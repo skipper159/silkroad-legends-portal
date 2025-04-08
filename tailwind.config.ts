@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				silkroad: {
+					gold: '#D4AF37',
+					crimson: '#8B0000',
+					blue: '#007FFF',
+					dark: '#121212',
+					darkgray: '#1E1E1E',
 				}
 			},
 			borderRadius: {
@@ -84,11 +92,38 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'glow': {
+					'0%, 100%': {
+						textShadow: '0 0 10px rgba(0, 127, 255, 0.5), 0 0 20px rgba(0, 127, 255, 0.3)'
+					},
+					'50%': {
+						textShadow: '0 0 20px rgba(0, 127, 255, 0.8), 0 0 30px rgba(0, 127, 255, 0.5)'
+					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'glow': 'glow 3s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite'
+			},
+			fontFamily: {
+				cinzel: ['Cinzel', 'serif'],
+				inter: ['Inter', 'sans-serif']
+			},
+			backgroundImage: {
+				'hero-pattern': "linear-gradient(to bottom, rgba(18, 18, 18, 0.7), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?q=80&w=2000')",
+				'login-bg': "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?q=80&w=2000')",
+				'register-bg': "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1469041797191-50ace28483c3?q=80&w=2000')"
 			}
 		}
 	},

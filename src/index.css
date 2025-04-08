@@ -1,101 +1,93 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 7%;
+    --foreground: 48 55% 80%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 48 55% 80%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 48 55% 80%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 47 55% 52%;
+    --primary-foreground: 0 0% 15%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 100% 27%;
+    --secondary-foreground: 48 55% 80%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 215.4 16.3% 56.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 215 27.9% 16.9%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 47 55% 52%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-silkroad-dark text-foreground font-inter;
+    background-image: linear-gradient(to bottom, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), 
+                      url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1500');
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-cinzel text-silkroad-gold;
+  }
+  
+  .btn-primary {
+    @apply bg-silkroad-gold hover:bg-amber-500 text-silkroad-dark font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .btn-secondary {
+    @apply bg-silkroad-crimson hover:bg-red-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-silkroad-gold text-silkroad-gold hover:bg-silkroad-gold hover:text-silkroad-dark font-bold py-2 px-5 rounded-lg transition-all duration-300;
+  }
+  
+  .card {
+    @apply bg-silkroad-darkgray border border-silkroad-gold/20 rounded-lg p-6 shadow-lg;
+  }
+  
+  .glow-text {
+    @apply text-silkroad-blue animate-glow;
+  }
+
+  .decorated-heading {
+    @apply relative inline-block font-cinzel font-bold text-silkroad-gold mb-8;
+  }
+  
+  .decorated-heading::before, 
+  .decorated-heading::after {
+    @apply content-[''] absolute h-[1px] w-10 bg-silkroad-gold top-1/2;
+  }
+  
+  .decorated-heading::before {
+    @apply -left-14;
+  }
+  
+  .decorated-heading::after {
+    @apply -right-14;
   }
 }
