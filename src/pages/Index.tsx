@@ -6,7 +6,6 @@ import NewsSection from "@/components/NewsSection";
 import ServerOverview from "@/components/ServerOverview";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import AdminTeaser from "@/components/AdminTeaser";
 
 const Index = () => {
   return (
@@ -17,7 +16,6 @@ const Index = () => {
       <Features />
       <DownloadSection />
       <NewsSection />
-      <AdminTeaser />
       <Footer />
     </div>
   );

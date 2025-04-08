@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LogOut } from "lucide-react";
@@ -14,6 +16,7 @@ import CharactersList from "@/components/dashboard/CharactersList";
 import PasswordChange from "@/components/dashboard/PasswordChange";
 import DownloadLinks from "@/components/dashboard/DownloadLinks";
 import SupportTickets from "@/components/dashboard/SupportTickets";
+import AdminTeaser from "@/components/AdminTeaser";
 
 // Mock user data
 const userData = {
@@ -22,6 +25,7 @@ const userData = {
   registrationDate: "January 15, 2025",
   lastLogin: "April 7, 2025",
   silkBalance: 2500,
+  isAdmin: true, // Mock admin status for testing
   characters: [
     { id: 1, name: "ShadowBlade", level: 92, guild: "Dragon Dynasty", online: true, class: "Blade", lastActive: "Now" },
     { id: 2, name: "StormMage", level: 75, guild: "Mystic Order", online: false, class: "Wizard", lastActive: "2 days ago" },
@@ -102,6 +106,13 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+          
+          {/* AdminTeaser only shown for admin users */}
+          {userData.isAdmin && (
+            <div className="mt-12">
+              <AdminTeaser />
+            </div>
+          )}
         </div>
       </main>
       <Footer />

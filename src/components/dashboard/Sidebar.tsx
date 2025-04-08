@@ -1,5 +1,5 @@
 
-import { Coins, Download, Key, LogOut, Shield, Ticket, User } from "lucide-react";
+import { Coins, Download, Key, LogOut, Shield, Ticket, User, Settings } from "lucide-react";
 import { TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +8,7 @@ interface SidebarProps {
     username: string;
     email: string;
     silkBalance: number;
+    isAdmin?: boolean;
   };
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -24,6 +25,11 @@ const Sidebar = ({ userData, activeTab, setActiveTab, handleLogout }: SidebarPro
           </div>
           <h2 className="text-xl font-bold">{userData.username}</h2>
           <span className="text-gray-400 text-sm">{userData.email}</span>
+          {userData.isAdmin && (
+            <span className="mt-2 bg-lafftale-gold/20 text-lafftale-gold text-xs px-3 py-1 rounded-full">
+              Administrator
+            </span>
+          )}
         </div>
         
         <div className="bg-lafftale-gold/10 rounded-lg p-4 mb-6">
@@ -74,6 +80,17 @@ const Sidebar = ({ userData, activeTab, setActiveTab, handleLogout }: SidebarPro
           >
             <Ticket size={18} /> Support Tickets
           </TabsTrigger>
+          
+          {/* Admin section only visible for admins */}
+          {userData.isAdmin && (
+            <TabsTrigger 
+              value="admin" 
+              onClick={() => setActiveTab("admin")}
+              className={`flex justify-start gap-3 items-center mt-4 border-t border-lafftale-gold/20 pt-4 ${activeTab === "admin" ? "bg-lafftale-gold/20" : ""}`}
+            >
+              <Settings size={18} /> Admin Panel
+            </TabsTrigger>
+          )}
         </TabsList>
         
         <Button 
