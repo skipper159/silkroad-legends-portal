@@ -63,10 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				silkroad: {
+				lafftale: {
 					gold: '#D4AF37',
-					crimson: '#8B0000',
-					blue: '#007FFF',
+					bronze: '#CD7F32',
+					darkred: '#8B0000',
+					beige: '#F5F5DC',
 					dark: '#121212',
 					darkgray: '#1E1E1E',
 				}
@@ -95,10 +96,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						textShadow: '0 0 10px rgba(0, 127, 255, 0.5), 0 0 20px rgba(0, 127, 255, 0.3)'
+						textShadow: '0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(212, 175, 55, 0.3)'
 					},
 					'50%': {
-						textShadow: '0 0 20px rgba(0, 127, 255, 0.8), 0 0 30px rgba(0, 127, 255, 0.5)'
+						textShadow: '0 0 20px rgba(212, 175, 55, 0.8), 0 0 30px rgba(212, 175, 55, 0.5)'
 					}
 				},
 				'float': {
@@ -108,13 +109,22 @@ export default {
 					'50%': {
 						transform: 'translateY(-10px)'
 					}
+				},
+				'pulse-subtle': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.7'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'glow': 'glow 3s ease-in-out infinite',
-				'float': 'float 6s ease-in-out infinite'
+				'float': 'float 6s ease-in-out infinite',
+				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite'
 			},
 			fontFamily: {
 				cinzel: ['Cinzel', 'serif'],
