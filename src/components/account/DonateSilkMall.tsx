@@ -13,9 +13,9 @@ import { Bitcoin, CreditCard, DollarSign, Coins } from "lucide-react";
 const silkPackages = [
   { id: 1, price: 5, amount: 300, bonus: 0, description: "Basic Pack" },
   { id: 2, price: 10, amount: 600, bonus: 0, description: "Standard Pack" },
-  { id: 3, price: 15, amount: 1050, bonus: 150, description: "Value Pack" },
-  { id: 4, price: 25, amount: 1800, bonus: 250, description: "Premium Pack" },
-  { id: 5, price: 50, amount: 4200, bonus: 600, description: "Ultimate Pack" },
+  { id: 3, price: 15, amount: 900, bonus: 150, description: "Value Pack" },
+  { id: 4, price: 25, amount: 1500, bonus: 250, description: "Premium Pack" },
+  { id: 5, price: 50, amount: 3000, bonus: 600, description: "Ultimate Pack" },
 ];
 
 const DonateSilkMall = () => {

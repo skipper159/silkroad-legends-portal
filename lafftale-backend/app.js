@@ -19,6 +19,9 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/tickets", require("./routes/tickets"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/donation", require("./routes/donation"));
+app.use("/api/rankings", require("./routes/rankings"));
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Lafftale backend running on port ${PORT}`));
