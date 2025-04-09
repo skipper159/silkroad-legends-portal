@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import Footer from "@/components/Footer";
 import AccountWebSettings from "@/components/account/AccountWebSettings";
 import GameAccountManager from "@/components/account/GameAccountManager";
 import CharacterOverview from "@/components/account/CharacterOverview";
+import SupportTickets from "@/components/dashboard/SupportTickets";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { Shield, User, Settings } from "lucide-react";
+import { Shield, User, Settings, TicketCheck } from "lucide-react";
 
 const Account = () => {
   const [activeTab, setActiveTab] = useState("web-account");
@@ -31,6 +33,11 @@ const Account = () => {
 
   const mockGameAccounts = [
     // ... deine Daten hier
+  ];
+
+  const mockTickets = [
+    { id: 101, subject: "Missing item after trade", status: "Open", date: "April 5, 2025" },
+    { id: 102, subject: "Bug in Hunter's Valley", status: "Closed", date: "March 28, 2025" }
   ];
 
   return (
@@ -63,6 +70,9 @@ const Account = () => {
                     </TabsTrigger>
                     <TabsTrigger value="characters" className="flex justify-start gap-3 items-center">
                       <User size={18} /> Character Overview
+                    </TabsTrigger>
+                    <TabsTrigger value="tickets" className="flex justify-start gap-3 items-center">
+                      <TicketCheck size={18} /> Support Tickets
                     </TabsTrigger>
                   </TabsList>
 
@@ -108,6 +118,10 @@ const Account = () => {
 
                   <TabsContent value="characters" className="mt-0">
                     <CharacterOverview gameAccounts={mockGameAccounts} />
+                  </TabsContent>
+
+                  <TabsContent value="tickets" className="mt-0">
+                    <SupportTickets tickets={mockTickets} />
                   </TabsContent>
                 </div>
               </div>
