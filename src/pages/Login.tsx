@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,28 +14,53 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate login process
-    setTimeout(() => {
-      if (username && password) {
+
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
         toast({
           title: "Login Successful",
           description: "Welcome back to Silkroad Legends!",
         });
-        // In a real app, this would redirect to dashboard
+
+        localStorage.setItem("token", data.token);
+
+        // JWT dekodieren
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
+
+        if (payload.role === 3) {
+          navigate("/dashboard");
+        } else {
+          navigate("/account");
+        }
       } else {
         toast({
           title: "Login Failed",
-          description: "Please check your username and password.",
-          variant: "destructive"
+          description: data || "Invalid credentials.",
+          variant: "destructive",
         });
       }
+    } catch (error: any) {
+      toast({
+        title: "Network Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -50,7 +74,7 @@ const Login = () => {
                 <h1 className="text-3xl font-bold">Login</h1>
                 <p className="text-gray-400 mt-2">Sign in to your Silkroad Legends account</p>
               </div>
-              
+
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="username">Username or Email</Label>
@@ -63,12 +87,12 @@ const Login = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <Label htmlFor="password">Password</Label>
-                    <Link 
-                      to="/forgot-password" 
+                    <Link
+                      to="/forgot-password"
                       className="text-sm text-silkroad-gold hover:underline"
                     >
                       Forgot Password?
@@ -84,10 +108,10 @@ const Login = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="remember" 
+                  <Checkbox
+                    id="remember"
                     checked={rememberMe}
                     onCheckedChange={(checked) => setRememberMe(!!checked)}
                   />
@@ -95,16 +119,16 @@ const Login = () => {
                     Remember me
                   </Label>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  className="btn-primary w-full" 
+
+                <Button
+                  type="submit"
+                  className="btn-primary w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </form>
-              
+
               <div className="mt-6 text-center">
                 <p className="text-gray-400">
                   Don't have an account?{" "}

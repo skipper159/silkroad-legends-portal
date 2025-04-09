@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,38 +17,62 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast({
         title: "Passwords do not match",
         description: "Please make sure your passwords match.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (!agreeTerms) {
       toast({
         title: "Terms agreement required",
         description: "Please accept the terms of service to register.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
-    // Simulate registration process
-    setTimeout(() => {
-      toast({
-        title: "Registration Successful",
-        description: "Welcome to Silkroad Legends! You can now login to your account.",
+
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
       });
+
+      const data = await response.text();
+
+      if (response.ok) {
+        toast({
+          title: "Registration Successful",
+          description: "Welcome to Silkroad Legends! You can now login to your account.",
+        });
+        // TODO: Weiterleitung zur Login-Seite (optional)
+      } else {
+        toast({
+          title: "Registration failed",
+          description: data || "Something went wrong during registration.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Network error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      // In a real app, this would redirect to login or dashboard
-    }, 1500);
+    }
   };
 
   return (
@@ -63,7 +86,7 @@ const Register = () => {
                 <h1 className="text-3xl font-bold">Register</h1>
                 <p className="text-gray-400 mt-2">Create your Silkroad Legends account</p>
               </div>
-              
+
               <form onSubmit={handleRegister} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
@@ -76,7 +99,7 @@ const Register = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -89,7 +112,7 @@ const Register = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -102,7 +125,7 @@ const Register = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <Input
@@ -115,10 +138,10 @@ const Register = () => {
                     className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                   />
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="terms" 
+                  <Checkbox
+                    id="terms"
                     checked={agreeTerms}
                     onCheckedChange={(checked) => setAgreeTerms(!!checked)}
                     required
@@ -127,23 +150,23 @@ const Register = () => {
                     I agree to the{" "}
                     <Link to="/terms" className="text-silkroad-gold hover:underline">
                       Terms of Service
-                    </Link>
-                    {" "}and{" "}
+                    </Link>{" "}
+                    and{" "}
                     <Link to="/privacy" className="text-silkroad-gold hover:underline">
                       Privacy Policy
                     </Link>
                   </Label>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  className="btn-primary w-full" 
+
+                <Button
+                  type="submit"
+                  className="btn-primary w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
               </form>
-              
+
               <div className="mt-6 text-center">
                 <p className="text-gray-400">
                   Already have an account?{" "}

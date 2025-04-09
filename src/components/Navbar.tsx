@@ -1,14 +1,21 @@
-
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-lafftale-dark/90 backdrop-blur-sm border-b border-lafftale-gold/20 sticky top-0 z-50">
@@ -21,25 +28,28 @@ const Navbar = () => {
               </span>
             </Link>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className={`font-medium transition-colors duration-300 hover:text-lafftale-gold ${isActive('/') ? 'text-lafftale-gold' : 'text-gray-300'}`}>
-              Home
-            </Link>
-            <Link to="/news" className={`font-medium transition-colors duration-300 hover:text-lafftale-gold ${isActive('/news') ? 'text-lafftale-gold' : 'text-gray-300'}`}>
-              News
-            </Link>
-            <Link to="/download" className={`font-medium transition-colors duration-300 hover:text-lafftale-gold ${isActive('/download') ? 'text-lafftale-gold' : 'text-gray-300'}`}>
-              Download
-            </Link>
-            <Link to="/register" className={`font-medium transition-colors duration-300 hover:text-lafftale-gold ${isActive('/register') ? 'text-lafftale-gold' : 'text-gray-300'}`}>
-              Register
-            </Link>
-            <Button asChild className="btn-primary">
-              <Link to="/login">Login</Link>
-            </Button>
+            <Link to="/" className={`font-medium hover:text-lafftale-gold ${isActive('/') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Home</Link>
+            <Link to="/news" className={`font-medium hover:text-lafftale-gold ${isActive('/news') ? 'text-lafftale-gold' : 'text-gray-300'}`}>News</Link>
+            <Link to="/download" className={`font-medium hover:text-lafftale-gold ${isActive('/download') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Download</Link>
+
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className={`font-medium hover:text-lafftale-gold ${isActive('/dashboard') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Dashboard</Link>
+                <Link to="/account" className={`font-medium hover:text-lafftale-gold ${isActive('/account') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Account</Link>
+                <Button variant="outline" onClick={handleLogout}>Logout</Button>
+              </>
+            ) : (
+              <>
+                <Link to="/register" className={`font-medium hover:text-lafftale-gold ${isActive('/register') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Register</Link>
+                <Button asChild className="btn-primary">
+                  <Link to="/login">Login</Link>
+                </Button>
+              </>
+            )}
           </div>
-          
+
           <div className="flex md:hidden">
             <Button 
               variant="ghost" 
@@ -51,46 +61,29 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-lafftale-darkgray border-b border-lafftale-gold/20">
-            <Link 
-              to="/" 
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:bg-lafftale-gold/10 hover:text-lafftale-gold'}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/news" 
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/news') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:bg-lafftale-gold/10 hover:text-lafftale-gold'}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              News
-            </Link>
-            <Link 
-              to="/download" 
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/download') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:bg-lafftale-gold/10 hover:text-lafftale-gold'}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Download
-            </Link>
-            <Link 
-              to="/register" 
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/register') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:bg-lafftale-gold/10 hover:text-lafftale-gold'}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Register
-            </Link>
-            <Link 
-              to="/login" 
-              className="block w-full text-center px-3 py-2 rounded-md text-base font-medium bg-lafftale-gold text-lafftale-dark hover:bg-amber-500"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Login
-            </Link>
+            <Link to="/" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Home</Link>
+            <Link to="/news" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/news') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>News</Link>
+            <Link to="/download" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/download') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Download</Link>
+
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                <Link to="/account" className="block px-3 py-2 rounded-md text-base font-medium text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>Account</Link>
+                <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-white">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/register" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>Register</Link>
+                <Link to="/login" className="block w-full text-center px-3 py-2 rounded-md text-base font-medium bg-lafftale-gold text-lafftale-dark hover:bg-amber-500" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -1,0 +1,364 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lafftale Web API",
+    "version": "1.0.0",
+    "description": "REST API for user management and support ticketing in the Silkroad Lafftale website"
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered"
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "500": {
+            "description": "Database error"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JWT token returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Login error"
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "summary": "Get authenticated user's profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "Username": {
+                      "type": "string"
+                    },
+                    "Email": {
+                      "type": "string"
+                    },
+                    "RegisteredAt": {
+                      "type": "string"
+                    },
+                    "LastLogin": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/tickets": {
+      "post": {
+        "summary": "Create a new support ticket",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "low",
+                      "normal",
+                      "high"
+                    ]
+                  }
+                },
+                "required": [
+                  "subject",
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket created"
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "500": {
+            "description": "Error creating ticket"
+          }
+        }
+      }
+    },
+    "/api/tickets/my": {
+      "get": {
+        "summary": "Get the authenticated user's tickets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/tickets/{id}": {
+      "get": {
+        "summary": "Get a ticket and its messages",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket and messages"
+          },
+          "404": {
+            "description": "Ticket not found"
+          },
+          "500": {
+            "description": "Error loading ticket"
+          }
+        }
+      }
+    },
+    "/api/tickets/{id}/message": {
+      "post": {
+        "summary": "Add a message to a ticket",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message added"
+          },
+          "400": {
+            "description": "Message required"
+          },
+          "500": {
+            "description": "Error adding message"
+          }
+        }
+      }
+    },
+    "/api/admin/tickets/open": {
+      "get": {
+        "summary": "Get all open tickets (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of open tickets"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error loading open tickets"
+          }
+        }
+      }
+    },
+    "/api/admin/tickets/{id}/close": {
+      "put": {
+        "summary": "Close a ticket (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket closed"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error closing ticket"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
