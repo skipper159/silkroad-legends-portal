@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const Navbar = () => {
             <Link to="/" className={`font-medium hover:text-lafftale-gold ${isActive('/') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Home</Link>
             <Link to="/news" className={`font-medium hover:text-lafftale-gold ${isActive('/news') ? 'text-lafftale-gold' : 'text-gray-300'}`}>News</Link>
             <Link to="/download" className={`font-medium hover:text-lafftale-gold ${isActive('/download') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Download</Link>
+            <Link to="/rankings" className={`font-medium hover:text-lafftale-gold ${isActive('/rankings') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Rankings</Link>
 
             {isAuthenticated ? (
               <>
@@ -69,6 +71,7 @@ const Navbar = () => {
             <Link to="/" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Home</Link>
             <Link to="/news" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/news') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>News</Link>
             <Link to="/download" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/download') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Download</Link>
+            <Link to="/rankings" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/rankings') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Rankings</Link>
 
             {isAuthenticated ? (
               <>
