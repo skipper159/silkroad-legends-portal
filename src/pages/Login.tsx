@@ -41,7 +41,7 @@ const Login = () => {
         const payload = JSON.parse(atob(data.token.split(".")[1]));
 
         if (payload.role === 3) {
-          navigate("/dashboard");
+          navigate("/AdminDashboard");
         } else {
           navigate("/account");
         }

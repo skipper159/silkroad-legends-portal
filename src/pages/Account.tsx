@@ -7,7 +7,9 @@ import Footer from "@/components/Footer";
 import AccountWebSettings from "@/components/account/AccountWebSettings";
 import GameAccountManager from "@/components/account/GameAccountManager";
 import CharacterOverview from "@/components/account/CharacterOverview";
-import SupportTickets from "@/components/dashboard/SupportTickets";
+import SupportTickets from "@/components/account/SupportTickets";
+import DonateSilkMall from "@/components/account/DonateSilkMall";
+import VotingSystem from "@/components/account/VotingSystem";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { Shield, User, Settings, TicketCheck } from "lucide-react";
+import { Shield, User, Settings, TicketCheck, Coins, Vote, Gift } from "lucide-react";
 
 const Account = () => {
   const [activeTab, setActiveTab] = useState("web-account");
@@ -28,7 +30,8 @@ const Account = () => {
     username: "Drachenmeister",
     email: "player@example.com",
     registeredAt: "January 15, 2025",
-    lastLogin: "April 7, 2025"
+    lastLogin: "April 7, 2025",
+    silkBalance: 1250
   };
 
   const mockGameAccounts = [
@@ -59,17 +62,34 @@ const Account = () => {
                     </div>
                     <h2 className="text-xl font-bold">{mockUserData.username}</h2>
                     <span className="text-gray-400 text-sm">{mockUserData.email}</span>
+                    
+                    {/* Silk Wallet Display */}
+                    <div className="mt-4 bg-lafftale-darkgray/70 border border-lafftale-gold/50 rounded-lg p-3 flex items-center gap-2 shadow-lg w-full">
+                      <div className="p-2 rounded-full bg-lafftale-gold/20 flex items-center justify-center">
+                        <Coins size={20} className="text-lafftale-gold animate-pulse" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Wallet Balance</p>
+                        <p className="text-lafftale-gold font-semibold">{mockUserData.silkBalance} Silk</p>
+                      </div>
+                    </div>
                   </div>
 
                   <TabsList className="grid grid-cols-1 h-auto gap-2">
                     <TabsTrigger value="web-account" className="flex justify-start gap-3 items-center">
-                      <Settings size={18} /> Web Account Settings
+                      <Settings size={18} /> Account Settings
                     </TabsTrigger>
                     <TabsTrigger value="game-accounts" className="flex justify-start gap-3 items-center">
                       <Shield size={18} /> Game Accounts
                     </TabsTrigger>
                     <TabsTrigger value="characters" className="flex justify-start gap-3 items-center">
                       <User size={18} /> Character Overview
+                      </TabsTrigger>
+                    <TabsTrigger value="donate" className="flex justify-start gap-3 items-center">
+                      <Gift size={18} /> Donate / SilkMall
+                    </TabsTrigger>
+                    <TabsTrigger value="voting" className="flex justify-start gap-3 items-center">
+                      <Vote size={18} /> Voting
                     </TabsTrigger>
                     <TabsTrigger value="tickets" className="flex justify-start gap-3 items-center">
                       <TicketCheck size={18} /> Support Tickets
@@ -92,7 +112,7 @@ const Account = () => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="outline" className="text-red-500 border-red-500 hover:bg-red-500/20">
-                            Delete Web Account
+                            Delete Account
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-lafftale-darkgray border-lafftale-gold">
@@ -119,7 +139,14 @@ const Account = () => {
                   <TabsContent value="characters" className="mt-0">
                     <CharacterOverview gameAccounts={mockGameAccounts} />
                   </TabsContent>
-
+                                    
+                  <TabsContent value="donate" className="mt-0">
+                    <DonateSilkMall />
+                  </TabsContent>
+                  
+                  <TabsContent value="voting" className="mt-0">
+                    <VotingSystem />
+                  </TabsContent>
                   <TabsContent value="tickets" className="mt-0">
                     <SupportTickets tickets={mockTickets} />
                   </TabsContent>

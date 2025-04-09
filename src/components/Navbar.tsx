@@ -38,7 +38,7 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className={`font-medium hover:text-lafftale-gold ${isActive('/dashboard') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Dashboard</Link>
+                <Link to="/AdminDashboard" className={`font-medium hover:text-lafftale-gold ${isActive('/AdminDashboard') ? 'text-lafftale-gold' : 'text-gray-300'}`}>AdminDashboard</Link>
                 <Link to="/account" className={`font-medium hover:text-lafftale-gold ${isActive('/account') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Account</Link>
                 <Button variant="outline" onClick={handleLogout}>Logout</Button>
               </>

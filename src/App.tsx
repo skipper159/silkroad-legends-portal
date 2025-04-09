@@ -4,7 +4,6 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
-import Dashboard from "./pages/Dashboard";
 import Rankings from "./pages/Rankings";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -24,8 +23,7 @@ function App() {
           
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<Account />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/AdminDashboard" element={<AdminDashboard />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

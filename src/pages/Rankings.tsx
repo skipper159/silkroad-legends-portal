@@ -16,7 +16,7 @@ const Rankings = () => {
     rank: i + 1,
     name: `Player${i + 1}`,
     level: 100 - (i * 2),
-    class: ["Wizard", "Warrior", "Hunter", "Thief", "Trader"][Math.floor(Math.random() * 5)],
+    class: ["Hunter", "Thief", "Trader"][Math.floor(Math.random() * 5)],
     guild: ["DragonSlayers", "NightWatch", "SilkElite", "MoonGuard", "None"][Math.floor(Math.random() * 5)],
     killCount: Math.floor(Math.random() * 1000)
   }));
@@ -84,9 +84,9 @@ const Rankings = () => {
                       <TableHead className="text-lafftale-gold w-16 text-center">#</TableHead>
                       <TableHead className="text-lafftale-gold">Name</TableHead>
                       <TableHead className="text-lafftale-gold hidden md:table-cell">Level</TableHead>
-                      <TableHead className="text-lafftale-gold hidden md:table-cell">Class</TableHead>
+                      <TableHead className="text-lafftale-gold hidden md:table-cell">Job</TableHead>
                       <TableHead className="text-lafftale-gold hidden lg:table-cell">Guild</TableHead>
-                      <TableHead className="text-lafftale-gold text-right">Kill Count</TableHead>
+                      <TableHead className="text-lafftale-gold text-right">Item Points</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

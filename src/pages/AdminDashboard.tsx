@@ -33,7 +33,7 @@ const AdminDashboard = () => {
             Admin Dashboard
           </h1>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs defaultValue="webaccounts" value={activeTab} onValueChange={setActiveTab}>
             <Card className="bg-lafftale-darkgray border-lafftale-gold/20 mb-6">
               <TabsList className="flex justify-center p-2 bg-transparent border-b border-lafftale-gold/20">
                 <TabsTrigger 
