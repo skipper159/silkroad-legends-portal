@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
 import Rankings from "./pages/Rankings";
+import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AuthProvider } from "./context/AuthContext";
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/rankings" element={<Rankings />} />
+          <Route path="/download" element={<Download />} />
           
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<Account />} />
