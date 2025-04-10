@@ -21,6 +21,9 @@ app.use("/api/tickets", require("./routes/tickets"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/donation", require("./routes/donation"));
 app.use("/api/rankings", require("./routes/rankings"));
+app.use("/api/characters", require("./routes/characters"));
+app.use("/api/characterdetails", require("./routes/characterdetails"));
+app.use("/api/silk", require("./routes/silk"));
 
 
 const PORT = process.env.PORT || 3000;

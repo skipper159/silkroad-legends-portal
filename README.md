@@ -35,6 +35,9 @@ npm i
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
+# Step 5: Start the Backend development server with auto-reloading and an instant preview.
+npm app.js  cd.\lafftale-backend
+```
 
 **Edit a file directly in GitHub**
 

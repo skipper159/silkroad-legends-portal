@@ -285,7 +285,7 @@
         }
       }
     },
-   "/ranking/{type}": {
+    "/api/ranking/{type}": {
       "get": {
         "summary": "Get paginated rankings by type",
         "parameters": [
@@ -326,7 +326,205 @@
           "500": { "description": "Database error" }
         }
       }
-    } 
+    },
+    "/api/characters/gameaccounts": {
+      "post": {
+        "summary": "Create a new game account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" },
+                  "webUserId": { "type": "integer" }
+                },
+                "required": ["username", "password", "webUserId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Game account created" },
+          "400": { "description": "Missing fields" },
+          "500": { "description": "Failed to create game account" }
+        }
+      }
+    },
+    "/api/characters/gameaccounts/{id}/password": {
+      "put": {
+        "summary": "Change game account password",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": { "type": "string" }
+                },
+                "required": ["newPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password updated" },
+          "400": { "description": "New password required" },
+          "500": { "description": "Failed to update password" }
+        }
+      }
+    },
+    "/api/characters/gameaccounts/{id}": {
+      "delete": {
+        "summary": "Delete a game account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Game account deleted" },
+          "500": { "description": "Failed to delete game account" }
+        }
+      }
+    },
+    "/api/characters/{charId}/details": {
+      "get": {
+        "summary": "Get detailed character information including equipped items",
+        "parameters": [
+          {
+            "name": "charId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Character details returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "CharID": { "type": "integer" },
+                      "CharName16": { "type": "string" },
+                      "Level": { "type": "integer" },
+                      "Strength": { "type": "integer" },
+                      "Intellect": { "type": "integer" },
+                      "Slot": { "type": "integer" },
+                      "RefItemID": { "type": "integer" },
+                      "CodeName128": { "type": "string" },
+                      "Name128": { "type": "string" },
+                      "Desc128": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Failed to load character details" }
+        }
+      }
+    },
+    "/api/silk/balance/{gameAccountId}": {
+      "get": {
+        "summary": "Get Silk balance for a game account",
+        "parameters": [
+          {
+            "name": "gameAccountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current Silk amount",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "silk": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Game account not found" },
+          "500": { "description": "Failed to fetch Silk balance" }
+        }
+      }
+    },
+    "/api/silk/add": {
+      "post": {
+        "summary": "Add Silk to a game account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gameAccountId": { "type": "integer" },
+                  "amount": { "type": "integer" }
+                },
+                "required": ["gameAccountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Silk added successfully" },
+          "400": { "description": "Missing fields" },
+          "500": { "description": "Failed to add Silk" }
+        }
+      }
+    },
+    "/api/silk/spend": {
+      "post": {
+        "summary": "Spend Silk from a game account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gameAccountId": { "type": "integer" },
+                  "amount": { "type": "integer" }
+                },
+                "required": ["gameAccountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Silk spent successfully" },
+          "400": { "description": "Not enough Silk or missing fields" },
+          "500": { "description": "Failed to spend Silk" }
+        }
+      }
+    }
   },
   "components": {
     "securitySchemes": {
