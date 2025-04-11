@@ -1,130 +1,110 @@
-
-import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Ban, Clock, Info } from "lucide-react";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from "@/components/ui/pagination";
+import { Loader2, Ban, TimerReset, Info } from "lucide-react";
 
-// Mock data for game accounts
-const mockGameAccounts = Array(60).fill(null).map((_, i) => ({
-  id: i + 1,
-  gameAccountId: `GA${1000 + i}`,
-  playerNameId: `Player${2000 + i}`,
-  guildId: i % 5 === 0 ? null : `Guild${500 + Math.floor(i / 3)}`,
-  jobTitle: ["Warrior", "Mage", "Cleric", "Rogue", "Hunter"][i % 5],
-  jobNameId: `Job${100 + (i % 5)}`
-}));
+interface GameAccount {
+  GameAccountId: number;
+  Username: string;
+  CharName16: string;
+  CharID: number;
+  GuildID: number;
+  JobType: number;
+  JobName: string;
+  REG_IP: string;
+  RegTime: string;
+  AccPlayTime: string;
+  IsBanned: boolean;
+  TimeoutUntil: string | null;
+}
 
 const GameAccountsList = () => {
-  const [accounts] = useState(mockGameAccounts);
-  const [currentPage, setCurrentPage] = useState(1);
-  const accountsPerPage = 50;
-  
-  const indexOfLastAccount = currentPage * accountsPerPage;
-  const indexOfFirstAccount = indexOfLastAccount - accountsPerPage;
-  const currentAccounts = accounts.slice(indexOfFirstAccount, indexOfLastAccount);
-  
-  const totalPages = Math.ceil(accounts.length / accountsPerPage);
+  const [accounts, setAccounts] = useState<GameAccount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAccounts = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/admin/gameaccounts");
+      if (!res.ok) throw new Error("Failed to fetch game accounts");
+      const data = await res.json();
+      setAccounts(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const banAccount = async (id: number) => {
+    await fetch(`http://localhost:3000/api/admin/gameaccounts/${id}/ban`, { method: "PUT" });
+    fetchAccounts();
+  };
+
+  const timeoutAccount = async (id: number) => {
+    await fetch(`http://localhost:3000/api/admin/gameaccounts/${id}/timeout`, { method: "PUT" });
+    fetchAccounts();
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  if (loading) {
+    return <div className="flex justify-center py-10 text-lafftale-gold"><Loader2 className="animate-spin mr-2" />Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center py-4">Error: {error}</div>;
+  }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold font-cinzel text-lafftale-gold mb-6">Game Accounts</h2>
-      
-      {accounts.length > 0 ? (
-        <>
-          <div className="overflow-x-auto">
-            <Table className="w-full">
-              <TableHeader className="bg-lafftale-dark">
-                <TableRow className="border-b border-lafftale-gold/20">
-                  <TableHead className="text-lafftale-gold">Game Account ID</TableHead>
-                  <TableHead className="text-lafftale-gold">Player Name ID</TableHead>
-                  <TableHead className="text-lafftale-gold">Guild ID</TableHead>
-                  <TableHead className="text-lafftale-gold">Job Title</TableHead>
-                  <TableHead className="text-lafftale-gold">Job Name ID</TableHead>
-                  <TableHead className="text-lafftale-gold text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentAccounts.map((account) => (
-                  <TableRow key={account.id} className="border-b border-lafftale-gold/20 hover:bg-lafftale-dark/40">
-                    <TableCell className="font-medium">{account.gameAccountId}</TableCell>
-                    <TableCell>{account.playerNameId}</TableCell>
-                    <TableCell>{account.guildId || 'N/A'}</TableCell>
-                    <TableCell>{account.jobTitle}</TableCell>
-                    <TableCell>{account.jobNameId}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="border-lafftale-darkred text-lafftale-darkred hover:bg-lafftale-darkred hover:text-white"
-                        >
-                          <Ban size={16} />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white"
-                        >
-                          <Clock size={16} />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="border-lafftale-gold text-lafftale-gold hover:bg-lafftale-gold hover:text-lafftale-dark"
-                        >
-                          <Info size={16} />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          
-          <Pagination className="mt-6">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-              
-              {[...Array(totalPages)].map((_, i) => (
-                <PaginationItem key={i + 1}>
-                  <PaginationLink 
-                    isActive={currentPage === i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
-                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </>
-      ) : (
-        <div className="text-center p-8 text-gray-400">
-          <p>No game accounts found.</p>
-        </div>
-      )}
-    </div>
+    <Card className="overflow-x-auto">
+      <table className="min-w-full text-left text-sm text-gray-300">
+      <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
+        <tr>
+        <th className="p-3">ID</th>
+        <th className="p-3">Username</th>
+        <th className="p-3">Char</th>
+        <th className="p-3">Guild</th>
+        <th className="p-3">Job</th>
+        <th className="p-3">REG IP</th>
+        <th className="p-3">Reg Time</th>
+        <th className="p-3">Play Time</th>
+        <th className="p-3">Banned</th>
+        <th className="p-3">Timeout</th>
+        <th className="p-3 text-center">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {accounts.map((acc) => (
+        <tr key={acc.GameAccountId} className="border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20">
+          <td className="p-3">{acc.GameAccountId}</td>
+          <td className="p-3">{acc.Username}</td>
+          <td className="p-3">{acc.CharName16 || "—"}</td>
+          <td className="p-3">{acc.GuildID ?? "—"}</td>
+          <td className="p-3">{acc.JobName || acc.JobType}</td>
+          <td className="p-3">{acc.REG_IP}</td>
+          <td className="p-3">{new Date(acc.RegTime).toLocaleString()}</td>
+          <td className="p-3">{acc.AccPlayTime || "—"}</td>
+          <td className="p-3">{acc.IsBanned ? "✅" : "❌"}</td>
+          <td className="p-3">{acc.TimeoutUntil ? new Date(acc.TimeoutUntil).toLocaleString() : "—"}</td>
+          <td className="p-3 flex gap-2 justify-center">
+          <Button size="sm" variant="destructive" onClick={() => banAccount(acc.GameAccountId)}>
+            <Ban size={16} />
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => timeoutAccount(acc.GameAccountId)}>
+            <TimerReset size={16} />
+          </Button>
+          <Button size="sm" variant="outline">
+            <Info size={16} />
+          </Button>
+          </td>
+        </tr>
+          ))}
+        </tbody>
+      </table>
+    </Card>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, isAdmin } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -38,7 +37,9 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
-                <Link to="/AdminDashboard" className={`font-medium hover:text-lafftale-gold ${isActive('/AdminDashboard') ? 'text-lafftale-gold' : 'text-gray-300'}`}>AdminDashboard</Link>
+                {isAdmin && (
+                  <Link to="/AdminDashboard" className={`font-medium hover:text-lafftale-gold ${isActive('/AdminDashboard') ? 'text-lafftale-gold' : 'text-gray-300'}`}>AdminDashboard</Link>
+                )}
                 <Link to="/account" className={`font-medium hover:text-lafftale-gold ${isActive('/account') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Account</Link>
                 <Button variant="outline" onClick={handleLogout}>Logout</Button>
               </>
@@ -75,7 +76,9 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                {isAdmin && (
+                  <Link to="/AdminDashboard" className="block px-3 py-2 rounded-md text-base font-medium text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>AdminDashboard</Link>
+                )}
                 <Link to="/account" className="block px-3 py-2 rounded-md text-base font-medium text-lafftale-gold" onClick={() => setMobileMenuOpen(false)}>Account</Link>
                 <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-white">
                   Logout

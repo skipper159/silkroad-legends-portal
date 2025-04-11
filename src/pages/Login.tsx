@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -15,6 +16,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,30 +33,43 @@ const Login = () => {
 
       if (response.ok) {
         toast({
-          title: "Login Successful",
-          description: "Welcome back to Silkroad Legends!",
+          title: "Login Erfolgreich",
+          description: "Willkommen zurück bei Silkroad Lafftale!",
         });
 
-        localStorage.setItem("token", data.token);
-
-        // JWT dekodieren
-        const payload = JSON.parse(atob(data.token.split(".")[1]));
-
-        if (payload.role === 3) {
-          navigate("/AdminDashboard");
-        } else {
-          navigate("/account");
+        try {
+          // JWT dekodieren
+          const payload = JSON.parse(atob(data.token.split(".")[1]));
+          console.log("JWT Payload:", payload);
+          
+          // Auth-Kontext aktualisieren und Token speichern
+          const isAdmin = payload.role === 3;
+          login(data.token, isAdmin);
+          
+          // Sofortige Navigation ohne Verzögerung
+          if (payload.role === 3) {
+            console.log("Redirecting to AdminDashboard");
+            navigate("/AdminDashboard", { replace: true });
+          } else {
+            console.log("Redirecting to account");
+            navigate("/account", { replace: true });
+          }
+        } catch (error) {
+          console.error("Error decoding JWT:", error);
+          // Fallback bei JWT-Dekodierungsfehlern
+          navigate("/account", { replace: true });
         }
       } else {
         toast({
-          title: "Login Failed",
-          description: data || "Invalid credentials.",
+          title: "Login Fehlgeschlagen",
+          description: data?.message || "Ungültige Anmeldedaten.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
+      console.error("Login error:", error);
       toast({
-        title: "Network Error",
+        title: "Netzwerkfehler",
         description: error.message,
         variant: "destructive",
       });
@@ -72,7 +87,7 @@ const Login = () => {
             <div className="card backdrop-blur-sm border-silkroad-gold/30">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold">Login</h1>
-                <p className="text-gray-400 mt-2">Sign in to your Silkroad Legends account</p>
+                <p className="text-gray-400 mt-2">Sign in to your Silkroad Lafftale account</p>
               </div>
 
               <form onSubmit={handleLogin} className="space-y-6">

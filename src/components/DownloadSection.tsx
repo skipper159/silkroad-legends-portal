@@ -37,9 +37,7 @@ const DownloadSection = () => {
   return (
     <section className="py-20 bg-silkroad-darkgray/60">
       <div className="container mx-auto px-4">
-        <h2 className="decorated-heading text-3xl md:text-4xl text-center">
-          Download & Play
-        </h2>
+
 
         <div className="max-w-4xl mx-auto mt-10">
           <div className="card">

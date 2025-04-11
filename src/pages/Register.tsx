@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,22 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (redirectCountdown !== null) {
+      if (redirectCountdown <= 0) {
+        navigate('/login');
+      } else {
+        const timer = setTimeout(() => {
+          setRedirectCountdown(redirectCountdown - 1);
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [redirectCountdown, navigate]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +69,9 @@ const Register = () => {
       if (response.ok) {
         toast({
           title: "Registration Successful",
-          description: "Welcome to Silkroad Legends! You can now login to your account.",
+          description: "Welcome to Silkroad Legends! Redirecting to login in 5 seconds.",
         });
-        // TODO: Weiterleitung zur Login-Seite (optional)
+        setRedirectCountdown(5);
       } else {
         toast({
           title: "Registration failed",
