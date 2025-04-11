@@ -1,94 +1,102 @@
-
+// routes/user_tickets.js
 const express = require("express");
 const router = express.Router();
-const { pool, poolConnect, sql } = require("../db");
 const authenticateToken = require("../middleware/auth");
+const { sql, webPool, webPoolConnect } = require("../db");
 
-// Create a new ticket
-router.post("/", authenticateToken, async (req, res) => {
-  const { subject, message, priority } = req.body;
-  if (!subject || !message) return res.status(400).send("Missing fields");
-
-  await poolConnect;
-  try {
-    const result = await pool.request()
-      .input("userId", sql.Int, req.user.id)
-      .input("subject", sql.NVarChar, subject)
-      .input("priority", sql.NVarChar, priority || 'normal')
-      .query(`INSERT INTO SupportTickets (UserId, Subject, Priority) OUTPUT INSERTED.Id VALUES (@userId, @subject, @priority)`);
-
-    const ticketId = result.recordset[0].Id;
-
-    await pool.request()
-      .input("ticketId", sql.Int, ticketId)
-      .input("senderId", sql.Int, req.user.id)
-      .input("message", sql.NVarChar, message)
-      .input("isFromStaff", sql.Bit, 0)
-      .query(`INSERT INTO TicketMessages (TicketId, SenderId, Message, IsFromStaff) VALUES (@ticketId, @senderId, @message, @isFromStaff)`);
-
-    res.status(201).send("Ticket created");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error creating ticket");
-  }
-});
-
-// Get user's tickets
+// GET all tickets of current user
 router.get("/my", authenticateToken, async (req, res) => {
-  await poolConnect;
+  await webPoolConnect;
   try {
-    const result = await pool.request()
+    const result = await webPool.request()
       .input("userId", sql.Int, req.user.id)
       .query("SELECT * FROM SupportTickets WHERE UserId = @userId ORDER BY CreatedAt DESC");
-
     res.json(result.recordset);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching tickets");
+    console.error("Error fetching user tickets:", err);
+    res.status(500).json({ error: "Failed to fetch tickets" });
   }
 });
 
-// Get ticket details with messages
+// GET single ticket and messages
 router.get("/:id", authenticateToken, async (req, res) => {
   const ticketId = req.params.id;
-  await poolConnect;
+  await webPoolConnect;
   try {
-    const ticket = await pool.request()
+    const ticketResult = await webPool.request()
       .input("id", sql.Int, ticketId)
-      .query("SELECT * FROM SupportTickets WHERE Id = @id");
+      .input("userId", sql.Int, req.user.id)
+      .query("SELECT * FROM SupportTickets WHERE Id = @id AND UserId = @userId");
 
-    if (!ticket.recordset[0]) return res.status(404).send("Ticket not found");
+    const ticket = ticketResult.recordset[0];
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
 
-    const messages = await pool.request()
+    const messagesResult = await webPool.request()
       .input("ticketId", sql.Int, ticketId)
       .query("SELECT * FROM TicketMessages WHERE TicketId = @ticketId ORDER BY SentAt ASC");
 
-    res.json({ ticket: ticket.recordset[0], messages: messages.recordset });
+    res.json({ ...ticket, Messages: messagesResult.recordset });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading ticket");
+    console.error("Error loading ticket:", err);
+    res.status(500).json({ error: "Failed to load ticket" });
   }
 });
 
-// Add a message to an existing ticket
-router.post("/:id/message", authenticateToken, async (req, res) => {
-  const ticketId = req.params.id;
-  const { message } = req.body;
-  if (!message) return res.status(400).send("Message required");
+// POST new ticket + message
+router.post("/", authenticateToken, async (req, res) => {
+  const { subject, message, priority = "normal" } = req.body;
+  if (!subject || !message) {
+    return res.status(400).json({ error: "Missing subject or message" });
+  }
 
-  await poolConnect;
+  await webPoolConnect;
   try {
-    await pool.request()
+    const ticketResult = await webPool.request()
+      .input("userId", sql.Int, req.user.id)
+      .input("subject", sql.NVarChar, subject)
+      .input("priority", sql.NVarChar, priority)
+      .query(`
+        INSERT INTO SupportTickets (UserId, Subject, Priority, Status, CreatedAt)
+        OUTPUT INSERTED.Id AS TicketId
+        VALUES (@userId, @subject, @priority, 'open', GETDATE())
+      `);
+
+    const ticketId = ticketResult.recordset[0].TicketId;
+
+    await webPool.request()
       .input("ticketId", sql.Int, ticketId)
       .input("senderId", sql.Int, req.user.id)
       .input("message", sql.NVarChar, message)
-      .input("isFromStaff", sql.Bit, 0)
-      .query(`INSERT INTO TicketMessages (TicketId, SenderId, Message, IsFromStaff) VALUES (@ticketId, @senderId, @message, @isFromStaff)`);
+      .query(`
+        INSERT INTO TicketMessages (TicketId, SenderId, Message, SentAt)
+        VALUES (@ticketId, @senderId, @message, GETDATE())
+      `);
 
-    res.send("Message added");
+    res.status(201).json({ message: "Ticket created", ticketId });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error adding message");
+    console.error("Error creating ticket:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// POST message to existing ticket
+router.post("/:id/message", authenticateToken, async (req, res) => {
+  const ticketId = req.params.id;
+  const { message } = req.body;
+  if (!message) return res.status(400).json({ error: "Message required" });
+
+  await webPoolConnect;
+  try {
+    await webPool.request()
+      .input("ticketId", sql.Int, ticketId)
+      .input("senderId", sql.Int, req.user.id)
+      .input("message", sql.NVarChar, message)
+      .query("INSERT INTO TicketMessages (TicketId, SenderId, Message, SentAt) VALUES (@ticketId, @senderId, @message, GETDATE())");
+
+    res.status(200).json({ message: "Message added" });
+  } catch (err) {
+    console.error("Error adding message:", err);
+    res.status(500).json({ error: "Failed to add message" });
   }
 });
 
