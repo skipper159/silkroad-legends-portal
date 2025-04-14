@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Download, Monitor, LayoutList } from "lucide-react";
@@ -25,11 +24,42 @@ const clientRequirements = {
 
 const DownloadSection = () => {
   const [downloading, setDownloading] = useState(false);
+  const [fileSize, setFileSize] = useState<string>("Lädt...");
+  const megaLink = "https://mega.nz/file/8JFiWKoL#RKox6jJpDbdqpgP2ABWuYC9V7uzSXJ3QcZJT30ANNog";
 
-  const handleDownload = (type: string) => {
+  useEffect(() => {
+    // In einer realen Implementierung würde hier eine API-Anfrage erfolgen,
+    // um die tatsächliche Dateigröße zu ermitteln
+    // Da wir nicht direkt auf die Mega-API zugreifen können, simulieren wir dies
+    const fetchFileSize = async () => {
+      try {
+        // In einer realen Implementierung:
+        // const response = await fetch('api/getFileSize', { 
+        //   method: 'POST',
+        //   body: JSON.stringify({ url: megaLink })
+        // });
+        // const data = await response.json();
+        // setFileSize(data.size);
+        
+        // Für dieses Beispiel setzen wir nach einer kurzen Verzögerung eine Größe
+        setTimeout(() => {
+          setFileSize("1.24 GB");
+        }, 1500);
+      } catch (error) {
+        console.error("Fehler beim Abrufen der Dateigröße:", error);
+        setFileSize("1.24 GB"); // Fallback-Größe
+      }
+    };
+
+    fetchFileSize();
+  }, []);
+
+  const handleDownload = () => {
     setDownloading(true);
-    // Simulate download start
+    // Simuliere Download-Start
     setTimeout(() => {
+      // Öffne den Mega-Link in einem neuen Tab
+      window.open(megaLink, '_blank');
       setDownloading(false);
     }, 2000);
   };
@@ -37,29 +67,17 @@ const DownloadSection = () => {
   return (
     <section className="py-20 bg-silkroad-darkgray/60">
       <div className="container mx-auto px-4">
-
-
         <div className="max-w-4xl mx-auto mt-10">
           <div className="card">
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="flex items-center justify-center mb-8">
               <Button
-                onClick={() => handleDownload('launcher')} 
+                onClick={handleDownload} 
                 className="btn-primary flex items-center gap-2"
                 disabled={downloading}
               >
                 <Download size={20} />
-                {downloading ? 'Downloading...' : 'Download Launcher'} 
-                <span className="text-xs bg-silkroad-dark/70 px-2 py-1 rounded-full">450 MB</span>
-              </Button>
-              
-              <Button
-                onClick={() => handleDownload('client')} 
-                className="btn-secondary flex items-center gap-2"
-                disabled={downloading}
-              >
-                <Download size={20} />
-                {downloading ? 'Downloading...' : 'Full Client'} 
-                <span className="text-xs bg-black/30 px-2 py-1 rounded-full">4.2 GB</span>
+                {downloading ? 'Downloading...' : 'Lafftale Client'} 
+                <span className="text-xs bg-silkroad-dark/70 px-2 py-1 rounded-full">{fileSize}</span>
               </Button>
             </div>
 
@@ -106,34 +124,34 @@ const DownloadSection = () => {
                   <h3 className="text-center text-xl mb-4">Installation Steps</h3>
                   <ol className="list-decimal list-inside space-y-4 text-left pl-4">
                     <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Download the Launcher</span>
+                      <span className="text-silkroad-gold font-medium">Download den Lafftale Client</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Download our easy-to-use launcher for the simplest installation experience.
+                        Lade den kompletten Lafftale Client über den Download-Button herunter.
                       </p>
                     </li>
                     <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Run the Installer</span>
+                      <span className="text-silkroad-gold font-medium">Entpacke die Datei</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Execute the downloaded file and follow the on-screen instructions.
+                        Entpacke den heruntergeladenen Client mit einem geeigneten Programm wie WinRAR oder 7-Zip.
                       </p>
                     </li>
                     <li className="text-gray-300">
                       <span className="text-silkroad-gold font-medium">Create Your Account</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Register a new account through the launcher or on our website.
+                        Registriere einen neuen Account auf unserer Website.
                       </p>
                     </li>
                     <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Login and Play</span>
+                      <span className="text-silkroad-gold font-medium">Starte das Spiel</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Enter your credentials, click Play, and begin your adventure!
+                        Führe die sro_client.exe aus, gib deine Zugangsdaten ein und beginne dein Abenteuer!
                       </p>
                     </li>
                   </ol>
                   
                   <div className="mt-8 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
                     <p className="text-amber-200 text-sm">
-                      <strong>Note:</strong> Our launcher will automatically download required files and keep your game updated. If you choose the full client download, you will need to manually update when new patches are released.
+                      <strong>Hinweis:</strong> Bei Aktualisierungen des Spiels werden entsprechende Informationen auf der Website oder im Discord-Server bereitgestellt.
                     </p>
                   </div>
                 </div>

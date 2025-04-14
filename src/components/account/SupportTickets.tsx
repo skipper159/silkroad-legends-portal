@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Loader2, PlusCircle, Eye } from "lucide-react";
-import { fetchWithAuth } from "@/lib/api";
+import { fetchWithAuth, weburl } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { DialogDescription } from "@/components/ui/dialog";
 
@@ -21,9 +21,13 @@ interface TicketMessage {
   Id: number;
   TicketId: number;
   SenderId: number;
+  SenderName: string;
   Message: string;
   SentAt: string;
+  IsFromStaff: boolean;
 }
+
+const MAX_PREVIEW_LENGTH = 500;
 
 const SupportTickets = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -40,18 +44,25 @@ const SupportTickets = () => {
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [reply, setReply] = useState("");
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [expandedMessages, setExpandedMessages] = useState<number[]>([]);
+
+  const toggleExpand = (id: number) => {
+    setExpandedMessages((prev) =>
+      prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]
+    );
+  };
 
   const { toast } = useToast();
 
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const res = await fetchWithAuth("http://localhost:3000/api/user_tickets/my");
+      const res = await fetchWithAuth(`${weburl}/api/user_tickets/my`);
       if (!res.ok) throw new Error("Failed to fetch tickets");
       const data = await res.json();
       setTickets(data);
-    } catch (err) {
-      toast({ title: "Fehler", description: "Konnte Tickets nicht laden", variant: "destructive" });
+    } catch {
+      toast({ title: "Error", description: "Could not load tickets", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -61,13 +72,13 @@ const SupportTickets = () => {
     if (!subject.trim() || !message.trim()) return;
 
     try {
-      const res = await fetchWithAuth("http://localhost:3000/api/user_tickets", {
+      const res = await fetchWithAuth(`${weburl}/api/user_tickets`, {
         method: "POST",
         body: JSON.stringify({ subject, message, priority })
       });
 
       if (res.ok) {
-        toast({ title: "Ticket erstellt", description: "Support wird sich melden." });
+        toast({ title: "Ticket created", description: "Support will answer shortly." });
         setSubject("");
         setMessage("");
         setOpenNewModal(false);
@@ -75,8 +86,8 @@ const SupportTickets = () => {
       } else {
         throw new Error();
       }
-    } catch (err) {
-      toast({ title: "Fehler", description: "Ticket konnte nicht erstellt werden", variant: "destructive" });
+    } catch {
+      toast({ title: "Error", description: "Only one open ticket allowed", variant: "destructive" });
     }
   };
 
@@ -86,11 +97,11 @@ const SupportTickets = () => {
     setLoadingDetails(true);
 
     try {
-      const res = await fetchWithAuth(`http://localhost:3000/api/user_tickets/${ticket.Id}`);
-      if (!res.ok) throw new Error("Fehler beim Laden");
+      const res = await fetchWithAuth(`${weburl}/api/user_tickets/${ticket.Id}`);
+      if (!res.ok) throw new Error("Fail to load ticket");
       const data = await res.json();
       setMessages(data.Messages || []);
-    } catch (err) {
+    } catch {
       setMessages([]);
     } finally {
       setLoadingDetails(false);
@@ -101,14 +112,14 @@ const SupportTickets = () => {
     if (!reply.trim() || !selectedTicket) return;
 
     try {
-      await fetchWithAuth(`http://localhost:3000/api/user_tickets/${selectedTicket.Id}/message`, {
+      await fetchWithAuth(`${weburl}/api/user_tickets/${selectedTicket.Id}/message`, {
         method: "POST",
         body: JSON.stringify({ message: reply })
       });
       setReply("");
       fetchTicketDetails(selectedTicket);
     } catch {
-      toast({ title: "Fehler", description: "Antwort konnte nicht gesendet werden", variant: "destructive" });
+      toast({ title: "Error", description: "Could not send answer", variant: "destructive" });
     }
   };
 
@@ -122,23 +133,23 @@ const SupportTickets = () => {
         <h2 className="text-xl font-bold text-lafftale-gold">Support Tickets</h2>
         <Button onClick={() => setOpenNewModal(true)} className="flex items-center gap-2">
           <PlusCircle size={16} />
-          Neues Ticket
+          New Ticket
         </Button>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-6 text-lafftale-gold">
-          <Loader2 className="animate-spin mr-2" />Lade Tickets...
+          <Loader2 className="animate-spin mr-2" />Loading tickets...
         </div>
       ) : (
         <Card className="overflow-x-auto">
           <table className="min-w-full text-left text-sm text-gray-300">
             <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
               <tr>
-                <th className="p-3">Betreff</th>
-                <th className="p-3">Priorität</th>
+                <th className="p-3">Subject</th>
+                <th className="p-3">Priority</th>
                 <th className="p-3">Status</th>
-                <th className="p-3">Erstellt</th>
+                <th className="p-3">Created</th>
                 <th className="p-3 text-center">Details</th>
               </tr>
             </thead>
@@ -169,18 +180,18 @@ const SupportTickets = () => {
         </Card>
       )}
 
-      {/* Modal: Neues Ticket */}
+      {/* Modal: Create Ticket */}
       <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
         <DialogContent className="bg-lafftale-darkgray border border-lafftale-gold/20 text-gray-300">
-        <DialogHeader>
-          <DialogTitle className="text-lafftale-gold">Neues Ticket erstellen</DialogTitle>
-          <DialogDescription>
-              Bitte gib einen aussagekräftigen Betreff und deine Nachricht ein.
-          </DialogDescription>
-        </DialogHeader>
+          <DialogHeader>
+            <DialogTitle className="text-lafftale-gold">Create new Ticket</DialogTitle>
+            <DialogDescription>
+              Please describe your issue. One open ticket at a time is allowed.
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4">
-            <Input placeholder="Betreff" value={subject} onChange={(e) => setSubject(e.target.value)} />
-            <Textarea placeholder="Nachricht" value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
+            <Input placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+            <Textarea placeholder="Your message..." value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
             <div className="flex gap-4 text-sm">
               {["low", "normal", "high"].map((lvl) => (
                 <label key={lvl}>
@@ -196,7 +207,7 @@ const SupportTickets = () => {
             </div>
           </div>
           <DialogFooter className="mt-4">
-            <Button onClick={handleCreateTicket} className="btn-primary">Absenden</Button>
+            <Button onClick={handleCreateTicket} className="btn-primary">Send</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -204,39 +215,65 @@ const SupportTickets = () => {
       {/* Modal: Ticket Details */}
       <Dialog open={openDetailModal} onOpenChange={setOpenDetailModal}>
         <DialogContent className="max-w-2xl bg-lafftale-darkgray border-lafftale-gold/20 text-gray-300">
-        <DialogHeader>
-          <DialogTitle className="text-lafftale-gold">
+          <DialogHeader>
+            <DialogTitle className="text-lafftale-gold">
               Ticket #{selectedTicket?.Id} – {selectedTicket?.Subject}
-          </DialogTitle>
-          <DialogDescription>
-            Hier siehst du den bisherigen Verlauf und kannst auf das Ticket antworten.
-          </DialogDescription>
-        </DialogHeader>
+            </DialogTitle>
+            <DialogDescription>
+              Below is your conversation history.
+            </DialogDescription>
+          </DialogHeader>
           {loadingDetails ? (
             <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
           ) : (
             <>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {messages.map((msg) => (
-                  <div key={msg.Id} className="border-t pt-2 text-sm">
-                    <p>{msg.Message}</p>
-                    <p className="text-xs text-gray-500">
-                      Gesendet am {new Date(msg.SentAt).toLocaleString()} von User {msg.SenderId}
-                    </p>
-                  </div>
-                ))}
+              <div className="space-y-3 max-h-[70vh] overflow-y-auto">
+                {messages.map((msg) => {
+                  const isExpanded = expandedMessages.includes(msg.Id);
+                  const shortText = msg.Message.slice(0, MAX_PREVIEW_LENGTH);
+
+                  return (
+                    <div
+                      key={msg.Id}
+                      className={`p-3 rounded text-sm w-fit max-w-[85%] ${
+                        msg.IsFromStaff
+                          ? "ml-auto bg-yellow-100 text-yellow-900 text-right"
+                          : "mr-auto bg-gray-800 text-white text-left"
+                      }`}
+                    >
+                      <div className="text-xs mb-1 text-lafftale-gold">
+                        {msg.SenderName} • {new Date(msg.SentAt).toLocaleString()}
+                      </div>
+                      <div>
+                        {msg.Message.length <= MAX_PREVIEW_LENGTH ? (
+                          msg.Message
+                        ) : isExpanded ? (
+                          <>
+                            {msg.Message}
+                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read less</Button>
+                          </>
+                        ) : (
+                          <>
+                            {shortText}...
+                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read more</Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {selectedTicket?.Status !== "closed" && (
                 <>
                   <Textarea
-                    placeholder="Antwort eingeben..."
+                    placeholder="Write a reply..."
                     value={reply}
                     onChange={(e) => setReply(e.target.value)}
                     className="mt-4"
                   />
                   <DialogFooter className="mt-2">
-                    <Button className="btn-primary" onClick={sendReply}>Antwort senden</Button>
+                    <Button className="btn-primary" onClick={sendReply}>Reply</Button>
                   </DialogFooter>
                 </>
               )}

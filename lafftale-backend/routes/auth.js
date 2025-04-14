@@ -36,24 +36,73 @@ router.post("/login", async (req, res) => {
 
   await poolConnect;
   try {
+    console.log(`Login attempt for user: ${username}`);
+    
     const user = await pool.request()
       .input("identifier", sql.NVarChar, username)
       .query("SELECT * FROM WebUsers WHERE Username = @identifier OR Email = @identifier");
 
-    if (!user.recordset[0]) return res.status(404).send("User not found");
+    if (!user.recordset[0]) {
+      console.log("User not found in database");
+      return res.status(404).send("User not found");
+    }
 
     const valid = await bcrypt.compare(password, user.recordset[0].PasswordHash);
-    if (!valid) return res.status(403).send("Invalid credentials");
+    if (!valid) {
+      console.log("Invalid password provided");
+      return res.status(403).send("Invalid credentials");
+    }
+
+    console.log(`User authenticated successfully. UserId: ${user.recordset[0].Id}`);
+    
+    // Update last login time with current timestamp
+    try {
+      const currentTime = new Date();
+      
+      // Korrektes aktuelles Datum ohne Zeitanteil für LastLogin
+      const today = new Date();
+      
+      // Format HH:MM:SS für LogTime
+      const timeOnly = currentTime.toTimeString().split(' ')[0];
+      
+      console.log(`Updating LastLogin (date) for user ${user.recordset[0].Id} to ${today.toISOString().split('T')[0]}`);
+      console.log(`Updating LogTime (time) for user ${user.recordset[0].Id} to ${timeOnly}`);
+      
+      // Debug-Ausgabe für Zeitwerte
+      console.log("Current Date Object:", currentTime);
+      console.log("Today:", today);
+      console.log("Time only:", timeOnly);
+      
+      // Verwende separate Abfragen für mehr Klarheit bei der Fehlerbehandlung
+      const updateDateResult = await pool.request()
+        .input("userId", sql.Int, user.recordset[0].Id)
+        .input("lastLogin", sql.Date, today)
+        .query("UPDATE WebUsers SET LastLogin = CONVERT(date, GETDATE()) WHERE Id = @userId");
+      
+      console.log("LastLogin update result:", updateDateResult);
+      
+      const updateTimeResult = await pool.request()
+        .input("userId", sql.Int, user.recordset[0].Id)
+        .input("logTime", sql.VarChar, timeOnly)
+        .query("UPDATE WebUsers SET LogTime = @logTime WHERE Id = @userId");
+        
+      console.log("LogTime update result:", updateTimeResult);
+    } catch (updateErr) {
+      console.error("Error updating LastLogin/LogTime:", updateErr);
+    }
 
     const token = jwt.sign(
-      { id: user.recordset[0].Id, role: user.recordset[0].RoleId },
+      { id: user.recordset[0].Id, 
+        role: user.recordset[0].RoleId,
+        username: user.recordset[0].Username
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     res.json({ token });
   } catch (err) {
-    console.error(err);
+    console.error("Login error:", err);
     res.status(500).send("Login error");
   }
 });

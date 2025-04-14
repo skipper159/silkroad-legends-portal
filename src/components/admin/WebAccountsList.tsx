@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { weburl } from "@/lib/api";
 
 interface WebAccount {
   Id: number;
@@ -18,7 +19,7 @@ const WebAccountsList = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/admin/webaccounts");
+        const res = await fetch(`${weburl}/api/admin/webaccounts`);
         if (!res.ok) throw new Error("Failed to fetch accounts");
         const data = await res.json();
         setAccounts(data);

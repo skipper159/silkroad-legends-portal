@@ -8,3 +8,6 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   
     return fetch(url, { ...options, headers });
   };
+
+  export const weburl = import.meta.env.VITE_API_weburl;
+  export const webUrl = import.meta.env.VITE_API_webURL;

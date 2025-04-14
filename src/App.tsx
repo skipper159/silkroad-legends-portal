@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import NewsSection from "./components/NewsSection";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/rankings" element={<Rankings />} />
           <Route path="/download" element={<Download />} />
+          <Route path="/News" element={<NewsSection />} />
           
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<Account />} />

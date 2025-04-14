@@ -1,102 +1,136 @@
 // routes/characters.js
 const express = require("express");
 const router = express.Router();
-const { pool, poolConnect, sql } = require("../db");
+const { pool, gamePool, charPool, poolConnect, gamePoolConnect, charPoolConnect, sql } = require("../db");
+const authenticateToken = require("../middleware/auth");
 
-// Get all game accounts for a web user
-router.get("/gameaccounts/:webUserId", async (req, res) => {
+// Get all game accounts for a web user (mit authentifizierung)
+router.get("/gameaccounts/:webUserId", authenticateToken, async (req, res) => {
   const { webUserId } = req.params;
-
-  await poolConnect;
+  
+  // Sicherstellung: Der angeforderte Benutzer ist der angemeldete Benutzer oder ein Admin
+  if (parseInt(webUserId) !== req.user.id && req.user.role !== 3) {
+    return res.status(403).json({ error: "Unauthorized access to other user's data" });
+  }
+  
+  await charPoolConnect;
   try {
-    const result = await pool.request()
+    // Holen der AccountIDs aus _AccountJID mit WebUserId Verknüpfung
+    const accountsResult = await charPool.request()
       .input("webUserId", sql.Int, webUserId)
-      .query("SELECT * FROM GameAccounts WHERE WebUserId = @webUserId");
+      .query("SELECT JID, AccountID FROM _AccountJID WHERE WebUserId = @webUserId");
 
-    res.json(result.recordset);
+    // Abrufen der Benutzerdetails aus TB_User
+    await gamePoolConnect;
+    const jids = accountsResult.recordset.map(row => row.JID);
+    
+    if (jids.length === 0) {
+      return res.json([]);
+    }
+    
+    const jidParams = jids.map((_, i) => `@jid${i}`).join(", ");
+    const gameReq = gamePool.request();
+    jids.forEach((jid, i) => gameReq.input(`jid${i}`, sql.Int, jid));
+    
+    const userResult = await gameReq.query(`
+      SELECT JID, StrUserID, regtime, reg_ip, AccPlayTime
+      FROM TB_User
+      WHERE JID IN (${jidParams})
+    `);
+    
+    const gameAccounts = userResult.recordset.map(acc => {
+      const accountJID = accountsResult.recordset.find(a => a.JID === acc.JID);
+      return {
+        id: acc.JID,
+        username: acc.StrUserID,
+        regTime: acc.regtime,
+        regIp: acc.reg_ip,
+        accountId: accountJID ? accountJID.AccountID : null
+      };
+    });
+    
+    res.json(gameAccounts);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching game accounts:", err);
     res.status(500).json({ error: "Error fetching game accounts" });
   }
 });
 
-// Create a new game account
-router.post("/gameaccounts", async (req, res) => {
-  const { username, password, webUserId } = req.body;
-
-  if (!username || !password || !webUserId) {
-    return res.status(400).json({ error: "Missing fields" });
-  }
-
-  await poolConnect;
-  try {
-    await pool.request()
-      .input("username", sql.NVarChar, username)
-      .input("password", sql.NVarChar, password)
-      .input("webUserId", sql.Int, webUserId)
-      .query(`INSERT INTO GameAccounts (Username, Password, WebUserId) VALUES (@username, @password, @webUserId)`);
-
-    res.status(201).json({ message: "Game account created" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create game account" });
-  }
-});
-
-// Change game account password
-router.put("/gameaccounts/:id/password", async (req, res) => {
-  const { id } = req.params;
-  const { newPassword } = req.body;
-
-  if (!newPassword) {
-    return res.status(400).json({ error: "New password required" });
-  }
-
-  await poolConnect;
-  try {
-    await pool.request()
-      .input("id", sql.Int, id)
-      .input("newPassword", sql.NVarChar, newPassword)
-      .query("UPDATE GameAccounts SET Password = @newPassword WHERE Id = @id");
-
-    res.json({ message: "Password updated" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to update password" });
-  }
-});
-
-// Delete a game account
-router.delete("/gameaccounts/:id", async (req, res) => {
-  const { id } = req.params;
-
-  await poolConnect;
-  try {
-    await pool.request()
-      .input("id", sql.Int, id)
-      .query("DELETE FROM GameAccounts WHERE Id = @id");
-
-    res.json({ message: "Game account deleted" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to delete game account" });
-  }
-});
-
 // Get characters for a game account
-router.get("/characters/:gameAccountId", async (req, res) => {
-  const { gameAccountId } = req.params;
-
-  await poolConnect;
+router.get("/characters/:gameAccountId", authenticateToken, async (req, res) => {
+  const gameAccountId = parseInt(req.params.gameAccountId, 10);
+  if (isNaN(gameAccountId)) {
+    return res.status(400).json({ error: "Invalid game account ID" });
+  }
+  
   try {
-    const result = await pool.request()
-      .input("gameAccountId", sql.Int, gameAccountId)
-      .query(`SELECT TOP 4 c.CharID, c.CharName16, c.Level, c.Strength, c.Intellect,
-                     e.Slot, e.RefItemID
-              FROM _Char c
-              LEFT JOIN _Items i ON c.CharID = i.CharID
-              LEFT JOIN _Equip e ON i.ID64 = e.ItemID
-              WHERE c.UserJID = @gameAccountId`);
+    // Überprüfen, ob der GameAccount zum aktuellen Benutzer gehört
+    await charPoolConnect;
+    const ownerCheck = await charPool.request()
+      .input("jid", sql.Int, gameAccountId)
+      .input("webUserId", sql.Int, req.user.id)
+      .query("SELECT COUNT(*) AS count FROM _AccountJID WHERE JID = @jid AND WebUserId = @webUserId");
+      
+    // Erlauben, wenn es ein Admin ist oder der Account dem Benutzer gehört
+    if (ownerCheck.recordset[0].count === 0 && req.user.role !== 3) {
+      return res.status(403).json({ error: "Unauthorized access to this game account" });
+    }
+    
+    // Jetzt verwenden wir die korrekte Beziehung zwischen Tabellen:
+    // 1. SRO_VT_ACCOUNT.TB_User (JID) -> 2. SRO_VT_SHARD._User (UserJID, CharID) -> 3. SRO_VT_SHARD._Char (CharID)
+    
+    // Erst Charaktere über die _User-Tabelle in der Character-Datenbank finden
+    const charIdsResult = await charPool.request()
+      .input("userJID", sql.Int, gameAccountId)
+      .query(`
+        SELECT CharID 
+        FROM _User 
+        WHERE UserJID = @userJID
+      `);
+    
+    if (charIdsResult.recordset.length === 0) {
+      return res.json([]);  // Keine Charaktere gefunden
+    }
+    
+    // CharIDs für die IN-Klausel vorbereiten
+    const charIds = charIdsResult.recordset.map(row => row.CharID);
+    const charIdParams = charIds.map((_, i) => `@charId${i}`).join(", ");
+    
+    // Request vorbereiten mit allen CharIDs
+    const charReq = charPool.request();
+    charIds.forEach((charId, i) => charReq.input(`charId${i}`, sql.Int, charId));
+    
+    // Alle gefundenen Charaktere abrufen
+    const result = await charReq.query(`
+      SELECT 
+        CharID AS id, 
+        CharName16 AS name, 
+        NickName16 AS nickname,
+        CurLevel AS level, 
+        MaxLevel AS maxLevel,
+        Strength,
+        Intellect,
+        RemainGold AS gold,
+        RemainSkillPoint AS skillPoints,
+        RemainStatPoint AS statPoints,
+        HP,
+        MP,
+        LatestRegion AS region,
+        PosX,
+        PosY,
+        PosZ,
+        JobLvl_Trader AS traderLevel,
+        JobLvl_Hunter AS hunterLevel,
+        JobLvl_Robber AS thiefLevel,
+        GuildID,
+        CASE 
+          WHEN Strength > Intellect THEN 'European'
+          WHEN Intellect > Strength THEN 'Chinese'
+          ELSE 'Balanced'
+        END AS job
+      FROM _Char
+      WHERE CharID IN (${charIdParams}) AND Deleted = 0
+    `);
 
     res.json(result.recordset);
   } catch (err) {

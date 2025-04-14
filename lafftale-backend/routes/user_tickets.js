@@ -4,13 +4,19 @@ const router = express.Router();
 const authenticateToken = require("../middleware/auth");
 const { sql, webPool, webPoolConnect } = require("../db");
 
-// GET all tickets of current user
+// GET all tickets of current user with optional status filter
 router.get("/my", authenticateToken, async (req, res) => {
+  const { status } = req.query;
   await webPoolConnect;
   try {
-    const result = await webPool.request()
-      .input("userId", sql.Int, req.user.id)
-      .query("SELECT * FROM SupportTickets WHERE UserId = @userId ORDER BY CreatedAt DESC");
+    let query = "SELECT * FROM SupportTickets WHERE UserId = @userId";
+    if (status) query += " AND Status = @status";
+    query += " ORDER BY CreatedAt DESC";
+
+    const request = webPool.request().input("userId", sql.Int, req.user.id);
+    if (status) request.input("status", sql.NVarChar, status);
+
+    const result = await request.query(query);
     res.json(result.recordset);
   } catch (err) {
     console.error("Error fetching user tickets:", err);
@@ -21,28 +27,39 @@ router.get("/my", authenticateToken, async (req, res) => {
 // GET single ticket and messages
 router.get("/:id", authenticateToken, async (req, res) => {
   const ticketId = req.params.id;
+
   await webPoolConnect;
   try {
     const ticketResult = await webPool.request()
       .input("id", sql.Int, ticketId)
-      .input("userId", sql.Int, req.user.id)
-      .query("SELECT * FROM SupportTickets WHERE Id = @id AND UserId = @userId");
-
-    const ticket = ticketResult.recordset[0];
-    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+      .query("SELECT * FROM SupportTickets WHERE Id = @id");
 
     const messagesResult = await webPool.request()
       .input("ticketId", sql.Int, ticketId)
-      .query("SELECT * FROM TicketMessages WHERE TicketId = @ticketId ORDER BY SentAt ASC");
+      .query(`
+        SELECT 
+          TM.Id, TM.TicketId, TM.SenderId, TM.Message, TM.SentAt, TM.IsFromStaff,
+          U.Username AS SenderName
+        FROM TicketMessages TM
+        JOIN WebUsers U ON TM.SenderId = U.Id
+        WHERE TM.TicketId = @ticketId
+        ORDER BY TM.SentAt ASC
+      `);
 
-    res.json({ ...ticket, Messages: messagesResult.recordset });
+    const ticket = ticketResult.recordset[0];
+    if (!ticket) return res.status(404).send("Ticket not found");
+
+    res.json({
+      ...ticket,
+      Messages: messagesResult.recordset
+    });
   } catch (err) {
-    console.error("Error loading ticket:", err);
-    res.status(500).json({ error: "Failed to load ticket" });
+    console.error("Error loading ticket messages:", err);
+    res.status(500).send("Error loading ticket");
   }
 });
 
-// POST new ticket + message
+// POST new ticket + message (only if no open ticket exists)
 router.post("/", authenticateToken, async (req, res) => {
   const { subject, message, priority = "normal" } = req.body;
   if (!subject || !message) {
@@ -51,6 +68,16 @@ router.post("/", authenticateToken, async (req, res) => {
 
   await webPoolConnect;
   try {
+    // Prüfen ob bereits ein offenes Ticket vorhanden ist
+    const openCheck = await webPool.request()
+      .input("userId", sql.Int, req.user.id)
+      .query("SELECT COUNT(*) AS OpenCount FROM SupportTickets WHERE UserId = @userId AND Status = 'open'");
+
+    if (openCheck.recordset[0].OpenCount > 0) {
+      return res.status(403).json({ error: "You already have an open ticket." });
+    }
+
+    // Ticket erstellen
     const ticketResult = await webPool.request()
       .input("userId", sql.Int, req.user.id)
       .input("subject", sql.NVarChar, subject)
@@ -68,8 +95,8 @@ router.post("/", authenticateToken, async (req, res) => {
       .input("senderId", sql.Int, req.user.id)
       .input("message", sql.NVarChar, message)
       .query(`
-        INSERT INTO TicketMessages (TicketId, SenderId, Message, SentAt)
-        VALUES (@ticketId, @senderId, @message, GETDATE())
+        INSERT INTO TicketMessages (TicketId, SenderId, Message, SentAt, IsFromStaff)
+        VALUES (@ticketId, @senderId, @message, GETDATE(), 0)
       `);
 
     res.status(201).json({ message: "Ticket created", ticketId });
@@ -83,7 +110,10 @@ router.post("/", authenticateToken, async (req, res) => {
 router.post("/:id/message", authenticateToken, async (req, res) => {
   const ticketId = req.params.id;
   const { message } = req.body;
-  if (!message) return res.status(400).json({ error: "Message required" });
+
+  if (!message) return res.status(400).send("Message required");
+
+  const isFromStaff = req.user.role === 3; // Role 3 = Admin/Staff
 
   await webPoolConnect;
   try {
@@ -91,12 +121,17 @@ router.post("/:id/message", authenticateToken, async (req, res) => {
       .input("ticketId", sql.Int, ticketId)
       .input("senderId", sql.Int, req.user.id)
       .input("message", sql.NVarChar, message)
-      .query("INSERT INTO TicketMessages (TicketId, SenderId, Message, SentAt) VALUES (@ticketId, @senderId, @message, GETDATE())");
+      .input("isFromStaff", sql.Bit, isFromStaff ? 1 : 0)
+      .input("sentAt", sql.DateTime, new Date())
+      .query(`
+        INSERT INTO TicketMessages (TicketId, SenderId, Message, IsFromStaff, SentAt)
+        VALUES (@ticketId, @senderId, @message, @isFromStaff, @sentAt)
+      `);
 
-    res.status(200).json({ message: "Message added" });
+    res.status(200).send("Message added");
   } catch (err) {
-    console.error("Error adding message:", err);
-    res.status(500).json({ error: "Failed to add message" });
+    console.error("Error inserting message:", err);
+    res.status(500).send("Error adding message");
   }
 });
 

@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -21,27 +20,91 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { Shield, User, Settings, TicketCheck, Coins, Vote, Gift } from "lucide-react";
+import { Shield, User, Settings, TicketCheck, Coins, Vote, Gift, Loader2 } from "lucide-react";
+import { fetchWithAuth } from "@/lib/api";
+import { weburl } from "@/lib/api";
+
+interface UserData {
+  username: string;
+  email: string;
+  registeredAt: string;
+  lastLogin: string;
+  logTime: string;
+}
 
 const Account = () => {
   const [activeTab, setActiveTab] = useState("web-account");
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const mockUserData = {
-    username: "Drachenmeister",
-    email: "player@example.com",
-    registeredAt: "January 15, 2025",
-    lastLogin: "April 7, 2025",
-    silkBalance: 1250
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetchWithAuth(`${weburl}/api/users/me`);
+        
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Benutzerdaten");
+        }
+        
+        const data = await response.json();
+        console.log("Received user data:", data);
+        
+        setUserData({
+          username: data.username,
+          email: data.email,
+          registeredAt: new Date(data.registeredAt).toLocaleDateString('de-DE'),
+          lastLogin: new Date(data.lastLogin).toLocaleDateString('de-DE'),
+          logTime: data.logTime || ''
+        });
+      } catch (err) {
+        console.error("Fehler beim Laden der Benutzerdaten:", err);
+        setError("Benutzerdaten konnten nicht geladen werden");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const mockGameAccounts = [
-    // ... deine Daten hier
-  ];
+    fetchUserData();
+  }, []);
 
-  const mockTickets = [
-    { id: 101, subject: "Missing item after trade", status: "Open", date: "April 5, 2025" },
-    { id: 102, subject: "Bug in Hunter's Valley", status: "Closed", date: "March 28, 2025" }
-  ];
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow bg-lafftale-dark flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <Loader2 size={40} className="text-lafftale-gold animate-spin mb-4" />
+            <p className="text-lafftale-gold">Lade Kontodaten...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !userData) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow bg-lafftale-dark flex items-center justify-center">
+          <div className="card p-8 text-center">
+            <h2 className="text-2xl text-red-500 mb-4">Fehler</h2>
+            <p className="text-gray-300 mb-4">{error || "Benutzerdaten konnten nicht geladen werden"}</p>
+            <Button onClick={() => window.location.reload()} className="bg-lafftale-gold text-lafftale-dark">
+              Erneut versuchen
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Formatierung der Login-Zeit mit Datum und Uhrzeit
+  const formattedLastLogin = userData.logTime 
+    ? `${userData.lastLogin} um ${userData.logTime.substring(0, 5)} Uhr` 
+    : userData.lastLogin;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -60,19 +123,8 @@ const Account = () => {
                     <div className="w-20 h-20 rounded-full bg-lafftale-darkgray border-2 border-lafftale-gold flex items-center justify-center mb-3">
                       <User size={40} className="text-lafftale-gold" />
                     </div>
-                    <h2 className="text-xl font-bold">{mockUserData.username}</h2>
-                    <span className="text-gray-400 text-sm">{mockUserData.email}</span>
-                    
-                    {/* Silk Wallet Display */}
-                    <div className="mt-4 bg-lafftale-darkgray/70 border border-lafftale-gold/50 rounded-lg p-3 flex items-center gap-2 shadow-lg w-full">
-                      <div className="p-2 rounded-full bg-lafftale-gold/20 flex items-center justify-center">
-                        <Coins size={20} className="text-lafftale-gold animate-pulse" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-400">Wallet Balance</p>
-                        <p className="text-lafftale-gold font-semibold">{mockUserData.silkBalance} Silk</p>
-                      </div>
-                    </div>
+                    <h2 className="text-xl font-bold">{userData.username}</h2>
+                    <span className="text-gray-400 text-sm">{userData.email}</span>
                   </div>
 
                   <TabsList className="grid grid-cols-1 h-auto gap-2">
@@ -97,8 +149,8 @@ const Account = () => {
                   </TabsList>
 
                   <div className="mt-6 pt-6 border-t border-lafftale-gold/20">
-                    <p className="text-sm text-gray-400 mb-2">Last login: {mockUserData.lastLogin}</p>
-                    <p className="text-sm text-gray-400">Member since: {mockUserData.registeredAt}</p>
+                    <p className="text-sm text-gray-400 mb-2">Letzter Login: {formattedLastLogin}</p>
+                    <p className="text-sm text-gray-400">Mitglied seit: {userData.registeredAt}</p>
                   </div>
                 </div>
               </div>
@@ -106,7 +158,7 @@ const Account = () => {
               <div className="lg:col-span-9">
                 <div className="card min-h-[600px]">
                   <TabsContent value="web-account" className="mt-0">
-                    <AccountWebSettings userData={mockUserData} />
+                    <AccountWebSettings userData={userData} />
 
                     <div className="mt-10 flex justify-end">
                       <AlertDialog>
@@ -133,11 +185,11 @@ const Account = () => {
                   </TabsContent>
 
                   <TabsContent value="game-accounts" className="mt-0">
-                    <GameAccountManager gameAccounts={mockGameAccounts} />
+                    <GameAccountManager />
                   </TabsContent>
 
                   <TabsContent value="characters" className="mt-0">
-                    <CharacterOverview gameAccounts={mockGameAccounts} />
+                    <CharacterOverview />
                   </TabsContent>
                                     
                   <TabsContent value="donate" className="mt-0">
@@ -148,7 +200,7 @@ const Account = () => {
                     <VotingSystem />
                   </TabsContent>
                   <TabsContent value="tickets" className="mt-0">
-                    <SupportTickets tickets={mockTickets} />
+                    <SupportTickets />
                   </TabsContent>
                 </div>
               </div>

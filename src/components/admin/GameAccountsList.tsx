@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Ban, TimerReset, Info } from "lucide-react";
+import { weburl } from "@/lib/api";
 
 interface GameAccount {
   GameAccountId: number;
@@ -25,7 +26,7 @@ const GameAccountsList = () => {
 
   const fetchAccounts = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/admin/gameaccounts");
+      const res = await fetch(`${weburl}/api/admin/gameaccounts`);
       if (!res.ok) throw new Error("Failed to fetch game accounts");
       const data = await res.json();
       setAccounts(data);
@@ -37,12 +38,12 @@ const GameAccountsList = () => {
   };
 
   const banAccount = async (id: number) => {
-    await fetch(`http://localhost:3000/api/admin/gameaccounts/${id}/ban`, { method: "PUT" });
+    await fetch(`${weburl}/api/admin/gameaccounts/${id}/ban`, { method: "PUT" });
     fetchAccounts();
   };
 
   const timeoutAccount = async (id: number) => {
-    await fetch(`http://localhost:3000/api/admin/gameaccounts/${id}/timeout`, { method: "PUT" });
+    await fetch(`${weburl}/api/admin/gameaccounts/${id}/timeout`, { method: "PUT" });
     fetchAccounts();
   };
 

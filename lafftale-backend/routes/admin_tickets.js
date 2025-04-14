@@ -1,7 +1,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { pool, poolConnect, sql } = require("../db");
+const { webPool, webPoolConnect, sql } = require("../db");
 const authenticateToken = require("../middleware/auth");
 
 // Admin-only middleware
@@ -10,12 +10,19 @@ function isAdmin(req, res, next) {
   next();
 }
 
-// Get all open tickets
+// Get all open tickets WITH username
 router.get("/tickets/open", authenticateToken, isAdmin, async (req, res) => {
-  await poolConnect;
+  await webPoolConnect;
   try {
-    const result = await pool.request()
-      .query("SELECT * FROM SupportTickets WHERE Status = 'open' ORDER BY CreatedAt ASC");
+    const result = await webPool.request().query(`
+      SELECT 
+        T.Id, T.UserId, T.Subject, T.Priority, T.Status, T.CreatedAt,
+        U.Username
+      FROM SupportTickets T
+      JOIN WebUsers U ON T.UserId = U.Id
+      WHERE T.Status = 'open'
+      ORDER BY T.CreatedAt ASC
+    `);
     res.json(result.recordset);
   } catch (err) {
     console.error(err);
@@ -26,9 +33,9 @@ router.get("/tickets/open", authenticateToken, isAdmin, async (req, res) => {
 // Close a ticket
 router.put("/tickets/:id/close", authenticateToken, isAdmin, async (req, res) => {
   const ticketId = req.params.id;
-  await poolConnect;
+  await webPoolConnect;
   try {
-    await pool.request()
+    await webPool.request()
       .input("id", sql.Int, ticketId)
       .input("closedAt", sql.DateTime, new Date())
       .query("UPDATE SupportTickets SET Status = 'closed', ClosedAt = @closedAt WHERE Id = @id");

@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Eye, XCircle } from "lucide-react";
-import { fetchWithAuth } from "@/lib/api";
+import { fetchWithAuth, weburl } from "@/lib/api";
+
 
 interface Ticket {
   Id: number;
   UserId: number;
   Subject: string;
+  Username: string;
   Priority: "low" | "normal" | "high";
   Status: "open" | "closed";
   CreatedAt: string;
@@ -19,9 +21,13 @@ interface TicketMessage {
   Id: number;
   TicketId: number;
   SenderId: number;
+  SenderName: string;
   Message: string;
   SentAt: string;
+  IsFromStaff: boolean;
 }
+
+const MAX_PREVIEW_LENGTH = 500;
 
 const TicketSystem = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -32,11 +38,18 @@ const TicketSystem = () => {
   const [loading, setLoading] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedMessages, setExpandedMessages] = useState<number[]>([]);
+
+  const toggleExpand = (id: number) => {
+    setExpandedMessages((prev) =>
+      prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]
+    );
+  };
 
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const res = await fetchWithAuth("http://localhost:3000/api/admin_tickets/tickets/open");
+      const res = await fetchWithAuth(`${weburl}/api/admin_tickets/tickets/open`);
       if (!res.ok) throw new Error("Failed to fetch tickets");
       const data = await res.json();
       setTickets(data);
@@ -52,7 +65,7 @@ const TicketSystem = () => {
     setModalOpen(true);
     setLoadingDetails(true);
     try {
-      const res = await fetchWithAuth(`http://localhost:3000/api/user_tickets/${ticket.Id}`);
+      const res = await fetchWithAuth(`${weburl}/api/user_tickets/${ticket.Id}`);
       if (!res.ok) throw new Error("Failed to fetch ticket messages");
       const data = await res.json();
       setMessages(data.Messages || []);
@@ -64,7 +77,7 @@ const TicketSystem = () => {
   };
 
   const closeTicket = async (id: number) => {
-    await fetchWithAuth(`http://localhost:3000/api/admin_tickets/tickets/${id}/close`, {
+    await fetchWithAuth(`${weburl}/api/admin_tickets/tickets/${id}/close`, {
       method: "PUT"
     });
     fetchTickets();
@@ -75,7 +88,7 @@ const TicketSystem = () => {
 
   const sendReply = async () => {
     if (!reply.trim()) return;
-    await fetchWithAuth(`http://localhost:3000/api/user_tickets/${selectedTicket?.Id}/message`, {
+    await fetchWithAuth(`${weburl}/api/user_tickets/${selectedTicket?.Id}/message`, {
       method: "POST",
       body: JSON.stringify({ message: reply })
     });
@@ -102,7 +115,7 @@ const TicketSystem = () => {
           <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
             <tr>
               <th className="p-3">Ticket</th>
-              <th className="p-3">UserID</th>
+              <th className="p-3">Username</th>
               <th className="p-3">Subject</th>
               <th className="p-3">Priority</th>
               <th className="p-3">Created</th>
@@ -118,7 +131,7 @@ const TicketSystem = () => {
                 }`}
               >
                 <td className="p-3">{ticket.Id}</td>
-                <td className="p-3">{ticket.UserId}</td>
+                <td className="p-3">{ticket.Username || "Unknown"}</td>
                 <td className="p-3">{ticket.Subject}</td>
                 <td className="p-3 font-semibold">
                   <span className={
@@ -141,7 +154,7 @@ const TicketSystem = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> 
       </Card>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -150,35 +163,68 @@ const TicketSystem = () => {
             <DialogTitle className="text-lafftale-gold">
               Ticket #{selectedTicket?.Id} – {selectedTicket?.Subject}
             </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Here you can view ticket details and reply.
+            </DialogDescription>
           </DialogHeader>
 
           {loadingDetails ? (
-            <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
+          <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
           ) : (
             <>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {messages.map((msg) => (
-                  <div key={msg.Id} className="border-t pt-2 text-sm">
-                    <p>{msg.Message}</p>
-                    <p className="text-xs text-gray-500">
-                      By User {msg.SenderId} at {new Date(msg.SentAt).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
+          <div className="space-y-3 max-h-[70vh] overflow-y-auto">
+          {messages.map((msg) => {
+                  const isExpanded = expandedMessages.includes(msg.Id);
+                  const shortText = msg.Message.slice(0, MAX_PREVIEW_LENGTH);
+
+                  return (
+                    <div
+                      key={msg.Id}
+                      className={`p-3 rounded text-sm w-fit max-w-[85%] ${
+                        msg.IsFromStaff
+                          ? "ml-auto bg-yellow-100 text-yellow-900 text-right"
+                          : "mr-auto bg-gray-800 text-white text-left"
+                      }`}
+                    >
+                      <div className="text-xs mb-1 text-lafftale-gold">
+                        {msg.SenderName} • {new Date(msg.SentAt).toLocaleString()}
+                      </div>
+                      <div>
+                        {msg.Message.length <= MAX_PREVIEW_LENGTH ? (
+                          msg.Message
+                        ) : isExpanded ? (
+                          <>
+                            {msg.Message}
+                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read less</Button>
+                          </>
+                        ) : (
+                          <>
+                            {shortText}...
+                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read more</Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <Textarea
-                placeholder="Type a reply..."
-                value={reply}
-                onChange={(e) => setReply(e.target.value)}
-                className="mt-4"
-              />
-              <DialogFooter className="flex justify-between mt-2">
-                <Button variant="destructive" onClick={() => closeTicket(selectedTicket!.Id)}>
-                  Close Ticket
-                </Button>
-                <Button className="btn-primary" onClick={sendReply}>Send Reply</Button>
-              </DialogFooter>
+              {selectedTicket?.Status !== "closed" && (
+                <>
+                  <Textarea
+                    placeholder="Type a reply..."
+                    value={reply}
+                    onChange={(e) => setReply(e.target.value)}
+                    className="mt-4"
+                  />
+                  <DialogFooter className="flex justify-between mt-2">
+                    <Button variant="destructive" onClick={() => closeTicket(selectedTicket!.Id)}>
+                      Close Ticket
+                    </Button>
+                    <Button className="btn-primary" onClick={sendReply}>Send Reply</Button>
+                  </DialogFooter>
+                </>
+              )}
             </>
           )}
         </DialogContent>

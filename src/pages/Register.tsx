@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { weburl } from "@/lib/api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -56,7 +57,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      const response = await fetch(`${weburl}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
