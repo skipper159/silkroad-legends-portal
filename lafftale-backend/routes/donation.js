@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { pool, poolConnect, sql } = require("../db");
+const authenticateToken = require("../middleware/auth");
 
 // Initiate a donation (placeholder logic)
 router.post("/initiate", async (req, res) => {
@@ -34,25 +35,38 @@ router.get("/wallet/:userId", async (req, res) => {
   }
 });
 
+// Validate that the gameAccountId belongs to the authenticated user
+const validateGameAccountOwnership = async (userId, gameAccountId) => {
+  const result = await pool.request()
+    .input("userId", sql.Int, userId)
+    .input("gameAccountId", sql.Int, gameAccountId)
+    .query("SELECT COUNT(*) AS count FROM _AccountJID WHERE WebUserId = @userId AND JID = @gameAccountId");
+  return result.recordset[0].count > 0;
+};
+
 // POST a vote to a platform
-router.post("/vote/:platform", async (req, res) => {
+router.post("/vote/:platform", authenticateToken, async (req, res) => {
   const { platform } = req.params;
-  const { userId } = req.body;
+  const { userId, gameAccountId } = req.body;
   const allowedPlatforms = ["xtreme", "arena", "gtop", "topg"];
 
   if (!allowedPlatforms.includes(platform)) {
     return res.status(400).json({ error: "Invalid voting platform" });
   }
 
-  // Mock: Only allow one vote every 24h per user/platform
-  // Logic skipped, assume vote is allowed
+  if (!gameAccountId) {
+    return res.status(400).json({ error: "Game account ID is required" });
+  }
 
   await poolConnect;
   try {
+    const isValid = await validateGameAccountOwnership(userId, gameAccountId);
+    if (!isValid) return res.status(403).json({ error: "Unauthorized game account" });
+
     // Add 3 Silk
     await pool.request()
-      .input("userId", sql.Int, userId)
-      .query("UPDATE WebUsers SET SilkBalance = SilkBalance + 3 WHERE Id = @userId");
+      .input("gameAccountId", sql.Int, gameAccountId)
+      .query("UPDATE GameAccounts SET Silk = Silk + 3 WHERE Id = @gameAccountId");
 
     res.json({ message: `Vote for ${platform} registered, 3 Silk added.` });
   } catch (err) {

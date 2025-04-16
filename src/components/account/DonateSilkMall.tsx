@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchWithAuth, weburl } from "@/lib/api";
 import { 
   Select, 
   SelectContent, 
@@ -21,6 +22,25 @@ const silkPackages = [
 const DonateSilkMall = () => {
   const [selectedPackage, setSelectedPackage] = useState<string>("1");
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [selectedGameAccount, setSelectedGameAccount] = useState<string | null>(null);
+  const [gameAccounts, setGameAccounts] = useState<{ id: number; username: string }[]>([]);
+
+  useEffect(() => {
+    const fetchGameAccounts = async () => {
+      try {
+        const response = await fetchWithAuth(`${weburl}/api/gameaccount/my`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch game accounts");
+        }
+        const data = await response.json();
+        setGameAccounts(data.map((account: any) => ({ id: account.JID, username: account.StrUserID })));
+      } catch (error) {
+        console.error("Error fetching game accounts:", error);
+      }
+    };
+
+    fetchGameAccounts();
+  }, []);
 
   const handlePackageChange = (value: string) => {
     setSelectedPackage(value);
@@ -28,6 +48,10 @@ const DonateSilkMall = () => {
 
   const selectPaymentMethod = (method: string) => {
     setPaymentMethod(method);
+  };
+
+  const handleGameAccountChange = (value: string) => {
+    setSelectedGameAccount(value);
   };
 
   const selectedPack = silkPackages.find(pack => pack.id.toString() === selectedPackage);
@@ -40,6 +64,29 @@ const DonateSilkMall = () => {
           <Coins size={20} className="text-lafftale-gold" />
           <span className="text-gray-300">Get premium currency for special items and features</span>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <Card className="bg-lafftale-darkgray border border-lafftale-gold/30">
+          <CardHeader>
+            <CardTitle className="text-lafftale-gold font-cinzel text-xl">Select Game Account</CardTitle>
+            <CardDescription>Choose the game account to credit Silk</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select value={selectedGameAccount} onValueChange={handleGameAccountChange}>
+              <SelectTrigger className="w-full bg-lafftale-dark border-lafftale-gold/30">
+                <SelectValue placeholder="Select a game account" />
+              </SelectTrigger>
+              <SelectContent className="bg-lafftale-darkgray border-lafftale-gold/30">
+                {gameAccounts.map(account => (
+                  <SelectItem key={account.id} value={account.id.toString()}>
+                    {account.username}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

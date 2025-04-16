@@ -469,7 +469,25 @@
         },
         "responses": {
           "200": {
-            "description": "Donation initiated"
+            "description": "Donation initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "transactionId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing donation fields"
           }
         },
         "tags": [
@@ -531,10 +549,14 @@
                 "properties": {
                   "userId": {
                     "type": "integer"
+                  },
+                  "gameAccountId": {
+                    "type": "integer"
                   }
                 },
                 "required": [
-                  "userId"
+                  "userId",
+                  "gameAccountId"
                 ]
               }
             }
@@ -542,10 +564,25 @@
         },
         "responses": {
           "200": {
-            "description": "Vote registered and silk added"
+            "description": "Vote registered and Silk added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Invalid voting platform"
+            "description": "Invalid voting platform or missing fields"
+          },
+          "403": {
+            "description": "Unauthorized game account"
           }
         },
         "tags": [

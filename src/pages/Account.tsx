@@ -32,9 +32,20 @@ interface UserData {
   logTime: string;
 }
 
+interface GameAccount {
+  JID: number;
+  StrUserID: string;
+  silk_own: number;
+  silk_gift?: number;
+  silk_point?: number;
+  total_silk?: number;
+  regtime?: string;
+}
+
 const Account = () => {
   const [activeTab, setActiveTab] = useState("web-account");
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [gameAccounts, setGameAccounts] = useState<GameAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,7 +76,24 @@ const Account = () => {
       }
     };
 
+    const fetchGameAccounts = async () => {
+      try {
+        const response = await fetchWithAuth(`${weburl}/api/gameaccount/my`);
+        
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Game-Accounts");
+        }
+        
+        const data = await response.json();
+        setGameAccounts(data);
+      } catch (err) {
+        console.error("Fehler beim Laden der Game-Accounts:", err);
+        // Wir setzen hier keinen Fehler, da es nicht kritisch ist
+      }
+    };
+
     fetchUserData();
+    fetchGameAccounts();
   }, []);
 
   if (loading) {
@@ -126,6 +154,27 @@ const Account = () => {
                     <h2 className="text-xl font-bold">{userData.username}</h2>
                     <span className="text-gray-400 text-sm">{userData.email}</span>
                   </div>
+
+                  {/* Game Accounts mit Silk-Guthaben */}
+                  {gameAccounts.length > 0 && (
+                    <div className="mb-6 px-2 py-4 bg-lafftale-darkgray border border-lafftale-gold/30 rounded-lg">
+                      <h3 className="text-md font-bold text-lafftale-gold mb-3 text-center">Silk Currency</h3>
+                      <div className="space-y-2">
+                        {gameAccounts.map((account) => (
+                          <div 
+                            key={account.JID}
+                            className="p-2 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 flex justify-between items-center"
+                          >
+                            <span className="text-lafftale-gold font-cinzel font-medium">{account.StrUserID}</span>
+                            <div className="flex items-center gap-1 text-lafftale-gold">
+                              <span>{account.silk_own}</span>
+                              <Coins size={14} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <TabsList className="grid grid-cols-1 h-auto gap-2">
                     <TabsTrigger value="web-account" className="flex justify-start gap-3 items-center">

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { charPool, gamePool, charPoolConnect, gamePoolConnect, sql } = require("../db");
+const { charPool, gamePool, webPool, charPoolConnect, gamePoolConnect, webPoolConnect, sql } = require("../db");
 const authenticateToken = require("../middleware/auth");
 
 // Create Game Account
@@ -58,6 +58,14 @@ router.post("/create", authenticateToken, async (req, res) => {
         VALUES (@jid, 0)
       `);
 
+    // Erstelle einen Eintrag in SK_SILK für das Silk-Guthaben
+    await gamePool.request()
+      .input("jid", sql.Int, newJid)
+      .query(`
+        INSERT INTO SK_SILK (JID, silk_own, silk_gift, silk_point)
+        VALUES (@jid, 0, 0, 0)
+      `);
+
     res.status(201).json({ message: "Game account created", jid: newJid });
   } catch (err) {
     console.error("Error creating game account:", err);
@@ -70,7 +78,16 @@ router.get("/my", authenticateToken, async (req, res) => {
   try {
     await charPoolConnect;
     await gamePoolConnect;
+    await webPoolConnect;
 
+    // Hole die E-Mail-Adresse des Benutzers
+    const userResult = await webPool.request()
+      .input("userId", sql.Int, req.user.id)
+      .query("SELECT Email FROM WebUsers WHERE Id = @userId");
+    
+    const userEmail = userResult.recordset[0]?.Email;
+
+    // Hole JIDs (Game Account IDs) für den angemeldeten Benutzer
     const jidsResult = await charPool.request()
       .input("userId", sql.Int, req.user.id)
       .query("SELECT JID FROM _AccountJID WHERE WebUserId = @userId");
@@ -78,6 +95,7 @@ router.get("/my", authenticateToken, async (req, res) => {
     const jids = jidsResult.recordset.map(row => row.JID);
     if (jids.length === 0) return res.status(200).json([]);
 
+    // Hole Game Account Details
     const jidParams = jids.map((_, i) => `@jid${i}`).join(", ");
     const gameReq = gamePool.request();
     jids.forEach((jid, i) => gameReq.input(`jid${i}`, sql.Int, jid));
@@ -88,7 +106,31 @@ router.get("/my", authenticateToken, async (req, res) => {
       WHERE JID IN (${jidParams})
     `);
 
-    res.json(result.recordset);
+    // Hole Silk-Informationen für alle Game Accounts
+    const silkReq = gamePool.request();
+    jids.forEach((jid, i) => silkReq.input(`jid${i}`, sql.Int, jid));
+
+    const silkResult = await silkReq.query(`
+      SELECT JID, silk_own, silk_gift, silk_point 
+      FROM SK_SILK 
+      WHERE JID IN (${jidParams})
+    `);
+
+    // Kombiniere die Daten
+    const gameAccounts = result.recordset.map(account => {
+      const silkData = silkResult.recordset.find(s => s.JID === account.JID) || { silk_own: 0, silk_gift: 0, silk_point: 0 };
+      
+      return {
+        ...account,
+        email: userEmail,
+        silk_own: silkData.silk_own || 0,
+        silk_gift: silkData.silk_gift || 0,
+        silk_point: silkData.silk_point || 0,
+        total_silk: (silkData.silk_own || 0) + (silkData.silk_gift || 0) + (silkData.silk_point || 0)
+      };
+    });
+
+    res.json(gameAccounts);
   } catch (err) {
     console.error("Error fetching game accounts:", err);
     res.status(500).json({ error: "Failed to load game accounts" });
@@ -136,11 +178,17 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     await gamePoolConnect;
     await charPoolConnect;
 
-    // Lösche auch aus _AccountJID
+    // Lösche aus _AccountJID
     await charPool.request()
       .input("jid", sql.Int, id)
       .query("DELETE FROM _AccountJID WHERE JID = @jid");
 
+    // Lösche aus SK_SILK
+    await gamePool.request()
+      .input("jid", sql.Int, id)
+      .query("DELETE FROM SK_SILK WHERE JID = @jid");
+
+    // Lösche aus TB_User
     await gamePool.request()
       .input("id", sql.Int, id)
       .query("DELETE FROM TB_User WHERE JID = @id");
