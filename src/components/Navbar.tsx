@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import logo from '/lafftale_logo_300x300.png';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -23,8 +24,9 @@ const Navbar = () => {
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center">
-              <span className="text-lafftale-gold font-cinzel text-2xl font-bold">
-                Silkroad <span className="text-lafftale-bronze">Lafftale</span>
+              <img src={logo} alt="Lafftale Logo" className="h-10 w-auto mr-2" />
+              <span className="text-lafftale-bronze font-cinzel text-2xl font-bold">
+                Lafftale <span className="text-lafftale-gold font-cinzel text-2xl font-bold">Online</span>
               </span>
             </Link>
           </div>
@@ -33,6 +35,7 @@ const Navbar = () => {
             <Link to="/" className={`font-medium hover:text-lafftale-gold ${isActive('/') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Home</Link>
             <Link to="/download" className={`font-medium hover:text-lafftale-gold ${isActive('/download') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Download</Link>
             <Link to="/rankings" className={`font-medium hover:text-lafftale-gold ${isActive('/rankings') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Rankings</Link>
+            <Link to="/server-info" className={`font-medium hover:text-lafftale-gold ${isActive('/server-info') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Server Info</Link>
 
             {isAuthenticated ? (
               <>
@@ -72,6 +75,7 @@ const Navbar = () => {
             <Link to="/news" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/news') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>News</Link>
             <Link to="/download" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/download') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Download</Link>
             <Link to="/rankings" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/rankings') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Rankings</Link>
+            <Link to="/server-info" className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/server-info') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'}`} onClick={() => setMobileMenuOpen(false)}>Server Info</Link>
 
             {isAuthenticated ? (
               <>

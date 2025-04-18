@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -8,6 +7,7 @@ import Rankings from "./pages/Rankings";
 import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
+import ServerInfo from "./pages/ServerInfo";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -24,6 +24,7 @@ function App() {
           <Route path="/rankings" element={<Rankings />} />
           <Route path="/download" element={<Download />} />
           <Route path="/News" element={<NewsSection />} />
+          <Route path="/server-info" element={<ServerInfo />} />
           
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<Account />} />
