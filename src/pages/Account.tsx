@@ -55,7 +55,7 @@ const Account = () => {
         const response = await fetchWithAuth(`${weburl}/api/users/me`);
         
         if (!response.ok) {
-          throw new Error("Fehler beim Laden der Benutzerdaten");
+          throw new Error("Fail to load user data");
         }
         
         const data = await response.json();
@@ -69,8 +69,8 @@ const Account = () => {
           logTime: data.logTime || ''
         });
       } catch (err) {
-        console.error("Fehler beim Laden der Benutzerdaten:", err);
-        setError("Benutzerdaten konnten nicht geladen werden");
+        console.error("fail to load user data:", err);
+        setError("User Data could not loaded, please check if ur login is correct.");
       } finally {
         setLoading(false);
       }
@@ -87,7 +87,7 @@ const Account = () => {
         const data = await response.json();
         setGameAccounts(data);
       } catch (err) {
-        console.error("Fehler beim Laden der Game-Accounts:", err);
+        console.error("Fail to load Game-Accounts:", err);
         // Wir setzen hier keinen Fehler, da es nicht kritisch ist
       }
     };

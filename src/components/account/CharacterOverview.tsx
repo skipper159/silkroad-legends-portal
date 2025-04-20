@@ -294,51 +294,20 @@ const CharacterOverview = () => {
                     </div>
                   </div>
                   
+                  {/* Inventory Modul */}     
+                           
                   <div className="lg:w-2/3">
                     <h3 className="text-xl font-bold text-lafftale-gold mb-4">Ausrüstung</h3>
-                    <div className="flex">
-                    <div className="hidden lg:block w-1/3 flex justify-center">
-                   <EquipmentWrapper />
-                    </div>
-                    <div></div>
+                      <div className="flex">
+                        <div className="hidden lg:block w-1/3 flex justify-center">
+                        <EquipmentWrapper selectedCharacter={selectedCharacter} />
+                        </div>
+                    
                       {/* Andere Inhalte (Charaktermodell, etc.) */}
-                    </div>
-
-
-                    <TooltipProvider>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {Object.entries(selectedCharacter.equipment).map(([slot, item]) => (
-                          item ? (
-                            <Tooltip key={slot}>
-                              <TooltipTrigger asChild>
-                                <div className="bg-lafftale-dark/50 p-3 rounded border border-lafftale-gold/20 cursor-pointer hover:bg-lafftale-dark/70">
-                                  <strong className="block text-sm text-lafftale-bronze mb-1 capitalize">{slot}</strong>
-                                  <span className={getRarityColorClass(item.rarity)}>
-                                    {item.name} (Lv. {item.level})
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent side="right" className="bg-lafftale-darkgray border border-lafftale-gold p-3 w-64">
-                                <div className="space-y-2">
-                                  <div className={`font-bold ${getRarityColorClass(item.rarity)}`}>{item.name} (Lv. {item.level})</div>
-                                  <div className="text-xs text-lafftale-bronze capitalize">{item.rarity}</div>
-                                  <div className="pt-2 border-t border-lafftale-gold/20">
-                                    {item.bonuses.map((bonus, i) => (
-                                      <div key={i} className="text-sm text-green-400">{bonus}</div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          ) : (
-                            <div key={slot} className="bg-lafftale-dark/30 p-3 rounded border border-lafftale-gold/10">
-                              <strong className="block text-sm text-lafftale-bronze mb-1 capitalize">{slot}</strong>
-                              <span className="text-gray-400">Nicht ausgerüstet</span>
-                            </div>
-                          )
-                        ))}
                       </div>
-                    </TooltipProvider>
+
+                   
+
                     
                     <div className="mt-6 p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20">
                       <h4 className="text-lafftale-bronze font-bold mb-3">Position</h4>

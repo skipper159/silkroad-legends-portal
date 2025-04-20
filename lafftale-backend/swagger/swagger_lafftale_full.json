@@ -1274,6 +1274,47 @@
             "description": "Game account username"
           }
         }
+      },
+      "InventoryItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the item instance"
+          },
+          "codeName": {
+            "type": "string",
+            "description": "Internal item code (e.g. ITEM_CH_WEAPON_BLADE_01_A)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Translated item name"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "How many of this item exist in the inventory"
+          },
+          "slot": {
+            "type": "string",
+            "description": "Inventory slot or position (if available)"
+          },
+          "plus": {
+            "type": "integer",
+            "description": "Plus level of the item (+0 to +15)"
+          },
+          "rarity": {
+            "type": "string",
+            "description": "Rarity type (e.g. normal, magic, rare, legend)"
+          },
+          "iconUrl": {
+            "type": "string",
+            "description": "Path to item's icon (e.g. /image/sro/item/...)"
+          },
+          "isEquipped": {
+            "type": "boolean",
+            "description": "Whether the item is currently equipped"
+          }
+        }
       }
     }
   }

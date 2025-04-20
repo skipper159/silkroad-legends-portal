@@ -63,14 +63,14 @@ const Login = () => {
       } else {
         toast({
           title: "Login Fehlgeschlagen",
-          description: data?.message || "Ungültige Anmeldedaten.",
+          description: data?.message || "Incorrect Login Data.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
-        title: "Netzwerkfehler",
+        title: "Network Fail",
         description: error.message,
         variant: "destructive",
       });

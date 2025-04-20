@@ -2,7 +2,14 @@ import React from "react";
 import { EquipmentGrid } from "./EquipmentGrid";
 import { EquipmentFrame } from "./Equipmentframe";
 
-export const EquipmentWrapper: React.FC = () => {
+interface EquipmentWrapperProps {
+    selectedCharacter: {
+      equipment: Record<string, any>;
+    };
+  }
+  
+
+export const EquipmentWrapper: React.FC<EquipmentWrapperProps> = ({selectedCharacter}) => {
     return (
       <div className="relative w-[216px] h-[400px] bg-black rounded">
         <div className="absolute inset-0 z-0">

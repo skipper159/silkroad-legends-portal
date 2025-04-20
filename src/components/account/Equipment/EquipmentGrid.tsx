@@ -1,4 +1,5 @@
 import React from "react";
+import { getItemImagePath } from "@/lib/itemimage"; // Pfad anpassen je nach Projektstruktur
 
 interface EquipmentGridProps {
   side: "left" | "right";
@@ -35,23 +36,20 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
   return (
     <div className="flex flex-col">
       {slots.map((slot, i) => {
-        const item = equipment?.[slot];
-        // Abstand zwischen Slot 1 und 2 = 24px
+        const item = equipment?.[slot]; // Item-Daten aus Backend
         const topMargin =
           i === 1 ? "mt-[24px]" :
           i === slots.length - 1 ? "mt-[12px]" :
           "mt-[3px]";
 
+        const imageSrc = item?.iconUrl || `/public/image/sro/interface/equipment/${slot}.png`;
+
         return (
-          <div key={i} className={`w-[48px] h-[48px] ${i > 0 ? topMargin : ""}`}>
+          <div key={slot} className={`w-[48px] h-[48px] ${i > 0 ? topMargin : ""}`}>
             <img
-              src={
-                item
-                ? `/public/image/sro/item/${item.icon}`
-                : `/public/image/sro/interface/equipment/${slot}.png`
-              }
+              src={imageSrc}
               alt={slot}
-              className="w-full h-full object-contain opacity-80"
+              className="w-full h-full object-contain"
             />
           </div>
         );
