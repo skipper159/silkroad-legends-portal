@@ -34,8 +34,8 @@ const Login = () => {
 
       if (response.ok) {
         toast({
-          title: "Login Erfolgreich",
-          description: "Willkommen zurück bei Silkroad Lafftale!",
+          title: "Login Successful",
+          description: "Welcome back to Lafftale online!",
         });
 
         try {

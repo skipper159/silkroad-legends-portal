@@ -45,7 +45,7 @@
   body {
     @apply bg-lafftale-dark text-foreground font-inter;
     background-image: linear-gradient(to bottom, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), 
-                      url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1500');
+                      url('/public/image/web/background.png');
     background-attachment: fixed;
     background-size: cover;
   }

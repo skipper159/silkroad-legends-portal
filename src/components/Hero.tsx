@@ -8,7 +8,7 @@ const Hero = () => {
     <div className="bg-hero-pattern bg-cover bg-center min-h-[calc(100vh-4rem)] flex items-center justify-center">
       <div className="container mx-auto px-4 py-28 text-center">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
-          Experience <span className="text-lafftale-darkred">Lafftale</span>
+          Experience <span className="text-lafftale-bronze">Lafftale</span>
         </h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-gray-300">
           Journey through the ancient Silkroad, discover mystical powers, and forge legendary alliances in the ultimate MMORPG experience.

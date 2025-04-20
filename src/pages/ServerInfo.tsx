@@ -9,21 +9,22 @@ const ServerInfo: FC = () => {
     <>
       <Navbar />
       
-      <div className="py-12 bg-hero-pattern bg-cover bg-center">
+      <div className="py-12 bg-header-bg bg-cover bg-center">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Server Specs <span className="text-lafftale-darkred">Lafftale</span>
+            Server Specs <span className="text-lafftale-bronze font-cinzel text-4xl font-bold">Lafftale</span>
           </h1>
           <p className="text-lg max-w-2xl mx-auto mb-10 text-gray-300">
             Dive into the golden era of Silkroad Online, reimagined on our private server Lafftale – for true veterans and new explorers alike. Here you'll find a carefully balanced gameplay experience that stays true to the classic SRO version, enhanced with modern features and fair mechanics.
           </p>
         </div>
       </div>
-      
+      <hr></hr>
+
       <div className="container mx-auto py-10">
         <h1 className="text-4xl font-bold text-center mb-8">Server Information & Rules</h1>
         
-        <Tabs defaultValue="general" className="w-full">
+        <Tabs defaultValue="general" className="w-full ">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             <TabsTrigger value="general">General Info</TabsTrigger>
             <TabsTrigger value="rules">Server Rules</TabsTrigger>
@@ -32,14 +33,14 @@ const ServerInfo: FC = () => {
           </TabsList>
           
           <TabsContent value="general">
-            <Card>
+            <Card className="border-lafftale-gold/30 mb-6">
               <CardHeader>
                 <CardTitle>General Server Information</CardTitle>
                 <CardDescription>Important details about our server</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-destructive/10 p-4 rounded-lg">
                     <h3 className="text-xl font-semibold mb-4">Server Status</h3>
                     <ul className="space-y-2">
                       <li className="flex justify-between">
@@ -57,7 +58,7 @@ const ServerInfo: FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-destructive/10 p-4 rounded-lg">
                     <h3 className="text-xl font-semibold mb-4">Server Details</h3>
                     <ul className="space-y-2">
                       <li className="flex justify-between">
@@ -80,7 +81,7 @@ const ServerInfo: FC = () => {
                   </div>
                 </div>
                 
-                <div className="bg-gray-800 p-6 rounded-lg">
+                <div className="bg-destructive/10 p-6 rounded-lg">
                   <h3 className="text-xl font-semibold mb-4">About Silkroad Legends</h3>
                   <p className="text-muted-foreground leading-relaxed">
                     Welcome to Silkroad Legends! Our server offers a classic Silkroad experience with modern improvements.
@@ -93,13 +94,13 @@ const ServerInfo: FC = () => {
           </TabsContent>
           
           <TabsContent value="rules">
-            <Card>
+            <Card className="border-lafftale-gold/30 mb-6">
               <CardHeader>
                 <CardTitle>Server Rules & Policies</CardTitle>
                 <CardDescription>By registering, you agree to these rules</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="bg-gray-800 p-6 rounded-lg">
+                <div className="bg-destructive/10 p-6 rounded-lg">
                   <p className="text-muted-foreground mb-4">
                     Violations of these rules may result in the following actions:
                   </p>
@@ -182,13 +183,13 @@ const ServerInfo: FC = () => {
           </TabsContent>
           
           <TabsContent value="fortress">
-            <Card>
+            <Card className="border-lafftale-gold/30 mb-6">
               <CardHeader>
                 <CardTitle>Fortress War</CardTitle>
                 <CardDescription>Information about Fortress Wars</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-800 p-6 rounded-lg">
+                <div className="bg-destructive/10 p-6 rounded-lg">
                   <h3 className="text-xl font-semibold mb-4">Fortress Battle Times</h3>
                   <ul className="space-y-2">
                     <li className="flex justify-between">
@@ -215,14 +216,14 @@ const ServerInfo: FC = () => {
           </TabsContent>
           
           <TabsContent value="events">
-            <Card>
+            <Card className="border-lafftale-gold/30 mb-6">
               <CardHeader>
                 <CardTitle>Server Events</CardTitle>
                 <CardDescription>Regular events on our server</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-destructive/10 p-4 rounded-lg">
                     <h3 className="text-xl font-semibold mb-4">Daily Events</h3>
                     <ul className="space-y-2">
                       <li className="border-b pb-2">
@@ -240,7 +241,7 @@ const ServerInfo: FC = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-gray-800 p-4 rounded-lg">
+                  <div className="bg-destructive/10 p-4 rounded-lg">
                     <h3 className="text-xl font-semibold mb-4">Weekly Events</h3>
                     <ul className="space-y-2">
                       <li className="border-b pb-2">

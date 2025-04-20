@@ -1,0 +1,43 @@
+.inventoryContainer {
+  margin-top: 20px;
+}
+
+.inventoryGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.inventorySlot {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory {
+  display: grid;
+  grid-template-columns: repeat(5, 64px);
+  grid-auto-rows: 64px;
+  gap: 4px;
+  padding: 8px;
+  background: url('/image/sro/interface/inventory_bg.png') no-repeat;
+}
+
+.slot {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  background: url('/image/sro/interface/slot_empty.png') no-repeat center;
+}
+
+.slot img {
+  width: 48px;
+  height: 48px;
+  margin: 8px auto;
+  display: block;
+  cursor: pointer;
+}

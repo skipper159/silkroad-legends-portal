@@ -110,7 +110,7 @@ const TicketSystem = () => {
 
   return (
     <>
-      <Card className="overflow-x-auto">
+      <Card className="overflow-x-auto border-lafftale-gold/30">
         <table className="min-w-full text-left text-sm text-gray-300">
           <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
             <tr>
@@ -126,7 +126,7 @@ const TicketSystem = () => {
             {tickets.map((ticket) => (
               <tr
                 key={ticket.Id}
-                className={`border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20 ${
+                className={`border-b border-lafftale-gold/30 hover:bg-lafftale-dark/20 ${
                   ticket.Status === "closed" ? "opacity-40 pointer-events-none" : ""
                 }`}
               >

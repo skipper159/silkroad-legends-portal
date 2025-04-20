@@ -11,7 +11,7 @@ const newsItems = [
     category: "Updates",
     icon: <Award className="h-5 w-5" />,
     excerpt: "Latest server update includes balance changes to the Hunter class and new dungeon rewards.",
-    imageUrl: "https://images.unsplash.com/photo-1466442929976-97f336a657be?q=80&w=1500&h=800&fit=crop"
+    imageUrl: "public/image/web/serverupdate.png"
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const newsItems = [
     category: "Events",
     icon: <Calendar className="h-5 w-5" />,
     excerpt: "Join us for a special weekend XP boost! All characters will receive 2x experience points.",
-    imageUrl: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=1500&h=800&fit=crop"
+    imageUrl: "public/image/web/xpevent.png"
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const newsItems = [
     category: "Community",
     icon: <Users className="h-5 w-5" />,
     excerpt: "Highlights from last week's epic Guild Wars event where Dragon Dynasty claimed victory.",
-    imageUrl: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?q=80&w=1500&h=800&fit=crop"
+    imageUrl: "public/image/web/community.png"
   },
 ];
 
@@ -44,7 +44,7 @@ const NewsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
           {newsItems.map((item) => (
             <article key={item.id} className="card overflow-hidden group">
-              <div className="relative h-48 overflow-hidden mb-4">
+              <div className="relative h-60 overflow-hidden mb-3">
                 <img 
                   src={item.imageUrl} 
                   alt={item.title} 

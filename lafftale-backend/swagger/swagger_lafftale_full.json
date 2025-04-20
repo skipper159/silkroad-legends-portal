@@ -1154,6 +1154,70 @@
           }
         }
       }
+    },
+    "/api/inventory/{charId}": {
+      "get": {
+        "summary": "Get inventory for a character",
+        "parameters": [
+          {
+            "name": "charId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the character whose inventory is being fetched"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "The ID of the item"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the item"
+                      },
+                      "icon": {
+                        "type": "string",
+                        "description": "The path to the item's icon"
+                      },
+                      "quantity": {
+                        "type": "integer",
+                        "description": "The quantity of the item"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid character ID"
+          },
+          "403": {
+            "description": "Unauthorized access to this character's inventory"
+          },
+          "500": {
+            "description": "Error fetching inventory"
+          }
+        },
+        "tags": ["inventory"]
+      }
     }
   },
   "components": {

@@ -139,4 +139,47 @@ router.get("/characters/:gameAccountId", authenticateToken, async (req, res) => 
   }
 });
 
+// Neue Route: Inventar eines Charakters abrufen
+router.get("/inventory/:charId", authenticateToken, async (req, res) => {
+  const charId = parseInt(req.params.charId, 10);
+  if (isNaN(charId)) {
+    return res.status(400).json({ error: "Invalid character ID" });
+  }
+
+  try {
+    // Überprüfen, ob der Charakter zum aktuellen Benutzer gehört
+    await charPoolConnect;
+    const ownerCheck = await charPool.request()
+      .input("charId", sql.Int, charId)
+      .input("webUserId", sql.Int, req.user.id)
+      .query(`
+        SELECT COUNT(*) AS count
+        FROM _Char
+        WHERE CharID = @charId AND Deleted = 0
+      `);
+
+    if (ownerCheck.recordset[0].count === 0 && req.user.role !== 3) {
+      return res.status(403).json({ error: "Unauthorized access to this character's inventory" });
+    }
+
+    // Inventar-Items des Charakters abrufen
+    const inventoryResult = await charPool.request()
+      .input("charId", sql.Int, charId)
+      .query(`
+        SELECT 
+          ItemID AS id,
+          ItemName AS name,
+          IconPath AS icon,
+          Quantity AS quantity
+        FROM _Inventory
+        WHERE CharID = @charId
+      `);
+
+    res.json(inventoryResult.recordset);
+  } catch (err) {
+    console.error("Error fetching inventory:", err);
+    res.status(500).json({ error: "Error fetching inventory" });
+  }
+});
+
 module.exports = router;

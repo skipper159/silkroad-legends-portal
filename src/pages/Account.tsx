@@ -137,11 +137,17 @@ const Account = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow bg-lafftale-dark">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold font-cinzel text-lafftale-gold text-center mb-8">
-            Account Management
-          </h1>
+      <main className="flex-grow">
+        <div className="py-12 bg-header-bg bg-cover bg-center">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold mb-6">
+              Dashboard <span className="text-lafftale-bronze font-cinzel text-6xl font-bold">Account</span>
+            </h1>
+          </div>
+        </div>
+        <hr></hr>
+
+        <div className="container mx-auto py-10">
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

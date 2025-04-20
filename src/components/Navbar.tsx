@@ -32,11 +32,12 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
+            
             <Link to="/" className={`font-medium hover:text-lafftale-gold ${isActive('/') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Home</Link>
             <Link to="/download" className={`font-medium hover:text-lafftale-gold ${isActive('/download') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Download</Link>
             <Link to="/rankings" className={`font-medium hover:text-lafftale-gold ${isActive('/rankings') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Rankings</Link>
             <Link to="/server-info" className={`font-medium hover:text-lafftale-gold ${isActive('/server-info') ? 'text-lafftale-gold' : 'text-gray-300'}`}>Server Info</Link>
-
+            
             {isAuthenticated ? (
               <>
                 {isAdmin && (

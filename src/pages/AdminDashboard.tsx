@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -27,14 +26,20 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow bg-lafftale-dark">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold font-cinzel text-lafftale-gold text-center mb-8">
-            Admin Dashboard
-          </h1>
+      <main className="flex-grow">
+        <div className="py-20 bg-header2-bg bg-cover bg-top">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold mb-6">
+              Dashboard <span className="text-lafftale-bronze font-cinzel text-6xl font-bold">Admin</span>
+            </h1>
+          </div>
+        </div>
+        <hr></hr>
+        <div className="container mx-auto py-10">
+          
 
           <Tabs defaultValue="webaccounts" value={activeTab} onValueChange={setActiveTab}>
-            <Card className="bg-lafftale-darkgray border-lafftale-gold/20 mb-6">
+            <Card className="bg-lafftale-darkgray border-lafftale-gold/30 mb-6">
               <TabsList className="flex justify-center p-2 bg-transparent border-b border-lafftale-gold/20">
                 <TabsTrigger 
                   value="webaccounts" 
@@ -60,7 +65,7 @@ const AdminDashboard = () => {
               </TabsList>
             </Card>
 
-            <Card className="bg-lafftale-darkgray border-lafftale-gold/20 p-6">
+            <Card className="bg-lafftale-darkgray border-lafftale-gold/30 p-6">
               <TabsContent value="webaccounts" className="mt-0">
                 <WebAccountsList />
               </TabsContent>

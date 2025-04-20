@@ -36,10 +36,16 @@ const Rankings = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8 decorated-heading">
-          Server Rankings
-        </h1>
+      <main className="flex-grow">
+        <div className="py-20 bg-header2-bg bg-cover bg-top">
+          <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Ranking <span className="text-lafftale-bronze font-cinzel text-4xl font-bold">Lafftale</span>
+            </h1>
+          </div>
+        </div>
+        <hr></hr>
+        <div className="container mx-auto py-10">
         
         <Card className="bg-lafftale-darkgray border-lafftale-gold/30 shadow-lg">
           <CardHeader className="border-b border-lafftale-gold/20 pb-4 flex flex-col sm:flex-row items-center justify-between">
@@ -423,10 +429,12 @@ const Rankings = () => {
             </Pagination>
           </CardContent>
         </Card>
+        </div>
       </main>
       
       <Footer />
     </div>
+    
   );
 };
 

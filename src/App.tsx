@@ -13,11 +13,13 @@ import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import NewsSection from "./components/NewsSection";
 
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

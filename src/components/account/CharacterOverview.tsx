@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { fetchWithAuth, weburl } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { EquipmentWrapper } from "./Equipment/EquipmentWrapper";
 
 interface Equipment {
   name: string;
@@ -295,7 +296,15 @@ const CharacterOverview = () => {
                   
                   <div className="lg:w-2/3">
                     <h3 className="text-xl font-bold text-lafftale-gold mb-4">Ausrüstung</h3>
-                    
+                    <div className="flex">
+                    <div className="hidden lg:block w-1/3 flex justify-center">
+                   <EquipmentWrapper />
+                    </div>
+                    <div></div>
+                      {/* Andere Inhalte (Charaktermodell, etc.) */}
+                    </div>
+
+
                     <TooltipProvider>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {Object.entries(selectedCharacter.equipment).map(([slot, item]) => (

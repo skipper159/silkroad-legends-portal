@@ -42,7 +42,7 @@ const WebAccountsList = () => {
   }
 
   return (
-    <Card className="overflow-x-auto">
+    <Card className="overflow-x-auto border-lafftale-gold/30">
       <table className="min-w-full text-left text-sm text-gray-300">
         <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
           <tr>
@@ -55,7 +55,7 @@ const WebAccountsList = () => {
         </thead>
         <tbody>
           {accounts.map((acc) => (
-            <tr key={acc.Id} className="border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20">
+            <tr key={acc.Id} className="border-b border-lafftale-gold/30 hover:bg-lafftale-dark/20">
               <td className="p-3">{acc.Id}</td>
               <td className="p-3">{acc.Username}</td>
               <td className="p-3">{acc.Email}</td>
