@@ -12,7 +12,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import NewsSection from "./components/NewsSection";
-
+import ServerRules from "./components/Legal/Server Rules";
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
           <Route path="/download" element={<Download />} />
           <Route path="/News" element={<NewsSection />} />
           <Route path="/server-info" element={<ServerInfo />} />
+          <Route path="/rules" element={<ServerRules />} />
           
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<Account />} />
