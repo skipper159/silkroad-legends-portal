@@ -102,34 +102,42 @@ router.get("/characters/:gameAccountId", authenticateToken, async (req, res) => 
     
     // Alle gefundenen Charaktere abrufen
     const result = await charReq.query(`
-      SELECT 
-        CharID AS id, 
-        CharName16 AS name, 
-        NickName16 AS nickname,
-        CurLevel AS level, 
-        MaxLevel AS maxLevel,
-        Strength,
-        Intellect,
-        RemainGold AS gold,
-        RemainSkillPoint AS skillPoints,
-        RemainStatPoint AS statPoints,
-        HP,
-        MP,
-        LatestRegion AS region,
-        PosX,
-        PosY,
-        PosZ,
-        JobLvl_Trader AS traderLevel,
-        JobLvl_Hunter AS hunterLevel,
-        JobLvl_Robber AS thiefLevel,
-        GuildID,
-        CASE 
-          WHEN Strength > Intellect THEN 'European'
-          WHEN Intellect > Strength THEN 'Chinese'
-          ELSE 'Balanced'
-        END AS job
-      FROM _Char
-      WHERE CharID IN (${charIdParams}) AND Deleted = 0
+SELECT 
+  CharID AS id, 
+  CharName16 AS name, 
+  NickName16 AS nickname,
+  CurLevel AS level, 
+  MaxLevel AS maxLevel,
+  Strength,
+  Intellect,
+  RemainGold AS gold,
+  RemainSkillPoint AS skillPoints,
+  RemainStatPoint AS statPoints,
+  HP,
+  MP,
+  LatestRegion AS region,
+  PosX,
+  PosY,
+  PosZ,
+  JobLvl_Trader AS traderLevel,
+  JobLvl_Hunter AS hunterLevel,
+  JobLvl_Robber AS thiefLevel,
+  GuildID,
+  RefObjID AS CharIcon,
+
+  -- ✅ Race via CodeName128 aus RefObjCommon
+  ISNULL(
+    CASE 
+      WHEN roc.CodeName128 LIKE 'CH_%' THEN 'Chinese'
+      WHEN roc.CodeName128 LIKE 'EU_%' THEN 'European'
+    END,
+    'Unknown'
+  ) AS race
+
+FROM _Char
+LEFT JOIN _RefObjChar rchar ON _Char.RefObjID = rchar.ID
+LEFT JOIN _RefObjCommon roc ON rchar.ID = roc.ID
+WHERE CharID IN (${charIdParams}) AND Deleted = 0
     `);
 
     res.json(result.recordset);

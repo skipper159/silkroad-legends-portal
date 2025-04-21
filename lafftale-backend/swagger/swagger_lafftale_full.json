@@ -679,7 +679,9 @@
             "description": "Error fetching characters"
           }
         },
-        "tags": ["characters"]
+        "tags": [
+          "characters"
+        ]
       }
     },
     "/api/characters/gameaccounts/{webUserId}": {
@@ -713,7 +715,9 @@
             "description": "Error fetching game accounts"
           }
         },
-        "tags": ["characters"]
+        "tags": [
+          "characters"
+        ]
       }
     },
     "/api/characters/{charId}/details": {
@@ -981,7 +985,9 @@
     },
     "/gameaccount/create": {
       "post": {
-        "tags": ["GameAccount"],
+        "tags": [
+          "GameAccount"
+        ],
         "summary": "Create a new game account",
         "description": "Creates a new game account for the currently authenticated web user. `reg_ip` and `regtime` are automatically set by the server.",
         "security": [
@@ -1005,7 +1011,10 @@
                     "example": "MySecret123!"
                   }
                 },
-                "required": ["username", "password"]
+                "required": [
+                  "username",
+                  "password"
+                ]
               }
             }
           }
@@ -1216,7 +1225,234 @@
             "description": "Error fetching inventory"
           }
         },
-        "tags": ["inventory"]
+        "tags": [
+          "inventory"
+        ]
+      }
+    },
+    "/api/payment/nowpayments/initiate": {
+      "post": {
+        "summary": "NOWPayments Crypto-Zahlung starten",
+        "description": "Erzeugt eine Invoice f\u00fcr eine Kryptow\u00e4hrungszahlung \u00fcber NOWPayments",
+        "tags": [
+          "Payment NowPayments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "example": "45678"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 15
+                  }
+                },
+                "required": [
+                  "accountId",
+                  "amount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Weiterleitungslink zur Invoice",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://nowpayments.io/invoice/abc123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Fehler bei Invoice-Erstellung"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/payment/payop/callback": {
+      "post": {
+        "summary": "PayOP Webhook (Callback)",
+        "description": "Empf\u00e4ngt Zahlungsbest\u00e4tigung von PayOP und schreibt Silk gut.",
+        "tags": [
+          "Payment PayOP"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "success"
+                  },
+                  "order": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "example": "Silk purchase for account 12345"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "example": 10.0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK, Silk ggf. gutgeschrieben"
+          },
+          "400": {
+            "description": "Fehlende Daten"
+          }
+        }
+      }
+    },
+    "/api/payment/nowpayments/callback": {
+      "post": {
+        "summary": "NOWPayments Webhook (IPN)",
+        "description": "Empf\u00e4ngt IPN-Daten von NOWPayments und schreibt Silk gut, wenn die Zahlung erfolgreich ist.",
+        "tags": [
+          "Payment NowPayments"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_status": {
+                    "type": "string",
+                    "example": "finished"
+                  },
+                  "price_amount": {
+                    "type": "number",
+                    "example": 15.0
+                  },
+                  "order_description": {
+                    "type": "string",
+                    "example": "Silk for game account 12345"
+                  },
+                  "pay_currency": {
+                    "type": "string",
+                    "example": "btc"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK, Silk ggf. gutgeschrieben"
+          },
+          "403": {
+            "description": "Invalid signature"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/api/payment/payop/initiate": {
+      "post": {
+        "summary": "Startet eine PayOP-Zahlung",
+        "description": "Diese Route erstellt eine PayOP-Zahlung basierend auf dem GameAccount und dem Silk-Paket.",
+        "tags": [
+          "Payment PayOP"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 10
+                  }
+                },
+                "required": [
+                  "accountId",
+                  "amount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Weiterleitungslink zu PayOP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://payop.com/en/payment/invoice-preprocessing/..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Fehler bei der Erstellung der PayOP-Zahlung",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create PayOP invoice"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -1259,6 +1495,14 @@
           "RefItemID": {
             "type": "integer",
             "description": "Reference ID to the equipped item"
+          },
+          "RefObjID": {
+            "type": "integer",
+            "description": "Reference ID to the Character Picture"
+          },
+          "race": { 
+            "type": "string" ,
+            "description": "Chinese, Eurpean or unknown"
           }
         }
       },

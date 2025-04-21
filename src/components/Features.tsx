@@ -4,7 +4,7 @@ import { Award, Calendar, Shield, Coins, Users } from "lucide-react";
 const featuresData = [
   {
     icon: <Award className="h-10 w-10 text-silkroad-gold" />,
-    title: "Level Cap 110",
+    title: "Level Cap 100",
     description: "Progress further than ever with our extended level cap and challenging content."
   },
   {

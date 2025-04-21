@@ -1,4 +1,3 @@
-
 {
   "name": "lafftale-backend",
   "version": "1.0.0",
@@ -10,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

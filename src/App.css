@@ -33,6 +33,39 @@
   }
 }
 
+@keyframes spin-a {
+  0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) rotate(360deg); opacity: 1; }
+}
+
+@keyframes spin-b {
+  0% { transform: translate(-50%, -50%) rotate(20deg); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) rotate(380deg); opacity: 1; }
+}
+
+@keyframes spin-c {
+  0% { transform: translate(-50%, -50%) rotate(-10deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) rotate(350deg); opacity: 1; }
+}
+
+.rare-glow-a {
+  animation: spin-a 4s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 200, 0.7));
+  pointer-events: none;
+}
+
+.rare-glow-b {
+  animation: spin-b 4.2s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+  pointer-events: none;
+}
+
+.rare-glow-c {
+  animation: spin-c 3.8s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 240, 180, 0.8));
+  pointer-events: none;
+}
+
 .card {
   padding: 2em;
 }

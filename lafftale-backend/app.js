@@ -26,7 +26,9 @@ app.use("/api/characters", require("./routes/characters"));
 app.use("/api/characterdetails", require("./routes/characterdetails"));
 app.use("/api/silk", require("./routes/silk"));
 app.use("/api/gameaccount", require("./routes/gameaccount"));
-app.use("api/inventory", require("./routes/inventory"));
+app.use("/api/inventory", require("./routes/inventory"));
+//app.use("/api/Payment", require("./routes/Payment/payment"));
+
 
 
 const PORT = process.env.PORT || 3000;

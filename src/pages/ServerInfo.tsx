@@ -1,10 +1,33 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const ServerInfo: FC = () => {
+  const [serverTime, setServerTime] = useState<string>("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const serverDate = new Date();
+      serverDate.setHours(serverDate.getUTCHours() + 1); // GMT+1
+
+      const formattedTime = new Intl.DateTimeFormat(navigator.language, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }).format(serverDate);
+
+      setServerTime(formattedTime);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -53,7 +76,7 @@ const ServerInfo: FC = () => {
                       </li>
                       <li className="flex justify-between">
                         <span>Server Time:</span>
-                        <span className="font-medium">-</span>
+                        <span className="font-medium">{serverTime}</span>
                       </li>
                     </ul>
                   </div>
@@ -63,15 +86,15 @@ const ServerInfo: FC = () => {
                     <ul className="space-y-2">
                       <li className="flex justify-between">
                         <span>Cap:</span>
-                        <span className="font-medium">110</span>
+                        <span className="font-medium">100</span>
                       </li>
                       <li className="flex justify-between">
                         <span>Races:</span>
-                        <span className="font-medium">CH - EU</span>
+                        <span className="font-medium">Chinese</span>
                       </li>
                       <li className="flex justify-between">
                         <span>Guild Limit:</span>
-                        <span className="font-medium">24</span>
+                        <span className="font-medium">32</span>
                       </li>
                       <li className="flex justify-between">
                         <span>Union Limit:</span>
@@ -82,9 +105,9 @@ const ServerInfo: FC = () => {
                 </div>
                 
                 <div className="bg-destructive/10 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-4">About Silkroad Legends</h3>
+                  <h3 className="text-xl font-semibold mb-4">About Lafftale Online</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Welcome to Silkroad Legends! Our server offers a classic Silkroad experience with modern improvements.
+                    Welcome to Lafftale Online! Our server offers a classic Silkroad experience with modern improvements.
                     We place great emphasis on fair gameplay and a friendly community.
                     Our dedicated administrators and moderators are always ready to help.
                   </p>
@@ -234,9 +257,25 @@ const ServerInfo: FC = () => {
                         <span className="font-medium">Job War</span>
                         <p className="text-sm text-muted-foreground">Daily at 21:00</p>
                       </li>
-                      <li>
+                      <li className="border-b pb-2">
                         <span className="font-medium">Dungeon Challenge</span>
                         <p className="text-sm text-muted-foreground">Daily at 14:00</p>
+                      </li>
+                      <li className="border-b pb-2">
+                        <span className="font-medium">PvP Event</span>
+                        <p className="text-sm text-muted-foreground">Daily at 21:00</p>
+                      </li>
+                      <li className="border-b pb-2">
+                        <span className="font-medium">Survival Arena</span>
+                        <p className="text-sm text-muted-foreground">Daily at 21:00</p>
+                      </li>
+                      <li className="border-b pb-2">
+                        <span className="font-medium">Battle Arena (Score)</span>
+                        <p className="text-sm text-muted-foreground">Daily at 21:00</p>
+                      </li>
+                      <li className="font-medium">
+                        <span className="font-medium">Battle Arena (Flag)</span>
+                        <p className="text-sm text-muted-foreground">Daily at 21:00</p>
                       </li>
                     </ul>
                   </div>
@@ -251,6 +290,10 @@ const ServerInfo: FC = () => {
                       <li className="border-b pb-2">
                         <span className="font-medium">Treasure Hunt</span>
                         <p className="text-sm text-muted-foreground">Wednesday at 18:00</p>
+                      </li>
+                      <li className="border-b pb-2">
+                        <span className="font-medium">ROC Event</span>
+                        <p className="text-sm text-muted-foreground">Saturday at 19:00</p>
                       </li>
                       <li>
                         <span className="font-medium">Guild Challenge</span>
