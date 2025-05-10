@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const { charPool, gamePool, webPool, charPoolConnect, gamePoolConnect, webPoolConnect, sql } = require("../db");
 const authenticateToken = require("../middleware/auth");
 
@@ -24,12 +24,12 @@ router.post("/create", authenticateToken, async (req, res) => {
       return res.status(409).json({ error: "Game account already exists" });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = crypto.createHash('md5').update(password).digest('hex');
 
     // Insert into TB_User
     const insertResult = await gamePool.request()
       .input("username", sql.NVarChar(25), username)
-      .input("password", sql.NVarChar(60), hashed)
+      .input("password", sql.NVarChar(32), hashed)
       .input("regtime", sql.DateTime, new Date())
       .input("reg_ip", sql.NVarChar(25), userIp.toString())
       .query(`
@@ -49,8 +49,8 @@ router.post("/create", authenticateToken, async (req, res) => {
         INSERT INTO _AccountJID (AccountID, JID, WebUserId)
         VALUES (@accountId, @jid, @webUserId)
       `);
-      
-    // Insert into dbo._User mit CharID = 0 als Platzhalter (wird später aktualisiert, wenn ein Character erstellt wird)
+
+    // Insert into dbo._User
     await charPool.request()
       .input("jid", sql.Int, newJid)
       .query(`
@@ -58,7 +58,7 @@ router.post("/create", authenticateToken, async (req, res) => {
         VALUES (@jid, 0)
       `);
 
-    // Erstelle einen Eintrag in SK_SILK für das Silk-Guthaben
+    // Insert into SK_SILK
     await gamePool.request()
       .input("jid", sql.Int, newJid)
       .query(`
@@ -153,14 +153,14 @@ router.put("/:id/password", authenticateToken, async (req, res) => {
     const account = userRes.recordset[0];
     if (!account) return res.status(404).json({ error: "Game account not found" });
 
-    const valid = await bcrypt.compare(oldPassword, account.password);
-    if (!valid) return res.status(403).json({ error: "Invalid old password" });
+    const hashedOld = crypto.createHash('md5').update(oldPassword).digest('hex');
+    if (hashedOld !== account.password) return res.status(403).json({ error: "Invalid old password" });
 
-    const hashed = await bcrypt.hash(newPassword, 10);
+    const hashedNew = crypto.createHash('md5').update(newPassword).digest('hex');
 
     await gamePool.request()
       .input("id", sql.Int, id)
-      .input("pw", sql.NVarChar(60), hashed)
+      .input("pw", sql.NVarChar(32), hashedNew)
       .query("UPDATE TB_User SET password = @pw WHERE JID = @id");
 
     res.send("Password updated");
@@ -177,6 +177,11 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     await gamePoolConnect;
     await charPoolConnect;
+
+    // Lösche aus dbo._User
+    await charPool.request()
+      .input("jid", sql.Int, id)
+      .query("DELETE FROM dbo._User WHERE UserJID = @jid");
 
     // Lösche aus _AccountJID
     await charPool.request()

@@ -107,7 +107,7 @@ const GameAccountManager = () => {
     if (!selectedAccount) return;
 
     try {
-      const res = await fetchWithAuth(`${weburl}:3000/api/gameaccount/${selectedAccount.JID}`, {
+      const res = await fetchWithAuth(`${weburl}/api/gameaccount/${selectedAccount.JID}`, {
         method: "DELETE"
       });
 
@@ -139,11 +139,25 @@ const GameAccountManager = () => {
         <CardContent>
           <form onSubmit={handleCreateGameAccount} className="space-y-4">
             <Label>Username</Label>
-            <Input value={newGameUsername} onChange={(e) => setNewGameUsername(e.target.value)} />
+            <Input 
+                className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                value={newGameUsername} 
+                onChange={(e) => setNewGameUsername(e.target.value)} 
+            />
             <Label>Password</Label>
-            <Input type="password" value={newGamePassword} onChange={(e) => setNewGamePassword(e.target.value)} />
+            <Input 
+                className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                type="password" 
+                value={newGamePassword} 
+                onChange={(e) => setNewGamePassword(e.target.value)} 
+            />
             <Label>Confirm Password</Label>
-            <Input type="password" value={confirmGamePassword} onChange={(e) => setConfirmGamePassword(e.target.value)} />
+            <Input 
+                className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                type="password" 
+                value={confirmGamePassword} 
+                onChange={(e) => setConfirmGamePassword(e.target.value)} 
+            />
             <Button type="submit" className="bg-lafftale-gold text-lafftale-dark">Create</Button>
           </form>
         </CardContent>
@@ -164,7 +178,7 @@ const GameAccountManager = () => {
               <SelectTrigger className="bg-lafftale-dark border-lafftale-gold/20">
                 <SelectValue placeholder="Choose Account" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-lafftale-darkgray">
                 {gameAccounts.map((acc) => (
                   <SelectItem key={acc.JID} value={acc.JID.toString()}>{acc.StrUserID}</SelectItem>
                 ))}
@@ -176,11 +190,26 @@ const GameAccountManager = () => {
                 <div className="mt-4 flex flex-col sm:flex-row sm:justify-between gap-3">
                <form onSubmit={handleChangeGamePassword} className="space-y-4 sm:w-1/2">
                <Label>Current Password</Label>
-                <Input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                <Input 
+                    className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                    type="password" 
+                    value={currentPassword} 
+                    onChange={(e) => setCurrentPassword(e.target.value)} 
+                />
                 <Label>New Password</Label>
-                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                <Input 
+                    className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                    type="password" 
+                    value={newPassword} 
+                    onChange={(e) => setNewPassword(e.target.value)} 
+                />
                 <Label>Confirm New Password</Label>
-                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                <Input 
+                    className="bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+                    type="password" 
+                    value={confirmPassword} 
+                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                />
                 <Button type="submit" className="bg-lafftale-gold text-lafftale-dark">Change Password</Button>
                 </form>
 

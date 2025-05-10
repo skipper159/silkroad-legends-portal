@@ -131,7 +131,7 @@ const Account = () => {
 
   // Formatierung der Login-Zeit mit Datum und Uhrzeit
   const formattedLastLogin = userData.logTime 
-    ? `${userData.lastLogin} um ${userData.logTime.substring(0, 5)} Uhr` 
+    ? `${userData.lastLogin} at ${userData.logTime.substring(0, 5)} o clock` 
     : userData.lastLogin;
 
   return (
@@ -204,8 +204,8 @@ const Account = () => {
                   </TabsList>
 
                   <div className="mt-6 pt-6 border-t border-lafftale-gold/20">
-                    <p className="text-sm text-gray-400 mb-2">Letzter Login: {formattedLastLogin}</p>
-                    <p className="text-sm text-gray-400">Mitglied seit: {userData.registeredAt}</p>
+                    <p className="text-sm text-gray-400 mb-2">Last Login: {formattedLastLogin}</p>
+                    <p className="text-sm text-gray-400">Member since: {userData.registeredAt}</p>
                   </div>
                 </div>
               </div>

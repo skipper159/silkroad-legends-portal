@@ -1193,21 +1193,88 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {
+                        "id": {
                         "type": "integer",
-                        "description": "The ID of the item"
-                      },
-                      "name": {
+                        "description": "Unique identifier for the item instance"
+                        },
+                        "codeName": {
                         "type": "string",
-                        "description": "The name of the item"
-                      },
-                      "icon": {
-                        "type": "string",
-                        "description": "The path to the item's icon"
-                      },
-                      "quantity": {
-                        "type": "integer",
-                        "description": "The quantity of the item"
+                        "description": "Internal item code (e.g. ITEM_CH_WEAPON_BLADE_01_A)"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Translated item name"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "description": "How many of this item exist in the inventory"
+                        },
+                        "slot": {
+                          "type": "integer",
+                          "description": "Inventory slot number"
+                        },
+                        "plus": {
+                          "type": "integer",
+                          "description": "Plus level of the item (+0 to +15)"
+                        },
+                        "rarity": {
+                          "type": "string",
+                          "description": "Item rarity: normal, Seal of Star, Moon, Sun"
+                        },
+                        "iconUrl": {
+                          "type": "string",
+                          "description": "URL path to the item's icon"
+                        },
+                        "isEquipped": {
+                          "type": "boolean",
+                          "description": "True if item is equipped"
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Item type: Weapon, Armor, Accessory, Shield"
+                        },
+                        "phyAttack": {
+                          "type": "string",
+                          "description": "Physical attack value (e.g. 345–410)"
+                        },
+                        "magAttack": {
+                          "type": "string",
+                          "description": "Magical attack value (e.g. 270–320)"
+                        },
+                        "phyDef": {
+                          "type": "integer",
+                          "description": "Physical defense value"
+                        },
+                        "magDef": {
+                          "type": "integer",
+                          "description": "Magical defense value"
+                        },
+                        "atkRate": {
+                          "type": "integer",
+                          "description": "Attack rate value"
+                        },
+                        "parryRate": {
+                          "type": "integer",
+                          "description": "Parry rate value"
+                        },
+                        "durability": {
+                          "type": "string",
+                          "description": "Durability string (e.g. 60/60)"
+                        },
+                        "phyReinforce": {
+                          "type": "string",
+                          "description": "Physical reinforce percentage (e.g. 45%)"
+                        },
+                          "magReinforce": {
+                          "type": "string",
+                        "description": "Magical reinforce percentage (e.g. 48%)"
+                        },
+                        "blues": {
+                          "type": "array",
+                          "items": {
+                              "type": "string"
+                        },
+                        "description": "Array of blue attributes (e.g. +7 STR, Immortal, Astral)"
                       }
                     }
                   }

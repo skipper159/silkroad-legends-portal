@@ -185,6 +185,7 @@ const CharacterOverview = () => {
     return "text-white";
   };
   return (
+    <TooltipProvider>
     <div>
       <h2 className="text-2xl font-bold text-lafftale-gold mb-6">Character Overview</h2>
       
@@ -198,7 +199,7 @@ const CharacterOverview = () => {
             <Label>Choose Game Account</Label>
             <Select value={selectedAccountId?.toString()} onValueChange={handleAccountChange}>
               <SelectTrigger className="bg-lafftale-dark border-lafftale-gold/30">
-                <SelectValue placeholder="Account auswählen" />
+                <SelectValue placeholder="Choose Account" />
               </SelectTrigger>
               <SelectContent className="bg-lafftale-darkgray">
                 {gameAccounts.map(acc => (
@@ -209,7 +210,7 @@ const CharacterOverview = () => {
               </SelectContent>
             </Select>
           </div>
-
+          
           {selectedAccountId && gameAccounts.find(acc => acc.id === selectedAccountId)?.characters.length ? (
   <div>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -376,6 +377,7 @@ const CharacterOverview = () => {
         <p className="text-gray-400">No GameAccounts available.</p>
       )}
     </div>
+    </TooltipProvider>
   );
 };
 
