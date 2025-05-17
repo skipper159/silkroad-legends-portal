@@ -28,9 +28,7 @@ const Login = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
+      });      const data = await response.json();
 
       if (response.ok) {
         toast({
@@ -61,11 +59,22 @@ const Login = () => {
           navigate("/account", { replace: true });
         }
       } else {
-        toast({
-          title: "Login Fehlgeschlagen",
-          description: data?.message || "Incorrect Login Data.",
-          variant: "destructive",
-        });
+        if (data?.needsVerification) {
+          toast({
+            title: "E-Mail nicht verifiziert",
+            description: "Bitte bestätigen Sie Ihre E-Mail-Adresse, um sich anzumelden.",
+            variant: "destructive",
+          });
+          
+          // Weiterleitung zur Seite für erneutes Senden der Bestätigungs-E-Mail
+          setTimeout(() => navigate("/resend-verification"), 2000);
+        } else {
+          toast({
+            title: "Login Fehlgeschlagen",
+            description: data?.message || "Incorrect Login Data.",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error: any) {
       console.error("Login error:", error);

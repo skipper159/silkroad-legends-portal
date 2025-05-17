@@ -11,6 +11,12 @@ import { Button } from "@/components/ui/button";
 const Rankings = () => {
   const [activeTab, setActiveTab] = useState("players");
   const [activeRankingType, setActiveRankingType] = useState("player");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("Top Player");
+
+  const dropdownOptions = activeRankingType === "player" 
+    ? ["Top Player", "Top Guild", "Unique", "Thief", "Trader", "Hunter"]
+    : ["Last Man Standing", "PVP", "Battle Arena", "Survival Arena", "Capture the Flag"];
 
   // Placeholder data for player rankings
   const playersData = Array(25).fill(0).map((_, i) => ({
@@ -22,6 +28,10 @@ const Rankings = () => {
     killCount: Math.floor(Math.random() * 1000)
   }));
 
+  const filteredPlayersData = playersData.filter((player) =>
+    player.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Placeholder data for event rankings
   const eventData = Array(25).fill(0).map((_, i) => ({
     rank: i + 1,
@@ -31,6 +41,10 @@ const Rankings = () => {
     wins: Math.floor(Math.random() * 50),
     points: Math.floor(Math.random() * 5000)
   }));
+
+  const filteredEventData = eventData.filter((event) =>
+    event.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -69,6 +83,27 @@ const Rankings = () => {
           </CardHeader>
           
           <CardContent className="p-6">
+            <div className="mb-4 flex items-center justify-center gap-4">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-1/3 p-2 border border-lafftale-gold/20 rounded bg-lafftale-dark text-lafftale-gold focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+              />
+              <select
+                value={selectedFilter}
+                onChange={(e) => setSelectedFilter(e.target.value)}
+                className="w-1/3 p-2 border border-lafftale-gold/20 rounded bg-lafftale-dark text-lafftale-gold focus:ring-2 focus:ring-lafftale-gold focus:outline-none"
+              >
+                {dropdownOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {activeRankingType === "player" ? (
               <Tabs defaultValue="players" value={activeTab} onValueChange={setActiveTab} className="mb-6">
                 <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 w-full bg-lafftale-dark p-2 rounded-lg border border-lafftale-gold/20">
@@ -124,7 +159,7 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {playersData.map((player) => (
+                      {filteredPlayersData.map((player) => (
                         <TableRow 
                           key={player.rank} 
                           className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
@@ -202,29 +237,29 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventData.map((player) => (
+                      {filteredEventData.map((event) => (
                         <TableRow 
-                          key={player.rank} 
-                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
+                          key={event.rank} 
+                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${event.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
                         >
                           <TableCell className="font-medium text-center">
-                            {player.rank <= 3 ? (
+                            {event.rank <= 3 ? (
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                                player.rank === 1 ? 'bg-yellow-500' : 
-                                player.rank === 2 ? 'bg-gray-400' : 
+                                event.rank === 1 ? 'bg-yellow-500' : 
+                                event.rank === 2 ? 'bg-gray-400' : 
                                 'bg-amber-700'
                               } text-black font-bold`}>
-                                {player.rank}
+                                {event.rank}
                               </span>
                             ) : (
-                              player.rank
+                              event.rank
                             )}
                           </TableCell>
-                          <TableCell className="font-medium text-lafftale-gold">{player.name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.level}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.class}</TableCell>
-                          <TableCell className="text-right">{player.wins}</TableCell>
-                          <TableCell className="text-right">{player.points}</TableCell>
+                          <TableCell className="font-medium text-lafftale-gold">{event.name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.level}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.class}</TableCell>
+                          <TableCell className="text-right">{event.wins}</TableCell>
+                          <TableCell className="text-right">{event.points}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -245,29 +280,29 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventData.map((player) => (
+                      {filteredEventData.map((event) => (
                         <TableRow 
-                          key={player.rank} 
-                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
+                          key={event.rank} 
+                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${event.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
                         >
                           <TableCell className="font-medium text-center">
-                            {player.rank <= 3 ? (
+                            {event.rank <= 3 ? (
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                                player.rank === 1 ? 'bg-yellow-500' : 
-                                player.rank === 2 ? 'bg-gray-400' : 
+                                event.rank === 1 ? 'bg-yellow-500' : 
+                                event.rank === 2 ? 'bg-gray-400' : 
                                 'bg-amber-700'
                               } text-black font-bold`}>
-                                {player.rank}
+                                {event.rank}
                               </span>
                             ) : (
-                              player.rank
+                              event.rank
                             )}
                           </TableCell>
-                          <TableCell className="font-medium text-lafftale-gold">{player.name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.level}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.class}</TableCell>
-                          <TableCell className="text-right">{player.wins}</TableCell>
-                          <TableCell className="text-right">{player.points}</TableCell>
+                          <TableCell className="font-medium text-lafftale-gold">{event.name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.level}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.class}</TableCell>
+                          <TableCell className="text-right">{event.wins}</TableCell>
+                          <TableCell className="text-right">{event.points}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -288,29 +323,29 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventData.map((player) => (
+                      {filteredEventData.map((event) => (
                         <TableRow 
-                          key={player.rank} 
-                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
+                          key={event.rank} 
+                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${event.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
                         >
                           <TableCell className="font-medium text-center">
-                            {player.rank <= 3 ? (
+                            {event.rank <= 3 ? (
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                                player.rank === 1 ? 'bg-yellow-500' : 
-                                player.rank === 2 ? 'bg-gray-400' : 
+                                event.rank === 1 ? 'bg-yellow-500' : 
+                                event.rank === 2 ? 'bg-gray-400' : 
                                 'bg-amber-700'
                               } text-black font-bold`}>
-                                {player.rank}
+                                {event.rank}
                               </span>
                             ) : (
-                              player.rank
+                              event.rank
                             )}
                           </TableCell>
-                          <TableCell className="font-medium text-lafftale-gold">{player.name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.level}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.class}</TableCell>
-                          <TableCell className="text-right">{player.wins}</TableCell>
-                          <TableCell className="text-right">{player.points}</TableCell>
+                          <TableCell className="font-medium text-lafftale-gold">{event.name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.level}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.class}</TableCell>
+                          <TableCell className="text-right">{event.wins}</TableCell>
+                          <TableCell className="text-right">{event.points}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -331,29 +366,29 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventData.map((player) => (
+                      {filteredEventData.map((event) => (
                         <TableRow 
-                          key={player.rank} 
-                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
+                          key={event.rank} 
+                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${event.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
                         >
                           <TableCell className="font-medium text-center">
-                            {player.rank <= 3 ? (
+                            {event.rank <= 3 ? (
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                                player.rank === 1 ? 'bg-yellow-500' : 
-                                player.rank === 2 ? 'bg-gray-400' : 
+                                event.rank === 1 ? 'bg-yellow-500' : 
+                                event.rank === 2 ? 'bg-gray-400' : 
                                 'bg-amber-700'
                               } text-black font-bold`}>
-                                {player.rank}
+                                {event.rank}
                               </span>
                             ) : (
-                              player.rank
+                              event.rank
                             )}
                           </TableCell>
-                          <TableCell className="font-medium text-lafftale-gold">{player.name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.level}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.class}</TableCell>
-                          <TableCell className="text-right">{player.wins}</TableCell>
-                          <TableCell className="text-right">{player.points}</TableCell>
+                          <TableCell className="font-medium text-lafftale-gold">{event.name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.level}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.class}</TableCell>
+                          <TableCell className="text-right">{event.wins}</TableCell>
+                          <TableCell className="text-right">{event.points}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -374,29 +409,29 @@ const Rankings = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventData.map((player) => (
+                      {filteredEventData.map((event) => (
                         <TableRow 
-                          key={player.rank} 
-                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${player.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
+                          key={event.rank} 
+                          className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${event.rank <= 3 ? 'bg-lafftale-gold/10' : ''}`}
                         >
                           <TableCell className="font-medium text-center">
-                            {player.rank <= 3 ? (
+                            {event.rank <= 3 ? (
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                                player.rank === 1 ? 'bg-yellow-500' : 
-                                player.rank === 2 ? 'bg-gray-400' : 
+                                event.rank === 1 ? 'bg-yellow-500' : 
+                                event.rank === 2 ? 'bg-gray-400' : 
                                 'bg-amber-700'
                               } text-black font-bold`}>
-                                {player.rank}
+                                {event.rank}
                               </span>
                             ) : (
-                              player.rank
+                              event.rank
                             )}
                           </TableCell>
-                          <TableCell className="font-medium text-lafftale-gold">{player.name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.level}</TableCell>
-                          <TableCell className="hidden md:table-cell">{player.class}</TableCell>
-                          <TableCell className="text-right">{player.wins}</TableCell>
-                          <TableCell className="text-right">{player.points}</TableCell>
+                          <TableCell className="font-medium text-lafftale-gold">{event.name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.level}</TableCell>
+                          <TableCell className="hidden md:table-cell">{event.class}</TableCell>
+                          <TableCell className="text-right">{event.wins}</TableCell>
+                          <TableCell className="text-right">{event.points}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
   token: string | null;
@@ -10,8 +11,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const checkTokenExpiration = (token: string | null) => {
+  if (!token) return false;
+  const decoded: any = jwtDecode(token);
+  const currentTime = Date.now() / 1000;
+  return decoded.exp < currentTime;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
@@ -23,6 +31,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAdmin(savedIsAdmin);
     }
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (checkTokenExpiration(token)) {
+        logout();
+      }
+    }, 60000); // Überprüfung alle 60 Sekunden
+
+    return () => clearInterval(interval);
+  }, [token]);
 
   const login = (newToken: string, adminStatus: boolean) => {
     localStorage.setItem("token", newToken);

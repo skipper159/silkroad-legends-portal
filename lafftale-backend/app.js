@@ -15,7 +15,7 @@ app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Deine API-Routen
-app.use("/api/auth", require("./routes/auth"));
+app.use("/api/auth", require("./routes/auth-v2"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/admin_tickets", require("./routes/admin_tickets"));
