@@ -33,10 +33,9 @@ async function addSilkDirect(gameAccountId, amount) {
       await gamePool.request()
         .input("jid", sql.Int, gameAccountId)
         .input("amount", sql.Int, amount)
-        .query("UPDATE SK_SILK SET silk_own = silk_own + @amount WHERE JID = @jid");
-    }
+        .query("UPDATE SK_SILK SET silk_own = silk_own + @amount WHERE JID = @jid");    }
   } catch (err) {
-    console.error("Fehler bei Silk-Gutschrift:", err);
+    console.error("Error with Silk credit:", err);
   }
 }
 
@@ -114,9 +113,8 @@ router.post("/nowpayments/callback", express.json(), async (req, res) => {
     .createHmac("sha512", NOWPAYMENTS_HMAC_SECRET)
     .update(JSON.stringify(body))
     .digest("hex");
-
   if (generatedHmac !== receivedHmac) {
-    console.warn("Ungültige HMAC-Signatur von NOWPayments!");
+    console.warn("Invalid HMAC signature from NOWPayments!");
     return res.status(403).send("Invalid signature");
   }
 

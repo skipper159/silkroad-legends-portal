@@ -78,16 +78,14 @@ router.get("/my", authenticateToken, async (req, res) => {
   try {
     await charPoolConnect;
     await gamePoolConnect;
-    await webPoolConnect;
-
-    // Hole die E-Mail-Adresse des Benutzers
+    await webPoolConnect;    // Get the user's email address
     const userResult = await webPool.request()
       .input("userId", sql.Int, req.user.id)
       .query("SELECT Email FROM WebUsers WHERE Id = @userId");
     
     const userEmail = userResult.recordset[0]?.Email;
 
-    // Hole JIDs (Game Account IDs) für den angemeldeten Benutzer
+    // Get JIDs (Game Account IDs) for the logged in user
     const jidsResult = await charPool.request()
       .input("userId", sql.Int, req.user.id)
       .query("SELECT JID FROM _AccountJID WHERE WebUserId = @userId");
@@ -98,15 +96,13 @@ router.get("/my", authenticateToken, async (req, res) => {
     // Hole Game Account Details
     const jidParams = jids.map((_, i) => `@jid${i}`).join(", ");
     const gameReq = gamePool.request();
-    jids.forEach((jid, i) => gameReq.input(`jid${i}`, sql.Int, jid));
-
-    const result = await gameReq.query(`
+    jids.forEach((jid, i) => gameReq.input(`jid${i}`, sql.Int, jid));    const result = await gameReq.query(`
       SELECT JID, StrUserID, regtime, reg_ip, AccPlayTime
       FROM TB_User
       WHERE JID IN (${jidParams})
     `);
 
-    // Hole Silk-Informationen für alle Game Accounts
+    // Get Silk information for all game accounts
     const silkReq = gamePool.request();
     jids.forEach((jid, i) => silkReq.input(`jid${i}`, sql.Int, jid));
 

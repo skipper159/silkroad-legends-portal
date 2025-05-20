@@ -3,7 +3,7 @@ const router = express.Router();
 const { charPool, charPoolConnect, sql } = require("../db");
 const { getItemImagePath } = require("../utils/itemimage");
 
-// 🔧 Hilfsfunktion zur Bestimmung der Item-Rarität anhand des CodeNames
+// 🔧 Helper function to determine item rarity based on CodeName
 function getRarityFromCodeName(ItemCodeName) {
     if (!ItemCodeName) return "normal";
 
@@ -51,7 +51,7 @@ router.get("/:charId", async (req, res) => {
                     AND inv.Slot BETWEEN 0 AND 12
             `);
 
-        console.log("Ermittelte Items für CharID", charId, ":", result.recordset);
+        console.log("Found items for CharID", charId, ":", result.recordset);
 
         const items = result.recordset.map(row => {
             const rarity = getRarityFromCodeName(row.ItemCodeName);

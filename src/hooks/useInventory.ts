@@ -4,11 +4,10 @@ import type { InventoryItem } from '../types/inventory';
 export function useInventory(characterId: number) {
   const [items, setItems] = useState<InventoryItem[]>([]);
 
-  useEffect(() => {
-    fetch(`/api/characters/${characterId}/inventory`)
+  useEffect(() => {    fetch(`/api/characters/${characterId}/inventory`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Fehler beim Abrufen des Inventars');
+          throw new Error('Error retrieving inventory');
         }
         return response.json();
       })

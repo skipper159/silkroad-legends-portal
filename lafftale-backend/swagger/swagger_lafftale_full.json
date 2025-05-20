@@ -26,11 +26,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "username",
-                  "email",
-                  "password"
-                ]
+                "required": ["username", "email", "password"]
               }
             }
           }
@@ -46,9 +42,7 @@
             "description": "Database error"
           }
         },
-        "tags": [
-          "auth"
-        ]
+        "tags": ["auth"]
       }
     },
     "/api/auth/login": {
@@ -68,10 +62,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "username",
-                  "password"
-                ]
+                "required": ["username", "password"]
               }
             }
           }
@@ -99,9 +90,7 @@
             "description": "Login error"
           }
         },
-        "tags": [
-          "auth"
-        ]
+        "tags": ["auth"]
       }
     },
     "/api/user_tickets/me": {
@@ -144,9 +133,7 @@
             "description": "Unauthorized"
           }
         },
-        "tags": [
-          "user_tickets"
-        ]
+        "tags": ["user_tickets"]
       }
     },
     "/api/user_tickets": {
@@ -172,17 +159,10 @@
                   },
                   "priority": {
                     "type": "string",
-                    "enum": [
-                      "low",
-                      "normal",
-                      "high"
-                    ]
+                    "enum": ["low", "normal", "high"]
                   }
                 },
-                "required": [
-                  "subject",
-                  "message"
-                ]
+                "required": ["subject", "message"]
               }
             }
           }
@@ -198,9 +178,7 @@
             "description": "Error creating ticket"
           }
         },
-        "tags": [
-          "user_tickets"
-        ]
+        "tags": ["user_tickets"]
       }
     },
     "/api/user_tickets/my": {
@@ -229,9 +207,7 @@
             "description": "Unauthorized"
           }
         },
-        "tags": [
-          "user_tickets"
-        ]
+        "tags": ["user_tickets"]
       }
     },
     "/api/user_tickets/{id}": {
@@ -319,9 +295,7 @@
             "description": "Error loading ticket"
           }
         },
-        "tags": [
-          "user_tickets"
-        ]
+        "tags": ["user_tickets"]
       }
     },
     "/api/user_tickets/{id}/message": {
@@ -353,9 +327,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "message"
-                ]
+                "required": ["message"]
               }
             }
           }
@@ -371,9 +343,7 @@
             "description": "Error adding message"
           }
         },
-        "tags": [
-          "user_tickets"
-        ]
+        "tags": ["user_tickets"]
       }
     },
     "/api/admin_tickets/tickets/open": {
@@ -395,9 +365,7 @@
             "description": "Error loading open tickets"
           }
         },
-        "tags": [
-          "admin_tickets"
-        ]
+        "tags": ["admin_tickets"]
       }
     },
     "/api/admin_tickets/tickets/{id}/close": {
@@ -429,9 +397,7 @@
             "description": "Error closing ticket"
           }
         },
-        "tags": [
-          "admin_tickets"
-        ]
+        "tags": ["admin_tickets"]
       }
     },
     "/api/donation/initiate": {
@@ -457,12 +423,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "userId",
-                  "amount",
-                  "silkAmount",
-                  "method"
-                ]
+                "required": ["userId", "amount", "silkAmount", "method"]
               }
             }
           }
@@ -490,9 +451,7 @@
             "description": "Missing donation fields"
           }
         },
-        "tags": [
-          "donation"
-        ]
+        "tags": ["donation"]
       }
     },
     "/api/donation/wallet/{userId}": {
@@ -516,9 +475,7 @@
             "description": "User not found"
           }
         },
-        "tags": [
-          "donation"
-        ]
+        "tags": ["donation"]
       }
     },
     "/api/donation/vote/{platform}": {
@@ -531,12 +488,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": [
-                "xtreme",
-                "arena",
-                "gtop",
-                "topg"
-              ]
+              "enum": ["xtreme", "arena", "gtop", "topg"]
             }
           }
         ],
@@ -554,10 +506,7 @@
                     "type": "integer"
                   }
                 },
-                "required": [
-                  "userId",
-                  "gameAccountId"
-                ]
+                "required": ["userId", "gameAccountId"]
               }
             }
           }
@@ -585,9 +534,7 @@
             "description": "Unauthorized game account"
           }
         },
-        "tags": [
-          "donation"
-        ]
+        "tags": ["donation"]
       }
     },
     "/api/ranking/{type}": {
@@ -643,9 +590,7 @@
             "description": "Database error"
           }
         },
-        "tags": [
-          "ranking"
-        ]
+        "tags": ["ranking"]
       }
     },
     "/api/characters/characters/{gameAccountId}": {
@@ -679,9 +624,7 @@
             "description": "Error fetching characters"
           }
         },
-        "tags": [
-          "characters"
-        ]
+        "tags": ["characters"]
       }
     },
     "/api/characters/gameaccounts/{webUserId}": {
@@ -715,9 +658,7 @@
             "description": "Error fetching game accounts"
           }
         },
-        "tags": [
-          "characters"
-        ]
+        "tags": ["characters"]
       }
     },
     "/api/characters/{charId}/details": {
@@ -751,9 +692,7 @@
             "description": "Failed to load character details"
           }
         },
-        "tags": [
-          "characters"
-        ]
+        "tags": ["characters"]
       }
     },
     "/api/silk/balance/{gameAccountId}": {
@@ -792,9 +731,7 @@
             "description": "Failed to fetch Silk balance"
           }
         },
-        "tags": [
-          "silk"
-        ]
+        "tags": ["silk"]
       }
     },
     "/api/silk/add": {
@@ -814,10 +751,7 @@
                     "type": "integer"
                   }
                 },
-                "required": [
-                  "gameAccountId",
-                  "amount"
-                ]
+                "required": ["gameAccountId", "amount"]
               }
             }
           }
@@ -833,9 +767,7 @@
             "description": "Failed to add Silk"
           }
         },
-        "tags": [
-          "silk"
-        ]
+        "tags": ["silk"]
       }
     },
     "/api/silk/spend": {
@@ -855,10 +787,7 @@
                     "type": "integer"
                   }
                 },
-                "required": [
-                  "gameAccountId",
-                  "amount"
-                ]
+                "required": ["gameAccountId", "amount"]
               }
             }
           }
@@ -874,9 +803,7 @@
             "description": "Failed to spend Silk"
           }
         },
-        "tags": [
-          "silk"
-        ]
+        "tags": ["silk"]
       }
     },
     "/api/admin/webaccounts": {
@@ -900,9 +827,7 @@
             "description": "Failed to fetch web accounts"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/admin/gameaccounts": {
@@ -926,9 +851,7 @@
             "description": "Failed to fetch game accounts"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/admin/gameaccounts/{id}/ban": {
@@ -952,9 +875,7 @@
             "description": "Failed to ban account"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/api/admin/gameaccounts/{id}/timeout": {
@@ -978,16 +899,12 @@
             "description": "Failed to apply timeout"
           }
         },
-        "tags": [
-          "admin"
-        ]
+        "tags": ["admin"]
       }
     },
     "/gameaccount/create": {
       "post": {
-        "tags": [
-          "GameAccount"
-        ],
+        "tags": ["GameAccount"],
         "summary": "Create a new game account",
         "description": "Creates a new game account for the currently authenticated web user. `reg_ip` and `regtime` are automatically set by the server.",
         "security": [
@@ -1011,10 +928,7 @@
                     "example": "MySecret123!"
                   }
                 },
-                "required": [
-                  "username",
-                  "password"
-                ]
+                "required": ["username", "password"]
               }
             }
           }
@@ -1035,9 +949,7 @@
     "/api/gameaccount/my": {
       "get": {
         "summary": "Get a list of your game accounts",
-        "tags": [
-          "GameAccount"
-        ],
+        "tags": ["GameAccount"],
         "security": [
           {
             "bearerAuth": []
@@ -1080,9 +992,7 @@
     "/api/gameaccount/{id}/password": {
       "put": {
         "summary": "Change password of a game account",
-        "tags": [
-          "GameAccount"
-        ],
+        "tags": ["GameAccount"],
         "security": [
           {
             "bearerAuth": []
@@ -1110,9 +1020,7 @@
                     "example": "newSecurePW"
                   }
                 },
-                "required": [
-                  "newPassword"
-                ]
+                "required": ["newPassword"]
               }
             }
           }
@@ -1133,9 +1041,7 @@
     "/api/gameaccount/{id}": {
       "delete": {
         "summary": "Delete a game account",
-        "tags": [
-          "GameAccount"
-        ],
+        "tags": ["GameAccount"],
         "security": [
           {
             "bearerAuth": []
@@ -1193,86 +1099,86 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                        "id": {
+                      "id": {
                         "type": "integer",
                         "description": "Unique identifier for the item instance"
-                        },
-                        "codeName": {
+                      },
+                      "codeName": {
                         "type": "string",
                         "description": "Internal item code (e.g. ITEM_CH_WEAPON_BLADE_01_A)"
-                        },
-                        "name": {
-                          "type": "string",
-                          "description": "Translated item name"
-                        },
-                        "quantity": {
-                          "type": "integer",
-                          "description": "How many of this item exist in the inventory"
-                        },
-                        "slot": {
-                          "type": "integer",
-                          "description": "Inventory slot number"
-                        },
-                        "plus": {
-                          "type": "integer",
-                          "description": "Plus level of the item (+0 to +15)"
-                        },
-                        "rarity": {
-                          "type": "string",
-                          "description": "Item rarity: normal, Seal of Star, Moon, Sun"
-                        },
-                        "iconUrl": {
-                          "type": "string",
-                          "description": "URL path to the item's icon"
-                        },
-                        "isEquipped": {
-                          "type": "boolean",
-                          "description": "True if item is equipped"
-                        },
-                        "type": {
-                          "type": "string",
-                          "description": "Item type: Weapon, Armor, Accessory, Shield"
-                        },
-                        "phyAttack": {
-                          "type": "string",
-                          "description": "Physical attack value (e.g. 345–410)"
-                        },
-                        "magAttack": {
-                          "type": "string",
-                          "description": "Magical attack value (e.g. 270–320)"
-                        },
-                        "phyDef": {
-                          "type": "integer",
-                          "description": "Physical defense value"
-                        },
-                        "magDef": {
-                          "type": "integer",
-                          "description": "Magical defense value"
-                        },
-                        "atkRate": {
-                          "type": "integer",
-                          "description": "Attack rate value"
-                        },
-                        "parryRate": {
-                          "type": "integer",
-                          "description": "Parry rate value"
-                        },
-                        "durability": {
-                          "type": "string",
-                          "description": "Durability string (e.g. 60/60)"
-                        },
-                        "phyReinforce": {
-                          "type": "string",
-                          "description": "Physical reinforce percentage (e.g. 45%)"
-                        },
-                          "magReinforce": {
-                          "type": "string",
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Translated item name"
+                      },
+                      "quantity": {
+                        "type": "integer",
+                        "description": "How many of this item exist in the inventory"
+                      },
+                      "slot": {
+                        "type": "integer",
+                        "description": "Inventory slot number"
+                      },
+                      "plus": {
+                        "type": "integer",
+                        "description": "Plus level of the item (+0 to +15)"
+                      },
+                      "rarity": {
+                        "type": "string",
+                        "description": "Item rarity: normal, Seal of Star, Moon, Sun"
+                      },
+                      "iconUrl": {
+                        "type": "string",
+                        "description": "URL path to the item's icon"
+                      },
+                      "isEquipped": {
+                        "type": "boolean",
+                        "description": "True if item is equipped"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Item type: Weapon, Armor, Accessory, Shield"
+                      },
+                      "phyAttack": {
+                        "type": "string",
+                        "description": "Physical attack value (e.g. 345–410)"
+                      },
+                      "magAttack": {
+                        "type": "string",
+                        "description": "Magical attack value (e.g. 270–320)"
+                      },
+                      "phyDef": {
+                        "type": "integer",
+                        "description": "Physical defense value"
+                      },
+                      "magDef": {
+                        "type": "integer",
+                        "description": "Magical defense value"
+                      },
+                      "atkRate": {
+                        "type": "integer",
+                        "description": "Attack rate value"
+                      },
+                      "parryRate": {
+                        "type": "integer",
+                        "description": "Parry rate value"
+                      },
+                      "durability": {
+                        "type": "string",
+                        "description": "Durability string (e.g. 60/60)"
+                      },
+                      "phyReinforce": {
+                        "type": "string",
+                        "description": "Physical reinforce percentage (e.g. 45%)"
+                      },
+                      "magReinforce": {
+                        "type": "string",
                         "description": "Magical reinforce percentage (e.g. 48%)"
-                        },
-                        "blues": {
-                          "type": "array",
-                          "items": {
-                              "type": "string"
+                      },
+                      "blues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
                         },
                         "description": "Array of blue attributes (e.g. +7 STR, Immortal, Astral)"
                       }
@@ -1292,18 +1198,14 @@
             "description": "Error fetching inventory"
           }
         },
-        "tags": [
-          "inventory"
-        ]
+        "tags": ["inventory"]
       }
     },
     "/api/payment/nowpayments/initiate": {
       "post": {
         "summary": "NOWPayments Crypto-Zahlung starten",
         "description": "Erzeugt eine Invoice f\u00fcr eine Kryptow\u00e4hrungszahlung \u00fcber NOWPayments",
-        "tags": [
-          "Payment NowPayments"
-        ],
+        "tags": ["Payment NowPayments"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1320,10 +1222,7 @@
                     "example": 15
                   }
                 },
-                "required": [
-                  "accountId",
-                  "amount"
-                ]
+                "required": ["accountId", "amount"]
               }
             }
           }
@@ -1346,7 +1245,7 @@
             }
           },
           "500": {
-            "description": "Fehler bei Invoice-Erstellung"
+            "description": "Error creating invoice"
           }
         },
         "security": [
@@ -1360,9 +1259,7 @@
       "post": {
         "summary": "PayOP Webhook (Callback)",
         "description": "Empf\u00e4ngt Zahlungsbest\u00e4tigung von PayOP und schreibt Silk gut.",
-        "tags": [
-          "Payment PayOP"
-        ],
+        "tags": ["Payment PayOP"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1406,9 +1303,7 @@
       "post": {
         "summary": "NOWPayments Webhook (IPN)",
         "description": "Empf\u00e4ngt IPN-Daten von NOWPayments und schreibt Silk gut, wenn die Zahlung erfolgreich ist.",
-        "tags": [
-          "Payment NowPayments"
-        ],
+        "tags": ["Payment NowPayments"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1454,9 +1349,7 @@
       "post": {
         "summary": "Startet eine PayOP-Zahlung",
         "description": "Diese Route erstellt eine PayOP-Zahlung basierend auf dem GameAccount und dem Silk-Paket.",
-        "tags": [
-          "Payment PayOP"
-        ],
+        "tags": ["Payment PayOP"],
         "requestBody": {
           "required": true,
           "content": {
@@ -1473,10 +1366,7 @@
                     "example": 10
                   }
                 },
-                "required": [
-                  "accountId",
-                  "amount"
-                ]
+                "required": ["accountId", "amount"]
               }
             }
           }
@@ -1499,7 +1389,7 @@
             }
           },
           "500": {
-            "description": "Fehler bei der Erstellung der PayOP-Zahlung",
+            "description": "Error creating PayOP payment",
             "content": {
               "application/json": {
                 "schema": {
@@ -1567,8 +1457,8 @@
             "type": "integer",
             "description": "Reference ID to the Character Picture"
           },
-          "race": { 
-            "type": "string" ,
+          "race": {
+            "type": "string",
             "description": "Chinese, Eurpean or unknown"
           }
         }

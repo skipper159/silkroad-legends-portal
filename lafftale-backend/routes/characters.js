@@ -7,20 +7,18 @@ const authenticateToken = require("../middleware/auth");
 // Get all game accounts for a web user (mit authentifizierung)
 router.get("/gameaccounts/:webUserId", authenticateToken, async (req, res) => {
   const { webUserId } = req.params;
-  
-  // Sicherstellung: Der angeforderte Benutzer ist der angemeldete Benutzer oder ein Admin
+    // Security check: The requested user is the logged in user or an admin
   if (parseInt(webUserId) !== req.user.id && req.user.role !== 3) {
     return res.status(403).json({ error: "Unauthorized access to other user's data" });
   }
   
   await charPoolConnect;
-  try {
-    // Holen der AccountIDs aus _AccountJID mit WebUserId Verknüpfung
+  try {    // Get AccountIDs from _AccountJID with WebUserId link
     const accountsResult = await charPool.request()
       .input("webUserId", sql.Int, webUserId)
       .query("SELECT JID, AccountID FROM _AccountJID WHERE WebUserId = @webUserId");
 
-    // Abrufen der Benutzerdetails aus TB_User
+    // Retrieve user details from TB_User
     await gamePoolConnect;
     const jids = accountsResult.recordset.map(row => row.JID);
     
@@ -63,15 +61,13 @@ router.get("/characters/:gameAccountId", authenticateToken, async (req, res) => 
     return res.status(400).json({ error: "Invalid game account ID" });
   }
   
-  try {
-    // Überprüfen, ob der GameAccount zum aktuellen Benutzer gehört
+  try {    // Check if the GameAccount belongs to the current user
     await charPoolConnect;
     const ownerCheck = await charPool.request()
       .input("jid", sql.Int, gameAccountId)
       .input("webUserId", sql.Int, req.user.id)
       .query("SELECT COUNT(*) AS count FROM _AccountJID WHERE JID = @jid AND WebUserId = @webUserId");
-      
-    // Erlauben, wenn es ein Admin ist oder der Account dem Benutzer gehört
+        // Allow if it's an admin or the account belongs to the user
     if (ownerCheck.recordset[0].count === 0 && req.user.role !== 3) {
       return res.status(403).json({ error: "Unauthorized access to this game account" });
     }
@@ -89,14 +85,13 @@ router.get("/characters/:gameAccountId", authenticateToken, async (req, res) => 
       `);
     
     if (charIdsResult.recordset.length === 0) {
-      return res.json([]);  // Keine Charaktere gefunden
+      return res.json([]);  // No characters found
     }
-    
-    // CharIDs für die IN-Klausel vorbereiten
+      // Prepare CharIDs for the IN clause
     const charIds = charIdsResult.recordset.map(row => row.CharID);
     const charIdParams = charIds.map((_, i) => `@charId${i}`).join(", ");
     
-    // Request vorbereiten mit allen CharIDs
+    // Prepare request with all CharIDs
     const charReq = charPool.request();
     charIds.forEach((charId, i) => charReq.input(`charId${i}`, sql.Int, charId));
     
@@ -154,8 +149,7 @@ router.get("/inventory/:charId", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: "Invalid character ID" });
   }
 
-  try {
-    // Überprüfen, ob der Charakter zum aktuellen Benutzer gehört
+  try {    // Check if the character belongs to the current user
     await charPoolConnect;
     const ownerCheck = await charPool.request()
       .input("charId", sql.Int, charId)
@@ -170,11 +164,11 @@ router.get("/inventory/:charId", authenticateToken, async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to this character's inventory" });
     }
 
-    // Inventar-Items des Charakters abrufen
+    // Retrieve character's inventory items
     const inventoryResult = await charPool.request()
       .input("charId", sql.Int, charId)
       .query(`
-        SELECT 
+        SELECT
           ItemID AS id,
           ItemName AS name,
           IconPath AS icon,

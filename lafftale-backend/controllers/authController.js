@@ -10,11 +10,9 @@ const { generateToken, sendPasswordResetEmail, sendVerificationEmail } = require
 async function registerUser(req, res) {
   const { username, email, password } = req.body;
   if (!username || !email || !password) return res.status(400).send("Missing fields");
-
-  const hashedPassword = await hashPassword(password);
-  // Token für E-Mail-Verifizierung generieren
+  const hashedPassword = await hashPassword(password);  // Generate token for email verification
   const verificationToken = generateToken();
-  const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 Stunden gültig
+  const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // Valid for 24 hours
   
   await poolConnect;
     try {
@@ -33,15 +31,13 @@ async function registerUser(req, res) {
       .input("verificationToken", sql.NVarChar, verificationToken)
       .input("verificationExpiry", sql.DateTime, verificationExpiry)
       .query(`INSERT INTO WebUsers (Username, Email, PasswordHash, RoleId, EmailVerified, VerificationToken, VerificationTokenExpiry) 
-              VALUES (@username, @email, @password, @roleId, 0, @verificationToken, @verificationExpiry)`);
-
-    // Verifizierungs-E-Mail senden
+              VALUES (@username, @email, @password, @roleId, 0, @verificationToken, @verificationExpiry)`);    // Verification email
     try {
       await sendVerificationEmail(email, verificationToken);
       console.log(`Verification email sent to ${email}`);
     } catch (emailError) {
       console.error("Error sending verification email:", emailError);
-      // Wir geben hier keinen Fehler zurück, um den Registrierungsprozess nicht zu unterbrechen
+      // We don't return an error here to avoid interrupting the registration process
     }
 
     res.status(201).send("User registered successfully");
@@ -72,13 +68,11 @@ async function loginUser(req, res) {
     if (!user.recordset[0]) return res.status(404).send("User not found");
 
     const valid = await comparePassword(password, user.recordset[0].PasswordHash);
-    if (!valid) return res.status(403).send("Invalid credentials");
-
-    // Prüfen, ob der Benutzer die E-Mail-Adresse bestätigt hat
+    if (!valid) return res.status(403).send("Invalid credentials");    // Check if the user has verified their email address
     if (!user.recordset[0].EmailVerified) {
-      // Optional: Hier könnte eine neue Bestätigungs-E-Mail ausgelöst werden, falls die alte abgelaufen ist
+      // Optional: A new confirmation email could be triggered here if the old one has expired
       return res.status(403).send({
-        message: "Email nicht verifiziert",
+        message: "Email not verified",
         needsVerification: true
       });
     }
@@ -125,7 +119,7 @@ module.exports = {
 };
 
 /**
- * Passwort vergessen - Sendet eine E-Mail mit einem Passwort-Reset-Link
+ * Forgot password - Sends an email with a password reset link
  */
 async function forgotPassword(req, res) {
   const { email } = req.body;
@@ -133,29 +127,26 @@ async function forgotPassword(req, res) {
 
   try {
     await poolConnect;
-    
-    // Prüfen, ob der Benutzer mit dieser E-Mail existiert
+      // Check if user with this email exists
     const user = await pool.request()
       .input("email", sql.NVarChar, email)
       .query("SELECT * FROM WebUsers WHERE Email = @email");
     
     if (!user.recordset[0]) {
-      // Aus Sicherheitsgründen geben wir nicht an, dass die E-Mail nicht existiert
+      // For security reasons, we don't reveal that the email doesn't exist
       return res.status(200).send("Reset password instructions sent if email exists");
     }
-    
-    // Token für Passwort-Reset generieren
+      // Token for password reset
     const resetToken = generateToken();
-    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 Stunde gültig
-    
-    // Token in der Datenbank speichern
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // Valid for 1 hour
+      // Store token in the database
     await pool.request()
       .input("userId", sql.Int, user.recordset[0].Id)
       .input("resetToken", sql.NVarChar, resetToken)
       .input("resetTokenExpiry", sql.DateTime, resetTokenExpiry)
       .query("UPDATE WebUsers SET ResetPasswordToken = @resetToken, ResetPasswordTokenExpiry = @resetTokenExpiry WHERE Id = @userId");
     
-    // E-Mail senden
+    // Send email
     await sendPasswordResetEmail(email, resetToken);
     
     res.status(200).send("Reset password instructions sent");
@@ -166,7 +157,7 @@ async function forgotPassword(req, res) {
 }
 
 /**
- * Überprüft, ob ein Passwort-Reset-Token gültig ist
+ * Verifies if a password reset token is valid
  */
 async function verifyResetToken(req, res) {
   const { token } = req.params;
@@ -174,8 +165,7 @@ async function verifyResetToken(req, res) {
   
   try {
     await poolConnect;
-    
-    // Token in der Datenbank suchen
+      // Find token in the database
     const user = await pool.request()
       .input("token", sql.NVarChar, token)
       .input("now", sql.DateTime, new Date())
@@ -193,7 +183,7 @@ async function verifyResetToken(req, res) {
 }
 
 /**
- * Setzt das Passwort zurück
+ * Resets the password
  */
 async function resetPassword(req, res) {
   const { token, password } = req.body;
@@ -201,8 +191,7 @@ async function resetPassword(req, res) {
   
   try {
     await poolConnect;
-    
-    // Token in der Datenbank suchen
+      // Find token in the database
     const user = await pool.request()
       .input("token", sql.NVarChar, token)
       .input("now", sql.DateTime, new Date())
@@ -212,10 +201,10 @@ async function resetPassword(req, res) {
       return res.status(400).send("Invalid or expired token");
     }
     
-    // Neues Passwort hashen
+    // Hash new password
     const hashedPassword = await hashPassword(password);
     
-    // Passwort aktualisieren und Token zurücksetzen
+    // Update password and reset token
     await pool.request()
       .input("userId", sql.Int, user.recordset[0].Id)
       .input("password", sql.NVarChar, hashedPassword)
@@ -229,7 +218,7 @@ async function resetPassword(req, res) {
 }
 
 /**
- * Bestätigt die E-Mail-Adresse eines Benutzers
+ * Confirms a user's email address
  */
 async function verifyEmail(req, res) {
   const { token } = req.params;
@@ -237,8 +226,7 @@ async function verifyEmail(req, res) {
   
   try {
     await poolConnect;
-    
-    // Token in der Datenbank suchen
+      // Find token in the database
     const user = await pool.request()
       .input("token", sql.NVarChar, token)
       .input("now", sql.DateTime, new Date())
@@ -248,7 +236,7 @@ async function verifyEmail(req, res) {
       return res.status(400).send("Invalid or expired token");
     }
     
-    // E-Mail als verifiziert markieren und Token zurücksetzen
+    // Mark email as verified and reset token
     await pool.request()
       .input("userId", sql.Int, user.recordset[0].Id)
       .query("UPDATE WebUsers SET EmailVerified = 1, VerificationToken = NULL, VerificationTokenExpiry = NULL WHERE Id = @userId");
@@ -261,7 +249,7 @@ async function verifyEmail(req, res) {
 }
 
 /**
- * Sendet eine neue Verifizierungs-E-Mail
+ * Sends a new verification email
  */
 async function resendVerificationEmail(req, res) {
   const { email } = req.body;
@@ -269,34 +257,32 @@ async function resendVerificationEmail(req, res) {
   
   try {
     await poolConnect;
-    
-    // Benutzer in der Datenbank suchen
+      // Find user in the database
     const user = await pool.request()
       .input("email", sql.NVarChar, email)
       .query("SELECT * FROM WebUsers WHERE Email = @email");
     
     if (!user.recordset[0]) {
-      // Aus Sicherheitsgründen geben wir nicht an, dass die E-Mail nicht existiert
+      // For security reasons, we don't reveal that the email doesn't exist
       return res.status(200).send("Verification email sent if account exists");
     }
     
-    // Wenn die E-Mail bereits verifiziert ist
+    // If the email is already verified
     if (user.recordset[0].EmailVerified) {
       return res.status(400).send("Email is already verified");
     }
     
-    // Neuen Token generieren
+    // Generate new token
     const verificationToken = generateToken();
-    const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 Stunden gültig
-    
-    // Token in der Datenbank aktualisieren
+    const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // Valid for 24 hours
+      // Update token in the database
     await pool.request()
       .input("userId", sql.Int, user.recordset[0].Id)
       .input("verificationToken", sql.NVarChar, verificationToken)
       .input("verificationExpiry", sql.DateTime, verificationExpiry)
       .query("UPDATE WebUsers SET VerificationToken = @verificationToken, VerificationTokenExpiry = @verificationExpiry WHERE Id = @userId");
     
-    // E-Mail senden
+    // Send email
     await sendVerificationEmail(email, verificationToken);
     
     res.status(200).send("Verification email sent");

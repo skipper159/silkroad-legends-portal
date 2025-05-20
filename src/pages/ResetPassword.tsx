@@ -29,8 +29,8 @@ const ResetPassword = () => {
         if (!response.ok) {
           setIsValidToken(false);
           toast({
-            title: "Ungültiger oder abgelaufener Link",
-            description: "Dieser Passwort-Reset-Link ist ungültig oder abgelaufen.",
+            title: "Invalid or expired link",
+            description: "This password reset link is invalid or expired.",
             variant: "destructive",
           });
         }
@@ -38,8 +38,8 @@ const ResetPassword = () => {
         console.error("Token validation error:", error);
         setIsValidToken(false);
         toast({
-          title: "Fehler bei der Validierung",
-          description: "Der Passwort-Reset-Link konnte nicht validiert werden.",
+          title: "Validation Error",
+          description: "The password reset link could not be validated.",
           variant: "destructive",
         });
       }
@@ -51,10 +51,9 @@ const ResetPassword = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      toast({
-        title: "Passwörter stimmen nicht überein",
-        description: "Bitte stellen Sie sicher, dass die Passwörter übereinstimmen.",
+    if (password !== confirmPassword) {      toast({
+        title: "Passwords do not match",
+        description: "Please make sure the passwords match.",
         variant: "destructive",
       });
       return;
@@ -70,24 +69,21 @@ const ResetPassword = () => {
       });
 
       if (response.ok) {
-        setIsSubmitted(true);
-        toast({
-          title: "Passwort zurückgesetzt",
-          description: "Ihr Passwort wurde erfolgreich zurückgesetzt.",
+        setIsSubmitted(true);        toast({
+          title: "Password reset",
+          description: "Your password has been successfully reset.",
         });
         setTimeout(() => navigate("/login"), 3000);
       } else {
-        const data = await response.json();
-        toast({
-          title: "Fehler beim Zurücksetzen",
-          description: data?.message || "Ihr Passwort konnte nicht zurückgesetzt werden.",
+        const data = await response.json();        toast({
+          title: "Reset error",
+          description: data?.message || "Your password could not be reset.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
-      console.error("Reset password error:", error);
-      toast({
-        title: "Netzwerkfehler",
+      console.error("Reset password error:", error);      toast({
+        title: "Network error",
         description: error.message,
         variant: "destructive",
       });
@@ -103,14 +99,13 @@ const ResetPassword = () => {
         <main className="flex-grow bg-login-bg bg-cover bg-center">
           <div className="container mx-auto px-4 py-16 md:py-24">
             <div className="max-w-md mx-auto">
-              <div className="card backdrop-blur-sm border-silkroad-gold/30">
-                <div className="text-center p-6">
-                  <h1 className="text-3xl font-bold text-destructive">Ungültiger Link</h1>
+              <div className="card backdrop-blur-sm border-silkroad-gold/30">                <div className="text-center p-6">
+                  <h1 className="text-3xl font-bold text-destructive">Invalid Link</h1>
                   <p className="text-gray-400 mt-4 mb-6">
-                    Dieser Passwort-Reset-Link ist ungültig oder abgelaufen.
+                    This password reset link is invalid or expired.
                   </p>
                   <Link to="/forgot-password">
-                    <Button className="btn-primary">Neuen Reset-Link anfordern</Button>
+                    <Button className="btn-primary">Request New Reset Link</Button>
                   </Link>
                 </div>
               </div>
@@ -129,38 +124,35 @@ const ResetPassword = () => {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-md mx-auto">
             <div className="card backdrop-blur-sm border-silkroad-gold/30">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Passwort zurücksetzen</h1>
+              <div className="text-center mb-8">                <h1 className="text-3xl font-bold">Reset Password</h1>
                 <p className="text-gray-400 mt-2">
                   {isSubmitted 
-                    ? "Passwort erfolgreich zurückgesetzt" 
-                    : "Geben Sie Ihr neues Passwort ein"}
+                    ? "Password successfully reset" 
+                    : "Enter your new password"}
                 </p>
               </div>
 
               {!isSubmitted ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Neues Passwort</Label>
+                  <div className="space-y-2">                    <Label htmlFor="password">New Password</Label>
                     <Input
                       id="password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Geben Sie ein neues Passwort ein"
+                      placeholder="Enter a new password"
                       required
                       className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
+                  <div className="space-y-2">                    <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Bestätigen Sie Ihr neues Passwort"
+                      placeholder="Confirm your new password"
                       required
                       className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                     />
@@ -171,16 +163,15 @@ const ResetPassword = () => {
                     className="btn-primary w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Wird zurückgesetzt..." : "Passwort zurücksetzen"}
+                    {isLoading ? "Resetting..." : "Reset Password"}
                   </Button>
                 </form>
               ) : (
-                <div className="text-center">
-                  <p className="mb-6 text-gray-300">
-                    Ihr Passwort wurde erfolgreich zurückgesetzt. Sie werden in Kürze zur Login-Seite weitergeleitet.
+                <div className="text-center">                  <p className="mb-6 text-gray-300">
+                    Your password has been successfully reset. You will be redirected to the login page shortly.
                   </p>
                   <Link to="/login">
-                    <Button className="btn-primary w-full">Zum Login</Button>
+                    <Button className="btn-primary w-full">Go to Login</Button>
                   </Link>
                 </div>
               )}

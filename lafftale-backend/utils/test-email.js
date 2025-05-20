@@ -1,8 +1,8 @@
-// Einfache Test-Funktion für den E-Mail-Versand
+// Simple test function for email sending
 const testEmail = async (recipientEmail) => {
   console.log('Starting email test...');
   console.log('Email configuration:');
-  console.log(`- Host: ${process.env.EMAIL_HOST || 'smtp.example.com'}`);
+  console.log(`- Host: ${process.env.EMAIL_HOST || 'sunny_shooterboy@web.de'}`);
   console.log(`- Port: ${process.env.EMAIL_PORT || 587}`);
   console.log(`- Secure: ${process.env.EMAIL_SECURE === 'true'}`);
   console.log(`- User: ${process.env.EMAIL_USER || 'example@example.com'}`);  
@@ -10,7 +10,7 @@ const testEmail = async (recipientEmail) => {
     try {
     const emailModule = require('./email');
     const testToken = emailModule.generateToken();
-    // Verwende den übergebenen Empfänger oder Fallback auf die Konfiguration
+    // Use the provided recipient or fall back to configuration
     const testRecipient = recipientEmail || process.env.TEST_EMAIL || process.env.EMAIL_USER;
     
     console.log(`Sending test email to: ${testRecipient}`);
@@ -25,13 +25,13 @@ const testEmail = async (recipientEmail) => {
   }
 };
 
-// Führe den Test aus, wenn diese Datei direkt aufgerufen wird
+// Run the test if this file is called directly
 if (require.main === module) {
-  // Lade Umgebungsvariablen
+  // Load environment variables
   require('dotenv').config();
   
-  // Prüfe, ob eine E-Mail-Adresse als Argument übergeben wurde
-  const recipientEmail = process.argv[2]; // Nimmt das 3. Argument aus der Kommandozeile
+  // Check if an email address was provided as an argument
+  const recipientEmail = process.argv[2]; // Takes the 3rd argument from the command line
   
   if (recipientEmail) {
     console.log(`Using provided email address: ${recipientEmail}`);

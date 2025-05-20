@@ -1,10 +1,9 @@
-// email.js - E-Mail-Versand-Funktionalität
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const path = require('path');
 const config = require('../config');
 
-// E-Mail-Transporter konfigurieren
+// Configure email transporter
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.example.com',
   port: process.env.EMAIL_PORT || 587,
@@ -17,29 +16,25 @@ const transporter = nodemailer.createTransport({
   logger: true
 });
 
-/**
- * Token für Passwort-Reset oder E-Mail-Verifizierung erstellen
- * @returns {string} Zufällig generierter Token
- */
-function generateToken() {
+// Create token for password reset or email verification
+const generateToken = () => {
   return crypto.randomBytes(32).toString('hex');
-}
+};
 
-/**
- * E-Mail für Kontoverifizierung senden
- * @param {string} email - Die E-Mail-Adresse des Empfängers
- * @param {string} token - Der Verifizierungs-Token
- * @returns {Promise} Promise mit dem Ergebnis des E-Mail-Versands
- */
-async function sendVerificationEmail(email, token) {
-  // Verifications-URL erstellen
+// Send email for account verification
+const sendVerificationEmail = async (email, token) => {
+  // Create verification URL
   const verifyUrl = `${config.frontend.url}${config.frontend.routes.verify}/${token}`;
 
-  // Logo-URL und Attachments vorbereiten
+  // Prepare images
   let logoSrc = 'https://lafftale.online/image/Web/lafftale_logo_300x300.png';
+  let headerSrc = 'https://lafftale.online/image/Web/header2.png';
+  let footerSrc = 'https://lafftale.online/image/Web/header3.png';
+  let backgroundSrc = 'https://lafftale.online/image/Web/Background.png';
   let attachments = [];
   
   if (!config.email.templates.useAbsoluteUrls) {
+    // Include logo
     const logoPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.logo);
     logoSrc = 'cid:logo';
     attachments.push({
@@ -47,34 +42,59 @@ async function sendVerificationEmail(email, token) {
       path: logoPath,
       cid: 'logo'
     });
+    
+    // Include header
+    const headerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.header);
+    headerSrc = 'cid:header';
+    attachments.push({
+      filename: config.email.imagePaths.header,
+      path: headerPath,
+      cid: 'header'
+    });
+    
+    // Include footer
+    const footerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.footer);
+    footerSrc = 'cid:footer';
+    attachments.push({
+      filename: config.email.imagePaths.footer,
+      path: footerPath,
+      cid: 'footer'
+    });
+    
+    // Include background image
+    const backgroundPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.background);
+    backgroundSrc = 'cid:background';
+    attachments.push({
+      filename: config.email.imagePaths.background,
+      path: backgroundPath,
+      cid: 'background'
+    });
   }
-
   const mailOptions = {
     from: config.email.from,
     to: email,
     subject: 'Lafftale Online - Email Verification',
-    html: createVerificationEmailTemplate(verifyUrl, logoSrc),
+    html: createVerificationEmailTemplate(verifyUrl, logoSrc, headerSrc, footerSrc, backgroundSrc),
     attachments
   };
 
   return transporter.sendMail(mailOptions);
-}
+};
 
-/**
- * E-Mail für Passwort-Reset senden
- * @param {string} email - Die E-Mail-Adresse des Empfängers
- * @param {string} token - Der Reset-Token
- * @returns {Promise} Promise mit dem Ergebnis des E-Mail-Versands
- */
-async function sendPasswordResetEmail(email, token) {
-  // Reset-URL erstellen
+// Send email for password reset
+const sendPasswordResetEmail = async (email, token) => {
+  // Create reset URL
   const resetUrl = `${config.frontend.url}${config.frontend.routes.reset}/${token}`;
 
-  // Logo-URL und Attachments vorbereiten
+  // Prepare images
   let logoSrc = 'https://lafftale.online/image/Web/lafftale_logo_300x300.png';
+  let headerSrc = 'https://lafftale.online/image/Web/header2.png';
+  let footerSrc = 'https://lafftale.online/image/Web/header3.png';
+  let backgroundSrc = 'https://lafftale.online/image/Web/Background.png';
   let attachments = [];
   
   if (!config.email.templates.useAbsoluteUrls) {
+    // Include logo
     const logoPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.logo);
     logoSrc = 'cid:logo';
     attachments.push({
@@ -82,26 +102,46 @@ async function sendPasswordResetEmail(email, token) {
       path: logoPath,
       cid: 'logo'
     });
+    
+    // Include header
+    const headerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.header);
+    headerSrc = 'cid:header';
+    attachments.push({
+      filename: config.email.imagePaths.header,
+      path: headerPath,
+      cid: 'header'
+    });
+    
+    // Include footer
+    const footerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.footer);
+    footerSrc = 'cid:footer';
+    attachments.push({
+      filename: config.email.imagePaths.footer,
+      path: footerPath,
+      cid: 'footer'
+    });
+    
+    // Include background image
+    const backgroundPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.background);
+    backgroundSrc = 'cid:background';
+    attachments.push({
+      filename: config.email.imagePaths.background,
+      path: backgroundPath,
+      cid: 'background'
+    });
   }
-
   const mailOptions = {
     from: config.email.from,
     to: email,
-    subject: 'Lafftale Online - Passwort zurücksetzen',
-    html: createPasswordResetEmailTemplate(resetUrl, logoSrc),
+    subject: 'Lafftale Online - Reset Password',
+    html: createPasswordResetEmailTemplate(resetUrl, logoSrc, headerSrc, footerSrc, backgroundSrc),
     attachments
   };
 
   return transporter.sendMail(mailOptions);
-}
+};
 
-/**
- * Template für Verifizierungs-E-Mail erstellen
- * @param {string} verifyUrl - Die Verifizierungs-URL
- * @param {string} logoSrc - Pfad zum Logo
- * @returns {string} HTML-Template
- */
-function createVerificationEmailTemplate(verifyUrl, logoSrc) {
+function createVerificationEmailTemplate(verifyUrl, logoSrc, headerSrc, footerSrc, backgroundSrc) {
   return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -110,56 +150,59 @@ function createVerificationEmailTemplate(verifyUrl, logoSrc) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       <title>Email Verification</title>
       <style type="text/css">
-        /* Grundlegende Stile, die in den meisten E-Mail-Clients funktionieren */
+        /* Basic styles that work in most email clients */
         body { margin: 0; padding: 0; min-width: 100%; font-family: Arial, sans-serif; }
         table { border-spacing: 0; font-family: Arial, sans-serif; }
         td { padding: 0; }
         img { border: 0; }
         .content { width: 600px; max-width: 100%; }
-        .header { padding: 40px 30px 20px 30px; background-color: #1e293b; text-align: center; }
+        .header { padding: 40px 30px 20px 30px; background-color: #1e293b; background-image: url('${headerSrc}'); background-size: cover; background-position: center; text-align: center; }
         .header-logo { display: inline-block; }
         .header-title { color: #d4af37; font-size: 28px; font-weight: bold; margin-top: 20px; }
-        .container { padding: 30px 30px 40px 30px; background-color: #111827; color: #e0e0e0; }
-        .footer { padding: 20px 30px; background-color: #1e293b; text-align: center; color: #9ca3af; }
+        .container { padding: 30px 30px 40px 30px; background-color: #111827; background-image: url('${backgroundSrc}'); background-size: cover; background-position: center; color: #e0e0e0; }
+        .footer { padding: 20px 30px; background-color: #1e293b; background-image: url('${footerSrc}'); background-size: cover; background-position: center; text-align: center; color: #9ca3af; }
         .button { display: inline-block; padding: 12px 25px; background-color: #d4af37; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0; }
         .text-center { text-align: center; }
         .signature { margin-top: 30px; color: #9ca3af; font-size: 14px; }
+        /* Specific styles for Outlook */
+        .ExternalClass { width: 100%; }
+        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #0f172a;">
       <center>
-        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#0f172a">
+        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#0f172a" style="background-color: #0f172a !important;">
           <tr>
             <td align="center" valign="top">
               <!-- Header -->
-              <table class="content" cellpadding="0" cellspacing="0">
+              <table class="content" cellpadding="0" cellspacing="0" border="0" style="width: 600px; max-width: 100%;">
                 <tr>
-                  <td class="header">
+                  <td class="header" style="padding: 40px 30px 20px 30px; background-color: #1e293b !important; background-image: url('${headerSrc}'); background-size: cover; background-position: center; text-align: center;">
                     <img src="${logoSrc}" alt="Lafftale Online Logo" width="100" style="display: block; margin: 0 auto;" />
-                    <div class="header-title">Lafftale Online</div>
+                    <div class="header-title" style="color: #d4af37; font-size: 28px; font-weight: bold; margin-top: 20px;">Lafftale Online</div>
                   </td>
                 </tr>
                 <!-- Main Content -->
                 <tr>
-                  <td class="container">
-                    <p>Hallo,</p>
-                    <p>Danke für deine Registrierung bei Lafftale Online! Um deine Registrierung abzuschließen, verifiziere bitte deine E-Mail-Adresse, indem du auf den Button unten klickst:</p>
+                  <td class="container" style="padding: 30px 30px 40px 30px; background-color: #111827 !important; background-image: url('${backgroundSrc}'); background-size: cover; background-position: center; color: #e0e0e0;">
+                    <p>Hello,</p>
+                    <p>Thank you for registering with Lafftale Online! To complete your registration, please verify your email address by clicking the button below:</p>
                     
-                    <div class="text-center">
-                      <a href="${verifyUrl}" class="button">E-Mail verifizieren</a>
+                    <div class="text-center" style="text-align: center;">
+                      <a href="${verifyUrl}" class="button" style="display: inline-block; padding: 12px 25px; background-color: #d4af37; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0;">Verify Email</a>
                     </div>
                     
-                    <p>Dieser Verifizierungslink ist 24 Stunden gültig. Wenn du keinen Account erstellt hast, kannst du diese E-Mail ignorieren.</p>
+                    <p>This verification link is valid for 24 hours. If you didn't create an account, you can ignore this email.</p>
                     
-                    <div class="signature">
-                      <p>Mit freundlichen Grüßen,<br>Das Lafftale Online Team</p>
+                    <div class="signature" style="margin-top: 30px; color: #9ca3af; font-size: 14px;">
+                      <p>Best regards,<br>The Lafftale Online Team</p>
                     </div>
                   </td>
                 </tr>
                 <!-- Footer -->
                 <tr>
-                  <td class="footer">
-                    <p>&copy; ${new Date().getFullYear()} Lafftale Online. Alle Rechte vorbehalten.</p>
+                  <td class="footer" style="padding: 20px 30px; background-color: #1e293b !important; background-image: url('${footerSrc}'); background-size: cover; background-position: center; text-align: center; color: #9ca3af;">
+                    <p>&copy; ${new Date().getFullYear()} Lafftale Online. All rights reserved.</p>
                   </td>
                 </tr>
               </table>
@@ -172,71 +215,69 @@ function createVerificationEmailTemplate(verifyUrl, logoSrc) {
   `;
 }
 
-/**
- * Template für Passwort-Reset-E-Mail erstellen
- * @param {string} resetUrl - Die Reset-URL
- * @param {string} logoSrc - Pfad zum Logo
- * @returns {string} HTML-Template
- */
-function createPasswordResetEmailTemplate(resetUrl, logoSrc) {
+// Template for password reset email
+function createPasswordResetEmailTemplate(resetUrl, logoSrc, headerSrc, footerSrc, backgroundSrc) {
   return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>Passwort zurücksetzen</title>
+      <title>Reset Password</title>
       <style type="text/css">
-        /* Grundlegende Stile, die in den meisten E-Mail-Clients funktionieren */
+        /* Basic styles that work in most email clients */
         body { margin: 0; padding: 0; min-width: 100%; font-family: Arial, sans-serif; }
         table { border-spacing: 0; font-family: Arial, sans-serif; }
         td { padding: 0; }
         img { border: 0; }
         .content { width: 600px; max-width: 100%; }
-        .header { padding: 40px 30px 20px 30px; background-color: #1e293b; text-align: center; }
+        .header { padding: 40px 30px 20px 30px; background-color: #1e293b; background-image: url('${headerSrc}'); background-size: cover; background-position: center; text-align: center; }
         .header-logo { display: inline-block; }
         .header-title { color: #d4af37; font-size: 28px; font-weight: bold; margin-top: 20px; }
-        .container { padding: 30px 30px 40px 30px; background-color: #111827; color: #e0e0e0; }
-        .footer { padding: 20px 30px; background-color: #1e293b; text-align: center; color: #9ca3af; }
+        .container { padding: 30px 30px 40px 30px; background-color: #111827; background-image: url('${backgroundSrc}'); background-size: cover; background-position: center; color: #e0e0e0; }
+        .footer { padding: 20px 30px; background-color: #1e293b; background-image: url('${footerSrc}'); background-size: cover; background-position: center; text-align: center; color: #9ca3af; }
         .button { display: inline-block; padding: 12px 25px; background-color: #d4af37; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0; }
         .text-center { text-align: center; }
         .signature { margin-top: 30px; color: #9ca3af; font-size: 14px; }
+        /* Specific styles for Outlook */
+        .ExternalClass { width: 100%; }
+        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #0f172a;">
       <center>
-        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#0f172a">
+        <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#0f172a" style="background-color: #0f172a !important;">
           <tr>
             <td align="center" valign="top">
               <!-- Header -->
-              <table class="content" cellpadding="0" cellspacing="0">
+              <table class="content" cellpadding="0" cellspacing="0" border="0" style="width: 600px; max-width: 100%;">
                 <tr>
-                  <td class="header">
+                  <td class="header" style="padding: 40px 30px 20px 30px; background-color: #1e293b !important; background-image: url('${headerSrc}'); background-size: cover; background-position: center; text-align: center;">
                     <img src="${logoSrc}" alt="Lafftale Online Logo" width="100" style="display: block; margin: 0 auto;" />
-                    <div class="header-title">Lafftale Online</div>
+                    <div class="header-title" style="color: #d4af37; font-size: 28px; font-weight: bold; margin-top: 20px;">Lafftale Online</div>
                   </td>
                 </tr>
                 <!-- Main Content -->
                 <tr>
-                  <td class="container">
-                    <p>Hallo,</p>
-                    <p>Du hast das Zurücksetzen deines Passworts für dein Lafftale Online-Konto angefordert. Bitte klicke auf den Button unten, um dein Passwort zurückzusetzen:</p>
+                  <td class="container" style="padding: 30px 30px 40px 30px; background-color: #111827 !important; background-image: url('${backgroundSrc}'); background-size: cover; background-position: center; color: #e0e0e0;">
+                    <p>Hello,</p>
+                    <p>You have requested to reset your password for your Lafftale Online account. Please click the button below to reset your password:</p>
                     
-                    <div class="text-center">
-                      <a href="${resetUrl}" class="button">Passwort zurücksetzen</a>
+                    <div class="text-center" style="text-align: center;">
+                      <a href="${resetUrl}" class="button" style="display: inline-block; padding: 12px 25px; background-color: #d4af37; color: #000000 !important; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0;">Reset Password</a>
                     </div>
                     
-                    <p>Dieser Link ist eine Stunde gültig. Wenn du keine Passwort-Zurücksetzung angefordert hast, kannst du diese E-Mail ignorieren.</p>
+                    <p>This link is valid for one hour. If you did not request a password reset, you can ignore this email.</p>
                     
-                    <div class="signature">
-                      <p>Mit freundlichen Grüßen,<br>Das Lafftale Online Team</p>
+                    <div class="signature" style="margin-top: 30px; color: #9ca3af; font-size: 14px;">
+                      <p>Best regards,<br>The Lafftale Online Team</p>
                     </div>
                   </td>
                 </tr>
                 <!-- Footer -->
                 <tr>
-                  <td class="footer">
-                    <p>&copy; ${new Date().getFullYear()} Lafftale Online. Alle Rechte vorbehalten.</p>
+                  <td class="footer" style="padding: 20px 30px; background-color: #1e293b !important; background-image: url('${footerSrc}'); background-size: cover; background-position: center; text-align: center; color: #9ca3af;">
+                    <p>&copy; ${new Date().getFullYear()} Lafftale Online. All rights reserved.</p>
                   </td>
                 </tr>
               </table>
@@ -249,7 +290,11 @@ function createPasswordResetEmailTemplate(resetUrl, logoSrc) {
   `;
 }
 
-// Exporte
-exports.generateToken = generateToken;
-exports.sendVerificationEmail = sendVerificationEmail;
-exports.sendPasswordResetEmail = sendPasswordResetEmail;
+// Exports
+const emailUtils = {
+  sendPasswordResetEmail,
+  generateToken,
+  sendVerificationEmail
+};
+
+module.exports = emailUtils;

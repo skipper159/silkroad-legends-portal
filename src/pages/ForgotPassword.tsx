@@ -26,23 +26,20 @@ const ForgotPassword = () => {
       });
 
       if (response.ok) {
-        setIsSubmitted(true);
-        toast({
-          title: "E-Mail gesendet",
-          description: "Eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts wurde gesendet.",
+        setIsSubmitted(true);        toast({
+          title: "Email sent",
+          description: "An email with instructions to reset your password has been sent.",
         });
       } else {
-        const data = await response.json();
-        toast({
-          title: "Fehler",
-          description: data?.message || "Beim Versenden der E-Mail ist ein Fehler aufgetreten.",
+        const data = await response.json();        toast({
+          title: "Error",
+          description: data?.message || "An error occurred while sending the email.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
-      console.error("Forgot password error:", error);
-      toast({
-        title: "Netzwerkfehler",
+      console.error("Forgot password error:", error);      toast({
+        title: "Network error",
         description: error.message,
         variant: "destructive",
       });
@@ -58,25 +55,23 @@ const ForgotPassword = () => {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-md mx-auto">
             <div className="card backdrop-blur-sm border-silkroad-gold/30">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Passwort vergessen</h1>
+              <div className="text-center mb-8">                <h1 className="text-3xl font-bold">Forgot Password</h1>
                 <p className="text-gray-400 mt-2">
                   {isSubmitted 
-                    ? "Überprüfen Sie Ihre E-Mail für den Passwort-Reset-Link" 
-                    : "Geben Sie Ihre E-Mail-Adresse ein, um das Passwort zurückzusetzen"}
+                    ? "Check your email for the password reset link" 
+                    : "Enter your email address to reset your password"}
                 </p>
               </div>
 
               {!isSubmitted ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">E-Mail</Label>
+                  <div className="space-y-2">                    <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Geben Sie Ihre registrierte E-Mail-Adresse ein"
+                      placeholder="Enter your registered email address"
                       required
                       className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
                     />
@@ -87,20 +82,19 @@ const ForgotPassword = () => {
                     className="btn-primary w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Senden..." : "Passwort zurücksetzen"}
+                    {isLoading ? "Sending..." : "Reset Password"}
                   </Button>
                 </form>
               ) : (
-                <div className="text-center">
-                  <p className="mb-6 text-gray-300">
-                    Wir haben Ihnen eine E-Mail mit einem Link zum Zurücksetzen Ihres Passworts gesendet. 
-                    Bitte überprüfen Sie Ihren Posteingang und Spam-Ordner.
+                <div className="text-center">                  <p className="mb-6 text-gray-300">
+                    We have sent you an email with a link to reset your password. 
+                    Please check your inbox and spam folder.
                   </p>
                   <Button
                     className="btn-primary w-full"
                     onClick={() => setIsSubmitted(false)}
                   >
-                    Erneut senden
+                    Resend
                   </Button>
                 </div>
               )}
@@ -108,7 +102,7 @@ const ForgotPassword = () => {
               <div className="mt-6 text-center">
                 <p className="text-gray-400">
                   <Link to="/login" className="text-silkroad-gold hover:underline">
-                    Zurück zum Login
+                    Back to Login
                   </Link>
                 </p>
               </div>

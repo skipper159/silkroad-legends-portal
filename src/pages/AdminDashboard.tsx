@@ -43,9 +43,7 @@ const AdminDashboard = () => {
               <TabsList className="flex justify-center p-2 bg-transparent border-b border-lafftale-gold/20">
                 <TabsTrigger 
                   value="webaccounts" 
-                  className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark"
-                >
-                  <Users size={18} />
+                  className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark"                >                  <Users size={18} />
                   <span>Web Accounts</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -62,8 +60,7 @@ const AdminDashboard = () => {
                   <TicketCheck size={18} />
                   <span>Ticket System</span>
                 </TabsTrigger>
-              </TabsList>
-            </Card>
+              </TabsList>            </Card>
 
             <Card className="bg-lafftale-darkgray border-lafftale-gold/30 p-6">
               <TabsContent value="webaccounts" className="mt-0">

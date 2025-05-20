@@ -79,16 +79,14 @@ const Account = () => {
     const fetchGameAccounts = async () => {
       try {
         const response = await fetchWithAuth(`${weburl}/api/gameaccount/my`);
-        
-        if (!response.ok) {
-          throw new Error("Fehler beim Laden der Game-Accounts");
+          if (!response.ok) {
+          throw new Error("Error loading game accounts");
         }
         
         const data = await response.json();
-        setGameAccounts(data);
-      } catch (err) {
+        setGameAccounts(data);      } catch (err) {
         console.error("Fail to load Game-Accounts:", err);
-        // Wir setzen hier keinen Fehler, da es nicht kritisch ist
+        // We don't set an error here as it's not critical
       }
     };
 
@@ -115,12 +113,11 @@ const Account = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-grow bg-lafftale-dark flex items-center justify-center">
-          <div className="card p-8 text-center">
-            <h2 className="text-2xl text-red-500 mb-4">Fehler</h2>
-            <p className="text-gray-300 mb-4">{error || "Benutzerdaten konnten nicht geladen werden"}</p>
+        <main className="flex-grow bg-lafftale-dark flex items-center justify-center">          <div className="card p-8 text-center">
+            <h2 className="text-2xl text-red-500 mb-4">Error</h2>
+            <p className="text-gray-300 mb-4">{error || "User data could not be loaded"}</p>
             <Button onClick={() => window.location.reload()} className="bg-lafftale-gold text-lafftale-dark">
-              Erneut versuchen
+              Try again
             </Button>
           </div>
         </main>

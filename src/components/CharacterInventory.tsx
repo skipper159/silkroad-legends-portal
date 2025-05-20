@@ -6,8 +6,8 @@ import type { CharacterOverviewProps as CharacterInventoryProps } from '../types
 import styles from '../styles/Inventory.module.css';
 
 /**
- * CharacterInventory-Komponente zeigt das Inventar eines Charakters im Silkroad-Stil.
- * @param characterId - ID des Charakters, dessen Items angezeigt werden sollen
+ * CharacterInventory component displays a character's inventory in Silkroad style.
+ * @param characterId - ID of the character whose items should be displayed
  */
 export default function CharacterInventory({ characterId }: CharacterInventoryProps) {
   const items = useInventory(characterId);

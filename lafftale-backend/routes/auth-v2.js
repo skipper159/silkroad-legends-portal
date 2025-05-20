@@ -10,25 +10,25 @@ const {
   resendVerificationEmail
 } = require("../controllers/authController");
 
-// Registrierung
+// Registration
 router.post("/register", registerUser);
 
 // Login
 router.post("/login", loginUser);
 
-// Passwort vergessen
+// Forgot password
 router.post("/forgot-password", forgotPassword);
 
-// Passwort-Reset-Token überprüfen
+// Verify password reset token
 router.get("/verify-reset-token/:token", verifyResetToken);
 
-// Passwort zurücksetzen
+// Reset password
 router.post("/reset-password", resetPassword);
 
-// E-Mail verifizieren
+// Verify email
 router.get("/verify-email/:token", verifyEmail);
 
-// Verifizierungs-E-Mail erneut senden
+// Resend verification email
 router.post("/resend-verification", resendVerificationEmail);
 
 module.exports = router;

@@ -55,22 +55,20 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error decoding JWT:", error);
-          // Fallback bei JWT-Dekodierungsfehlern
+          // Fallback for JWT decoding errors
           navigate("/account", { replace: true });
         }
-      } else {
-        if (data?.needsVerification) {
+      } else {        if (data?.needsVerification) {
           toast({
-            title: "E-Mail nicht verifiziert",
-            description: "Bitte bestätigen Sie Ihre E-Mail-Adresse, um sich anzumelden.",
+            title: "Email not verified",
+            description: "Please verify your email address to log in.",
             variant: "destructive",
           });
           
-          // Weiterleitung zur Seite für erneutes Senden der Bestätigungs-E-Mail
+          // Redirect to the page for resending the verification email
           setTimeout(() => navigate("/resend-verification"), 2000);
-        } else {
-          toast({
-            title: "Login Fehlgeschlagen",
+        } else {          toast({
+            title: "Login Failed",
             description: data?.message || "Incorrect Login Data.",
             variant: "destructive",
           });

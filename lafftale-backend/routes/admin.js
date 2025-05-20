@@ -14,7 +14,7 @@ router.get("/webaccounts", async (req, res) => {
   await webPoolConnect;
   try {
     const result = await webPool.request().query(
-      `SELECT Id, Username, Email, RegisteredAt, LastLogin FROM WebUsers WHERE RoleId = 3`
+      `SELECT Id, Username, Email, RegisteredAt, LastLogin FROM WebUsers WHERE RoleId >= 1`
     );
     res.json(result.recordset);
   } catch (err) {

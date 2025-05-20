@@ -72,27 +72,23 @@ const CharacterOverview = () => {
 
   useEffect(() => {
     const loadAccountsAndCharacters = async () => {
-      setIsLoading(true);
-      try {
-        // Hole die aktuelle BenutzerID aus dem Token
+      setIsLoading(true);      try {
+        // Get the current user ID from the token
         const userId = getUserIdFromToken(token);
         if (!userId) {
-          throw new Error("Benutzer-ID konnte nicht ermittelt werden");
-        }
-        
-        // Abrufen der Game Accounts für den aktuellen Benutzer
+          throw new Error("User ID could not be determined");
+        }          // Get game accounts for the current user        
         const gameAccountsRes = await fetchWithAuth(`${weburl}/api/characters/gameaccounts/${userId}`);
-        if (!gameAccountsRes.ok) throw new Error("Fehler beim Laden der GameAccounts");
+        if (!gameAccountsRes.ok) throw new Error("Error loading game accounts");
         const accounts: GameAccount[] = await gameAccountsRes.json();
 
-        // Laden der Charaktere für jeden Game Account
+        // Loading characters for each game account
         const detailedAccounts: GameAccount[] = await Promise.all(
           accounts.map(async (account) => {
             try {
               const charRes = await fetchWithAuth(`${weburl}/api/characters/characters/${account.id}`);
               const chars = charRes.ok ? await charRes.json() : [];
-              
-              // Bereite jeden Charakter mit Standardwerten für das Equipment vor
+                // Prepare each character with default values for equipment
               const charactersWithEquipment = chars.map((char: Character) => ({
                 ...char,
               //  equipment: {
@@ -115,9 +111,8 @@ const CharacterOverview = () => {
         setSelectedAccountId(detailedAccounts[0].id);
         // Ersten Charakter direkt vollständig laden (inkl. Ausrüstung)
         await handleCharacterSelect(detailedAccounts[0].characters[0]);
-        }
-      } catch (err: any) {
-        toast({ title: "Fehler", description: err.message, variant: "destructive" });
+        }      } catch (err: any) {
+        toast({ title: "Error", description: err.message, variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
@@ -125,15 +120,13 @@ const CharacterOverview = () => {
 
     loadAccountsAndCharacters();
   }, [toast, token]);
-
-  // Helfer-Funktion zum Extrahieren der Benutzer-ID aus dem JWT-Token
+  // Helper function to extract user ID from JWT token
   const getUserIdFromToken = (token: string | null): number | null => {
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.id;
-    } catch (error) {
-      console.error("Fehler beim Dekodieren des Tokens:", error);
+      return payload.id;    } catch (error) {
+      console.error("Error decoding token:", error);
       return null;
     }
   };
@@ -161,7 +154,7 @@ const CharacterOverview = () => {
   
       setSelectedCharacter({ ...character, equipment: mappedEquipment });
     } catch (error) {
-      console.error("Fehler beim Laden der Ausrüstung:", error);
+      console.error("Error loading equipment:", error);
       setSelectedCharacter({ ...character, equipment: {} });
     }
   };
@@ -286,9 +279,8 @@ const CharacterOverview = () => {
                         <span className="text-gray-300">Skill Points:</span>
                         <span className="text-lafftale-gold">{selectedCharacter.skillPoints}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Guild:</span>
-                        <span className="text-lafftale-gold">{selectedCharacter.GuildID || "Keine"}</span>
+                      <div className="flex justify-between">                        <span className="text-gray-300">Guild:</span>
+                        <span className="text-lafftale-gold">{selectedCharacter.GuildID || "None"}</span>
                       </div>
                     </div>
                     

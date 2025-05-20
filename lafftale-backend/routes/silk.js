@@ -42,23 +42,20 @@ router.post("/add", authenticateToken, async (req, res) => {
 
   await poolConnect;
   await gamePoolConnect;
-  try {
-    const isValid = await validateGameAccountOwnership(userId, gameAccountId);
+  try {    const isValid = await validateGameAccountOwnership(userId, gameAccountId);
     if (!isValid) return res.status(403).json({ error: "Unauthorized game account" });
 
-    // Prüfen, ob ein Eintrag für diesen JID bereits existiert
+    // Check if an entry for this JID already exists
     const checkResult = await gamePool.request()
       .input("jid", sql.Int, gameAccountId)
-      .query("SELECT JID FROM SK_SILK WHERE JID = @jid");
-
-    if (checkResult.recordset.length === 0) {
-      // Eintrag existiert nicht - erstellen
+      .query("SELECT JID FROM SK_SILK WHERE JID = @jid");if (checkResult.recordset.length === 0) {
+      // Entry does not exist - create it
       await gamePool.request()
         .input("jid", sql.Int, gameAccountId)
         .input("amount", sql.Int, amount)
         .query("INSERT INTO SK_SILK (JID, silk_own, silk_gift, silk_point) VALUES (@jid, @amount, 0, 0)");
     } else {
-      // Eintrag existiert - aktualisieren
+      // Entry exists - update it
       await gamePool.request()
         .input("jid", sql.Int, gameAccountId)
         .input("amount", sql.Int, amount)

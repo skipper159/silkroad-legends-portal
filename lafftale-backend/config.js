@@ -1,33 +1,32 @@
-// Konfigurationen für die Anwendung
+// Configurations for the application
 module.exports = {
-  // E-Mail-Konfiguration
+  // Email configuration
   email: {
     from: process.env.EMAIL_FROM || 'noreply@silkroad-legends.com',
     
-    // Bildpfade für E-Mail-Vorlagen
-    // Im Produktionsmodus können diese Pfade auf einen CDN oder anderen öffentlichen Speicherort verweisen
+    // Image paths for email templates
+    // In production mode, these paths can point to a CDN or other public storage location
     imagePaths: {
-      // Setze IMAGE_PATH_BASE in .env, um den Basispfad zu überschreiben (für Produktion)
+      // Set IMAGE_PATH_BASE in .env to override the base path (for production)
       base: process.env.IMAGE_PATH_BASE || './public/image/Web',
       
       header: 'header2.png',
       logo: 'lafftale_logo_300x300.png',
       background: 'Background.png',
-      footer: 'header3.png'
-    },
+      footer: 'header3.png'    },
     
-    // E-Mail-Template-Einstellungen
+    // Email template settings
     templates: {
-      // Wenn true, werden absolute URLs für Bilder verwendet, andernfalls werden Bilder als Anhänge gesendet
+      // If true, absolute URLs are used for images, otherwise images are sent as attachments
       useAbsoluteUrls: process.env.USE_ABSOLUTE_URLS === 'true',
       
-      // Basis-URL für Bilder, wenn absolute URLs verwendet werden
-      // z.B. 'https://lafftale.online' oder 'https://cdn.silkroad-legends.com'
+      // Base URL for images when using absolute URLs
+      // e.g. 'https://lafftale.online' or 'https://cdn.silkroad-legends.com'
       imageBaseUrl: process.env.IMAGE_BASE_URL || 'https://lafftale.online'
     }
   },
   
-  // Frontend-URLs
+  // Frontend URLs
   frontend: {
     url: process.env.FRONTEND_URL || 'http://localhost:5173',
     routes: {
@@ -36,10 +35,10 @@ module.exports = {
     }
   },
   
-  // Token-Konfiguration
+  // Token configuration
   tokens: {
-    // Gültigkeitsdauer für Tokens in Millisekunden
-    verificationExpiry: 24 * 60 * 60 * 1000, // 24 Stunden
-    passwordResetExpiry: 60 * 60 * 1000      // 1 Stunde
+    // Token validity duration in milliseconds
+    verificationExpiry: 24 * 60 * 60 * 1000, // 24 hours
+    passwordResetExpiry: 60 * 60 * 1000      // 1 hour
   }
 };

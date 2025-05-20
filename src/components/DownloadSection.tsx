@@ -22,18 +22,15 @@ const clientRequirements = {
   }
 };
 
-const DownloadSection = () => {
-  const [downloading, setDownloading] = useState(false);
-  const [fileSize, setFileSize] = useState<string>("Lädt...");
+const DownloadSection = () => {  const [downloading, setDownloading] = useState(false);
+  const [fileSize, setFileSize] = useState<string>("Loading...");
   const megaLink = "https://mega.nz/file/8JFiWKoL#RKox6jJpDbdqpgP2ABWuYC9V7uzSXJ3QcZJT30ANNog";
 
-  useEffect(() => {
-    // In einer realen Implementierung würde hier eine API-Anfrage erfolgen,
-    // um die tatsächliche Dateigröße zu ermitteln
-    // Da wir nicht direkt auf die Mega-API zugreifen können, simulieren wir dies
-    const fetchFileSize = async () => {
-      try {
-        // In einer realen Implementierung:
+  useEffect(() => {    // In a real implementation, an API request would be made here
+    // to determine the actual file size
+    // Since we can't access the Mega API directly, we simulate this
+    const fetchFileSize = async () => {      try {
+        // In a real implementation:
         // const response = await fetch('api/getFileSize', { 
         //   method: 'POST',
         //   body: JSON.stringify({ url: megaLink })
@@ -41,24 +38,22 @@ const DownloadSection = () => {
         // const data = await response.json();
         // setFileSize(data.size);
         
-        // Für dieses Beispiel setzen wir nach einer kurzen Verzögerung eine Größe
+        // For this example, we set a size after a short delay
         setTimeout(() => {
           setFileSize("1.24 GB");
-        }, 1500);
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Dateigröße:", error);
-        setFileSize("1.24 GB"); // Fallback-Größe
+        }, 1500);      } catch (error) {
+        console.error("Error retrieving file size:", error);
+        setFileSize("1.24 GB"); // Fallback size
       }
     };
 
     fetchFileSize();
   }, []);
-
   const handleDownload = () => {
     setDownloading(true);
-    // Simuliere Download-Start
+    // Simulate download start
     setTimeout(() => {
-      // Öffne den Mega-Link in einem neuen Tab
+      // Open the Mega link in a new tab
       window.open(megaLink, '_blank');
       setDownloading(false);
     }, 2000);
@@ -122,36 +117,34 @@ const DownloadSection = () => {
               <TabsContent value="instructions">
                 <div className="card bg-silkroad-dark/50">
                   <h3 className="text-center text-xl mb-4">Installation Steps</h3>
-                  <ol className="list-decimal list-inside space-y-4 text-left pl-4">
-                    <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Download den Lafftale Client</span>
+                  <ol className="list-decimal list-inside space-y-4 text-left pl-4">                    <li className="text-gray-300">
+                      <span className="text-silkroad-gold font-medium">Download the Lafftale Client</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Lade den kompletten Lafftale Client über den Download-Button herunter.
+                        Download the complete Lafftale Client using the download button.
                       </p>
                     </li>
                     <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Entpacke die Datei</span>
+                      <span className="text-silkroad-gold font-medium">Extract the File</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Entpacke den heruntergeladenen Client mit einem geeigneten Programm wie WinRAR oder 7-Zip.
+                        Extract the downloaded client with a suitable program like WinRAR or 7-Zip.
                       </p>
                     </li>
                     <li className="text-gray-300">
                       <span className="text-silkroad-gold font-medium">Create Your Account</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Registriere einen neuen Account auf unserer Website.
+                        Register a new account on our website.
                       </p>
-                    </li>
-                    <li className="text-gray-300">
-                      <span className="text-silkroad-gold font-medium">Starte das Spiel</span>
+                    </li>                    <li className="text-gray-300">
+                      <span className="text-silkroad-gold font-medium">Start the Game</span>
                       <p className="mt-1 text-sm text-gray-400 pl-5">
-                        Führe die sro_client.exe aus, gib deine Zugangsdaten ein und beginne dein Abenteuer!
+                        Run sro_client.exe, enter your login credentials and begin your adventure!
                       </p>
                     </li>
                   </ol>
                   
                   <div className="mt-8 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
                     <p className="text-amber-200 text-sm">
-                      <strong>Hinweis:</strong> Bei Aktualisierungen des Spiels werden entsprechende Informationen auf der Website oder im Discord-Server bereitgestellt.
+                      <strong>Note:</strong> Information about game updates will be provided on the website or in the Discord server.
                     </p>
                   </div>
                 </div>

@@ -58,22 +58,19 @@ router.post("/login", async (req, res) => {
     // Update last login time with current timestamp
     try {
       const currentTime = new Date();
-      
-      // Korrektes aktuelles Datum ohne Zeitanteil für LastLogin
+        // Correct current date without time component for LastLogin
       const today = new Date();
       
-      // Format HH:MM:SS für LogTime
+      // Format HH:MM:SS for LogTime
       const timeOnly = currentTime.toTimeString().split(' ')[0];
-      
-      console.log(`Updating LastLogin (date) for user ${user.recordset[0].Id} to ${today.toISOString().split('T')[0]}`);
+        console.log(`Updating LastLogin (date) for user ${user.recordset[0].Id} to ${today.toISOString().split('T')[0]}`);
       console.log(`Updating LogTime (time) for user ${user.recordset[0].Id} to ${timeOnly}`);
       
-      // Debug-Ausgabe für Zeitwerte
+      // Debug output for time values
       console.log("Current Date Object:", currentTime);
       console.log("Today:", today);
       console.log("Time only:", timeOnly);
-      
-      // Verwende separate Abfragen für mehr Klarheit bei der Fehlerbehandlung
+        // Use separate queries for more clarity in error handling
       const updateDateResult = await pool.request()
         .input("userId", sql.Int, user.recordset[0].Id)
         .input("lastLogin", sql.Date, today)
