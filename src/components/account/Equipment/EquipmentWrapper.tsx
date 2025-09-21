@@ -1,6 +1,6 @@
 import React from "react";
 import { EquipmentGrid } from "./EquipmentGrid";
-import { EquipmentFrame } from "./Equipmentframe";
+import { EquipmentFrame } from "./EquipmentFrame";
 
 interface EquipmentWrapperProps {
     selectedCharacter: {
