@@ -81,7 +81,9 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({ data, loading, error, 
                   {getPlayerName(player)}
                 </div>
               </TableCell>
-              <TableCell className='font-semibold text-lafftale-gold'>{player.HonorPoint.toLocaleString()}</TableCell>
+              <TableCell className='font-semibold text-lafftale-gold'>
+                {(player.HonorPoint || 0).toLocaleString()}
+              </TableCell>
               <TableCell className='hidden md:table-cell'>{player.Level || 'Unknown'}</TableCell>
               <TableCell className='hidden lg:table-cell'>
                 {player.LatestHKTime ? new Date(player.LatestHKTime).toLocaleDateString() : 'Never'}

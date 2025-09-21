@@ -78,7 +78,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/admin_tickets', require('./routes/admin_tickets'));
 app.use('/api/user_tickets', require('./routes/user_tickets'));
 app.use('/api/donation', require('./routes/donation'));
-app.use('/api/rankings', require('./routes/rankings')); // Main ranking system only
+app.use('/api/rankings', require('./routes/ranking')); // Main ranking system
 
 // Enhanced Rankings API v2 - DISABLED (buggy schema compatibility)
 // app.use('/api/enhanced', require('./routes/ranking/enhancedRankings'));

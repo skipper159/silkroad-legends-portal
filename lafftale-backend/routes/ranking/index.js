@@ -24,11 +24,7 @@ const {
   getJobProgressionAnalytics,
 } = require('./jobAnalytics');
 const { getGuildRanking } = require('./guildRankings');
-const {
-  getItemEnhancementRanking,
-  getItemDropRanking,
-  router: itemRouter,
-} = require('./itemRankings');
+const itemRouter = require('./itemRankings');
 
 // Import enhanced features
 const enhancedRankings = require('./enhancedRankings');

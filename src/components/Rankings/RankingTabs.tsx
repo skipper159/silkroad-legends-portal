@@ -127,7 +127,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         break;
       case 'item':
         if (itemRankings.length === 0) {
-          fetchData('/rankings/item-enhancement', setItemRankings, 'itemRankings');
+          fetchData('/rankings/item-plus', setItemRankings, 'itemRankings');
         }
         break;
       case 'job-kd':

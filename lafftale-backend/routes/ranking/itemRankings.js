@@ -232,8 +232,4 @@ router.get('/item-drop', async (req, res) => {
 // EXPORTS
 // =============================================================================
 
-module.exports = {
-  router,
-  getItemEnhancementRanking,
-  getItemDropRanking,
-};
+module.exports = router;

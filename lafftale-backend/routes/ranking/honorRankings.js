@@ -13,22 +13,24 @@ async function getHonorRanking(
 ) {
   const pool = await getCharDb();
 
-  let whereClause = 'WHERE Honor > 0';
+  let whereClause = 'WHERE TotalPK > 0';
 
-  if (race && race !== 'all') {
-    whereClause += ' AND Race = @race';
-  }
   if (minHonor) {
-    whereClause += ' AND Honor >= @minHonor';
+    whereClause += ' AND TotalPK >= @minHonor';
   }
   if (minKills) {
-    whereClause += ' AND PKCount2 >= @minKills';
+    whereClause += ' AND DailyPK >= @minKills';
   }
 
   const query = `
     SELECT * FROM (
-      SELECT ROW_NUMBER() OVER (ORDER BY Honor DESC) AS rank,
-             CharName16, Honor, PKCount2 as Kills, Level, Race
+      SELECT ROW_NUMBER() OVER (ORDER BY TotalPK DESC) AS rank,
+             CharID,
+             CharName16,
+             TotalPK as HonorPoint,
+             DailyPK as Kills,
+             CurLevel as Level,
+             NULL as LatestHKTime
       FROM _Char 
       ${whereClause}
     ) AS ranked
@@ -38,9 +40,6 @@ async function getHonorRanking(
 
   const request = pool.request().input('offset', sql.Int, offset).input('limit', sql.Int, limit);
 
-  if (race && race !== 'all') {
-    request.input('race', sql.TinyInt, parseInt(race));
-  }
   if (minHonor) {
     request.input('minHonor', sql.Int, minHonor);
   }
