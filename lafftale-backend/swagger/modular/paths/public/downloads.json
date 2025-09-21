@@ -1,0 +1,151 @@
+{
+  "/api/downloads": {
+    "get": {
+      "tags": ["Public - Downloads"],
+      "summary": "Get available downloads",
+      "description": "Retrieve list of available game downloads",
+      "parameters": [
+        {
+          "name": "category",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["client", "patch", "tool", "other"]
+          },
+          "description": "Filter by download category"
+        },
+        {
+          "name": "featured",
+          "in": "query",
+          "schema": { "type": "boolean" },
+          "description": "Show only featured downloads"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Downloads retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Download" }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/downloads/categories": {
+    "get": {
+      "tags": ["Public - Downloads"],
+      "summary": "Get download categories",
+      "description": "Retrieve available download categories",
+      "responses": {
+        "200": {
+          "description": "Categories retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "name": { "type": "string" },
+                            "description": { "type": "string" },
+                            "downloadCount": { "type": "integer" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/downloads/{id}/download": {
+    "get": {
+      "tags": ["Public - Downloads"],
+      "summary": "Download file",
+      "description": "Download a specific file (redirects to file URL)",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Download ID"
+        }
+      ],
+      "responses": {
+        "302": {
+          "description": "Redirect to download URL"
+        },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    },
+    "post": {
+      "tags": ["Public - Downloads"],
+      "summary": "Track download",
+      "description": "Track download statistics",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Download ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Download tracked successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "downloadUrl": { "type": "string" },
+                          "filename": { "type": "string" },
+                          "fileSize": { "type": "integer" }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  }
+}

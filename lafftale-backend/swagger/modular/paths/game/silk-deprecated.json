@@ -1,0 +1,79 @@
+{
+  "/api/silk/balance/{gameAccountId}": {
+    "get": {
+      "tags": ["Game - Silk", "Deprecated"],
+      "summary": "Get silk balance by game account ID (DEPRECATED)",
+      "description": "This endpoint is deprecated. Use /api/silk/balance with authentication instead.",
+      "deprecated": true,
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "gameAccountId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Game account ID (deprecated parameter)"
+        }
+      ],
+      "responses": {
+        "410": {
+          "description": "Endpoint deprecated - use new SRO-CMS pattern",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeprecatedEndpointError"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/silk/add": {
+    "post": {
+      "tags": ["Game - Silk", "Deprecated"],
+      "summary": "Add silk to account (DEPRECATED)",
+      "description": "This endpoint is deprecated. Use /api/silk/process-paypal for donations or admin-specific endpoints instead.",
+      "deprecated": true,
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "gameAccountId": {
+                  "type": "integer",
+                  "description": "Target game account ID"
+                },
+                "amount": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Amount of silk to add"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Reason for adding silk"
+                }
+              },
+              "required": ["gameAccountId", "amount"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "410": {
+          "description": "Endpoint deprecated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeprecatedEndpointError"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

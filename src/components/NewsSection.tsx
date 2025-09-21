@@ -11,7 +11,7 @@ const newsItems = [
     category: "Updates",
     icon: <Award className="h-5 w-5" />,
     excerpt: "Latest server update includes balance changes to the Hunter class and new dungeon rewards.",
-    imageUrl: "public/image/web/serverupdate.png"
+    imageUrl: "/image/web/serverupdate.png"
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const newsItems = [
     category: "Events",
     icon: <Calendar className="h-5 w-5" />,
     excerpt: "Join us for a special weekend XP boost! All characters will receive 2x experience points.",
-    imageUrl: "public/image/web/xpevent.png"
+    imageUrl: "/image/web/xpevent.png"
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const newsItems = [
     category: "Community",
     icon: <Users className="h-5 w-5" />,
     excerpt: "Highlights from last week's epic Guild Wars event where Dragon Dynasty claimed victory.",
-    imageUrl: "public/image/web/community.png"
+    imageUrl: "/image/web/community.png"
   },
 ];
 

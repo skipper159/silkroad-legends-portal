@@ -1,0 +1,272 @@
+/* SRO Item and Inventory Styles */
+
+.sro-item-detail {
+  background: #808080;
+  width: 38px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.sro-item-detail.sro-item-special {
+  background: #ff8c00;
+}
+
+.sro-item-detail.sro-item-special .sro-item-special-seal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
+  width: 12px;
+  height: 12px;
+}
+
+.sro-item-detail .item {
+  width: 32px;
+  height: 32px;
+  float: left;
+  margin: 3px;
+  padding: 0 !important;
+  color: #fff;
+  background: #5f5f5f;
+  position: relative;
+  overflow: hidden;
+}
+
+.sro-item-detail .item img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sro-item-detail .item .amount {
+  background: rgba(50, 50, 50, 0.8);
+  padding: 1px 3px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 9px;
+  color: #fff;
+  border-radius: 2px 0 0 0;
+  line-height: 1;
+}
+
+.sro-item-detail .info {
+  color: #fff;
+  z-index: 80;
+  position: absolute;
+  left: 40px;
+  top: 3px;
+  width: 200px;
+  background: rgba(88, 98, 170, 0.95);
+  border: 2px solid #303d4d;
+  padding: 8px;
+  display: none;
+  line-height: 16px;
+  font-size: 11px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.sro-item-detail:hover .info {
+  display: block;
+}
+
+.table-inventory {
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+
+.table-inventory td,
+.table-inventory th {
+  padding: 2px;
+  border: none;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  background: #2a2a2a;
+  padding: 8px;
+  border-radius: 8px;
+  border: 2px solid #4a4a4a;
+}
+
+.inventory-slot {
+  width: 40px;
+  height: 40px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.inventory-slot:hover {
+  border-color: #888;
+}
+
+.inventory-slot.equipped {
+  border-color: #ffd700;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+.inventory-slot.empty {
+  background: #0f0f0f;
+}
+
+.equipment-slot {
+  width: 50px;
+  height: 50px;
+  background: #1a1a1a;
+  border: 2px solid #444;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 4px;
+  margin: 2px;
+}
+
+.equipment-slot:hover {
+  border-color: #888;
+}
+
+.equipment-slot.equipped {
+  border-color: #ffd700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+}
+
+.equipment-slot.helmet {
+  order: 1;
+}
+.equipment-slot.armor {
+  order: 2;
+}
+.equipment-slot.pants {
+  order: 3;
+}
+.equipment-slot.glove {
+  order: 4;
+}
+.equipment-slot.boots {
+  order: 5;
+}
+.equipment-slot.weapon {
+  order: 6;
+}
+.equipment-slot.shield {
+  order: 7;
+}
+.equipment-slot.accessory {
+  order: 8;
+}
+
+/* Equipment Layout */
+.equipment-layout {
+  display: grid;
+  grid-template-areas:
+    '. helmet .'
+    'weapon armor shield'
+    '. pants .'
+    'glove boots accessory';
+  gap: 4px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.equipment-layout .helmet {
+  grid-area: helmet;
+}
+.equipment-layout .armor {
+  grid-area: armor;
+}
+.equipment-layout .pants {
+  grid-area: pants;
+}
+.equipment-layout .glove {
+  grid-area: glove;
+}
+.equipment-layout .boots {
+  grid-area: boots;
+}
+.equipment-layout .weapon {
+  grid-area: weapon;
+}
+.equipment-layout .shield {
+  grid-area: shield;
+}
+.equipment-layout .accessory {
+  grid-area: accessory;
+}
+
+/* Character Race Icons */
+.race-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.job-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Item Quality Colors */
+.item-common {
+  color: #ffffff;
+}
+.item-uncommon {
+  color: #1eff00;
+}
+.item-rare {
+  color: #0070dd;
+}
+.item-epic {
+  color: #a335ee;
+}
+.item-legendary {
+  color: #ff8000;
+}
+.item-artifact {
+  color: #e6cc80;
+}
+
+/* Item Enhancement Glow */
+.item-plus-1 {
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+.item-plus-2 {
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
+}
+.item-plus-3 {
+  box-shadow: 0 0 4px rgba(0, 150, 255, 0.4);
+}
+.item-plus-4 {
+  box-shadow: 0 0 6px rgba(150, 0, 255, 0.5);
+}
+.item-plus-5 {
+  box-shadow: 0 0 6px rgba(255, 150, 0, 0.5);
+}
+.item-plus-6 {
+  box-shadow: 0 0 8px rgba(255, 50, 50, 0.6);
+}
+.item-plus-7 {
+  box-shadow: 0 0 8px rgba(255, 255, 0, 0.6);
+}
+
+/* Character Portrait */
+.character-portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #ffd700;
+  object-fit: cover;
+  transition: all 0.3s;
+}
+
+.character-portrait:hover {
+  transform: scale(1.05);
+  border-color: #ffa500;
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Gold Medal Background -->
+  <circle cx="16" cy="16" r="15" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+  <!-- Inner Circle -->
+  <circle cx="16" cy="16" r="10" fill="#FFF8DC" stroke="#DAA520" stroke-width="1"/>
+  <!-- Number 1 -->
+  <text x="16" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8B4513">1</text>
+</svg>

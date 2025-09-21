@@ -1,0 +1,1480 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { useToast } from '../ui/use-toast';
+import {
+  Users,
+  Gift,
+  Star,
+  Trophy,
+  UserPlus,
+  Award,
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  Settings,
+  BarChart3,
+} from 'lucide-react';
+import { fetchWithAuth, weburl } from '@/lib/api';
+
+interface AdminReferral {
+  id: number;
+  code: string;
+  name: string;
+  ip: string;
+  fingerprint: string;
+  jid: number;
+  invited_jid: number | null;
+  points: number;
+  reward_silk: number;
+  redeemed: boolean;
+  redeemed_at: string | null;
+  created_at: string;
+  referrer_username: string;
+  referrer_email: string;
+  referred_username: string;
+  referred_email: string;
+  // Anti-Cheat Felder
+  ip_address?: string;
+  is_valid?: boolean;
+  cheat_reason?: string;
+}
+
+interface AntiCheatStats {
+  total_stats: {
+    total_referrals: number;
+    valid_referrals: number;
+    blocked_referrals: number;
+    block_rate_percent: number;
+  };
+  suspicious_ips: Array<{
+    ip_address: string;
+    referral_count: number;
+    blocked_count: number;
+    unique_referrers: number;
+  }>;
+  cheat_reasons: Array<{
+    cheat_reason: string;
+    count: number;
+  }>;
+  daily_trends: Array<{
+    date: string;
+    total_referrals: number;
+    valid_referrals: number;
+    blocked_referrals: number;
+  }>;
+}
+
+interface SuspiciousReferral {
+  id: number;
+  code: string;
+  referrer_jid: number;
+  invited_jid: number;
+  points: number;
+  redeemed: boolean;
+  ip_address: string;
+  fingerprint: string;
+  is_valid: boolean;
+  cheat_reason: string;
+  created_at: string;
+  same_ip_count: number;
+  same_fingerprint_count: number;
+}
+
+interface ReferralStatistics {
+  total_referrals: number;
+  pending_referrals: number;
+  completed_referrals: number;
+  total_rewards_paid: number;
+  unique_referrers: number;
+}
+
+interface ReferralReward {
+  id: number;
+  points_required: number;
+  silk_reward: number;
+  item_id: number | null;
+  description: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+interface ReferralSettings {
+  // Basis Referral Settings
+  points_per_referral: { value: string; description: string };
+  minimum_redeem_points: { value: string; description: string };
+  silk_per_point: { value: string; description: string };
+  referral_enabled: { value: string; description: string };
+
+  // Anti-Cheat Settings
+  anticheat_enabled?: { value: string; description: string };
+  max_referrals_per_ip_per_day?: { value: string; description: string };
+  max_referrals_per_fingerprint_per_day?: { value: string; description: string };
+  block_duplicate_ip_referrals?: { value: string; description: string };
+  block_duplicate_fingerprint_referrals?: { value: string; description: string };
+  suspicious_referral_review_required?: { value: string; description: string };
+}
+
+const ReferralManager: React.FC = () => {
+  const [referrals, setReferrals] = useState<AdminReferral[]>([]);
+  const [statistics, setStatistics] = useState<ReferralStatistics | null>(null);
+  const [rewards, setRewards] = useState<ReferralReward[]>([]);
+  const [settings, setSettings] = useState<ReferralSettings | null>(null);
+  const [antiCheatStats, setAntiCheatStats] = useState<AntiCheatStats | null>(null);
+  const [suspiciousReferrals, setSuspiciousReferrals] = useState<SuspiciousReferral[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [timeframe, setTimeframe] = useState('30');
+  const [editingReward, setEditingReward] = useState<ReferralReward | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'rewards' | 'anticheat'>('overview');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchReferralData();
+    fetchStatistics();
+    fetchRewards();
+    fetchSettings();
+    if (activeTab === 'anticheat') {
+      fetchAntiCheatData();
+    }
+  }, [timeframe, activeTab]);
+
+  const fetchReferralData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals?timeframe=${timeframe}&search=${searchTerm}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setReferrals(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching referrals:', error);
+      setReferrals([]);
+      toast({
+        title: 'Fehler',
+        description: 'Referrals konnten nicht geladen werden',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/statistics?timeframe=${timeframe}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setStatistics(data.statistics || null);
+      }
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+    }
+  };
+
+  const fetchRewards = async () => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/rewards`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setRewards(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching rewards:', error);
+      setRewards([]);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/settings`);
+
+      if (response.ok) {
+        const data = await response.json();
+        // Neue API Struktur: data.data.settings
+        setSettings(data.data?.settings || data.data || null);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      setSettings(null);
+    }
+  };
+
+  const fetchAntiCheatData = async () => {
+    try {
+      // Anti-Cheat Statistiken
+      const statsResponse = await fetchWithAuth(`${weburl}/api/admin/referrals/anticheat/stats`);
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setAntiCheatStats(statsData.data || null);
+      }
+
+      // Verdächtige Referrals
+      const suspiciousResponse = await fetchWithAuth(`${weburl}/api/admin/referrals/anticheat/suspicious`);
+      if (suspiciousResponse.ok) {
+        const suspiciousData = await suspiciousResponse.json();
+        setSuspiciousReferrals(suspiciousData.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching anti-cheat data:', error);
+    }
+  };
+
+  const validateSuspiciousReferral = async (referralId: number, isValid: boolean, adminNotes?: string) => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/anticheat/validate/${referralId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          is_valid: isValid,
+          admin_notes: adminNotes,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolg',
+          description: `Referral wurde ${isValid ? 'als gültig markiert' : 'als ungültig markiert'}`,
+        });
+
+        // Daten neu laden
+        await fetchAntiCheatData();
+        await fetchReferralData();
+      } else {
+        throw new Error('API request failed');
+      }
+    } catch (error) {
+      console.error('Error validating referral:', error);
+      toast({
+        title: 'Fehler',
+        description: 'Referral-Validierung fehlgeschlagen',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const updateSettings = async (newSettings: Record<string, string>) => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ settings: newSettings }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolgreich!',
+          description: 'Referral-Einstellungen wurden aktualisiert',
+        });
+        fetchSettings(); // Neu laden
+      } else {
+        throw new Error('Failed to update settings');
+      }
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      toast({
+        title: 'Fehler',
+        description: 'Einstellungen konnten nicht gespeichert werden',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleStatusUpdate = async (referralId: number, newStatus: string) => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/${referralId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolgreich!',
+          description: `Referral Status wurde auf ${newStatus} geändert`,
+        });
+        fetchReferralData();
+        fetchStatistics();
+      } else {
+        toast({
+          title: 'Fehler',
+          description: 'Status konnte nicht geändert werden',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Fehler',
+        description: 'Status konnte nicht geändert werden',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteReward = async (rewardId: number) => {
+    if (!confirm('Möchtest du diese Belohnung wirklich löschen?')) {
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/rewards/${rewardId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolgreich!',
+          description: 'Belohnung wurde gelöscht',
+        });
+        fetchRewards();
+      } else {
+        toast({
+          title: 'Fehler',
+          description: 'Belohnung konnte nicht gelöscht werden',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Fehler',
+        description: 'Belohnung konnte nicht gelöscht werden',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleEditReward = (reward: ReferralReward) => {
+    setEditingReward({ ...reward });
+    setShowEditModal(true);
+  };
+
+  const handleSaveReward = async () => {
+    if (!editingReward) return;
+
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/rewards/${editingReward.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          points_required: editingReward.points_required,
+          silk_reward: editingReward.silk_reward,
+          item_id: editingReward.item_id,
+          description: editingReward.description,
+          is_active: editingReward.is_active,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolgreich!',
+          description: 'Belohnung wurde aktualisiert',
+        });
+        setShowEditModal(false);
+        setEditingReward(null);
+        fetchRewards();
+      } else {
+        toast({
+          title: 'Fehler',
+          description: 'Belohnung konnte nicht aktualisiert werden',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Fehler',
+        description: 'Belohnung konnte nicht aktualisiert werden',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteReferral = async (referralId: number) => {
+    if (!confirm('Möchtest du dieses Referral wirklich löschen?')) {
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/${referralId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Erfolgreich!',
+          description: 'Referral wurde gelöscht',
+        });
+        fetchReferralData();
+        fetchStatistics();
+      } else {
+        toast({
+          title: 'Fehler',
+          description: 'Referral konnte nicht gelöscht werden',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Fehler',
+        description: 'Referral konnte nicht gelöscht werden',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'rejected':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    }
+  };
+
+  const filteredReferrals = referrals.filter((referral) => {
+    const matchesSearch =
+      !searchTerm ||
+      referral.referrer_username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      referral.referred_username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      referral.code.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'completed' && referral.redeemed) ||
+      (statusFilter === 'pending' && !referral.redeemed);
+
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className='space-y-6'>
+      <div className='flex items-center gap-3'>
+        <UserPlus className='h-8 w-8 text-blue-600' />
+        <div>
+          <h2 className='text-2xl font-bold text-gray-900'>Referral Verwaltung</h2>
+          <p className='text-gray-600'>Verwalte Referrals und Belohnungen</p>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className='border-b border-gray-200'>
+        <nav className='flex space-x-8'>
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'overview'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center gap-2'>
+              <BarChart3 className='h-4 w-4' />
+              Übersicht & Verwaltung
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'settings'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center gap-2'>
+              <Settings className='h-4 w-4' />
+              Systemeinstellungen
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('rewards')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'rewards'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center gap-2'>
+              <Award className='h-4 w-4' />
+              Belohnungen verwalten
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('anticheat')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'anticheat'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center gap-2'>
+              <Eye className='h-4 w-4' />
+              Anti-Cheat
+            </div>
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'overview' && (
+        <div className='space-y-6'>
+          {/* Statistiken */}
+          {statistics && (
+            <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4'>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-blue-600'>{statistics.total_referrals}</div>
+                    <div className='text-sm text-gray-500'>Gesamt Referrals</div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-yellow-600'>{statistics.pending_referrals}</div>
+                    <div className='text-sm text-gray-500'>Wartend</div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-green-600'>{statistics.completed_referrals}</div>
+                    <div className='text-sm text-gray-500'>Abgeschlossen</div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-red-600'>
+                      {statistics.total_referrals - statistics.completed_referrals - statistics.pending_referrals}
+                    </div>
+                    <div className='text-sm text-gray-500'>Fehler/Andere</div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-purple-600'>{statistics.total_rewards_paid}</div>
+                    <div className='text-sm text-gray-500'>Belohnungen</div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className='pt-6'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-indigo-600'>{statistics.unique_referrers}</div>
+                    <div className='text-sm text-gray-500'>Aktive Werber</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Filter und Suche */}
+          <Card>
+            <CardContent className='pt-6'>
+              <div className='flex gap-4'>
+                <div className='flex-1'>
+                  <div className='relative'>
+                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+                    <Input
+                      placeholder='Nach Benutzername oder Code suchen...'
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className='pl-10'
+                    />
+                  </div>
+                </div>
+                <div className='w-48'>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
+                  >
+                    <option value='all'>Alle</option>
+                    <option value='pending'>Wartend</option>
+                    <option value='completed'>Abgeschlossen</option>
+                  </select>
+                </div>
+                <div className='w-32'>
+                  <select
+                    value={timeframe}
+                    onChange={(e) => setTimeframe(e.target.value)}
+                    className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
+                  >
+                    <option value='7'>7 Tage</option>
+                    <option value='30'>30 Tage</option>
+                    <option value='90'>90 Tage</option>
+                    <option value='365'>1 Jahr</option>
+                  </select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Referral Liste */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Referral Übersicht</CardTitle>
+              <CardDescription>
+                {filteredReferrals.length} von {referrals.length} Referrals
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className='text-center py-8'>
+                  <div className='text-gray-500'>Lade Referrals...</div>
+                </div>
+              ) : filteredReferrals.length === 0 ? (
+                <div className='text-center py-8'>
+                  <Users className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+                  <p className='text-gray-500'>Keine Referrals gefunden</p>
+                </div>
+              ) : (
+                <div className='space-y-3'>
+                  {filteredReferrals.map((referral) => (
+                    <div
+                      key={referral.id}
+                      className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
+                    >
+                      <div className='flex items-center gap-4'>
+                        <div>
+                          <div className='flex items-center gap-2'>
+                            <span className='font-medium'>{referral.referrer_username || 'Unbekannt'}</span>
+                            <span className='text-gray-400'>→</span>
+                            <span className='font-medium'>{referral.referred_username || 'Unbekannt'}</span>
+                          </div>
+                          <div className='flex items-center gap-2 mt-1'>
+                            <span className='text-sm text-gray-500 font-mono'>{referral.code}</span>
+                            <Badge
+                              className={
+                                referral.redeemed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                              }
+                            >
+                              {referral.redeemed ? 'Eingelöst' : 'Wartend'}
+                            </Badge>
+                            <span className='text-sm text-gray-500'>
+                              {new Date(referral.created_at).toLocaleDateString('de-DE')}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <div className='text-right mr-4'>
+                          <div className='font-bold text-lg'>+{referral.reward_silk}</div>
+                          <div className='text-sm text-gray-500'>
+                            {referral.redeemed_at ? 'Ausgezahlt' : 'Ausstehend'}
+                          </div>
+                        </div>
+
+                        {!referral.redeemed && referral.invited_jid && (
+                          <>
+                            <Button
+                              size='sm'
+                              onClick={() => handleStatusUpdate(referral.id, 'completed')}
+                              className='bg-green-600 hover:bg-green-700 text-white'
+                            >
+                              Auszahlen
+                            </Button>
+                          </>
+                        )}
+
+                        <Button
+                          size='sm'
+                          variant='ghost'
+                          onClick={() => handleDeleteReferral(referral.id)}
+                          className='text-red-600 hover:text-red-700 hover:bg-red-50'
+                        >
+                          <Trash2 className='h-4 w-4' />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div className='space-y-6'>
+          {/* Referral-Einstellungen */}
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Settings className='h-5 w-5' />
+                Referral-Systemeinstellungen
+              </CardTitle>
+              <CardDescription>Konfiguriere das Referral-System</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {settings ? (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <div className='space-y-2'>
+                    <label htmlFor='points_per_referral' className='text-sm font-medium'>
+                      Punkte pro Referral
+                    </label>
+                    <Input
+                      id='points_per_referral'
+                      type='number'
+                      value={settings.points_per_referral.value}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        newSettings.points_per_referral.value = e.target.value;
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          points_per_referral: settings.points_per_referral.value,
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>{settings.points_per_referral.description}</p>
+                  </div>
+
+                  <div className='space-y-2'>
+                    <label htmlFor='minimum_redeem_points' className='text-sm font-medium'>
+                      Mindest-Einlösung (Punkte)
+                    </label>
+                    <Input
+                      id='minimum_redeem_points'
+                      type='number'
+                      value={settings.minimum_redeem_points.value}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        newSettings.minimum_redeem_points.value = e.target.value;
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          minimum_redeem_points: settings.minimum_redeem_points.value,
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>{settings.minimum_redeem_points.description}</p>
+                  </div>
+
+                  <div className='space-y-2'>
+                    <label htmlFor='silk_per_point' className='text-sm font-medium'>
+                      Silk pro Punkt
+                    </label>
+                    <Input
+                      id='silk_per_point'
+                      type='number'
+                      value={settings.silk_per_point.value}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        newSettings.silk_per_point.value = e.target.value;
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          silk_per_point: settings.silk_per_point.value,
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>{settings.silk_per_point.description}</p>
+                  </div>
+
+                  <div className='space-y-2'>
+                    <label htmlFor='referral_enabled' className='text-sm font-medium'>
+                      System aktiviert
+                    </label>
+                    <select
+                      id='referral_enabled'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.referral_enabled.value}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        newSettings.referral_enabled.value = e.target.value;
+                        setSettings(newSettings);
+                        updateSettings({
+                          referral_enabled: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Aktiviert</option>
+                      <option value='false'>Deaktiviert</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>{settings.referral_enabled.description}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className='text-center py-4 text-gray-500'>Lade Einstellungen...</div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Anti-Cheat Einstellungen */}
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <BarChart3 className='h-5 w-5' />
+                Anti-Cheat Einstellungen
+              </CardTitle>
+              <CardDescription>Konfiguriere Betrugsschutz-Maßnahmen</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {settings ? (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  {/* Anti-Cheat aktiviert */}
+                  <div className='space-y-2'>
+                    <label htmlFor='anticheat_enabled' className='text-sm font-medium'>
+                      Anti-Cheat System
+                    </label>
+                    <select
+                      id='anticheat_enabled'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.anticheat_enabled?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.anticheat_enabled) {
+                          newSettings.anticheat_enabled = {
+                            value: e.target.value,
+                            description: 'Enable anti-cheat protection',
+                          };
+                        } else {
+                          newSettings.anticheat_enabled.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          anticheat_enabled: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Aktiviert</option>
+                      <option value='false'>Deaktiviert</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.anticheat_enabled?.description || 'Aktiviert automatische Betrugserkennung'}
+                    </p>
+                  </div>
+
+                  {/* Max Referrals pro IP */}
+                  <div className='space-y-2'>
+                    <label htmlFor='max_referrals_per_ip_per_day' className='text-sm font-medium'>
+                      Max. Referrals pro IP/Tag
+                    </label>
+                    <Input
+                      id='max_referrals_per_ip_per_day'
+                      type='number'
+                      min='1'
+                      max='20'
+                      value={settings.max_referrals_per_ip_per_day?.value || '5'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.max_referrals_per_ip_per_day) {
+                          newSettings.max_referrals_per_ip_per_day = {
+                            value: e.target.value,
+                            description: 'Maximum referrals per IP per day',
+                          };
+                        } else {
+                          newSettings.max_referrals_per_ip_per_day.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          max_referrals_per_ip_per_day: settings.max_referrals_per_ip_per_day?.value || '5',
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>
+                      {settings.max_referrals_per_ip_per_day?.description ||
+                        'Maximale Anzahl Referrals pro IP-Adresse pro Tag'}
+                    </p>
+                  </div>
+
+                  {/* Max Referrals pro Fingerprint */}
+                  <div className='space-y-2'>
+                    <label htmlFor='max_referrals_per_fingerprint_per_day' className='text-sm font-medium'>
+                      Max. Referrals pro Browser/Tag
+                    </label>
+                    <Input
+                      id='max_referrals_per_fingerprint_per_day'
+                      type='number'
+                      min='1'
+                      max='10'
+                      value={settings.max_referrals_per_fingerprint_per_day?.value || '3'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.max_referrals_per_fingerprint_per_day) {
+                          newSettings.max_referrals_per_fingerprint_per_day = {
+                            value: e.target.value,
+                            description: 'Maximum referrals per browser fingerprint per day',
+                          };
+                        } else {
+                          newSettings.max_referrals_per_fingerprint_per_day.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          max_referrals_per_fingerprint_per_day:
+                            settings.max_referrals_per_fingerprint_per_day?.value || '3',
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>
+                      {settings.max_referrals_per_fingerprint_per_day?.description ||
+                        'Maximale Anzahl Referrals pro Browser-Fingerprint pro Tag'}
+                    </p>
+                  </div>
+
+                  {/* Blockiere gleiche IP */}
+                  <div className='space-y-2'>
+                    <label htmlFor='block_duplicate_ip_referrals' className='text-sm font-medium'>
+                      Gleiche IP blockieren
+                    </label>
+                    <select
+                      id='block_duplicate_ip_referrals'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.block_duplicate_ip_referrals?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.block_duplicate_ip_referrals) {
+                          newSettings.block_duplicate_ip_referrals = {
+                            value: e.target.value,
+                            description: 'Block referrals from same IP as referrer',
+                          };
+                        } else {
+                          newSettings.block_duplicate_ip_referrals.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          block_duplicate_ip_referrals: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Aktiviert</option>
+                      <option value='false'>Deaktiviert</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.block_duplicate_ip_referrals?.description ||
+                        'Blockiert Referrals von derselben IP wie der Referrer'}
+                    </p>
+                  </div>
+
+                  {/* Blockiere gleichen Browser */}
+                  <div className='space-y-2'>
+                    <label htmlFor='block_duplicate_fingerprint_referrals' className='text-sm font-medium'>
+                      Gleichen Browser blockieren
+                    </label>
+                    <select
+                      id='block_duplicate_fingerprint_referrals'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.block_duplicate_fingerprint_referrals?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.block_duplicate_fingerprint_referrals) {
+                          newSettings.block_duplicate_fingerprint_referrals = {
+                            value: e.target.value,
+                            description: 'Block referrals from same fingerprint as referrer',
+                          };
+                        } else {
+                          newSettings.block_duplicate_fingerprint_referrals.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          block_duplicate_fingerprint_referrals: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Aktiviert</option>
+                      <option value='false'>Deaktiviert</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.block_duplicate_fingerprint_referrals?.description ||
+                        'Blockiert Referrals vom selben Browser-Fingerprint wie der Referrer'}
+                    </p>
+                  </div>
+
+                  {/* Manuelle Prüfung erforderlich */}
+                  <div className='space-y-2'>
+                    <label htmlFor='suspicious_referral_review_required' className='text-sm font-medium'>
+                      Manuelle Prüfung verdächtiger Referrals
+                    </label>
+                    <select
+                      id='suspicious_referral_review_required'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.suspicious_referral_review_required?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.suspicious_referral_review_required) {
+                          newSettings.suspicious_referral_review_required = {
+                            value: e.target.value,
+                            description: 'Require manual admin review for suspicious referrals',
+                          };
+                        } else {
+                          newSettings.suspicious_referral_review_required.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          suspicious_referral_review_required: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Aktiviert</option>
+                      <option value='false'>Deaktiviert</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.suspicious_referral_review_required?.description ||
+                        'Verdächtige Referrals erfordern manuelle Admin-Freigabe'}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className='text-center py-4 text-gray-500'>Lade Anti-Cheat Einstellungen...</div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {activeTab === 'rewards' && (
+        <div className='space-y-6'>
+          {/* Belohnungen verwalten */}
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Award className='h-5 w-5' />
+                Belohnungen verwalten
+              </CardTitle>
+              <CardDescription>Konfiguriere verfügbare Referral-Belohnungen</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                {rewards.map((reward) => (
+                  <div key={reward.id} className='p-4 border rounded-lg'>
+                    <div className='flex justify-between items-start mb-2'>
+                      <h4 className='font-medium'>{reward.description}</h4>
+                      <Badge variant={reward.is_active ? 'default' : 'secondary'}>
+                        {reward.is_active ? 'Aktiv' : 'Inaktiv'}
+                      </Badge>
+                    </div>
+                    <div className='space-y-2 mb-3'>
+                      <div className='text-sm text-gray-600'>
+                        <span className='font-medium'>Benötigte Punkte:</span> {reward.points_required}
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        <span className='font-medium'>Silk Belohnung:</span> {reward.silk_reward}
+                      </div>
+                      {reward.item_id && (
+                        <div className='text-sm text-gray-600'>
+                          <span className='font-medium'>Item ID:</span> {reward.item_id}
+                        </div>
+                      )}
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <span className='font-bold text-blue-600'>{reward.points_required} Punkte</span>
+                      <div className='flex gap-2'>
+                        <Button size='sm' variant='outline' onClick={() => handleEditReward(reward)}>
+                          <Edit className='h-3 w-3' />
+                        </Button>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          className='text-red-600'
+                          onClick={() => handleDeleteReward(reward.id)}
+                        >
+                          <Trash2 className='h-3 w-3' />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Edit Reward Modal - Verbessertes Design */}
+      {showEditModal && editingReward && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <div className='bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700'>
+            <div className='flex justify-between items-center mb-4'>
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>Belohnung bearbeiten</h3>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingReward(null);
+                }}
+                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              >
+                ×
+              </Button>
+            </div>
+
+            <div className='space-y-4'>
+              <div>
+                <label
+                  htmlFor='edit-description'
+                  className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                >
+                  Beschreibung
+                </label>
+                <Input
+                  id='edit-description'
+                  value={editingReward.description}
+                  onChange={(e) => setEditingReward({ ...editingReward, description: e.target.value })}
+                  placeholder='z.B. 100 Silk für 100 Punkte'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor='edit-points'
+                  className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                >
+                  Benötigte Punkte
+                </label>
+                <Input
+                  id='edit-points'
+                  type='number'
+                  value={editingReward.points_required}
+                  onChange={(e) =>
+                    setEditingReward({ ...editingReward, points_required: parseInt(e.target.value) || 0 })
+                  }
+                  min='1'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label htmlFor='edit-silk' className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'>
+                  Silk Belohnung
+                </label>
+                <Input
+                  id='edit-silk'
+                  type='number'
+                  value={editingReward.silk_reward}
+                  onChange={(e) => setEditingReward({ ...editingReward, silk_reward: parseInt(e.target.value) || 0 })}
+                  min='0'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label htmlFor='edit-item' className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'>
+                  Item ID (optional)
+                </label>
+                <Input
+                  id='edit-item'
+                  type='number'
+                  value={editingReward.item_id || ''}
+                  onChange={(e) =>
+                    setEditingReward({
+                      ...editingReward,
+                      item_id: e.target.value ? parseInt(e.target.value) : null,
+                    })
+                  }
+                  placeholder='z.B. 12345'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div className='flex items-center space-x-2'>
+                <input
+                  id='edit-active'
+                  type='checkbox'
+                  checked={editingReward.is_active}
+                  onChange={(e) => setEditingReward({ ...editingReward, is_active: e.target.checked })}
+                  className='rounded text-blue-600 focus:ring-blue-500'
+                />
+                <label htmlFor='edit-active' className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+                  Belohnung aktiv
+                </label>
+              </div>
+            </div>
+
+            <div className='flex gap-3 mt-6'>
+              <Button
+                variant='outline'
+                className='flex-1'
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingReward(null);
+                }}
+              >
+                Abbrechen
+              </Button>
+              <Button className='flex-1 bg-blue-600 hover:bg-blue-700' onClick={handleSaveReward}>
+                Speichern
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Anti-Cheat Tab */}
+      {activeTab === 'anticheat' && (
+        <div className='space-y-6'>
+          {/* Anti-Cheat Statistiken */}
+          {antiCheatStats && (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+              <Card className='bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'>
+                <CardContent className='p-6'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-blue-600 text-sm font-medium'>Gesamte Referrals</p>
+                      <p className='text-2xl font-bold text-blue-800'>
+                        {antiCheatStats.total_stats.total_referrals.toLocaleString()}
+                      </p>
+                    </div>
+                    <Users className='h-8 w-8 text-blue-600' />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className='bg-gradient-to-br from-green-50 to-green-100 border-green-200'>
+                <CardContent className='p-6'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-green-600 text-sm font-medium'>Gültige Referrals</p>
+                      <p className='text-2xl font-bold text-green-800'>
+                        {antiCheatStats.total_stats.valid_referrals.toLocaleString()}
+                      </p>
+                    </div>
+                    <Trophy className='h-8 w-8 text-green-600' />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className='bg-gradient-to-br from-red-50 to-red-100 border-red-200'>
+                <CardContent className='p-6'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-red-600 text-sm font-medium'>Blockierte Referrals</p>
+                      <p className='text-2xl font-bold text-red-800'>
+                        {antiCheatStats.total_stats.blocked_referrals.toLocaleString()}
+                      </p>
+                    </div>
+                    <Eye className='h-8 w-8 text-red-600' />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className='bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200'>
+                <CardContent className='p-6'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-yellow-600 text-sm font-medium'>Block-Rate</p>
+                      <p className='text-2xl font-bold text-yellow-800'>
+                        {antiCheatStats.total_stats.block_rate_percent.toFixed(1)}%
+                      </p>
+                    </div>
+                    <BarChart3 className='h-8 w-8 text-yellow-600' />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Verdächtige Referrals */}
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Eye className='h-5 w-5 text-red-600' />
+                Verdächtige Referral-Aktivitäten
+              </CardTitle>
+              <CardDescription>Übersicht über blockierte und verdächtige Referral-Versuche</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='overflow-x-auto'>
+                <table className='w-full'>
+                  <thead>
+                    <tr className='border-b border-gray-200'>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Code</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Referrer</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>IP-Adresse</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Grund</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Duplikate</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Datum</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {suspiciousReferrals.map((referral) => (
+                      <tr key={referral.id} className='border-b border-gray-100 hover:bg-gray-50'>
+                        <td className='py-3 px-4'>
+                          <code className='bg-gray-100 px-2 py-1 rounded text-sm font-mono'>{referral.code}</code>
+                        </td>
+                        <td className='py-3 px-4'>JID: {referral.referrer_jid}</td>
+                        <td className='py-3 px-4'>
+                          <code className='text-sm'>{referral.ip_address}</code>
+                        </td>
+                        <td className='py-3 px-4'>
+                          <Badge
+                            variant={
+                              referral.cheat_reason === 'IP_DUPLICATE'
+                                ? 'destructive'
+                                : referral.cheat_reason === 'FINGERPRINT_DUPLICATE'
+                                ? 'destructive'
+                                : referral.cheat_reason === 'RATE_LIMIT_IP'
+                                ? 'secondary'
+                                : 'outline'
+                            }
+                          >
+                            {referral.cheat_reason === 'IP_DUPLICATE' && 'Doppelte IP'}
+                            {referral.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Doppelter Browser'}
+                            {referral.cheat_reason === 'RATE_LIMIT_IP' && 'Rate Limit'}
+                            {referral.cheat_reason === 'ANTICHEAT_ERROR' && 'System Fehler'}
+                            {!['IP_DUPLICATE', 'FINGERPRINT_DUPLICATE', 'RATE_LIMIT_IP', 'ANTICHEAT_ERROR'].includes(
+                              referral.cheat_reason
+                            ) && referral.cheat_reason}
+                          </Badge>
+                        </td>
+                        <td className='py-3 px-4'>
+                          <div className='text-sm text-gray-600'>
+                            IP: {referral.same_ip_count}x, Browser: {referral.same_fingerprint_count}x
+                          </div>
+                        </td>
+                        <td className='py-3 px-4 text-sm text-gray-600'>
+                          {new Date(referral.created_at).toLocaleDateString('de-DE', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </td>
+                        <td className='py-3 px-4'>
+                          <div className='flex gap-2'>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              className='text-green-600 border-green-300 hover:bg-green-50'
+                              onClick={() => validateSuspiciousReferral(referral.id, true, 'Admin validated')}
+                            >
+                              Freigeben
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              className='text-red-600 border-red-300 hover:bg-red-50'
+                              onClick={() => validateSuspiciousReferral(referral.id, false, 'Admin rejected')}
+                            >
+                              Ablehnen
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {suspiciousReferrals.length === 0 && (
+                  <div className='text-center py-8 text-gray-500'>Keine verdächtigen Referral-Aktivitäten gefunden</div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Häufigste Cheat-Gründe */}
+          {antiCheatStats && antiCheatStats.cheat_reasons.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Häufigste Cheat-Gründe (letzte 30 Tage)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-3'>
+                  {antiCheatStats.cheat_reasons.map((reason, index) => (
+                    <div key={index} className='flex items-center justify-between p-3 bg-gray-50 rounded'>
+                      <span className='font-medium text-gray-900'>
+                        {reason.cheat_reason === 'IP_DUPLICATE' && 'Doppelte IP-Adresse'}
+                        {reason.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Doppelter Browser-Fingerprint'}
+                        {reason.cheat_reason === 'RATE_LIMIT_IP' && 'IP Rate Limit erreicht'}
+                        {reason.cheat_reason === 'ANTICHEAT_ERROR' && 'Anti-Cheat System Fehler'}
+                        {!['IP_DUPLICATE', 'FINGERPRINT_DUPLICATE', 'RATE_LIMIT_IP', 'ANTICHEAT_ERROR'].includes(
+                          reason.cheat_reason
+                        ) && reason.cheat_reason}
+                      </span>
+                      <Badge variant='secondary'>{reason.count} Fälle</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Top verdächtige IPs */}
+          {antiCheatStats && antiCheatStats.suspicious_ips.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Verdächtige IP-Adressen</CardTitle>
+                <CardDescription>IPs mit mehreren blockierten Referral-Versuchen</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='overflow-x-auto'>
+                  <table className='w-full'>
+                    <thead>
+                      <tr className='border-b border-gray-200'>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>IP-Adresse</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Gesamt Referrals</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Blockiert</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Einzigartige Referrer</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Verdächtigkeitsgrad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {antiCheatStats.suspicious_ips.map((ip, index) => {
+                        const suspiciousness = ip.blocked_count / ip.referral_count;
+                        return (
+                          <tr key={index} className='border-b border-gray-100'>
+                            <td className='py-3 px-4'>
+                              <code className='text-sm'>{ip.ip_address}</code>
+                            </td>
+                            <td className='py-3 px-4'>{ip.referral_count}</td>
+                            <td className='py-3 px-4 text-red-600 font-medium'>{ip.blocked_count}</td>
+                            <td className='py-3 px-4'>{ip.unique_referrers}</td>
+                            <td className='py-3 px-4'>
+                              <Badge
+                                variant={
+                                  suspiciousness >= 0.8
+                                    ? 'destructive'
+                                    : suspiciousness >= 0.5
+                                    ? 'secondary'
+                                    : 'outline'
+                                }
+                              >
+                                {(suspiciousness * 100).toFixed(0)}% verdächtig
+                              </Badge>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ReferralManager;

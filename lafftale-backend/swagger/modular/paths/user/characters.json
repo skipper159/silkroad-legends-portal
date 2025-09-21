@@ -1,0 +1,256 @@
+{
+  "/api/characters/characters/{gameAccountId}": {
+    "get": {
+      "tags": ["User - Characters"],
+      "summary": "Get characters by game account",
+      "description": "Retrieve all characters for a specific game account",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "gameAccountId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Game account ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Characters retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Character" }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/characters/gameaccounts/my": {
+    "get": {
+      "tags": ["User - Characters"],
+      "summary": "Get current user's game accounts",
+      "description": "Retrieve all game accounts belonging to current user",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Game accounts retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "ID": { "type": "integer" },
+                            "StrUserID": { "type": "string" },
+                            "StrPassword": { "type": "string" },
+                            "CharacterCount": { "type": "integer" },
+                            "Created": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "LastLogin": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "IsActive": { "type": "boolean" },
+                            "IsBanned": { "type": "boolean" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/characters/inventory/{charId}": {
+    "get": {
+      "tags": ["User - Characters"],
+      "summary": "Get character inventory",
+      "description": "Retrieve inventory items for a specific character",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "charId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Character ID"
+        },
+        {
+          "name": "min",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer" },
+          "description": "Minimum slot number to filter inventory (e.g., 13 for inventory items)"
+        },
+        {
+          "name": "max",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer" },
+          "description": "Maximum slot number to filter inventory (e.g., 108 for inventory items)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Inventory retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/CharacterInventory"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/characters/{charId}/details": {
+    "get": {
+      "tags": ["User - Characters"],
+      "summary": "Get character details",
+      "description": "Retrieve detailed information for a specific character",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "charId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Character ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Character details retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "allOf": [
+                          { "$ref": "#/components/schemas/Character" },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "stats": {
+                                "$ref": "#/components/schemas/CharacterStats"
+                              },
+                              "inventory": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/components/schemas/CharacterInventory"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/inventory/{charId}": {
+    "get": {
+      "tags": ["User - Characters"],
+      "summary": "Get character inventory (alternative endpoint)",
+      "description": "Alternative endpoint to retrieve character inventory",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "charId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Character ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Inventory retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/CharacterInventory"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  }
+}

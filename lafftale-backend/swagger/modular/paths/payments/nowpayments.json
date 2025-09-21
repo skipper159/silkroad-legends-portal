@@ -1,0 +1,111 @@
+{
+  "/api/payment/nowpayments/initiate": {
+    "post": {
+      "tags": ["Payments - NOWPayments"],
+      "summary": "Initiate NOWPayments transaction",
+      "description": "Start a cryptocurrency payment via NOWPayments",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "packageId": { "type": "integer" },
+                "amount": { "type": "number", "format": "decimal" },
+                "currency": { "type": "string", "default": "USD" },
+                "cryptoCurrency": {
+                  "type": "string",
+                  "enum": ["btc", "eth", "ltc", "bch", "usdt", "usdc"],
+                  "description": "Preferred cryptocurrency"
+                },
+                "returnUrl": { "type": "string" },
+                "cancelUrl": { "type": "string" }
+              },
+              "required": ["cryptoCurrency"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "NOWPayments transaction initiated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "paymentId": { "type": "string" },
+                          "paymentUrl": { "type": "string" },
+                          "invoiceUrl": { "type": "string" },
+                          "amount": { "type": "number" },
+                          "currency": { "type": "string" },
+                          "cryptoAmount": { "type": "number" },
+                          "cryptoCurrency": { "type": "string" },
+                          "address": { "type": "string" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/payment/nowpayments/callback": {
+    "post": {
+      "tags": ["Payments - NOWPayments"],
+      "summary": "NOWPayments webhook callback",
+      "description": "Handle webhook notifications from NOWPayments",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "payment_id": { "type": "string" },
+                "payment_status": { "type": "string" },
+                "pay_address": { "type": "string" },
+                "pay_amount": { "type": "number" },
+                "pay_currency": { "type": "string" },
+                "order_id": { "type": "string" },
+                "order_description": { "type": "string" },
+                "purchase_id": { "type": "string" },
+                "outcome_amount": { "type": "number" },
+                "outcome_currency": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Webhook processed successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  }
+}

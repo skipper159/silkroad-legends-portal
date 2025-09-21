@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { Loader2, PlusCircle, Eye } from "lucide-react";
-import { fetchWithAuth, weburl } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
-import { DialogDescription } from "@/components/ui/dialog";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card } from '@/components/ui/card';
+import { Loader2, PlusCircle, Eye } from 'lucide-react';
+import { fetchWithAuth, weburl } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
+import { DialogDescription } from '@/components/ui/dialog';
 
 interface Ticket {
   Id: number;
   Subject: string;
-  Status: "open" | "closed";
-  Priority: "low" | "normal" | "high";
+  Status: 'open' | 'closed';
+  Priority: 'low' | 'normal' | 'high';
   CreatedAt: string;
 }
 
@@ -36,20 +36,18 @@ const SupportTickets = () => {
   const [openNewModal, setOpenNewModal] = useState(false);
   const [openDetailModal, setOpenDetailModal] = useState(false);
 
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [priority, setPriority] = useState<"low" | "normal" | "high">("normal");
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [priority, setPriority] = useState<'low' | 'normal' | 'high'>('normal');
 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
-  const [reply, setReply] = useState("");
+  const [reply, setReply] = useState('');
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [expandedMessages, setExpandedMessages] = useState<number[]>([]);
 
   const toggleExpand = (id: number) => {
-    setExpandedMessages((prev) =>
-      prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]
-    );
+    setExpandedMessages((prev) => (prev.includes(id) ? prev.filter((mid) => mid !== id) : [...prev, id]));
   };
 
   const { toast } = useToast();
@@ -58,11 +56,11 @@ const SupportTickets = () => {
     setLoading(true);
     try {
       const res = await fetchWithAuth(`${weburl}/api/user_tickets/my`);
-      if (!res.ok) throw new Error("Failed to fetch tickets");
+      if (!res.ok) throw new Error('Failed to fetch tickets');
       const data = await res.json();
       setTickets(data);
     } catch {
-      toast({ title: "Error", description: "Could not load tickets", variant: "destructive" });
+      toast({ title: 'Error', description: 'Could not load tickets', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -73,21 +71,21 @@ const SupportTickets = () => {
 
     try {
       const res = await fetchWithAuth(`${weburl}/api/user_tickets`, {
-        method: "POST",
-        body: JSON.stringify({ subject, message, priority })
+        method: 'POST',
+        body: JSON.stringify({ subject, message, priority }),
       });
 
       if (res.ok) {
-        toast({ title: "Ticket created", description: "Support will answer shortly." });
-        setSubject("");
-        setMessage("");
+        toast({ title: 'Ticket created', description: 'Support will answer shortly.' });
+        setSubject('');
+        setMessage('');
         setOpenNewModal(false);
         fetchTickets();
       } else {
         throw new Error();
       }
     } catch {
-      toast({ title: "Error", description: "Only one open ticket allowed", variant: "destructive" });
+      toast({ title: 'Error', description: 'Only one open ticket allowed', variant: 'destructive' });
     }
   };
 
@@ -98,7 +96,7 @@ const SupportTickets = () => {
 
     try {
       const res = await fetchWithAuth(`${weburl}/api/user_tickets/${ticket.Id}`);
-      if (!res.ok) throw new Error("Fail to load ticket");
+      if (!res.ok) throw new Error('Fail to load ticket');
       const data = await res.json();
       setMessages(data.Messages || []);
     } catch {
@@ -113,13 +111,13 @@ const SupportTickets = () => {
 
     try {
       await fetchWithAuth(`${weburl}/api/user_tickets/${selectedTicket.Id}/message`, {
-        method: "POST",
-        body: JSON.stringify({ message: reply })
+        method: 'POST',
+        body: JSON.stringify({ message: reply }),
       });
-      setReply("");
+      setReply('');
       fetchTicketDetails(selectedTicket);
     } catch {
-      toast({ title: "Error", description: "Could not send answer", variant: "destructive" });
+      toast({ title: 'Error', description: 'Could not send answer', variant: 'destructive' });
     }
   };
 
@@ -129,52 +127,76 @@ const SupportTickets = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-lafftale-gold">Support Tickets</h2>
-        <Button onClick={() => setOpenNewModal(true)} className="flex items-center gap-2">
+      <div className='flex justify-between items-center mb-4'>
+        <h2 className='text-xl font-bold text-lafftale-gold'>Support Tickets</h2>
+        <Button onClick={() => setOpenNewModal(true)} className='flex items-center gap-2'>
           <PlusCircle size={16} />
           New Ticket
         </Button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-6 text-lafftale-gold">
-          <Loader2 className="animate-spin mr-2" />Loading tickets...
+        <div className='flex justify-center py-6 text-lafftale-gold'>
+          <Loader2 className='animate-spin mr-2' />
+          Loading tickets...
         </div>
       ) : (
-        <Card className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm text-gray-300">
-            <thead className="bg-lafftale-darkgray text-lafftale-gold uppercase">
+        <Card className='overflow-x-auto'>
+          <table className='min-w-full text-left text-sm text-gray-300'>
+            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
               <tr>
-                <th className="p-3">Subject</th>
-                <th className="p-3">Priority</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Created</th>
-                <th className="p-3 text-center">Details</th>
+                <th className='p-3'>Subject</th>
+                <th className='p-3'>Priority</th>
+                <th className='p-3'>Status</th>
+                <th className='p-3'>Created</th>
+                <th className='p-3 text-center'>Details</th>
               </tr>
             </thead>
             <tbody>
-              {tickets.map((ticket) => (
-                <tr key={ticket.Id} className="border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20">
-                  <td className="p-3">{ticket.Subject}</td>
-                  <td className="p-3 font-semibold">
-                    <span className={
-                      ticket.Priority === "high" ? "text-red-500" :
-                      ticket.Priority === "normal" ? "text-yellow-400" :
-                      "text-green-400"
-                    }>
-                      {ticket.Priority}
-                    </span>
-                  </td>
-                  <td className="p-3">{ticket.Status}</td>
-                  <td className="p-3">{new Date(ticket.CreatedAt).toLocaleString()}</td>
-                  <td className="p-3 text-center">
-                    <Button size="sm" variant="outline" onClick={() => fetchTicketDetails(ticket)}>
-                      <Eye size={16} />
-                    </Button>
+              {tickets.length > 0 ? (
+                tickets.map((ticket) => (
+                  <tr key={ticket.Id} className='border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20'>
+                    <td className='p-3'>{ticket.Subject}</td>
+                    <td className='p-3 font-semibold'>
+                      <span
+                        className={
+                          ticket.Priority === 'high'
+                            ? 'text-red-500'
+                            : ticket.Priority === 'normal'
+                            ? 'text-yellow-400'
+                            : 'text-green-400'
+                        }
+                      >
+                        {ticket.Priority}
+                      </span>
+                    </td>
+                    <td className='p-3'>
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-semibold ${
+                          ticket.Status === 'open' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-200'
+                        }`}
+                      >
+                        {ticket.Status}
+                      </span>
+                    </td>
+                    <td className='p-3'>{new Date(ticket.CreatedAt).toLocaleString()}</td>
+                    <td className='p-3 text-center'>
+                      <Button size='sm' variant='outline' onClick={() => fetchTicketDetails(ticket)}>
+                        <Eye size={16} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className='p-8 text-center text-gray-400'>
+                    <div className='space-y-2'>
+                      <div>No support tickets found</div>
+                      <div className='text-sm'>Create your first ticket if you need help!</div>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </Card>
@@ -182,52 +204,57 @@ const SupportTickets = () => {
 
       {/* Modal: Create Ticket */}
       <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
-        <DialogContent className="bg-lafftale-darkgray border border-lafftale-gold/20 text-gray-300">
+        <DialogContent className='bg-lafftale-darkgray border border-lafftale-gold/20 text-gray-300'>
           <DialogHeader>
-            <DialogTitle className="text-lafftale-gold">Create new Ticket</DialogTitle>
-            <DialogDescription>
-              Please describe your issue. One open ticket at a time is allowed.
-            </DialogDescription>
+            <DialogTitle className='text-lafftale-gold'>Create new Ticket</DialogTitle>
+            <DialogDescription>Please describe your issue. One open ticket at a time is allowed.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <Input placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
-            <Textarea placeholder="Your message..." value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
-            <div className="flex gap-4 text-sm">
-              {["low", "normal", "high"].map((lvl) => (
+          <div className='space-y-4'>
+            <Input placeholder='Subject' value={subject} onChange={(e) => setSubject(e.target.value)} />
+            <Textarea
+              placeholder='Your message...'
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={4}
+            />
+            <div className='flex gap-4 text-sm'>
+              {['low', 'normal', 'high'].map((lvl) => (
                 <label key={lvl}>
                   <input
-                    type="radio"
+                    type='radio'
                     value={lvl}
                     checked={priority === lvl}
-                    onChange={() => setPriority(lvl as "low" | "normal" | "high")}
-                  />{" "}
+                    onChange={() => setPriority(lvl as 'low' | 'normal' | 'high')}
+                  />{' '}
                   {lvl}
                 </label>
               ))}
             </div>
           </div>
-          <DialogFooter className="mt-4">
-            <Button onClick={handleCreateTicket} className="btn-primary">Send</Button>
+          <DialogFooter className='mt-4'>
+            <Button onClick={handleCreateTicket} className='btn-primary'>
+              Send
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Modal: Ticket Details */}
       <Dialog open={openDetailModal} onOpenChange={setOpenDetailModal}>
-        <DialogContent className="max-w-2xl bg-lafftale-darkgray border-lafftale-gold/20 text-gray-300">
+        <DialogContent className='max-w-2xl bg-lafftale-darkgray border-lafftale-gold/20 text-gray-300'>
           <DialogHeader>
-            <DialogTitle className="text-lafftale-gold">
+            <DialogTitle className='text-lafftale-gold'>
               Ticket #{selectedTicket?.Id} – {selectedTicket?.Subject}
             </DialogTitle>
-            <DialogDescription>
-              Below is your conversation history.
-            </DialogDescription>
+            <DialogDescription>Below is your conversation history.</DialogDescription>
           </DialogHeader>
           {loadingDetails ? (
-            <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
+            <div className='flex justify-center py-6'>
+              <Loader2 className='animate-spin' />
+            </div>
           ) : (
             <>
-              <div className="space-y-3 max-h-[70vh] overflow-y-auto">
+              <div className='space-y-3 max-h-[70vh] overflow-y-auto'>
                 {messages.map((msg) => {
                   const isExpanded = expandedMessages.includes(msg.Id);
                   const shortText = msg.Message.slice(0, MAX_PREVIEW_LENGTH);
@@ -237,11 +264,11 @@ const SupportTickets = () => {
                       key={msg.Id}
                       className={`p-3 rounded text-sm w-fit max-w-[85%] ${
                         msg.IsFromStaff
-                          ? "ml-auto bg-yellow-100 text-yellow-900 text-right"
-                          : "mr-auto bg-gray-800 text-white text-left"
+                          ? 'ml-auto bg-yellow-100 text-yellow-900 text-right'
+                          : 'mr-auto bg-gray-800 text-white text-left'
                       }`}
                     >
-                      <div className="text-xs mb-1 text-lafftale-gold">
+                      <div className='text-xs mb-1 text-lafftale-gold'>
                         {msg.SenderName} • {new Date(msg.SentAt).toLocaleString()}
                       </div>
                       <div>
@@ -250,12 +277,16 @@ const SupportTickets = () => {
                         ) : isExpanded ? (
                           <>
                             {msg.Message}
-                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read less</Button>
+                            <Button variant='link' className='text-xs p-0 ml-2' onClick={() => toggleExpand(msg.Id)}>
+                              Read less
+                            </Button>
                           </>
                         ) : (
                           <>
                             {shortText}...
-                            <Button variant="link" className="text-xs p-0 ml-2" onClick={() => toggleExpand(msg.Id)}>Read more</Button>
+                            <Button variant='link' className='text-xs p-0 ml-2' onClick={() => toggleExpand(msg.Id)}>
+                              Read more
+                            </Button>
                           </>
                         )}
                       </div>
@@ -264,16 +295,18 @@ const SupportTickets = () => {
                 })}
               </div>
 
-              {selectedTicket?.Status !== "closed" && (
+              {selectedTicket?.Status !== 'closed' && (
                 <>
                   <Textarea
-                    placeholder="Write a reply..."
+                    placeholder='Write a reply...'
                     value={reply}
                     onChange={(e) => setReply(e.target.value)}
-                    className="mt-4"
+                    className='mt-4'
                   />
-                  <DialogFooter className="mt-2">
-                    <Button className="btn-primary" onClick={sendReply}>Reply</Button>
+                  <DialogFooter className='mt-2'>
+                    <Button className='btn-primary' onClick={sendReply}>
+                      Reply
+                    </Button>
                   </DialogFooter>
                 </>
               )}

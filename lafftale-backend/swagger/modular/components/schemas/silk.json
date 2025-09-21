@@ -1,0 +1,588 @@
+{
+  "SilkBalance": {
+    "type": "object",
+    "description": "User's silk balance information",
+    "properties": {
+      "jid": {
+        "type": "integer",
+        "description": "Portal JID"
+      },
+      "silk": {
+        "type": "integer",
+        "description": "Normal silk amount"
+      },
+      "premiumSilk": {
+        "type": "integer",
+        "description": "Premium silk amount"
+      },
+      "vipLevel": {
+        "type": "integer",
+        "description": "VIP level"
+      }
+    },
+    "required": ["jid", "silk", "premiumSilk", "vipLevel"]
+  },
+  "PayPalDonationRequest": {
+    "type": "object",
+    "description": "PayPal donation processing request",
+    "properties": {
+      "amount": {
+        "type": "number",
+        "minimum": 0.01,
+        "description": "Dollar amount of the donation"
+      },
+      "transactionId": {
+        "type": "string",
+        "description": "PayPal transaction ID"
+      },
+      "silkRate": {
+        "type": "integer",
+        "default": 100,
+        "description": "Silk per dollar rate (optional, default: 100)"
+      }
+    },
+    "required": ["amount", "transactionId"]
+  },
+  "PayPalDonationResponse": {
+    "type": "object",
+    "description": "PayPal donation processing response",
+    "properties": {
+      "jid": {
+        "type": "integer",
+        "description": "Portal JID"
+      },
+      "amount": {
+        "type": "number",
+        "description": "Dollar amount processed"
+      },
+      "silk": {
+        "type": "integer",
+        "description": "Silk amount added"
+      },
+      "transactionId": {
+        "type": "string",
+        "description": "PayPal transaction ID"
+      }
+    },
+    "required": ["jid", "amount", "silk", "transactionId"]
+  },
+  "DonationHistory": {
+    "type": "object",
+    "description": "User's donation history",
+    "properties": {
+      "jid": {
+        "type": "integer",
+        "description": "Portal JID"
+      },
+      "donations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DonationRecord"
+        }
+      }
+    },
+    "required": ["jid", "donations"]
+  },
+  "DonationRecord": {
+    "type": "object",
+    "description": "Single donation record",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Donation record ID"
+      },
+      "method": {
+        "type": "string",
+        "enum": ["paypal", "credit_card", "bank_transfer", "vote"],
+        "description": "Donation method"
+      },
+      "amount": {
+        "type": "number",
+        "description": "Dollar amount donated"
+      },
+      "silk": {
+        "type": "integer",
+        "description": "Silk amount received"
+      },
+      "transaction_id": {
+        "type": "string",
+        "description": "External transaction ID"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "completed", "failed", "refunded"],
+        "description": "Donation status"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Donation timestamp"
+      }
+    },
+    "required": ["id", "method", "amount", "silk", "status", "created_at"]
+  },
+  "VotePointsRequest": {
+    "type": "object",
+    "description": "Vote points addition request",
+    "properties": {
+      "jid": {
+        "type": "integer",
+        "description": "Portal JID"
+      },
+      "points": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Vote points to add"
+      },
+      "site": {
+        "type": "string",
+        "description": "Vote site name"
+      }
+    },
+    "required": ["jid", "points", "site"]
+  },
+  "VotePointsResponse": {
+    "type": "object",
+    "description": "Vote points addition response",
+    "properties": {
+      "jid": {
+        "type": "integer",
+        "description": "Portal JID"
+      },
+      "points": {
+        "type": "integer",
+        "description": "Points added"
+      },
+      "site": {
+        "type": "string",
+        "description": "Vote site name"
+      }
+    },
+    "required": ["jid", "points", "site"]
+  },
+  "AccountNotLinkedError": {
+    "type": "object",
+    "description": "Error when user account is not properly linked to portal system",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": false
+      },
+      "error": {
+        "type": "string",
+        "example": "User account not properly linked to portal system"
+      },
+      "jid": {
+        "type": "integer",
+        "example": 0,
+        "description": "Current JID (usually 0 when not linked)"
+      }
+    },
+    "required": ["success", "error", "jid"]
+  },
+  "DeprecatedEndpointError": {
+    "type": "object",
+    "description": "Error for deprecated endpoints",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": false
+      },
+      "error": {
+        "type": "string",
+        "example": "This endpoint is deprecated. Use the new SRO-CMS pattern endpoints instead."
+      },
+      "migration": {
+        "type": "string",
+        "example": "Please update your client to use the new SRO-CMS pattern with proper JID linking."
+      }
+    },
+    "required": ["success", "error", "migration"]
+  },
+  "AdminSilkAccount": {
+    "type": "object",
+    "description": "Account with silk balance for admin view",
+    "properties": {
+      "gameJID": {
+        "type": "integer",
+        "description": "Game database JID"
+      },
+      "portalJID": {
+        "type": "integer",
+        "description": "Portal database JID"
+      },
+      "username": {
+        "type": "string",
+        "description": "Game account username"
+      },
+      "portalUsername": {
+        "type": "string",
+        "description": "Portal account username"
+      },
+      "silk": {
+        "type": "integer",
+        "description": "Regular silk amount"
+      },
+      "premiumSilk": {
+        "type": "integer",
+        "description": "Premium silk amount"
+      },
+      "totalSilk": {
+        "type": "integer",
+        "description": "Total silk (regular + premium)"
+      },
+      "vipLevel": {
+        "type": "integer",
+        "description": "VIP level"
+      },
+      "regDate": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Account registration date"
+      },
+      "lastLogin": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last login date"
+      }
+    },
+    "required": [
+      "gameJID",
+      "portalJID",
+      "username",
+      "silk",
+      "premiumSilk",
+      "totalSilk",
+      "vipLevel"
+    ]
+  },
+  "AdminSilkAccountDetail": {
+    "type": "object",
+    "description": "Detailed account silk information for admin",
+    "allOf": [
+      { "$ref": "#/components/schemas/AdminSilkAccount" },
+      {
+        "type": "object",
+        "properties": {
+          "transactionHistory": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SilkTransaction" },
+            "description": "Recent silk transactions"
+          },
+          "accountInfo": {
+            "type": "object",
+            "properties": {
+              "isOnline": { "type": "boolean" },
+              "charName": { "type": "string" },
+              "level": { "type": "integer" },
+              "job": { "type": "string" }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "ServerSilkStats": {
+    "type": "object",
+    "description": "Server-wide silk statistics",
+    "properties": {
+      "totalSilkValue": {
+        "type": "number",
+        "description": "Total silk value across all accounts"
+      },
+      "totalAccounts": {
+        "type": "integer",
+        "description": "Total number of accounts with silk"
+      },
+      "averageSilkPerAccount": {
+        "type": "number",
+        "description": "Average silk per account"
+      },
+      "totalPremiumSilk": {
+        "type": "number",
+        "description": "Total premium silk across all accounts"
+      },
+      "totalRegularSilk": {
+        "type": "number",
+        "description": "Total regular silk across all accounts"
+      },
+      "activeAccounts": {
+        "type": "integer",
+        "description": "Number of accounts with silk balance > 0"
+      },
+      "lastUpdated": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When stats were last calculated"
+      },
+      "cached": {
+        "type": "boolean",
+        "description": "Whether these stats are from cache"
+      }
+    },
+    "required": [
+      "totalSilkValue",
+      "totalAccounts",
+      "averageSilkPerAccount",
+      "totalPremiumSilk",
+      "totalRegularSilk",
+      "activeAccounts",
+      "cached"
+    ]
+  },
+  "SilkTrendData": {
+    "type": "object",
+    "description": "Silk trend data point",
+    "properties": {
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Date of the data point"
+      },
+      "totalSilk": {
+        "type": "number",
+        "description": "Total silk on this date"
+      },
+      "silkAdded": {
+        "type": "number",
+        "description": "Silk added on this date"
+      },
+      "silkSpent": {
+        "type": "number",
+        "description": "Silk spent on this date"
+      },
+      "activeAccounts": {
+        "type": "integer",
+        "description": "Active accounts on this date"
+      }
+    },
+    "required": [
+      "date",
+      "totalSilk",
+      "silkAdded",
+      "silkSpent",
+      "activeAccounts"
+    ]
+  },
+  "SilkTrendSummary": {
+    "type": "object",
+    "description": "Summary of silk trends",
+    "properties": {
+      "periodDays": {
+        "type": "integer",
+        "description": "Number of days in trend period"
+      },
+      "totalSilkChange": {
+        "type": "number",
+        "description": "Total silk change over period"
+      },
+      "averageDailySilkChange": {
+        "type": "number",
+        "description": "Average daily silk change"
+      },
+      "peakSilkDay": {
+        "type": "string",
+        "format": "date",
+        "description": "Day with highest silk amount"
+      },
+      "peakSilkAmount": {
+        "type": "number",
+        "description": "Highest silk amount in period"
+      }
+    },
+    "required": ["periodDays", "totalSilkChange", "averageDailySilkChange"]
+  },
+  "AdminSilkGiveRequest": {
+    "type": "object",
+    "description": "Request to give silk to an account",
+    "properties": {
+      "targetJID": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Target account Portal JID"
+      },
+      "silkType": {
+        "type": "string",
+        "enum": ["premium", "regular"],
+        "description": "Type of silk to give"
+      },
+      "amount": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 1000000,
+        "description": "Amount of silk to give"
+      },
+      "reason": {
+        "type": "string",
+        "maxLength": 255,
+        "description": "Reason for giving silk (optional)"
+      }
+    },
+    "required": ["targetJID", "silkType", "amount"]
+  },
+  "SilkTransaction": {
+    "type": "object",
+    "description": "Silk transaction record",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Transaction ID"
+      },
+      "jid": {
+        "type": "integer",
+        "description": "Account JID"
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "donation",
+          "vote",
+          "purchase",
+          "admin_give",
+          "admin_remove",
+          "refund"
+        ],
+        "description": "Transaction type"
+      },
+      "silkType": {
+        "type": "string",
+        "enum": ["premium", "regular"],
+        "description": "Type of silk affected"
+      },
+      "amount": {
+        "type": "integer",
+        "description": "Amount of silk (positive for additions, negative for removals)"
+      },
+      "balanceBefore": {
+        "type": "integer",
+        "description": "Silk balance before transaction"
+      },
+      "balanceAfter": {
+        "type": "integer",
+        "description": "Silk balance after transaction"
+      },
+      "adminJID": {
+        "type": "integer",
+        "description": "Admin JID (for admin transactions)"
+      },
+      "reason": {
+        "type": "string",
+        "description": "Transaction reason/description"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Transaction timestamp"
+      }
+    },
+    "required": [
+      "id",
+      "jid",
+      "type",
+      "silkType",
+      "amount",
+      "balanceBefore",
+      "balanceAfter",
+      "createdAt"
+    ]
+  },
+  "PaginationMeta": {
+    "type": "object",
+    "description": "Pagination metadata",
+    "properties": {
+      "currentPage": {
+        "type": "integer",
+        "description": "Current page number"
+      },
+      "totalPages": {
+        "type": "integer",
+        "description": "Total number of pages"
+      },
+      "totalItems": {
+        "type": "integer",
+        "description": "Total number of items"
+      },
+      "itemsPerPage": {
+        "type": "integer",
+        "description": "Items per page"
+      },
+      "hasNext": {
+        "type": "boolean",
+        "description": "Whether there is a next page"
+      },
+      "hasPrev": {
+        "type": "boolean",
+        "description": "Whether there is a previous page"
+      }
+    },
+    "required": [
+      "currentPage",
+      "totalPages",
+      "totalItems",
+      "itemsPerPage",
+      "hasNext",
+      "hasPrev"
+    ]
+  },
+  "CacheStats": {
+    "type": "object",
+    "description": "Cache statistics for silk data cache",
+    "properties": {
+      "totalEntries": {
+        "type": "integer",
+        "description": "Total number of cached entries"
+      },
+      "validEntries": {
+        "type": "integer",
+        "description": "Number of valid (non-expired) cached entries"
+      },
+      "expiredEntries": {
+        "type": "integer",
+        "description": "Number of expired cached entries"
+      },
+      "hitRate": {
+        "type": "number",
+        "format": "float",
+        "description": "Cache hit rate as percentage (0-100)"
+      },
+      "totalHits": {
+        "type": "integer",
+        "description": "Total number of cache hits"
+      },
+      "totalMisses": {
+        "type": "integer",
+        "description": "Total number of cache misses"
+      },
+      "totalRequests": {
+        "type": "integer",
+        "description": "Total number of cache requests"
+      },
+      "lastCleanup": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp of last cache cleanup"
+      },
+      "nextCleanup": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp of next scheduled cleanup"
+      },
+      "cacheSize": {
+        "type": "string",
+        "description": "Human-readable cache size (e.g., '2.3 MB')"
+      }
+    },
+    "required": [
+      "totalEntries",
+      "validEntries",
+      "expiredEntries",
+      "hitRate",
+      "totalHits",
+      "totalMisses",
+      "totalRequests",
+      "lastCleanup",
+      "nextCleanup",
+      "cacheSize"
+    ]
+  }
+}

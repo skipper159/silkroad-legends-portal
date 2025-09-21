@@ -1,5 +1,5 @@
 export function getItemImagePath(codeName: string): string {
-    const basePath = "/public/image/sro/item";
+    const basePath = "/image/sro/item";
   
     if (!codeName) return `${basePath}/unknown.png`;
   

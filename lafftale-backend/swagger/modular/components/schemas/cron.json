@@ -1,0 +1,71 @@
+{
+  "CronJob": {
+    "type": "object",
+    "description": "Cron Job Konfiguration und Status",
+    "properties": {
+      "job_name": {
+        "type": "string",
+        "description": "Eindeutiger Name des Cron Jobs",
+        "example": "silk_stats_calculation"
+      },
+      "cron_expression": {
+        "type": "string",
+        "description": "Cron Expression (5 Felder: Minute Stunde Tag Monat Wochentag)",
+        "example": "0 2 * * *"
+      },
+      "enabled": {
+        "type": "boolean",
+        "description": "Ob der Job aktiviert ist"
+      },
+      "description": {
+        "type": "string",
+        "description": "Beschreibung des Jobs",
+        "example": "Berechnet täglich um 02:00 Uhr die Server Silk-Statistiken"
+      },
+      "last_run": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true,
+        "description": "Zeitpunkt der letzten Ausführung"
+      },
+      "run_count": {
+        "type": "integer",
+        "description": "Anzahl der bisherigen Ausführungen"
+      },
+      "isRunning": {
+        "type": "boolean",
+        "description": "Ob der Job aktuell läuft"
+      },
+      "nextRunEstimate": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true,
+        "description": "Geschätzte nächste Ausführungszeit"
+      }
+    },
+    "required": [
+      "job_name",
+      "cron_expression",
+      "enabled",
+      "description",
+      "run_count",
+      "isRunning"
+    ]
+  },
+  "CronJobUpdate": {
+    "type": "object",
+    "description": "Cron Job Update Request",
+    "properties": {
+      "cronExpression": {
+        "type": "string",
+        "description": "Neue Cron Expression",
+        "example": "0 2 * * *"
+      },
+      "enabled": {
+        "type": "boolean",
+        "description": "Job aktivieren/deaktivieren"
+      }
+    },
+    "required": ["cronExpression", "enabled"]
+  }
+}

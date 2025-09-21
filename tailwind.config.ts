@@ -118,15 +118,15 @@ const config: Config = {
       },
       backgroundImage: {
         "hero-pattern":
-          "linear-gradient(to bottom, rgba(18, 18, 18, 0.7), rgba(18, 18, 18, 0.9)), url('/public/image/web/login.png');",
+          "linear-gradient(to bottom, rgba(18, 18, 18, 0.7), rgba(18, 18, 18, 0.9)), url('/image/web/login.png');",
         "login-bg":
-          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('public/image/web/background.png')",
+          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('/image/web/background.png')",
         "register-bg":
-          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('public/image/web/header.png')",
+          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('/image/web/header.png')",
         "header-bg":
-          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('public/image/web/header2.png')",
+          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('/image/web/header2.png')",
         "header2-bg":
-          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('public/image/web/header3.png')",
+          "linear-gradient(to bottom, rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('/image/web/header3.png')",
       },
     },
   },

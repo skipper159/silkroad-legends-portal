@@ -1,0 +1,239 @@
+{
+  "/api/ranking/{type}": {
+    "get": {
+      "tags": ["Public - Rankings"],
+      "summary": "Get player rankings",
+      "description": "Retrieve player rankings by type including all Phase 1-3 ranking types",
+      "parameters": [
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "top-player",
+              "top-guild",
+              "unique",
+              "unique-monthly",
+              "honor",
+              "job",
+              "job-all",
+              "job-hunter",
+              "job-thief",
+              "job-trader",
+              "job-statistics",
+              "job-leaderboard-comparison",
+              "job-progression",
+              "fortress-player",
+              "fortress-guild",
+              "pvp-kd",
+              "job-kd",
+              "item-plus",
+              "item-drop"
+            ]
+          },
+          "description": "Ranking type - supports all Phase 1-3 ranking systems"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 50, "maximum": 100 },
+          "description": "Number of entries to return"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": { "type": "integer", "default": 0 },
+          "description": "Number of entries to skip"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number for pagination"
+        },
+        {
+          "name": "jobType",
+          "in": "query",
+          "schema": { "type": "integer", "enum": [1, 2, 3] },
+          "description": "Job type filter for job-progression endpoint (1=Trader, 2=Thief, 3=Hunter)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "oneOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/RankingPlayer"
+                            },
+                            "description": "Standard player ranking data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/JobRanking"
+                            },
+                            "description": "Job-specific ranking data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/JobStatistics"
+                            },
+                            "description": "Job statistics data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/JobLeaderboardEntry"
+                            },
+                            "description": "Job leaderboard comparison data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/JobProgressionData"
+                            },
+                            "description": "Job progression analytics data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/HonorRanking"
+                            },
+                            "description": "Honor system ranking data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/FortressRanking"
+                            },
+                            "description": "Fortress system ranking data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/ItemEnhancementRanking"
+                            },
+                            "description": "Item enhancement ranking data"
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/ItemDropRanking"
+                            },
+                            "description": "Item drop ranking data"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/rankings-extended/{type}": {
+    "get": {
+      "tags": ["Public - Rankings"],
+      "summary": "Get extended player rankings",
+      "description": "Retrieve extended player rankings with more detailed information",
+      "parameters": [
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": ["level", "guild", "job", "pk", "honor", "wealth"]
+          },
+          "description": "Ranking type"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 50, "maximum": 100 }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": { "type": "integer", "default": 0 }
+        },
+        {
+          "name": "includeStats",
+          "in": "query",
+          "schema": { "type": "boolean", "default": false },
+          "description": "Include detailed character statistics"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Extended rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "rankings": {
+                            "type": "array",
+                            "items": {
+                              "allOf": [
+                                { "$ref": "#/components/schemas/RankingEntry" },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "characterDetails": {
+                                      "$ref": "#/components/schemas/Character"
+                                    },
+                                    "guildName": { "type": "string" },
+                                    "lastSeen": {
+                                      "type": "string",
+                                      "format": "date-time"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "totalEntries": { "type": "integer" },
+                          "lastUpdated": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  }
+}

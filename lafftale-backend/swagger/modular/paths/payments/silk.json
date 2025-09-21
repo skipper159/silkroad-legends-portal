@@ -1,0 +1,111 @@
+{
+  "/api/silk/process-paypal": {
+    "post": {
+      "tags": ["Silk - SRO-CMS", "Payments"],
+      "summary": "Process PayPal donation (SRO-CMS Pattern)",
+      "description": "Process PayPal donation and add silk to user account using proper JID linking",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/PayPalDonationRequest" }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Donation processed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/PayPalDonationResponse"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/silk/donation-history": {
+    "get": {
+      "tags": ["Silk - SRO-CMS", "History"],
+      "summary": "Get user's donation history",
+      "description": "Retrieve donation history for the authenticated user",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Donation history retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/DonationHistory" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/silk/add-vote-points": {
+    "post": {
+      "tags": ["Silk - SRO-CMS", "Voting"],
+      "summary": "Add vote points to user account",
+      "description": "Add vote points to user account (typically called by vote sites)",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/VotePointsRequest" }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Vote points added successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/VotePointsResponse"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  }
+}

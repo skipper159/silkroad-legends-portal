@@ -1,33 +1,33 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { pool, poolConnect, sql } = require("../db");
-const authenticateToken = require("../middleware/auth");
+const { getWebDb, sql } = require('../db');
+const { authenticateToken } = require('../middleware/auth');
 
 // GET own profile
-router.get("/me", authenticateToken, async (req, res) => {
-  await poolConnect;
+router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const result = await pool.request()
-      .input("id", sql.Int, req.user.id)
-      .query(`
+    const pool = await getWebDb();
+    const result = await pool.request().input('id', sql.BigInt, req.user.id).query(`
         SELECT 
-          Id as id, 
-          Username as username, 
-          Email as email, 
-          RegisteredAt as registeredAt, 
-          LastLogin as lastLogin,
-          CONVERT(VARCHAR(8), LogTime, 108) as logTime
-        FROM WebUsers 
-        WHERE Id = @id
+          u.id, 
+          u.username, 
+          u.email, 
+          u.jid,
+          u.created_at as registeredAt, 
+          u.updated_at as lastLogin,
+          ur.is_admin as isAdmin
+        FROM users u
+        LEFT JOIN user_roles ur ON u.id = ur.user_id
+        WHERE u.id = @id
       `);
 
-    if (!result.recordset[0]) return res.status(404).send("User not found");
-    
-    console.log("User data being sent:", result.recordset[0]);
+    if (!result.recordset[0]) return res.status(404).send('User not found');
+
+    console.log('User data being sent:', result.recordset[0]);
     res.json(result.recordset[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching user");
+    console.error('Error fetching user profile:', err);
+    res.status(500).send('Error fetching user');
   }
 });
 

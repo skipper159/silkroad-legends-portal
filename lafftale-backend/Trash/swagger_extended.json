@@ -1,0 +1,590 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lafftale Web API - Extended",
+    "version": "2.0.0",
+    "description": "Extended REST API with SRO CMS features for user management, support ticketing, donation/voting, pages, downloads, vouchers, referrals, and user roles"
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Page": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "content": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Download": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "file_url": { "type": "string" },
+          "file_size": { "type": "string" },
+          "version": { "type": "string" },
+          "category": { "type": "string" },
+          "download_count": { "type": "integer" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Voucher": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "code": { "type": "string" },
+          "type": { "type": "string", "enum": ["silk", "gold", "experience"] },
+          "value": { "type": "integer" },
+          "max_uses": { "type": "integer" },
+          "uses_left": { "type": "integer" },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "active": { "type": "boolean" }
+        }
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "url": { "type": "string" },
+          "site": { "type": "string" },
+          "reward": { "type": "integer" },
+          "timeout": { "type": "integer" },
+          "vote_count": { "type": "integer" },
+          "active": { "type": "boolean" }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "referrer_jid": { "type": "integer" },
+          "referred_jid": { "type": "integer" },
+          "points": { "type": "integer" },
+          "redeemed": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserRole": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "moderator", "support", "vip", "premium"]
+          },
+          "permissions": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RankingEntry": {
+        "type": "object",
+        "properties": {
+          "RowNum": { "type": "integer" },
+          "CharName16": { "type": "string" },
+          "CurLevel": { "type": "integer" },
+          "GuildName": { "type": "string" },
+          "RefObjID": { "type": "integer" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/pages": {
+      "get": {
+        "summary": "Get all active pages",
+        "tags": ["Pages"],
+        "responses": {
+          "200": {
+            "description": "List of pages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Page" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new page (Admin only)",
+        "tags": ["Pages"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "slug": { "type": "string" },
+                  "content": { "type": "string" },
+                  "excerpt": { "type": "string" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "slug", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Page created" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/api/pages/{slug}": {
+      "get": {
+        "summary": "Get page by slug",
+        "tags": ["Pages"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Page details" },
+          "404": { "description": "Page not found" }
+        }
+      }
+    },
+    "/api/downloads": {
+      "get": {
+        "summary": "Get all active downloads",
+        "tags": ["Downloads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "schema": { "type": "string" },
+            "description": "Filter by category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of downloads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Download" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new download (Admin only)",
+        "tags": ["Downloads"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "file_url": { "type": "string" },
+                  "file_size": { "type": "string" },
+                  "version": { "type": "string" },
+                  "category": { "type": "string" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "file_url", "category"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Download created" }
+        }
+      }
+    },
+    "/api/downloads/categories": {
+      "get": {
+        "summary": "Get all download categories",
+        "tags": ["Downloads"],
+        "responses": {
+          "200": { "description": "List of categories" }
+        }
+      }
+    },
+    "/api/downloads/{id}/download": {
+      "post": {
+        "summary": "Track download and increment counter",
+        "tags": ["Downloads"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Download URL" }
+        }
+      }
+    },
+    "/api/vouchers": {
+      "get": {
+        "summary": "Get all vouchers (Admin only)",
+        "tags": ["Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of vouchers" }
+        }
+      },
+      "post": {
+        "summary": "Create new voucher (Admin only)",
+        "tags": ["Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["silk", "gold", "experience"]
+                  },
+                  "value": { "type": "integer" },
+                  "max_uses": { "type": "integer" },
+                  "expires_at": { "type": "string", "format": "date-time" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["code", "type", "value"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Voucher created" }
+        }
+      }
+    },
+    "/api/vouchers/redeem": {
+      "post": {
+        "summary": "Redeem a voucher",
+        "tags": ["Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" }
+                },
+                "required": ["code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Voucher redeemed successfully" },
+          "404": { "description": "Voucher not found or expired" }
+        }
+      }
+    },
+    "/api/votes": {
+      "get": {
+        "summary": "Get all active vote sites",
+        "tags": ["Votes"],
+        "responses": {
+          "200": { "description": "List of vote sites" }
+        }
+      },
+      "post": {
+        "summary": "Create new vote site (Admin only)",
+        "tags": ["Votes"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "url": { "type": "string" },
+                  "site": { "type": "string" },
+                  "reward": { "type": "integer" },
+                  "timeout": { "type": "integer" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "url", "site", "reward"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Vote site created" }
+        }
+      }
+    },
+    "/api/votes/user-status": {
+      "get": {
+        "summary": "Get user vote status (last vote times)",
+        "tags": ["Votes"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User vote status" }
+        }
+      }
+    },
+    "/api/votes/{id}/vote": {
+      "post": {
+        "summary": "Process a vote (callback from vote site)",
+        "tags": ["Votes"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "ip": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["pending", "completed", "failed"]
+                  }
+                },
+                "required": ["username"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vote processed" }
+        }
+      }
+    },
+    "/api/referrals/my-referrals": {
+      "get": {
+        "summary": "Get user's referral information",
+        "tags": ["Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User referral data" }
+        }
+      }
+    },
+    "/api/referrals/redeem": {
+      "post": {
+        "summary": "Redeem referral points for rewards",
+        "tags": ["Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": { "type": "integer" }
+                },
+                "required": ["points"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Points redeemed successfully" }
+        }
+      }
+    },
+    "/api/referrals/register": {
+      "post": {
+        "summary": "Register a referral (called during user registration)",
+        "tags": ["Referrals"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "referrer_code": { "type": "string" },
+                  "referred_jid": { "type": "integer" }
+                },
+                "required": ["referrer_code", "referred_jid"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Referral registered" }
+        }
+      }
+    },
+    "/api/user-roles": {
+      "get": {
+        "summary": "Get all user roles (Admin only)",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of user roles" }
+        }
+      }
+    },
+    "/api/user-roles/assign": {
+      "post": {
+        "summary": "Assign role to user (Admin only)",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "role": {
+                    "type": "string",
+                    "enum": ["admin", "moderator", "support", "vip", "premium"]
+                  },
+                  "permissions": { "type": "string" }
+                },
+                "required": ["user_id", "role"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Role assigned" }
+        }
+      }
+    },
+    "/api/user-roles/my-roles": {
+      "get": {
+        "summary": "Get current user's roles",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User's roles" }
+        }
+      }
+    },
+    "/api/rankings-extended/{type}": {
+      "get": {
+        "summary": "Get extended rankings by type",
+        "tags": ["Rankings Extended"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "top-player",
+                "top-guild",
+                "unique",
+                "unique-monthly",
+                "honor",
+                "job",
+                "job-hunter",
+                "job-thief",
+                "job-trader",
+                "fortress-player",
+                "fortress-guild",
+                "pvp-kd",
+                "job-kd"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer", "default": 25 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranking data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/RankingEntry" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": { "type": "integer" },
+                        "limit": { "type": "integer" },
+                        "offset": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

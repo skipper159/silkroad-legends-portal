@@ -1,0 +1,447 @@
+{
+  "/api/admin/silk/accounts": {
+    "get": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Get all accounts with silk balances (Admin Only)",
+      "description": "Retrieve paginated list of all game accounts with their silk balances. Admin authentication required.",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Page number for pagination",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "description": "Number of accounts per page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 50
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "description": "Search filter for username",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "description": "Sort field",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "username",
+              "totalSilk",
+              "premiumSilk",
+              "regularSilk",
+              "regDate"
+            ],
+            "default": "username"
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "description": "Sort order",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "asc"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Accounts with silk balances retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/AdminSilkAccount"
+                            }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationMeta"
+                          },
+                          "totalSilkValue": {
+                            "type": "number",
+                            "description": "Total silk value across all accounts on this page"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  },
+  "/api/admin/silk/server-stats": {
+    "get": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Get server-wide silk statistics (Admin Only)",
+      "description": "Retrieve cached server-wide silk statistics including total silk volume, account counts, and trends.",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "force",
+          "in": "query",
+          "description": "Force refresh of cached statistics",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Server silk statistics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/ServerSilkStats" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/admin/silk/trends": {
+    "get": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Get silk usage trends (Admin Only)",
+      "description": "Retrieve historical silk usage trends and statistics over time.",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "days",
+          "in": "query",
+          "description": "Number of days to include in trends",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365,
+            "default": 30
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Silk trends retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "trends": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/SilkTrendData"
+                            }
+                          },
+                          "summary": {
+                            "$ref": "#/components/schemas/SilkTrendSummary"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  },
+  "/api/admin/silk/give": {
+    "post": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Give silk to account (Admin Only)",
+      "description": "Give silk (premium or regular) to a specific account. Requires admin privileges.",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/AdminSilkGiveRequest" }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Silk given successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "success": { "type": "boolean" },
+                          "newBalance": {
+                            "$ref": "#/components/schemas/SilkBalance"
+                          },
+                          "transaction": {
+                            "$ref": "#/components/schemas/SilkTransaction"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/admin/silk/account/{jid}": {
+    "get": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Get specific account silk details (Admin Only)",
+      "description": "Get detailed silk information for a specific account by JID.",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "jid",
+          "in": "path",
+          "description": "Account JID (Portal JID)",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Account silk details retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/AdminSilkAccountDetail"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/admin/silk/cache/warmup": {
+    "post": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Start cache warm-up for better performance",
+      "description": "Preloads silk balance data for the most active accounts to improve dashboard loading times. Admin authentication required.",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Cache warm-up completed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Cache warm-up completed for 100 accounts"
+                  },
+                  "stats": {
+                    "$ref": "#/components/schemas/CacheStats"
+                  },
+                  "performance": {
+                    "type": "object",
+                    "properties": {
+                      "warmupTime": {
+                        "type": "integer",
+                        "description": "Time taken for warm-up in milliseconds",
+                        "example": 2500
+                      },
+                      "accountsLoaded": {
+                        "type": "integer",
+                        "description": "Number of accounts preloaded",
+                        "example": 100
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/admin/silk/cache": {
+    "delete": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Clear silk balance cache",
+      "description": "Clears all cached silk balance data to force fresh data retrieval. Use when data inconsistencies are suspected. Admin authentication required.",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Cache cleared successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Silk balance cache cleared"
+                  },
+                  "clearedEntries": {
+                    "type": "integer",
+                    "description": "Number of cache entries that were cleared",
+                    "example": 1247
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/admin/silk/cache/stats": {
+    "get": {
+      "tags": ["Admin - Silk Management"],
+      "summary": "Get cache performance statistics",
+      "description": "Retrieve detailed statistics about silk balance cache performance including hit rates, entry counts, and memory usage. Admin authentication required.",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Cache statistics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "stats": {
+                    "$ref": "#/components/schemas/CacheStats"
+                  },
+                  "performance": {
+                    "type": "object",
+                    "properties": {
+                      "averageQueryTime": {
+                        "type": "number",
+                        "description": "Average query response time in milliseconds",
+                        "example": 45.7
+                      },
+                      "cacheEfficiency": {
+                        "type": "number",
+                        "description": "Cache efficiency percentage",
+                        "example": 92.5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  }
+}

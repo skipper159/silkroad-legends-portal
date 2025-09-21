@@ -1,0 +1,197 @@
+{
+  "/api/donation/initiate": {
+    "post": {
+      "tags": ["Payments - Donations"],
+      "summary": "Initiate donation payment",
+      "description": "Start a new donation payment process",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "packageId": {
+                  "type": "integer",
+                  "description": "Payment package ID"
+                },
+                "amount": {
+                  "type": "number",
+                  "format": "decimal",
+                  "description": "Custom amount (if not using package)"
+                },
+                "currency": {
+                  "type": "string",
+                  "default": "USD",
+                  "description": "Payment currency"
+                },
+                "paymentMethod": {
+                  "type": "string",
+                  "enum": ["paypal", "stripe", "nowpayments", "payop"],
+                  "description": "Payment provider"
+                },
+                "returnUrl": {
+                  "type": "string",
+                  "description": "URL to redirect after payment"
+                },
+                "cancelUrl": {
+                  "type": "string",
+                  "description": "URL to redirect on payment cancellation"
+                }
+              },
+              "required": ["paymentMethod"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Payment initiated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "paymentId": { "type": "string" },
+                          "paymentUrl": { "type": "string" },
+                          "amount": { "type": "number" },
+                          "currency": { "type": "string" },
+                          "coins": { "type": "integer" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/donation/wallet/{userId}": {
+    "get": {
+      "tags": ["Payments - Donations"],
+      "summary": "Get user wallet/coin balance",
+      "description": "Retrieve current coin balance for a user",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "User ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Wallet balance retrieved",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/CoinBalance" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/donation/vote/{platform}": {
+    "post": {
+      "tags": ["Payments - Donations"],
+      "summary": "Process vote reward",
+      "description": "Process reward for voting on external platform",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "platform",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "Voting platform identifier"
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "verification": {
+                  "type": "string",
+                  "description": "Vote verification token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Vote reward processed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "coinsAwarded": { "type": "integer" },
+                          "nextVoteAvailable": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "429": {
+          "description": "Vote cooldown active",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

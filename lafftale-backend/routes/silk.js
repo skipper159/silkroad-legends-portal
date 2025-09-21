@@ -1,71 +1,239 @@
-// routes/silk.js
-const express = require("express");
+// routes/silk.js - GB_JoymaxPortal Compatible Implementation
+const express = require('express');
 const router = express.Router();
-const { pool, poolConnect, gamePool, gamePoolConnect, sql } = require("../db");
-const authenticateToken = require("../middleware/auth");
+const { pool, poolConnect, sql, getWebDb, accountPoolConnect, accountPool } = require('../db');
+const { authenticateToken } = require('../middleware/auth');
+const SilkManager = require('../models/silkManagerEnhanced');
 
-// Get Silk balance for GameAccount
-router.get("/balance/:gameAccountId", async (req, res) => {
-  const { gameAccountId } = req.params;
-
-  await gamePoolConnect;
+// Get user's silk balance
+router.get('/balance', authenticateToken, async (req, res) => {
   try {
-    // Die SK_SILK-Tabelle befindet sich in der Game-Datenbank (SRO_VT_ACCOUNT)
-    const result = await gamePool.request()
-      .input("jid", sql.Int, gameAccountId)
-      .query("SELECT silk_own FROM SK_SILK WHERE JID = @jid");
+    const userId = req.user.id;
+    console.log(`🔍 Starting silk balance lookup for User ID: ${userId}`);
 
-    if (!result.recordset[0]) return res.status(404).json({ error: "Game account not found or no Silk data available" });
+    // 1. Hole das verknüpfte JID aus der Web-Datenbank
+    const webDb = await getWebDb();
+    const userResult = await webDb
+      .request()
+      .input('userId', sql.BigInt, userId)
+      .query('SELECT jid FROM users WHERE id = @userId');
 
-    res.json({ silk: result.recordset[0].silk_own });
-  } catch (err) {
-    console.error("Error fetching Silk balance:", err);
-    res.status(500).json({ error: "Failed to fetch Silk balance" });
+    console.log(`🔍 Web DB query result:`, userResult.recordset);
+
+    if (userResult.recordset.length === 0 || !userResult.recordset[0].jid) {
+      console.log(`❌ No game account linked for User ID: ${userId}`);
+      return res.status(404).json({
+        success: false,
+        error: 'No game account linked to this user',
+      });
+    }
+
+    const gameJID = userResult.recordset[0].jid;
+    console.log(`🔍 User ID ${userId} → Game JID ${gameJID}`);
+
+    // 2. Hole PortalJID aus TB_User (Account Pool - SILKROAD_R_ACCOUNT)
+    await accountPoolConnect;
+    const gameAccountResult = await accountPool
+      .request()
+      .input('jid', sql.Int, gameJID)
+      .query('SELECT PortalJID FROM TB_User WHERE JID = @jid');
+
+    console.log(`🔍 TB_User query result:`, gameAccountResult.recordset);
+
+    if (gameAccountResult.recordset.length === 0) {
+      console.log(`❌ Game account not found for JID: ${gameJID}`);
+      return res.status(404).json({
+        success: false,
+        error: 'Game account not found',
+      });
+    }
+
+    const portalJID = gameAccountResult.recordset[0].PortalJID;
+    console.log(`🔍 Game JID ${gameJID} → Portal JID ${portalJID}`);
+
+    const balanceData = await SilkManager.getJCash(portalJID);
+
+    // Wenn Account noch keine Silk-Einträge hat, gib Default-Werte zurück
+    if (balanceData.errorCode !== 0) {
+      console.log(
+        `ℹ️ Neuer Account ${portalJID} - noch keine Silk-Einträge (ErrorCode: ${balanceData.errorCode})`
+      );
+      return res.json({
+        success: true,
+        data: {
+          jid: portalJID,
+          silk: 0,
+          premiumSilk: 0,
+          vipLevel: 0,
+          monthUsage: 0,
+          threeMonthUsage: 0,
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        jid: portalJID,
+        silk: balanceData.silk,
+        premiumSilk: balanceData.premiumSilk,
+        vipLevel: balanceData.vipLevel,
+        monthUsage: balanceData.monthUsage,
+        threeMonthUsage: balanceData.threeMonthUsage,
+      },
+    });
+  } catch (error) {
+    console.error('Error getting silk balance:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
 });
 
-// Validate that the gameAccountId belongs to the authenticated user
-const validateGameAccountOwnership = async (userId, gameAccountId) => {
-  const result = await pool.request()
-    .input("userId", sql.Int, userId)
-    .input("gameAccountId", sql.Int, gameAccountId)
-    .query("SELECT COUNT(*) AS count FROM _AccountJID WHERE WebUserId = @userId AND JID = @gameAccountId");
-  return result.recordset[0].count > 0;
-};
+// Process PayPal donation
+router.post('/process-paypal', authenticateToken, async (req, res) => {
+  try {
+    const { amount, transactionId, silkRate = 100 } = req.body;
 
-// Add Silk (donation or voting)
-router.post("/add", authenticateToken, async (req, res) => {
-  const { gameAccountId, amount } = req.body;
-  const userId = req.user.id;
-
-  if (!gameAccountId || !amount) return res.status(400).json({ error: "Missing fields" });
-
-  await poolConnect;
-  await gamePoolConnect;
-  try {    const isValid = await validateGameAccountOwnership(userId, gameAccountId);
-    if (!isValid) return res.status(403).json({ error: "Unauthorized game account" });
-
-    // Check if an entry for this JID already exists
-    const checkResult = await gamePool.request()
-      .input("jid", sql.Int, gameAccountId)
-      .query("SELECT JID FROM SK_SILK WHERE JID = @jid");if (checkResult.recordset.length === 0) {
-      // Entry does not exist - create it
-      await gamePool.request()
-        .input("jid", sql.Int, gameAccountId)
-        .input("amount", sql.Int, amount)
-        .query("INSERT INTO SK_SILK (JID, silk_own, silk_gift, silk_point) VALUES (@jid, @amount, 0, 0)");
-    } else {
-      // Entry exists - update it
-      await gamePool.request()
-        .input("jid", sql.Int, gameAccountId)
-        .input("amount", sql.Int, amount)
-        .query("UPDATE SK_SILK SET silk_own = silk_own + @amount WHERE JID = @jid");
+    if (!amount || !transactionId || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid amount or transaction ID',
+      });
     }
 
-    res.json({ message: `Added ${amount} Silk` });
-  } catch (err) {
-    console.error("Error adding Silk:", err);
-    res.status(500).json({ error: "Failed to add Silk" });
+    const userId = req.user.id;
+    const result = await SilkManager.processPayPalDonation(userId, amount, transactionId, silkRate);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.message || 'PayPal donation processing failed',
+        errorCode: result.errorCode,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Donation processed successfully',
+      data: {
+        jid: result.jid,
+        amount: result.amount,
+        silk: result.silk,
+        transactionId: result.transactionId,
+        invoiceId: result.invoiceId,
+      },
+    });
+  } catch (error) {
+    console.error('Error processing PayPal donation:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+// Get donation history
+router.get('/donation-history', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const history = await SilkManager.getDonationHistory(userId);
+
+    res.json({
+      success: true,
+      data: history,
+    });
+  } catch (error) {
+    console.error('Error getting donation history:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+// Add vote points (typically called by external vote sites)
+router.post('/add-vote-points', async (req, res) => {
+  try {
+    const { jid, points, site } = req.body;
+
+    if (!jid || !points || !site || points <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid JID, points, or site',
+      });
+    }
+
+    const result = await SilkManager.addVotePoints(jid, points, site);
+
+    res.json({
+      success: true,
+      message: 'Vote points added successfully',
+      data: {
+        jid: jid,
+        points: points,
+        site: site,
+      },
+    });
+  } catch (error) {
+    console.error('Error adding vote points:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+// Admin: Give Gift Silk (requires admin authentication)
+router.post('/admin/give-silk', authenticateToken, async (req, res) => {
+  try {
+    const { targetJID, amount, silkType, message, grCode = 1 } = req.body;
+
+    if (!targetJID || !amount || !silkType || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid target JID, amount, or silk type',
+      });
+    }
+
+    // Note: In production, add proper admin role check here
+    const managerJID = req.user.id; // Admin JID
+
+    const result = await SilkManager.giveAdminSilk(
+      managerJID,
+      targetJID,
+      amount,
+      silkType,
+      message || 'Admin Gift Silk',
+      grCode
+    );
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: result.message,
+        errorCode: result.errorCode,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Gift Silk given successfully',
+      data: {
+        managerJID: managerJID,
+        targetJID: targetJID,
+        amount: amount,
+        silkType: silkType,
+        message: message,
+      },
+    });
+  } catch (error) {
+    console.error('Error giving admin silk:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
 });
 

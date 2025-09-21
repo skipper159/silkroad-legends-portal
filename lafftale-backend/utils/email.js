@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const path = require('path');
-const config = require('../config');
+const config = require('../email/config');
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -13,7 +13,16 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS || 'password',
   },
   debug: true,
-  logger: true
+  logger: true,
+  // Increase timeouts to avoid "Greeting never received" on slow servers
+  connectionTimeout: parseInt(process.env.EMAIL_CONNECTION_TIMEOUT || '30000', 10),
+  greetingTimeout: parseInt(process.env.EMAIL_GREETING_TIMEOUT || '30000', 10),
+  socketTimeout: parseInt(process.env.EMAIL_SOCKET_TIMEOUT || '60000', 10),
+  name: process.env.EMAIL_NAME || require('os').hostname(),
+  tls: {
+    // Allow opting out of strict certificate validation if the mailserver uses a self-signed cert
+    rejectUnauthorized: process.env.EMAIL_TLS_REJECT_UNAUTHORIZED !== 'false',
+  },
 });
 
 // Create token for password reset or email verification
@@ -32,42 +41,74 @@ const sendVerificationEmail = async (email, token) => {
   let footerSrc = 'https://lafftale.online/image/Web/header3.png';
   let backgroundSrc = 'https://lafftale.online/image/Web/Background.png';
   let attachments = [];
-  
+
   if (!config.email.templates.useAbsoluteUrls) {
     // Include logo
-    const logoPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.logo);
+    const logoPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.logo
+    );
     logoSrc = 'cid:logo';
     attachments.push({
       filename: config.email.imagePaths.logo,
       path: logoPath,
-      cid: 'logo'
+      cid: 'logo',
     });
-    
+
     // Include header
-    const headerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.header);
+    const headerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.header
+    );
     headerSrc = 'cid:header';
     attachments.push({
       filename: config.email.imagePaths.header,
       path: headerPath,
-      cid: 'header'
+      cid: 'header',
     });
-    
+
     // Include footer
-    const footerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.footer);
+    const footerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.footer
+    );
     footerSrc = 'cid:footer';
     attachments.push({
       filename: config.email.imagePaths.footer,
       path: footerPath,
-      cid: 'footer'
+      cid: 'footer',
     });
-    
+
     // Include background image
-    const backgroundPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.background);
+    const backgroundPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.background
+    );
     backgroundSrc = 'cid:background';
     attachments.push({
       filename: config.email.imagePaths.background,
       path: backgroundPath,
-      cid: 'background'
+      cid: 'background',
     });
   }
   const mailOptions = {
@@ -75,7 +116,7 @@ const sendVerificationEmail = async (email, token) => {
     to: email,
     subject: 'Lafftale Online - Email Verification',
     html: createVerificationEmailTemplate(verifyUrl, logoSrc, headerSrc, footerSrc, backgroundSrc),
-    attachments
+    attachments,
   };
 
   return transporter.sendMail(mailOptions);
@@ -92,42 +133,74 @@ const sendPasswordResetEmail = async (email, token) => {
   let footerSrc = 'https://lafftale.online/image/Web/header3.png';
   let backgroundSrc = 'https://lafftale.online/image/Web/Background.png';
   let attachments = [];
-  
+
   if (!config.email.templates.useAbsoluteUrls) {
     // Include logo
-    const logoPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.logo);
+    const logoPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.logo
+    );
     logoSrc = 'cid:logo';
     attachments.push({
       filename: config.email.imagePaths.logo,
       path: logoPath,
-      cid: 'logo'
+      cid: 'logo',
     });
-    
+
     // Include header
-    const headerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.header);
+    const headerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.header
+    );
     headerSrc = 'cid:header';
     attachments.push({
       filename: config.email.imagePaths.header,
       path: headerPath,
-      cid: 'header'
+      cid: 'header',
     });
-    
+
     // Include footer
-    const footerPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.footer);
+    const footerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.footer
+    );
     footerSrc = 'cid:footer';
     attachments.push({
       filename: config.email.imagePaths.footer,
       path: footerPath,
-      cid: 'footer'
+      cid: 'footer',
     });
-    
+
     // Include background image
-    const backgroundPath = path.join(__dirname, '..', '..', 'public', 'image', 'Web', config.email.imagePaths.background);
+    const backgroundPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.background
+    );
     backgroundSrc = 'cid:background';
     attachments.push({
       filename: config.email.imagePaths.background,
       path: backgroundPath,
-      cid: 'background'
+      cid: 'background',
     });
   }
   const mailOptions = {
@@ -135,7 +208,7 @@ const sendPasswordResetEmail = async (email, token) => {
     to: email,
     subject: 'Lafftale Online - Reset Password',
     html: createPasswordResetEmailTemplate(resetUrl, logoSrc, headerSrc, footerSrc, backgroundSrc),
-    attachments
+    attachments,
   };
 
   return transporter.sendMail(mailOptions);
@@ -294,7 +367,7 @@ function createPasswordResetEmailTemplate(resetUrl, logoSrc, headerSrc, footerSr
 const emailUtils = {
   sendPasswordResetEmail,
   generateToken,
-  sendVerificationEmail
+  sendVerificationEmail,
 };
 
 module.exports = emailUtils;

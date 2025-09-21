@@ -1,0 +1,176 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lafftale Web API - Modular",
+    "version": "2.0.0",
+    "description": "Modular REST API for the Silkroad Lafftale website including user management, support ticketing, donation/voting, SRO CMS features, pages, downloads, vouchers, referrals, and user roles"
+  },
+  "components": {
+    "securitySchemes": {
+      "$ref": "./components/security.json#/securitySchemes"
+    },
+    "schemas": {
+      "Character": {
+        "$ref": "./components/schemas/characters.json#/Character"
+      },
+      "GameAccount": {
+        "$ref": "./components/schemas/characters.json#/GameAccount"
+      },
+      "GameAccountAdmin": {
+        "$ref": "./components/schemas/characters.json#/GameAccountAdmin"
+      },
+      "InventoryItem": {
+        "$ref": "./components/schemas/characters.json#/InventoryItem"
+      },
+
+      "AdminTicket": {
+        "$ref": "./components/schemas/tickets.json#/AdminTicket"
+      },
+      "TicketMessage": {
+        "$ref": "./components/schemas/tickets.json#/TicketMessage"
+      },
+
+      "Referral": { "$ref": "./components/schemas/referrals.json#/Referral" },
+      "ReferralStatistics": {
+        "$ref": "./components/schemas/referrals.json#/ReferralStatistics"
+      },
+      "ReferralReward": {
+        "$ref": "./components/schemas/referrals.json#/ReferralReward"
+      },
+      "AntiCheatStats": {
+        "$ref": "./components/schemas/referrals.json#/AntiCheatStats"
+      },
+
+      "Voucher": { "$ref": "./components/schemas/cms.json#/Voucher" },
+      "Page": { "$ref": "./components/schemas/cms.json#/Page" },
+      "Download": { "$ref": "./components/schemas/cms.json#/Download" },
+      "Vote": { "$ref": "./components/schemas/cms.json#/Vote" },
+
+      "UserRole": { "$ref": "./components/schemas/auth.json#/UserRole" },
+      "LoginRequest": {
+        "$ref": "./components/schemas/auth.json#/LoginRequest"
+      },
+      "RegisterRequest": {
+        "$ref": "./components/schemas/auth.json#/RegisterRequest"
+      },
+
+      "PaymentRequest": {
+        "$ref": "./components/schemas/payments.json#/PaymentRequest"
+      },
+      "PaymentResponse": {
+        "$ref": "./components/schemas/payments.json#/PaymentResponse"
+      },
+
+      "PaginationInfo": {
+        "$ref": "./components/schemas/common.json#/PaginationInfo"
+      },
+      "SuccessResponse": {
+        "$ref": "./components/schemas/common.json#/SuccessResponse"
+      },
+      "ErrorResponse": {
+        "$ref": "./components/schemas/common.json#/ErrorResponse"
+      },
+      "RankingEntry": {
+        "$ref": "./components/schemas/common.json#/RankingEntry"
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": { "$ref": "./paths/auth/register.json" },
+    "/api/auth/login": { "$ref": "./paths/auth/login.json" },
+    "/api/auth/profile": { "$ref": "./paths/auth/profile.json" },
+
+    "/api/user_tickets": { "$ref": "./paths/user/tickets.json#/createTicket" },
+    "/api/user_tickets/my": {
+      "$ref": "./paths/user/tickets.json#/getMyTickets"
+    },
+    "/api/user_tickets/{id}": {
+      "$ref": "./paths/user/tickets.json#/getTicket"
+    },
+    "/api/user_tickets/{id}/message": {
+      "$ref": "./paths/user/tickets.json#/addMessage"
+    },
+
+    "/api/admin_tickets/tickets": {
+      "$ref": "./paths/admin/tickets.json#/getAllTickets"
+    },
+    "/api/admin_tickets/tickets/{id}/close": {
+      "$ref": "./paths/admin/tickets.json#/closeTicket"
+    },
+    "/api/admin_tickets/tickets/{id}/messages": {
+      "$ref": "./paths/admin/tickets.json#/getTicketMessages"
+    },
+    "/api/admin_tickets/tickets/{id}/reply": {
+      "$ref": "./paths/admin/tickets.json#/replyToTicket"
+    },
+
+    "/api/admin/referrals": {
+      "$ref": "./paths/admin/referrals.json#/getAllReferrals"
+    },
+    "/api/admin/referrals/statistics": {
+      "$ref": "./paths/admin/referrals.json#/getStatistics"
+    },
+    "/api/admin/referrals/rewards": {
+      "$ref": "./paths/admin/referrals.json#/getRewards"
+    },
+    "/api/admin/referrals/settings": {
+      "$ref": "./paths/admin/referrals.json#/getSettings"
+    },
+    "/api/admin/referrals/anticheat/stats": {
+      "$ref": "./paths/admin/referrals.json#/getAntiCheatStats"
+    },
+    "/api/admin/referrals/anticheat/suspicious": {
+      "$ref": "./paths/admin/referrals.json#/getSuspiciousReferrals"
+    },
+
+    "/api/referrals/my-referrals": {
+      "$ref": "./paths/referrals/user-referrals.json#/getMyReferrals"
+    },
+    "/api/referrals/redeem": {
+      "$ref": "./paths/referrals/user-referrals.json#/redeemPoints"
+    },
+    "/api/referrals/register": {
+      "$ref": "./paths/referrals/user-referrals.json#/registerReferral"
+    },
+
+    "/api/payment/payop/initiate": {
+      "$ref": "./paths/payments/payop.json#/initiate"
+    },
+    "/api/payment/payop/callback": {
+      "$ref": "./paths/payments/payop.json#/callback"
+    },
+    "/api/payment/nowpayments/initiate": {
+      "$ref": "./paths/payments/nowpayments.json#/initiate"
+    },
+    "/api/payment/nowpayments/callback": {
+      "$ref": "./paths/payments/nowpayments.json#/callback"
+    },
+
+    "/api/gameaccount/create": {
+      "$ref": "./paths/user/gameaccounts.json#/createGameAccount"
+    },
+    "/api/gameaccount/my": {
+      "$ref": "./paths/user/gameaccounts.json#/getMyGameAccounts"
+    },
+    "/api/gameaccount/{id}/password": {
+      "$ref": "./paths/user/gameaccounts.json#/changePassword"
+    },
+    "/api/gameaccount/{id}": {
+      "$ref": "./paths/user/gameaccounts.json#/deleteGameAccount"
+    },
+
+    "/api/characters/characters/{gameAccountId}": {
+      "$ref": "./paths/user/characters.json#/getCharacters"
+    },
+    "/api/characters/gameaccounts/my": {
+      "$ref": "./paths/user/characters.json#/getMyGameAccounts"
+    },
+    "/api/characters/inventory/{charId}": {
+      "$ref": "./paths/user/characters.json#/getInventory"
+    },
+    "/api/characters/{charId}/details": {
+      "$ref": "./paths/user/characters.json#/getCharacterDetails"
+    }
+  },
+  "tags": { "$ref": "./tags.json#/tags" }
+}

@@ -1,0 +1,320 @@
+{
+  "/api/user_tickets": {
+    "get": {
+      "tags": ["User - Tickets"],
+      "summary": "Get current user's tickets",
+      "description": "Retrieve all tickets created by the current user",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["all", "open", "in_progress", "resolved", "closed"]
+          },
+          "description": "Filter by ticket status"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 20 },
+          "description": "Items per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Tickets retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "tickets": {
+                            "type": "array",
+                            "items": { "$ref": "#/components/schemas/Ticket" }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationInfo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    },
+    "post": {
+      "tags": ["User - Tickets"],
+      "summary": "Create new support ticket",
+      "description": "Create a new support ticket",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "minLength": 5,
+                  "maxLength": 200,
+                  "description": "Ticket subject"
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Ticket message content"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "Ticket category"
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["low", "medium", "high", "urgent"],
+                  "default": "medium",
+                  "description": "Ticket priority"
+                }
+              },
+              "required": ["subject", "message"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Ticket created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/Ticket" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/user_tickets/my": {
+    "get": {
+      "tags": ["User - Tickets"],
+      "summary": "Get my tickets (alternative endpoint)",
+      "description": "Alternative endpoint to retrieve current user's tickets",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Tickets retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Ticket" }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/user_tickets/{id}": {
+    "get": {
+      "tags": ["User - Tickets"],
+      "summary": "Get specific ticket details",
+      "description": "Retrieve details for a specific ticket (only if owned by current user)",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Ticket ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Ticket details retrieved",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "allOf": [
+                          { "$ref": "#/components/schemas/Ticket" },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "replies": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/components/schemas/TicketReply"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    },
+    "put": {
+      "tags": ["User - Tickets"],
+      "summary": "Update ticket",
+      "description": "Update ticket details (only if owned by current user and ticket is open)",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Ticket ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subject": { "type": "string" },
+                "priority": {
+                  "type": "string",
+                  "enum": ["low", "medium", "high", "urgent"]
+                },
+                "status": { "type": "string", "enum": ["open", "closed"] }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Ticket updated successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/user_tickets/{id}/message": {
+    "post": {
+      "tags": ["User - Tickets"],
+      "summary": "Add message to ticket",
+      "description": "Add a new message/reply to an existing ticket",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Ticket ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "minLength": 10,
+                  "description": "Message content"
+                }
+              },
+              "required": ["message"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Message added successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/TicketReply" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  }
+}

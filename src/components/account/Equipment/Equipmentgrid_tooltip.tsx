@@ -40,7 +40,7 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
           i === slots.length - 1 ? "mt-[12px]" :
           "mt-[3px]";
 
-        const imageSrc = item?.iconUrl || `/public/image/sro/interface/equipment/${slot}.png`;
+        const imageSrc = item?.iconUrl || `/image/sro/interface/equipment/${slot}.png`;
         const glowVariants = ["rare-glow-a", "rare-glow-b", "rare-glow-c"];
         const glowClass = glowVariants[Math.floor(Math.random() * glowVariants.length)];
 
@@ -48,7 +48,7 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
           <div key={slot} className={`w-[48px] h-[48px] relative ${i > 0 ? topMargin : ""}`}>
             {/* Slot-Hintergrund */}
             <img
-              src={`/public/image/sro/interface/equipment/${slot}.png`}
+              src={`/image/sro/interface/equipment/${slot}.png`}
               alt={`${slot}-background`}
               className="absolute top-0 left-0 w-full h-full z-0"
             />
@@ -107,7 +107,7 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
             {/* ✨ SOX Effekt bei Rare */}
             {item?.rarity && item.rarity !== "normal" && (
               <img
-                src={`/public/image/sro/SOX.gif?rnd=${Math.floor(Math.random() * 5)}`}
+                src={`/image/sro/SOX.gif?rnd=${Math.floor(Math.random() * 5)}`}
                 alt="Sox-Glitzer"
                 className={`absolute top-1/2 left-1/2 w-[32px] h-[32px] z-20 -translate-x-1/2 -translate-y-1/2 ${glowClass}`}
               />

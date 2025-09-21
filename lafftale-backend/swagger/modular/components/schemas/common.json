@@ -1,0 +1,95 @@
+{
+  "PaginationInfo": {
+    "type": "object",
+    "description": "Pagination metadata for API responses",
+    "properties": {
+      "totalItems": {
+        "type": "integer",
+        "description": "Total number of items across all pages"
+      },
+      "totalPages": {
+        "type": "integer",
+        "description": "Total number of pages"
+      },
+      "currentPage": {
+        "type": "integer",
+        "description": "Current page number (1-based)"
+      },
+      "itemsPerPage": {
+        "type": "integer",
+        "description": "Number of items per page"
+      },
+      "hasNext": {
+        "type": "boolean",
+        "description": "Whether there is a next page"
+      },
+      "hasPrev": {
+        "type": "boolean",
+        "description": "Whether there is a previous page"
+      }
+    },
+    "required": ["totalItems", "totalPages", "currentPage", "itemsPerPage"]
+  },
+  "SuccessResponse": {
+    "type": "object",
+    "description": "Standard success response format",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true,
+        "description": "Indicates successful operation"
+      },
+      "message": {
+        "type": "string",
+        "description": "Success message"
+      },
+      "data": {
+        "description": "Response data (varies by endpoint)"
+      }
+    },
+    "required": ["success"]
+  },
+  "ErrorResponse": {
+    "type": "object",
+    "description": "Standard error response format",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": false,
+        "description": "Indicates failed operation"
+      },
+      "error": {
+        "type": "string",
+        "description": "Error message"
+      },
+      "details": {
+        "type": "string",
+        "description": "Additional error details"
+      }
+    },
+    "required": ["success", "error"]
+  },
+  "RankingEntry": {
+    "type": "object",
+    "description": "Single ranking entry",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Ranking position"
+      },
+      "name": {
+        "type": "string",
+        "description": "Player or guild name"
+      },
+      "level": {
+        "type": "integer",
+        "description": "Level or score"
+      },
+      "points": {
+        "type": "integer",
+        "description": "Points or experience"
+      }
+    },
+    "required": ["rank", "name"]
+  }
+}

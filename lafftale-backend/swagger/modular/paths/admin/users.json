@@ -1,0 +1,268 @@
+{
+  "/api/admin/webaccounts": {
+    "get": {
+      "tags": ["Admin - Users"],
+      "summary": "Get all web accounts",
+      "description": "Retrieve paginated list of all web user accounts",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 20 },
+          "description": "Items per page"
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "schema": { "type": "string" },
+          "description": "Search in username or email"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["all", "active", "banned", "pending"]
+          },
+          "description": "Filter by account status"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Web accounts retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accounts": {
+                            "type": "array",
+                            "items": { "$ref": "#/components/schemas/User" }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationInfo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  },
+  "/api/admin/gameaccounts": {
+    "get": {
+      "tags": ["Admin - Users"],
+      "summary": "Get all game accounts",
+      "description": "Retrieve paginated list of all game accounts",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 20 }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "schema": { "type": "string" },
+          "description": "Search in game account name"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["all", "active", "banned", "timeout"]
+          },
+          "description": "Filter by account status"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Game accounts retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "ID": { "type": "integer" },
+                                "StrUserID": { "type": "string" },
+                                "CharacterCount": { "type": "integer" },
+                                "Created": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "LastLogin": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "IsActive": { "type": "boolean" },
+                                "IsBanned": { "type": "boolean" },
+                                "BanReason": { "type": "string" },
+                                "BanExpires": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
+                              }
+                            }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationInfo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  },
+  "/api/admin/gameaccounts/{id}/ban": {
+    "post": {
+      "tags": ["Admin - Users"],
+      "summary": "Ban game account",
+      "description": "Ban a game account with specified reason and duration",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Game account ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "description": "Ban reason"
+                },
+                "duration": {
+                  "type": "integer",
+                  "description": "Ban duration in hours (0 = permanent)"
+                },
+                "banCharacters": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Whether to ban all characters"
+                }
+              },
+              "required": ["reason"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account banned successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/admin/gameaccounts/{id}/timeout": {
+    "post": {
+      "tags": ["Admin - Users"],
+      "summary": "Timeout game account",
+      "description": "Apply temporary timeout to game account",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Game account ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reason": { "type": "string" },
+                "duration": {
+                  "type": "integer",
+                  "description": "Timeout duration in minutes"
+                }
+              },
+              "required": ["reason", "duration"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Account timeout applied",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  }
+}

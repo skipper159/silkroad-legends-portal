@@ -1,0 +1,186 @@
+{
+  "/api/admin/cron/jobs": {
+    "get": {
+      "tags": ["Admin - Cron Jobs"],
+      "summary": "Hole alle Cron Job Einstellungen",
+      "description": "Ruft alle konfigurierten Cron Jobs mit Status und nächster Ausführungszeit ab",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Erfolgreiche Antwort",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/CronJob" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/admin/cron/jobs/{jobName}": {
+    "post": {
+      "tags": ["Admin - Cron Jobs"],
+      "summary": "Aktualisiere Cron Job Konfiguration",
+      "description": "Ändert die Cron Expression und Aktivierungsstatus eines Jobs",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "jobName",
+          "in": "path",
+          "required": true,
+          "description": "Name des Cron Jobs",
+          "schema": {
+            "type": "string",
+            "example": "silk_stats_calculation"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cronExpression": {
+                  "type": "string",
+                  "description": "Cron Expression (5 Felder: Minute Stunde Tag Monat Wochentag)",
+                  "example": "0 2 * * *"
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Job aktivieren/deaktivieren",
+                  "example": true
+                }
+              },
+              "required": ["cronExpression", "enabled"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Job erfolgreich aktualisiert",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "jobName": { "type": "string" },
+                      "cronExpression": { "type": "string" },
+                      "enabled": { "type": "boolean" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    },
+    "delete": {
+      "tags": ["Admin - Cron Jobs"],
+      "summary": "Stoppe Cron Job",
+      "description": "Deaktiviert einen Cron Job",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "jobName",
+          "in": "path",
+          "required": true,
+          "description": "Name des Cron Jobs",
+          "schema": {
+            "type": "string",
+            "example": "silk_stats_calculation"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job erfolgreich gestoppt",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/admin/cron/jobs/{jobName}/trigger": {
+    "post": {
+      "tags": ["Admin - Cron Jobs"],
+      "summary": "Triggere Cron Job manuell",
+      "description": "Führt einen Cron Job sofort manuell aus",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "jobName",
+          "in": "path",
+          "required": true,
+          "description": "Name des Cron Jobs",
+          "schema": {
+            "type": "string",
+            "example": "silk_stats_calculation"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job erfolgreich gestartet",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "message": { "type": "string" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "jobName": { "type": "string" },
+                      "triggeredAt": { "type": "string", "format": "date-time" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  }
+}

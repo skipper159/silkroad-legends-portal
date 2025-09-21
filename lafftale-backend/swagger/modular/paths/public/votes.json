@@ -1,0 +1,197 @@
+{
+  "/api/votes": {
+    "get": {
+      "tags": ["Public - Voting"],
+      "summary": "Get voting sites",
+      "description": "Retrieve list of available voting sites",
+      "responses": {
+        "200": {
+          "description": "Voting sites retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "url": { "type": "string" },
+                            "reward": { "type": "integer" },
+                            "cooldown": {
+                              "type": "integer",
+                              "description": "Cooldown in hours"
+                            },
+                            "description": { "type": "string" },
+                            "isActive": { "type": "boolean" },
+                            "logoUrl": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/votes/user-status": {
+    "get": {
+      "tags": ["Public - Voting"],
+      "summary": "Get user voting status",
+      "description": "Retrieve voting status for current user",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Voting status retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "siteId": { "type": "integer" },
+                            "siteName": { "type": "string" },
+                            "canVote": { "type": "boolean" },
+                            "lastVoteAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "nextVoteAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "totalVotes": { "type": "integer" },
+                            "totalRewards": { "type": "integer" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/votes/{id}/vote": {
+    "post": {
+      "tags": ["Public - Voting"],
+      "summary": "Process vote",
+      "description": "Process a vote for a specific voting site",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Voting site ID"
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "verification": {
+                  "type": "string",
+                  "description": "Vote verification token (if required)"
+                },
+                "callback": {
+                  "type": "string",
+                  "description": "Callback URL for verification"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Vote processed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "reward": { "type": "integer" },
+                          "nextVoteAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "totalVotes": { "type": "integer" },
+                          "redirectUrl": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": { "$ref": "#/components/responses/NotFound" },
+        "429": {
+          "description": "Vote cooldown active",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/ErrorResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "nextVoteAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "cooldownRemaining": {
+                            "type": "integer",
+                            "description": "Seconds remaining"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

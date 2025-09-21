@@ -1,0 +1,3449 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lafftale Web API - Complete",
+    "version": "2.0.0",
+    "description": "Complete REST API for the Silkroad Lafftale website including user management, support ticketing, donation/voting, SRO CMS features, pages, downloads, vouchers, referrals, and user roles"
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Character": {
+        "type": "object",
+        "properties": {
+          "CharID": {
+            "type": "integer",
+            "description": "Unique character identifier"
+          },
+          "CharName16": {
+            "type": "string",
+            "description": "Character name"
+          },
+          "NickName16": {
+            "type": "string",
+            "description": "Character nickname"
+          },
+          "CurLevel": {
+            "type": "integer",
+            "description": "Current character level"
+          },
+          "ExpOffset": {
+            "type": "integer",
+            "description": "Experience offset"
+          },
+          "scale": {
+            "type": "integer",
+            "description": "Character scale"
+          },
+          "bcity": {
+            "type": "integer",
+            "description": "Birth city"
+          },
+          "bscale": {
+            "type": "integer",
+            "description": "Birth scale"
+          },
+          "dwMoney": {
+            "type": "integer",
+            "description": "Character gold amount"
+          },
+          "RemainGold": {
+            "type": "integer",
+            "description": "Remaining gold"
+          },
+          "RemainSkillPoint": {
+            "type": "integer",
+            "description": "Remaining skill points"
+          },
+          "RemainStatPoint": {
+            "type": "integer",
+            "description": "Remaining stat points"
+          },
+          "RemainHWAN": {
+            "type": "integer",
+            "description": "Remaining Hwan points"
+          },
+          "HP": {
+            "type": "integer",
+            "description": "Current hit points"
+          },
+          "MP": {
+            "type": "integer",
+            "description": "Current mana points"
+          },
+          "strength": {
+            "type": "integer",
+            "description": "Strength stat"
+          },
+          "intellect": {
+            "type": "integer",
+            "description": "Intelligence stat"
+          },
+          "refObjCommon": {
+            "type": "integer",
+            "description": "Reference common object ID"
+          },
+          "RefObjID": {
+            "type": "integer",
+            "description": "Reference object ID for character model"
+          },
+          "Slot": {
+            "type": "integer",
+            "description": "Slot position of the equipment"
+          },
+          "RefItemID": {
+            "type": "integer",
+            "description": "Reference ID to the equipped item"
+          },
+          "race": {
+            "type": "string",
+            "description": "Chinese, European or unknown"
+          }
+        }
+      },
+      "GameAccount": {
+        "type": "object",
+        "properties": {
+          "JID": {
+            "type": "integer",
+            "description": "Game account ID (unique identifier)"
+          },
+          "PortalJID": {
+            "type": "integer",
+            "description": "Portal JID (unique portal identifier)"
+          },
+          "StrUserID": {
+            "type": "string",
+            "description": "Game account username"
+          },
+          "ServiceCompany": {
+            "type": "integer",
+            "description": "Service company identifier (always 11)"
+          },
+          "Active": {
+            "type": "boolean",
+            "description": "Account active status"
+          },
+          "UserIP": {
+            "type": "string",
+            "description": "User IP address"
+          },
+          "CountryCode": {
+            "type": "string",
+            "description": "Two-letter country code"
+          },
+          "VisitDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last visit date"
+          },
+          "RegDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Registration date"
+          },
+          "AccPlayTime": {
+            "type": "integer",
+            "description": "Total accumulated play time in minutes"
+          },
+          "sec_primary": {
+            "type": "integer",
+            "description": "Primary security level"
+          },
+          "sec_content": {
+            "type": "integer",
+            "description": "Content security level"
+          },
+          "sec_grade": {
+            "type": "integer",
+            "description": "Grade security level"
+          },
+          "LatestUpdateTime_ToPlayTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Latest play time update timestamp"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the web account owner"
+          },
+          "silk_own": {
+            "type": "integer",
+            "description": "Silk owned by the user"
+          },
+          "silk_gift": {
+            "type": "integer",
+            "description": "Silk received as gifts"
+          },
+          "silk_point": {
+            "type": "integer",
+            "description": "Silk points earned"
+          },
+          "total_silk": {
+            "type": "integer",
+            "description": "Total silk (sum of own + gift + point)"
+          }
+        }
+      },
+      "GameAccountAdmin": {
+        "type": "object",
+        "properties": {
+          "GameAccountId": {
+            "type": "integer",
+            "description": "Game account ID"
+          },
+          "Username": {
+            "type": "string",
+            "description": "Game account username"
+          },
+          "CharName16": {
+            "type": "string",
+            "nullable": true,
+            "description": "Main character name"
+          },
+          "CharID": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Character ID"
+          },
+          "GuildID": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Guild ID"
+          },
+          "GuildName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Guild name"
+          },
+          "JobType": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Job type ID"
+          },
+          "JobName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job name"
+          },
+          "REG_IP": {
+            "type": "string",
+            "nullable": true,
+            "description": "Registration IP address"
+          },
+          "RegTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Registration time"
+          },
+          "AccPlayTime": {
+            "type": "string",
+            "description": "Accumulated play time"
+          },
+          "IsBanned": {
+            "type": "boolean",
+            "description": "Ban status"
+          },
+          "TimeoutUntil": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Timeout expiration date"
+          }
+        }
+      },
+      "PaginationInfo": {
+        "type": "object",
+        "properties": {
+          "currentPage": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total number of items"
+          },
+          "hasNext": {
+            "type": "boolean",
+            "description": "Whether there is a next page"
+          },
+          "hasPrev": {
+            "type": "boolean",
+            "description": "Whether there is a previous page"
+          }
+        }
+      },
+      "TicketMessage": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "description": "Message ID"
+          },
+          "TicketId": {
+            "type": "integer",
+            "description": "Ticket ID"
+          },
+          "SenderId": {
+            "type": "integer",
+            "description": "Sender user ID"
+          },
+          "SenderName": {
+            "type": "string",
+            "description": "Sender username"
+          },
+          "Message": {
+            "type": "string",
+            "description": "Message content"
+          },
+          "SentAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Message sent date"
+          },
+          "IsFromStaff": {
+            "type": "boolean",
+            "description": "Whether message is from staff"
+          }
+        }
+      },
+      "AdminTicket": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "description": "Unique ticket identifier"
+          },
+          "UserId": {
+            "type": "integer",
+            "description": "User ID who created the ticket"
+          },
+          "Subject": {
+            "type": "string",
+            "description": "Ticket subject"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of ticket creator"
+          },
+          "Priority": {
+            "type": "string",
+            "enum": ["low", "normal", "high"],
+            "description": "Ticket priority"
+          },
+          "Status": {
+            "type": "string",
+            "enum": ["open", "closed"],
+            "description": "Ticket status"
+          },
+          "CreatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Ticket creation date"
+          },
+          "ClosedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Ticket closure date"
+          }
+        }
+      },
+      "InventoryItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Item serial number (unique identifier for the item instance)"
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "Reference item ID (RefItemID)"
+          },
+          "itemData": {
+            "type": "string",
+            "description": "Binary item data (includes enhancement, stats, etc.)"
+          },
+          "slot": {
+            "type": "integer",
+            "description": "Inventory slot position"
+          },
+          "name": {
+            "type": "string",
+            "description": "Item name (resolved from RefItemID)"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Item icon path"
+          },
+          "plus": {
+            "type": "integer",
+            "description": "Plus level of the item (+0 to +15)"
+          },
+          "rarity": {
+            "type": "string",
+            "description": "Rarity type (normal, magic, rare, legend)"
+          },
+          "isEquipped": {
+            "type": "boolean",
+            "description": "Whether the item is currently equipped"
+          },
+          "type": {
+            "type": "string",
+            "description": "Item type: Weapon, Armor, Accessory, Shield"
+          },
+          "phyAttack": {
+            "type": "string",
+            "description": "Physical attack value (e.g. 345–410)"
+          },
+          "magAttack": {
+            "type": "string",
+            "description": "Magical attack value (e.g. 270–320)"
+          },
+          "phyDef": {
+            "type": "integer",
+            "description": "Physical defense value"
+          },
+          "magDef": {
+            "type": "integer",
+            "description": "Magical defense value"
+          },
+          "atkRate": {
+            "type": "integer",
+            "description": "Attack rate value"
+          },
+          "parryRate": {
+            "type": "integer",
+            "description": "Parry rate value"
+          },
+          "durability": {
+            "type": "string",
+            "description": "Durability string (e.g. 60/60)"
+          },
+          "phyReinforce": {
+            "type": "string",
+            "description": "Physical reinforce percentage (e.g. 45%)"
+          },
+          "magReinforce": {
+            "type": "string",
+            "description": "Magical reinforce percentage (e.g. 48%)"
+          },
+          "blues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of blue attributes (e.g. +7 STR, Immortal, Astral)"
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "content": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Download": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "file_url": { "type": "string" },
+          "file_size": { "type": "string" },
+          "version": { "type": "string" },
+          "category": { "type": "string" },
+          "download_count": { "type": "integer" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Voucher": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "code": { "type": "string" },
+          "type": { "type": "string", "enum": ["silk", "gold", "experience"] },
+          "amount": { "type": "integer" },
+          "jid": { "type": "integer" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "expired"]
+          },
+          "valid_date": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "url": { "type": "string" },
+          "site": { "type": "string" },
+          "reward": { "type": "integer" },
+          "timeout": { "type": "integer" },
+          "vote_count": { "type": "integer" },
+          "active": { "type": "boolean" }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "jid": { "type": "integer" },
+          "invited_jid": { "type": "integer" },
+          "points": { "type": "integer" },
+          "reward_silk": { "type": "integer" },
+          "redeemed": { "type": "boolean" },
+          "redeemed_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ReferralStatistics": {
+        "type": "object",
+        "properties": {
+          "total_referrals": { "type": "integer" },
+          "total_rewards_given": { "type": "integer" },
+          "total_silk_awarded": { "type": "integer" },
+          "active_referrals": { "type": "integer" },
+          "recent_activity": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Referral" }
+          }
+        }
+      },
+      "ReferralReward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "points_required": { "type": "integer" },
+          "reward_type": { "type": "string", "enum": ["silk", "item", "gold"] },
+          "reward_value": { "type": "integer" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserRole": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "moderator", "support", "vip", "premium"]
+          },
+          "permissions": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RankingEntry": {
+        "type": "object",
+        "properties": {
+          "RowNum": { "type": "integer" },
+          "CharName16": { "type": "string" },
+          "CurLevel": { "type": "integer" },
+          "GuildName": { "type": "string" },
+          "RefObjID": { "type": "integer" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user with anti-cheat protection",
+        "description": "Creates a new user account with browser fingerprinting for anti-cheat protection. Optionally supports referral codes for bonus rewards.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 20,
+                    "description": "Username for the account",
+                    "example": "testuser123"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email address for the account",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Password for the account",
+                    "example": "securepassword123"
+                  },
+                  "referralCode": {
+                    "type": "string",
+                    "description": "Optional referral code for bonus rewards",
+                    "example": "ABC12345"
+                  },
+                  "fingerprint": {
+                    "type": "string",
+                    "description": "Browser fingerprint for anti-cheat protection (required)",
+                    "example": "1a2b3c4d5e6f7g8h"
+                  }
+                },
+                "required": ["username", "email", "password", "fingerprint"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User registered successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields or invalid anti-cheat fingerprint",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "examples": {
+                    "missing_fields": {
+                      "value": "Missing fields"
+                    },
+                    "missing_fingerprint": {
+                      "value": "Anti-cheat fingerprint is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Username or email already exists",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Username or email already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Database error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Database error"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Database error"
+          }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Get current user profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "Username": {
+                      "type": "string"
+                    },
+                    "Email": {
+                      "type": "string"
+                    },
+                    "RegisteredAt": {
+                      "type": "string"
+                    },
+                    "LastLogin": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/api/user_tickets": {
+      "post": {
+        "summary": "Create a new support ticket",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["low", "normal", "high"]
+                  }
+                },
+                "required": ["subject", "message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket created"
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "500": {
+            "description": "Error creating ticket"
+          }
+        },
+        "tags": ["user_tickets"]
+      }
+    },
+    "/api/user_tickets/my": {
+      "get": {
+        "summary": "Get the authenticated user's tickets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": ["user_tickets"]
+      }
+    },
+    "/api/user_tickets/{id}": {
+      "get": {
+        "summary": "Get a ticket and its messages",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket and messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Id": {
+                      "type": "integer"
+                    },
+                    "UserId": {
+                      "type": "integer"
+                    },
+                    "Subject": {
+                      "type": "string"
+                    },
+                    "Status": {
+                      "type": "string",
+                      "enum": ["open", "closed"]
+                    },
+                    "Priority": {
+                      "type": "string",
+                      "enum": ["low", "normal", "high"]
+                    },
+                    "CreatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "Messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TicketMessage"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ticket not found or access denied"
+          },
+          "500": {
+            "description": "Error loading ticket"
+          }
+        },
+        "tags": ["user_tickets"]
+      }
+    },
+    "/api/user_tickets/{id}/message": {
+      "post": {
+        "summary": "Add a message to a ticket",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": ["message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message added"
+          },
+          "400": {
+            "description": "Message required"
+          },
+          "500": {
+            "description": "Error adding message"
+          }
+        },
+        "tags": ["user_tickets"]
+      }
+    },
+    "/api/admin_tickets/tickets": {
+      "get": {
+        "summary": "Get paginated tickets with filters (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Items per page"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["all", "open", "closed"],
+              "default": "all"
+            },
+            "description": "Filter by ticket status"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search in subject or username"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminTicket"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/PaginationInfo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error loading tickets"
+          }
+        },
+        "tags": ["admin_tickets"]
+      }
+    },
+    "/api/admin_tickets/tickets/{id}/close": {
+      "put": {
+        "summary": "Close a ticket (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket closed"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error closing ticket"
+          }
+        },
+        "tags": ["admin_tickets"]
+      }
+    },
+    "/api/admin_tickets/tickets/{id}/messages": {
+      "get": {
+        "summary": "Get messages for a ticket (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ticket messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TicketMessage"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error loading messages"
+          }
+        },
+        "tags": ["admin_tickets"]
+      }
+    },
+    "/api/admin_tickets/tickets/{id}/reply": {
+      "post": {
+        "summary": "Reply to a ticket (Admin only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "Reply message"
+                  }
+                },
+                "required": ["message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reply sent successfully"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "500": {
+            "description": "Error sending reply"
+          }
+        },
+        "tags": ["admin_tickets"]
+      }
+    },
+    "/api/donation/initiate": {
+      "post": {
+        "summary": "Initiate a donation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "amount": {
+                    "type": "number"
+                  },
+                  "silkAmount": {
+                    "type": "integer"
+                  },
+                  "method": {
+                    "type": "string"
+                  }
+                },
+                "required": ["userId", "amount", "silkAmount", "method"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Donation initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "transactionId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing donation fields"
+          }
+        },
+        "tags": ["donation"]
+      }
+    },
+    "/api/donation/wallet/{userId}": {
+      "get": {
+        "summary": "Get wallet silk balance",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Silk balance returned"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": ["donation"]
+      }
+    },
+    "/api/donation/vote/{platform}": {
+      "post": {
+        "summary": "Vote for Silk and register reward",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["xtreme", "arena", "gtop", "topg"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "integer"
+                  },
+                  "gameAccountId": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["userId", "gameAccountId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vote registered and Silk added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid voting platform or missing fields"
+          },
+          "403": {
+            "description": "Unauthorized game account"
+          }
+        },
+        "tags": ["donation"]
+      }
+    },
+    "/api/ranking/{type}": {
+      "get": {
+        "summary": "Get paginated rankings by type",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "top-player",
+                "top-guild",
+                "unique",
+                "thief",
+                "trader",
+                "hunter"
+              ]
+            },
+            "description": "Ranking type to fetch"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of ranked entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ranking type"
+          },
+          "500": {
+            "description": "Database error"
+          }
+        },
+        "tags": ["ranking"]
+      }
+    },
+    "/api/characters/characters/{gameAccountId}": {
+      "get": {
+        "summary": "Get characters for a game account",
+        "parameters": [
+          {
+            "name": "gameAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of characters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Character"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error fetching characters"
+          }
+        },
+        "tags": ["characters"]
+      }
+    },
+    "/api/characters/gameaccounts/my": {
+      "get": {
+        "summary": "Get game accounts for the authenticated user (used for character listing)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game accounts with character associations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GameAccount"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid token"
+          },
+          "500": {
+            "description": "Error fetching game accounts"
+          }
+        },
+        "tags": ["characters"]
+      }
+    },
+    "/api/characters/inventory/{charId}": {
+      "get": {
+        "summary": "Get inventory for a character",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "charId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Character ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Character inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access to character"
+          },
+          "500": {
+            "description": "Error fetching inventory"
+          }
+        },
+        "tags": ["characters"]
+      }
+    },
+    "/api/characters/{charId}/details": {
+      "get": {
+        "summary": "Get detailed character information including equipped items",
+        "parameters": [
+          {
+            "name": "charId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Character details returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Character"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to load character details"
+          }
+        },
+        "tags": ["characters"]
+      }
+    },
+    "/api/silk/balance/{gameAccountId}": {
+      "get": {
+        "summary": "Get Silk balance for a game account",
+        "parameters": [
+          {
+            "name": "gameAccountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current Silk amount",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "silk": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game account not found"
+          },
+          "500": {
+            "description": "Failed to fetch Silk balance"
+          }
+        },
+        "tags": ["silk"]
+      }
+    },
+    "/api/silk/add": {
+      "post": {
+        "summary": "Add Silk to a game account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gameAccountId": {
+                    "type": "integer"
+                  },
+                  "amount": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["gameAccountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Silk added successfully"
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "500": {
+            "description": "Failed to add Silk"
+          }
+        },
+        "tags": ["silk"]
+      }
+    },
+    "/api/silk/spend": {
+      "post": {
+        "summary": "Spend Silk from a game account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gameAccountId": {
+                    "type": "integer"
+                  },
+                  "amount": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["gameAccountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Silk spent successfully"
+          },
+          "400": {
+            "description": "Not enough Silk or missing fields"
+          },
+          "500": {
+            "description": "Failed to spend Silk"
+          }
+        },
+        "tags": ["silk"]
+      }
+    },
+    "/api/admin/webaccounts": {
+      "get": {
+        "summary": "Get all web accounts",
+        "responses": {
+          "200": {
+            "description": "List of web accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Id": {
+                        "type": "integer",
+                        "description": "Account ID"
+                      },
+                      "Username": {
+                        "type": "string",
+                        "description": "Username"
+                      },
+                      "Email": {
+                        "type": "string",
+                        "description": "Email address"
+                      },
+                      "RegisteredAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Registration timestamp"
+                      },
+                      "LastLogin": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last login timestamp"
+                      },
+                      "IsAdmin": {
+                        "type": "boolean",
+                        "description": "Admin status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch web accounts"
+          }
+        },
+        "tags": ["admin"]
+      }
+    },
+    "/api/admin/gameaccounts": {
+      "get": {
+        "summary": "Get all game accounts with pagination and search",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term for username filtering"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of game accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GameAccountAdmin"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/PaginationInfo"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch game accounts"
+          }
+        },
+        "tags": ["admin"]
+      }
+    },
+    "/api/admin/gameaccounts/{id}/ban": {
+      "put": {
+        "summary": "Ban a game account",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game account banned"
+          },
+          "500": {
+            "description": "Failed to ban account"
+          }
+        },
+        "tags": ["admin"]
+      }
+    },
+    "/api/admin/gameaccounts/{id}/timeout": {
+      "put": {
+        "summary": "Put a game account in timeout for 24 hours",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timeout applied"
+          },
+          "500": {
+            "description": "Failed to apply timeout"
+          }
+        },
+        "tags": ["admin"]
+      }
+    },
+    "/api/gameaccount/create": {
+      "post": {
+        "tags": ["GameAccount"],
+        "summary": "Create a new game account",
+        "description": "Creates a new game account for the currently authenticated web user. `UserIP`, `VisitDate`, `RegDate`, `CountryCode`, `ServiceCompany`, `Active`, `sec_primary`, and `sec_content` are automatically set by the server.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "LegendKnight01"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "MySecret123!"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Game account successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Game account created"
+                    },
+                    "jid": {
+                      "type": "integer",
+                      "example": 123456
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username and password required"
+          },
+          "409": {
+            "description": "Game account already exists"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/gameaccount/my": {
+      "get": {
+        "summary": "Get a list of your game accounts",
+        "tags": ["GameAccount"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of game accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GameAccount"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/gameaccount/{id}/password": {
+      "put": {
+        "summary": "Change password of a game account",
+        "tags": ["GameAccount"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string",
+                    "example": "oldSecurePW"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "newSecurePW"
+                  }
+                },
+                "required": ["oldPassword", "newPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Game account not found"
+          }
+        }
+      }
+    },
+    "/api/gameaccount/{id}": {
+      "delete": {
+        "summary": "Delete a game account",
+        "tags": ["GameAccount"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game account deleted"
+          },
+          "404": {
+            "description": "Game account not found"
+          },
+          "500": {
+            "description": "Error deleting account"
+          }
+        }
+      }
+    },
+    "/api/inventory/{charId}": {
+      "get": {
+        "summary": "Get inventory for a character",
+        "parameters": [
+          {
+            "name": "charId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the character whose inventory is being fetched"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid character ID"
+          },
+          "403": {
+            "description": "Unauthorized access to this character's inventory"
+          },
+          "500": {
+            "description": "Error fetching inventory"
+          }
+        },
+        "tags": ["inventory"]
+      }
+    },
+    "/api/payment/nowpayments/initiate": {
+      "post": {
+        "summary": "NOWPayments Crypto-Zahlung starten",
+        "description": "Erzeugt eine Invoice für eine Kryptowährungszahlung über NOWPayments",
+        "tags": ["Payment NowPayments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "example": "45678"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 15
+                  }
+                },
+                "required": ["accountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Weiterleitungslink zur Invoice",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://nowpayments.io/invoice/abc123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error creating invoice"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/payment/payop/callback": {
+      "post": {
+        "summary": "PayOP Webhook (Callback)",
+        "description": "Empfängt Zahlungsbestätigung von PayOP und schreibt Silk gut.",
+        "tags": ["Payment PayOP"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "success"
+                  },
+                  "order": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "example": "Silk purchase for account 12345"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "example": 10.0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK, Silk ggf. gutgeschrieben"
+          },
+          "400": {
+            "description": "Fehlende Daten"
+          }
+        }
+      }
+    },
+    "/api/payment/nowpayments/callback": {
+      "post": {
+        "summary": "NOWPayments Webhook (IPN)",
+        "description": "Empfängt IPN-Daten von NOWPayments und schreibt Silk gut, wenn die Zahlung erfolgreich ist.",
+        "tags": ["Payment NowPayments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_status": {
+                    "type": "string",
+                    "example": "finished"
+                  },
+                  "price_amount": {
+                    "type": "number",
+                    "example": 15.0
+                  },
+                  "order_description": {
+                    "type": "string",
+                    "example": "Silk for game account 12345"
+                  },
+                  "pay_currency": {
+                    "type": "string",
+                    "example": "btc"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK, Silk ggf. gutgeschrieben"
+          },
+          "403": {
+            "description": "Invalid signature"
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/api/payment/payop/initiate": {
+      "post": {
+        "summary": "Startet eine PayOP-Zahlung",
+        "description": "Diese Route erstellt eine PayOP-Zahlung basierend auf dem GameAccount und dem Silk-Paket.",
+        "tags": ["Payment PayOP"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 10
+                  }
+                },
+                "required": ["accountId", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Weiterleitungslink zu PayOP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://payop.com/en/payment/invoice-preprocessing/..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error creating PayOP payment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create PayOP invoice"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pages": {
+      "get": {
+        "summary": "Get all active pages",
+        "tags": ["Pages"],
+        "responses": {
+          "200": {
+            "description": "List of pages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Page" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new page (Admin only)",
+        "tags": ["Pages"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "slug": { "type": "string" },
+                  "content": { "type": "string" },
+                  "excerpt": { "type": "string" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "slug", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Page created" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/api/pages/{slug}": {
+      "get": {
+        "summary": "Get page by slug",
+        "tags": ["Pages"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Page details" },
+          "404": { "description": "Page not found" }
+        }
+      }
+    },
+    "/api/downloads": {
+      "get": {
+        "summary": "Get all active downloads",
+        "tags": ["Downloads"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "schema": { "type": "string" },
+            "description": "Filter by category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of downloads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Download" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new download (Admin only)",
+        "tags": ["Downloads"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "file_url": { "type": "string" },
+                  "file_size": { "type": "string" },
+                  "version": { "type": "string" },
+                  "category": { "type": "string" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "file_url", "category"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Download created" }
+        }
+      }
+    },
+    "/api/downloads/categories": {
+      "get": {
+        "summary": "Get all download categories",
+        "tags": ["Downloads"],
+        "responses": {
+          "200": { "description": "List of categories" }
+        }
+      }
+    },
+    "/api/downloads/{id}/download": {
+      "post": {
+        "summary": "Track download and increment counter",
+        "tags": ["Downloads"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Download URL" }
+        }
+      }
+    },
+    "/api/admin/vouchers": {
+      "get": {
+        "summary": "Get all vouchers (Admin only)",
+        "tags": ["Admin Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of vouchers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Voucher" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Access denied" }
+        }
+      },
+      "post": {
+        "summary": "Create new voucher (Admin only)",
+        "tags": ["Admin Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["silk", "gold", "experience"]
+                  },
+                  "amount": { "type": "integer" },
+                  "jid": { "type": "integer" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "inactive", "expired"]
+                  },
+                  "valid_date": { "type": "string", "format": "date-time" }
+                },
+                "required": ["code", "type", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Voucher created" },
+          "400": { "description": "Missing required fields" },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/vouchers/{id}": {
+      "put": {
+        "summary": "Update voucher (Admin only)",
+        "tags": ["Admin Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["silk", "gold", "experience"]
+                  },
+                  "amount": { "type": "integer" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "inactive", "expired"]
+                  },
+                  "valid_date": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Voucher updated" },
+          "404": { "description": "Voucher not found" },
+          "403": { "description": "Access denied" }
+        }
+      },
+      "delete": {
+        "summary": "Delete voucher (Admin only)",
+        "tags": ["Admin Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Voucher deleted" },
+          "404": { "description": "Voucher not found" },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/referrals": {
+      "get": {
+        "summary": "Get all referrals with pagination (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "timeframe",
+            "schema": { "type": "integer", "default": 30 },
+            "description": "Days to look back"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": { "type": "string" },
+            "description": "Search by username or referral code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of referrals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Referral" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/referrals/statistics": {
+      "get": {
+        "summary": "Get referral statistics (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "timeframe",
+            "schema": { "type": "integer", "default": 30 },
+            "description": "Days to look back"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral statistics",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReferralStatistics" }
+              }
+            }
+          },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/referrals/rewards": {
+      "get": {
+        "summary": "Get all referral rewards (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of referral rewards",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ReferralReward" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Access denied" }
+        }
+      },
+      "post": {
+        "summary": "Create new referral reward (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "points_required": { "type": "integer" },
+                  "reward_type": {
+                    "type": "string",
+                    "enum": ["silk", "item", "gold"]
+                  },
+                  "reward_value": { "type": "integer" },
+                  "active": { "type": "boolean" }
+                },
+                "required": [
+                  "title",
+                  "points_required",
+                  "reward_type",
+                  "reward_value"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Referral reward created" },
+          "400": { "description": "Missing required fields" },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/referrals/{id}": {
+      "put": {
+        "summary": "Update referral status (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["pending", "approved", "rejected"]
+                  }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Referral status updated" },
+          "404": { "description": "Referral not found" },
+          "403": { "description": "Access denied" }
+        }
+      },
+      "delete": {
+        "summary": "Delete referral (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Referral deleted" },
+          "404": { "description": "Referral not found" },
+          "403": { "description": "Access denied" }
+        }
+      }
+    },
+    "/api/admin/referrals/settings": {
+      "get": {
+        "summary": "Get referral system settings (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Referral settings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "points_per_referral": {
+                          "type": "object",
+                          "properties": {
+                            "value": { "type": "string" },
+                            "description": { "type": "string" }
+                          }
+                        },
+                        "minimum_redeem_points": {
+                          "type": "object",
+                          "properties": {
+                            "value": { "type": "string" },
+                            "description": { "type": "string" }
+                          }
+                        },
+                        "silk_per_point": {
+                          "type": "object",
+                          "properties": {
+                            "value": { "type": "string" },
+                            "description": { "type": "string" }
+                          }
+                        },
+                        "referral_enabled": {
+                          "type": "object",
+                          "properties": {
+                            "value": { "type": "string" },
+                            "description": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Database error" }
+        }
+      },
+      "put": {
+        "summary": "Update referral system settings (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points_per_referral": {
+                    "type": "string",
+                    "description": "Points awarded per successful referral"
+                  },
+                  "minimum_redeem_points": {
+                    "type": "string",
+                    "description": "Minimum points required to redeem"
+                  },
+                  "silk_per_point": {
+                    "type": "string",
+                    "description": "Silk value per point"
+                  },
+                  "referral_enabled": {
+                    "type": "string",
+                    "description": "Whether referral system is enabled (1/0)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid setting name provided" },
+          "500": { "description": "Database error" }
+        }
+      }
+    },
+    "/api/admin/referrals/rewards/{id}": {
+      "delete": {
+        "summary": "Delete a referral reward (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Reward ID to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reward deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Reward not found" },
+          "500": { "description": "Database error" }
+        }
+      },
+      "put": {
+        "summary": "Update a referral reward (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Reward ID to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points_required": {
+                    "type": "integer",
+                    "description": "Points required to redeem this reward"
+                  },
+                  "silk_reward": {
+                    "type": "integer",
+                    "description": "Silk amount awarded for this reward"
+                  },
+                  "item_id": {
+                    "type": "integer",
+                    "description": "Optional item ID to award (can be null)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Reward description"
+                  },
+                  "is_active": {
+                    "type": "boolean",
+                    "description": "Whether reward is currently active"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reward updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Reward not found" },
+          "500": { "description": "Database error" }
+        }
+      }
+    },
+    "/api/admin/referrals/anticheat/suspicious": {
+      "get": {
+        "summary": "Get suspicious referral activities (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Suspicious referrals retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer" },
+                          "code": { "type": "string" },
+                          "referrer_jid": { "type": "integer" },
+                          "invited_jid": { "type": "integer" },
+                          "points": { "type": "integer" },
+                          "redeemed": { "type": "boolean" },
+                          "ip_address": { "type": "string" },
+                          "fingerprint": { "type": "string" },
+                          "is_valid": { "type": "boolean" },
+                          "cheat_reason": { "type": "string" },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "same_ip_count": { "type": "integer" },
+                          "same_fingerprint_count": { "type": "integer" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Database error" }
+        }
+      }
+    },
+    "/api/admin/referrals/anticheat/stats": {
+      "get": {
+        "summary": "Get anti-cheat statistics (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Anti-cheat statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total_stats": {
+                          "type": "object",
+                          "properties": {
+                            "total_referrals": { "type": "integer" },
+                            "valid_referrals": { "type": "integer" },
+                            "blocked_referrals": { "type": "integer" },
+                            "block_rate_percent": { "type": "number" }
+                          }
+                        },
+                        "suspicious_ips": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "ip_address": { "type": "string" },
+                              "referral_count": { "type": "integer" },
+                              "blocked_count": { "type": "integer" },
+                              "unique_referrers": { "type": "integer" }
+                            }
+                          }
+                        },
+                        "cheat_reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "cheat_reason": { "type": "string" },
+                              "count": { "type": "integer" }
+                            }
+                          }
+                        },
+                        "daily_trends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": { "type": "string", "format": "date" },
+                              "total_referrals": { "type": "integer" },
+                              "valid_referrals": { "type": "integer" },
+                              "blocked_referrals": { "type": "integer" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Database error" }
+        }
+      }
+    },
+    "/api/admin/referrals/anticheat/validate/{id}": {
+      "post": {
+        "summary": "Manually validate a suspicious referral (Admin only)",
+        "tags": ["Admin Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Referral ID to validate"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "is_valid": {
+                    "type": "boolean",
+                    "description": "Whether the referral should be marked as valid"
+                  },
+                  "admin_notes": {
+                    "type": "string",
+                    "description": "Optional admin notes for the validation"
+                  }
+                },
+                "required": ["is_valid"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Referral validation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Referral not found" },
+          "500": { "description": "Database error" }
+        }
+      }
+    },
+    "/api/vouchers": {
+      "get": {
+        "summary": "Get user's voucher history",
+        "tags": ["Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "User's vouchers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Voucher" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vouchers/redeem": {
+      "post": {
+        "summary": "Redeem a voucher",
+        "tags": ["Vouchers"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" }
+                },
+                "required": ["code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Voucher redeemed successfully" },
+          "404": { "description": "Voucher not found or expired" }
+        }
+      }
+    },
+    "/api/votes": {
+      "get": {
+        "summary": "Get all active vote sites",
+        "tags": ["Votes"],
+        "responses": {
+          "200": { "description": "List of vote sites" }
+        }
+      },
+      "post": {
+        "summary": "Create new vote site (Admin only)",
+        "tags": ["Votes"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "url": { "type": "string" },
+                  "site": { "type": "string" },
+                  "reward": { "type": "integer" },
+                  "timeout": { "type": "integer" },
+                  "active": { "type": "boolean" }
+                },
+                "required": ["title", "url", "site", "reward"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Vote site created" }
+        }
+      }
+    },
+    "/api/votes/user-status": {
+      "get": {
+        "summary": "Get user vote status (last vote times)",
+        "tags": ["Votes"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User vote status" }
+        }
+      }
+    },
+    "/api/votes/{id}/vote": {
+      "post": {
+        "summary": "Process a vote (callback from vote site)",
+        "tags": ["Votes"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "ip": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["pending", "completed", "failed"]
+                  }
+                },
+                "required": ["username"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vote processed" }
+        }
+      }
+    },
+    "/api/referrals/my-referrals": {
+      "get": {
+        "summary": "Get user's referral information",
+        "tags": ["Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User referral data" }
+        }
+      }
+    },
+    "/api/referrals/redeem": {
+      "post": {
+        "summary": "Redeem referral points for rewards",
+        "tags": ["Referrals"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": { "type": "integer" }
+                },
+                "required": ["points"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Points redeemed successfully" }
+        }
+      }
+    },
+    "/api/referrals/register": {
+      "post": {
+        "summary": "Register a referral (called during user registration)",
+        "tags": ["Referrals"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "referrer_code": { "type": "string" },
+                  "referred_jid": { "type": "integer" }
+                },
+                "required": ["referrer_code", "referred_jid"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Referral registered" }
+        }
+      }
+    },
+    "/api/user-roles": {
+      "get": {
+        "summary": "Get all user roles (Admin only)",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of user roles" }
+        }
+      }
+    },
+    "/api/user-roles/assign": {
+      "post": {
+        "summary": "Assign role to user (Admin only)",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "role": {
+                    "type": "string",
+                    "enum": ["admin", "moderator", "support", "vip", "premium"]
+                  },
+                  "permissions": { "type": "string" }
+                },
+                "required": ["user_id", "role"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Role assigned" }
+        }
+      }
+    },
+    "/api/user-roles/my-roles": {
+      "get": {
+        "summary": "Get current user's roles",
+        "tags": ["User Roles"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User's roles" }
+        }
+      }
+    },
+    "/api/rankings-extended/{type}": {
+      "get": {
+        "summary": "Get extended rankings by type",
+        "tags": ["Rankings Extended"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "top-player",
+                "top-guild",
+                "unique",
+                "unique-monthly",
+                "honor",
+                "job",
+                "job-hunter",
+                "job-thief",
+                "job-trader",
+                "fortress-player",
+                "fortress-guild",
+                "pvp-kd",
+                "job-kd"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer", "default": 25 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ranking data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/RankingEntry" }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": { "type": "integer" },
+                        "limit": { "type": "integer" },
+                        "offset": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "user_tickets",
+      "description": "User support ticket operations"
+    },
+    {
+      "name": "admin_tickets",
+      "description": "Admin ticket management operations"
+    },
+    {
+      "name": "donation",
+      "description": "Donation and voting operations"
+    },
+    {
+      "name": "ranking",
+      "description": "Player and guild ranking operations"
+    },
+    {
+      "name": "characters",
+      "description": "Character information and management"
+    },
+    {
+      "name": "silk",
+      "description": "Silk currency operations"
+    },
+    {
+      "name": "admin",
+      "description": "Administrative operations"
+    },
+    {
+      "name": "GameAccount",
+      "description": "Game account management"
+    },
+    {
+      "name": "inventory",
+      "description": "Character inventory operations"
+    },
+    {
+      "name": "Payment NowPayments",
+      "description": "NOWPayments cryptocurrency payment operations"
+    },
+    {
+      "name": "Payment PayOP",
+      "description": "PayOP payment gateway operations"
+    },
+    {
+      "name": "Pages",
+      "description": "CMS page management"
+    },
+    {
+      "name": "Downloads",
+      "description": "File download management"
+    },
+    {
+      "name": "Vouchers",
+      "description": "Voucher code management"
+    },
+    {
+      "name": "Admin Vouchers",
+      "description": "Admin voucher management and creation"
+    },
+    {
+      "name": "Votes",
+      "description": "Vote site management"
+    },
+    {
+      "name": "Referrals",
+      "description": "Referral system management"
+    },
+    {
+      "name": "Admin Referrals",
+      "description": "Admin referral management, statistics and rewards"
+    },
+    {
+      "name": "User Roles",
+      "description": "User role and permission management"
+    },
+    {
+      "name": "Rankings Extended",
+      "description": "Extended ranking system"
+    }
+  ]
+}

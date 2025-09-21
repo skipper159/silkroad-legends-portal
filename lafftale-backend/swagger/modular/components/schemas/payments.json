@@ -1,0 +1,242 @@
+{
+  "Payment": {
+    "type": "object",
+    "description": "Payment/donation transaction",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique payment ID"
+      },
+      "user_id": {
+        "type": "integer",
+        "description": "ID of user who made the payment"
+      },
+      "amount": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Payment amount in currency"
+      },
+      "currency": {
+        "type": "string",
+        "description": "Payment currency (USD, EUR, etc.)"
+      },
+      "coins_awarded": {
+        "type": "integer",
+        "description": "Number of coins/credits awarded"
+      },
+      "payment_method": {
+        "type": "string",
+        "enum": ["paypal", "stripe", "crypto", "bank_transfer", "other"],
+        "description": "Payment method used"
+      },
+      "transaction_id": {
+        "type": "string",
+        "description": "External transaction ID from payment provider"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "completed", "failed", "refunded", "cancelled"],
+        "description": "Payment status"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Payment creation timestamp"
+      },
+      "completed_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Payment completion timestamp"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Additional payment notes"
+      },
+      "username": {
+        "type": "string",
+        "description": "Username of payer (joined data)"
+      }
+    },
+    "required": [
+      "id",
+      "user_id",
+      "amount",
+      "currency",
+      "payment_method",
+      "status"
+    ]
+  },
+  "PaymentPackage": {
+    "type": "object",
+    "description": "Donation/payment package",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Package ID"
+      },
+      "name": {
+        "type": "string",
+        "description": "Package name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Package description"
+      },
+      "price": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Package price"
+      },
+      "currency": {
+        "type": "string",
+        "description": "Price currency"
+      },
+      "coins": {
+        "type": "integer",
+        "description": "Number of coins/credits provided"
+      },
+      "bonus_coins": {
+        "type": "integer",
+        "description": "Bonus coins for this package"
+      },
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether package is available for purchase"
+      },
+      "featured": {
+        "type": "boolean",
+        "description": "Whether package is featured/promoted"
+      },
+      "sort_order": {
+        "type": "integer",
+        "description": "Display order"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Package creation timestamp"
+      }
+    },
+    "required": ["id", "name", "price", "currency", "coins"]
+  },
+  "PaymentStats": {
+    "type": "object",
+    "description": "Payment system statistics",
+    "properties": {
+      "totalPayments": {
+        "type": "integer",
+        "description": "Total number of payments"
+      },
+      "totalRevenue": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Total revenue amount"
+      },
+      "pendingPayments": {
+        "type": "integer",
+        "description": "Number of pending payments"
+      },
+      "completedPayments": {
+        "type": "integer",
+        "description": "Number of completed payments"
+      },
+      "failedPayments": {
+        "type": "integer",
+        "description": "Number of failed payments"
+      },
+      "todayRevenue": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Revenue generated today"
+      },
+      "weekRevenue": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Revenue generated this week"
+      },
+      "monthRevenue": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Revenue generated this month"
+      },
+      "avgPaymentAmount": {
+        "type": "number",
+        "format": "decimal",
+        "description": "Average payment amount"
+      },
+      "topPaymentMethod": {
+        "type": "string",
+        "description": "Most popular payment method"
+      }
+    }
+  },
+  "CoinBalance": {
+    "type": "object",
+    "description": "User coin/credit balance",
+    "properties": {
+      "user_id": {
+        "type": "integer",
+        "description": "User ID"
+      },
+      "balance": {
+        "type": "integer",
+        "description": "Current coin balance"
+      },
+      "total_earned": {
+        "type": "integer",
+        "description": "Total coins earned"
+      },
+      "total_spent": {
+        "type": "integer",
+        "description": "Total coins spent"
+      },
+      "last_transaction_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last transaction timestamp"
+      }
+    },
+    "required": ["user_id", "balance"]
+  },
+  "CoinTransaction": {
+    "type": "object",
+    "description": "Coin/credit transaction",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Transaction ID"
+      },
+      "user_id": {
+        "type": "integer",
+        "description": "User ID"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["earned", "spent", "refund", "admin_add", "admin_remove"],
+        "description": "Transaction type"
+      },
+      "amount": {
+        "type": "integer",
+        "description": "Transaction amount (positive for earned, negative for spent)"
+      },
+      "description": {
+        "type": "string",
+        "description": "Transaction description"
+      },
+      "reference_id": {
+        "type": "string",
+        "description": "Reference ID (payment ID, purchase ID, etc.)"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Transaction timestamp"
+      },
+      "username": {
+        "type": "string",
+        "description": "Username (joined data)"
+      }
+    },
+    "required": ["id", "user_id", "type", "amount"]
+  }
+}

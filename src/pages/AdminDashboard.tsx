@@ -1,78 +1,189 @@
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WebAccountsList from "@/components/admin/WebAccountsList";
-import GameAccountsList from "@/components/admin/GameAccountsList";
-import TicketSystem from "@/components/admin/TicketSystem";
-import { Users, Database, TicketCheck } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import WebAccountsList from '@/components/admin/WebAccountsList';
+import GameAccountsList from '@/components/admin/GameAccountsList';
+import TicketSystem from '@/components/admin/TicketSystem';
+import DownloadsManager from '@/components/admin/DownloadsManager';
+import VoucherManager from '@/components/admin/VoucherManager';
+import VotesManager from '@/components/admin/VotesManager';
+import ReferralManager from '@/components/admin/ReferralManager';
+import PagesManager from '@/components/admin/PagesManager';
+import UserRolesManager from '@/components/admin/UserRolesManager';
+import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
+import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
+import AdminSettings from '@/components/admin/settings/AdminSettings';
+// import SettingsManager from "@/components/admin/SettingsManager";
+import {
+  Users,
+  Database,
+  TicketCheck,
+  Download,
+  Gift,
+  Vote,
+  UserPlus,
+  FileText,
+  Shield,
+  Coins,
+  Settings,
+} from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Navigate } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("webaccounts");
-  const { token } = useAuth();
+  const [activeTab, setActiveTab] = useState('webaccounts');
+  const { token, isAdmin } = useAuth();
 
-  // Mock admin check - in a real app, we'd check the decoded token for role
-  // For now, we're assuming the user is an admin if they have a token
-  // This would be replaced with proper role check in a real implementation
-  const isAdmin = !!token;
-
-  if (!isAdmin) {
-    return <Navigate to="/login" replace />;
+  // Check if user is authenticated AND is an admin
+  if (!token || !isAdmin) {
+    return <Navigate to='/login' replace />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className='min-h-screen flex flex-col'>
       <Navbar />
-      <main className="flex-grow">
-        <div className="py-20 bg-header2-bg bg-cover bg-top">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold mb-6">
-              Dashboard <span className="text-lafftale-bronze font-cinzel text-6xl font-bold">Admin</span>
+      <main className='flex-grow'>
+        <div className='py-20 bg-header2-bg bg-cover bg-top'>
+          <div className='container mx-auto px-4 text-center'>
+            <h1 className='text-3xl md:text-4xl lg:text-4xl font-bold mb-6'>
+              Dashboard <span className='text-lafftale-bronze font-cinzel text-6xl font-bold'>Admin</span>
             </h1>
           </div>
         </div>
         <hr></hr>
-        <div className="container mx-auto py-10">
-          
+        <div className='container mx-auto py-10'>
+          {/* Silk Dashboard Widget */}
+          <div className='mb-8'>
+            <SilkDashboardWidget compact={true} />
+          </div>
 
-          <Tabs defaultValue="webaccounts" value={activeTab} onValueChange={setActiveTab}>
-            <Card className="bg-lafftale-darkgray border-lafftale-gold/30 mb-6">
-              <TabsList className="flex justify-center p-2 bg-transparent border-b border-lafftale-gold/20">
-                <TabsTrigger 
-                  value="webaccounts" 
-                  className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark"                >                  <Users size={18} />
-                  <span>Web Accounts</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="gameaccounts" 
-                  className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark"
+          <Tabs defaultValue='webaccounts' value={activeTab} onValueChange={setActiveTab}>
+            <Card className='bg-lafftale-darkgray border-lafftale-gold/30 mb-6'>
+              <TabsList className='grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-10 gap-2 p-2 bg-transparent border-b border-lafftale-gold/20 h-auto'>
+                <TabsTrigger
+                  value='webaccounts'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
                 >
-                  <Database size={18} />
-                  <span>Game Accounts</span>
+                  <Users size={16} />
+                  <span className='hidden sm:inline'>Web Accounts</span>
+                  <span className='sm:hidden'>Web</span>
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="tickets" 
-                  className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark"
+                <TabsTrigger
+                  value='gameaccounts'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
                 >
-                  <TicketCheck size={18} />
-                  <span>Ticket System</span>
+                  <Database size={16} />
+                  <span className='hidden sm:inline'>Game Accounts</span>
+                  <span className='sm:hidden'>Game</span>
                 </TabsTrigger>
-              </TabsList>            </Card>
+                <TabsTrigger
+                  value='silk'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <Coins size={16} />
+                  <span className='hidden sm:inline'>Silk Admin</span>
+                  <span className='sm:hidden'>Silk</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='tickets'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <TicketCheck size={16} />
+                  <span className='hidden sm:inline'>Ticket System</span>
+                  <span className='sm:hidden'>Tickets</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='downloads'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <Download size={16} />
+                  <span className='hidden sm:inline'>Downloads</span>
+                  <span className='sm:hidden'>DL</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='vouchers'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <Gift size={16} />
+                  <span className='hidden sm:inline'>Vouchers</span>
+                  <span className='sm:hidden'>Gift</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='votes'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <Vote size={16} />
+                  <span className='hidden sm:inline'>Vote System</span>
+                  <span className='sm:hidden'>Vote</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='referrals'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <UserPlus size={16} />
+                  <span className='hidden sm:inline'>Referrals</span>
+                  <span className='sm:hidden'>Ref</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='pages'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <FileText size={16} />
+                  <span className='hidden sm:inline'>Pages</span>
+                  <span className='sm:hidden'>Pg</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value='settings'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                >
+                  <Settings size={16} />
+                  <span className='hidden sm:inline'>Settings</span>
+                  <span className='sm:hidden'>Set</span>
+                </TabsTrigger>
+              </TabsList>
+            </Card>
 
-            <Card className="bg-lafftale-darkgray border-lafftale-gold/30 p-6">
-              <TabsContent value="webaccounts" className="mt-0">
+            <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-6'>
+              <TabsContent value='webaccounts' className='mt-0'>
                 <WebAccountsList />
               </TabsContent>
-              
-              <TabsContent value="gameaccounts" className="mt-0">
+
+              <TabsContent value='gameaccounts' className='mt-0'>
                 <GameAccountsList />
               </TabsContent>
 
-              <TabsContent value="tickets" className="mt-0">
+              <TabsContent value='silk' className='mt-0'>
+                <SilkAdminPanel />
+              </TabsContent>
+
+              <TabsContent value='tickets' className='mt-0'>
                 <TicketSystem />
+              </TabsContent>
+
+              <TabsContent value='downloads' className='mt-0'>
+                <DownloadsManager />
+              </TabsContent>
+
+              <TabsContent value='vouchers' className='mt-0'>
+                <VoucherManager />
+              </TabsContent>
+
+              <TabsContent value='votes' className='mt-0'>
+                <VotesManager />
+              </TabsContent>
+
+              <TabsContent value='referrals' className='mt-0'>
+                <ReferralManager />
+              </TabsContent>
+
+              <TabsContent value='pages' className='mt-0'>
+                <PagesManager />
+              </TabsContent>
+
+              <TabsContent value='settings' className='mt-0'>
+                <AdminSettings />
               </TabsContent>
             </Card>
           </Tabs>

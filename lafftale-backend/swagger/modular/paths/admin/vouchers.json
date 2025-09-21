@@ -1,0 +1,403 @@
+{
+  "/api/admin/vouchers": {
+    "get": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Get all vouchers",
+      "description": "Retrieve paginated list of all vouchers",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 20 }
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["all", "active", "used", "expired"]
+          },
+          "description": "Filter by voucher status"
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "schema": { "type": "string" },
+          "description": "Search in voucher code"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vouchers retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "vouchers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "integer" },
+                                "code": { "type": "string" },
+                                "type": {
+                                  "type": "string",
+                                  "enum": ["coins", "item", "experience"]
+                                },
+                                "value": { "type": "integer" },
+                                "description": { "type": "string" },
+                                "uses": { "type": "integer" },
+                                "maxUses": { "type": "integer" },
+                                "expiresAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "isActive": { "type": "boolean" }
+                              }
+                            }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationInfo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    },
+    "post": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Create new voucher",
+      "description": "Create a new voucher code",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Voucher code (auto-generated if not provided)"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["coins", "item", "experience"],
+                  "description": "Voucher reward type"
+                },
+                "value": {
+                  "type": "integer",
+                  "description": "Reward value"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Voucher description"
+                },
+                "maxUses": {
+                  "type": "integer",
+                  "default": 1,
+                  "description": "Maximum number of uses"
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Expiration timestamp"
+                }
+              },
+              "required": ["type", "value"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Voucher created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer" },
+                          "code": { "type": "string" },
+                          "type": { "type": "string" },
+                          "value": { "type": "integer" },
+                          "description": { "type": "string" },
+                          "maxUses": { "type": "integer" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  },
+  "/api/admin/vouchers/{id}": {
+    "get": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Get voucher details",
+      "description": "Retrieve details for a specific voucher",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Voucher ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Voucher details retrieved",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer" },
+                          "code": { "type": "string" },
+                          "type": { "type": "string" },
+                          "value": { "type": "integer" },
+                          "description": { "type": "string" },
+                          "uses": { "type": "integer" },
+                          "maxUses": { "type": "integer" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "isActive": { "type": "boolean" },
+                          "usageHistory": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "userId": { "type": "integer" },
+                                "username": { "type": "string" },
+                                "usedAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    },
+    "put": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Update voucher",
+      "description": "Update voucher details",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Voucher ID"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string" },
+                "maxUses": { "type": "integer" },
+                "expiresAt": { "type": "string", "format": "date-time" },
+                "isActive": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Voucher updated successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    },
+    "delete": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Delete voucher",
+      "description": "Delete a voucher (only if unused)",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "Voucher ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Voucher deleted successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": {
+          "description": "Cannot delete used voucher",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/admin/vouchers/usage": {
+    "get": {
+      "tags": ["Admin - Vouchers"],
+      "summary": "Get voucher usage history",
+      "description": "Get comprehensive usage history for all vouchers",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 20 }
+        },
+        {
+          "name": "voucherId",
+          "in": "query",
+          "schema": { "type": "integer" },
+          "description": "Filter by specific voucher ID"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Voucher usage history retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "usageHistory": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "integer" },
+                                "voucher_code": { "type": "string" },
+                                "type": { "type": "integer" },
+                                "amount": { "type": "integer" },
+                                "status": { "type": "string" },
+                                "jid": { "type": "integer" },
+                                "username": { "type": "string" },
+                                "created_at": { "type": "string", "format": "date-time" },
+                                "updated_at": { "type": "string", "format": "date-time" }
+                              }
+                            }
+                          },
+                          "pagination": {
+                            "$ref": "#/components/schemas/PaginationInfo"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": { "$ref": "#/components/responses/Forbidden" }
+      }
+    }
+  }
+}

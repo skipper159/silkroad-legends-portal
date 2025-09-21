@@ -1,0 +1,158 @@
+{
+  "/api/referrals/my-referrals": {
+    "get": {
+      "tags": ["User - Referrals"],
+      "summary": "Get current user's referrals",
+      "description": "Retrieve all referrals created by the current user",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["all", "used", "unused", "claimed", "unclaimed"]
+          },
+          "description": "Filter by referral status"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User referrals retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/Referral" }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/referrals/redeem": {
+    "post": {
+      "tags": ["User - Referrals"],
+      "summary": "Redeem referral code",
+      "description": "Use a referral code during registration or account setup",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Referral code to redeem"
+                },
+                "fingerprint": {
+                  "type": "string",
+                  "description": "Browser fingerprint for anti-cheat"
+                }
+              },
+              "required": ["code"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Referral code redeemed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "referral": {
+                            "$ref": "#/components/schemas/Referral"
+                          },
+                          "validation": {
+                            "$ref": "#/components/schemas/AntiCheatValidation"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": {
+          "description": "Invalid referral code",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/referrals/register": {
+    "post": {
+      "tags": ["User - Referrals"],
+      "summary": "Register with referral code",
+      "description": "Register a new account using a referral code (alternative endpoint)",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" },
+                "email": { "type": "string", "format": "email" },
+                "referralCode": { "type": "string" },
+                "fingerprint": { "type": "string" }
+              },
+              "required": ["username", "password", "email", "referralCode"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Account created with referral",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "409": {
+          "description": "Username or email already exists",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "InternalServerError": {
+    "description": "Internal Server Error",
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "error": {
+              "type": "string",
+              "example": "Internal server error occurred"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-09-20T18:45:00.000Z"
+            }
+          },
+          "required": ["success", "error"]
+        }
+      }
+    }
+  },
+  "BadRequest": {
+    "description": "Bad Request",
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "error": {
+              "type": "string",
+              "example": "Invalid request parameters"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": ["success", "error"]
+        }
+      }
+    }
+  },
+  "Unauthorized": {
+    "description": "Unauthorized",
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "error": {
+              "type": "string",
+              "example": "Authentication required"
+            }
+          },
+          "required": ["success", "error"]
+        }
+      }
+    }
+  },
+  "NotFound": {
+    "description": "Resource Not Found",
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": false
+            },
+            "error": {
+              "type": "string",
+              "example": "Resource not found"
+            }
+          },
+          "required": ["success", "error"]
+        }
+      }
+    }
+  }
+}

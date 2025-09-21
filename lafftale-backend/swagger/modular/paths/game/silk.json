@@ -1,0 +1,40 @@
+{
+  "/api/silk/balance": {
+    "get": {
+      "tags": ["Silk - SRO-CMS"],
+      "summary": "Get user's silk balance (SRO-CMS Pattern)",
+      "description": "Retrieve silk balance using proper JID from portal system",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "Silk balance retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/SilkBalance" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "User account not properly linked to portal system",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountNotLinkedError" }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "/api/payment/payop/initiate": {
+    "post": {
+      "tags": ["Payments - PayOp"],
+      "summary": "Initiate PayOp transaction",
+      "description": "Start a payment via PayOp payment processor",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "packageId": { "type": "integer" },
+                "amount": { "type": "number", "format": "decimal" },
+                "currency": { "type": "string", "default": "USD" },
+                "paymentMethod": {
+                  "type": "string",
+                  "enum": ["card", "wallet", "bank", "crypto"],
+                  "description": "PayOp payment method"
+                },
+                "returnUrl": { "type": "string" },
+                "cancelUrl": { "type": "string" },
+                "customerInfo": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string" },
+                    "name": { "type": "string" },
+                    "phone": { "type": "string" }
+                  }
+                }
+              },
+              "required": ["paymentMethod"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "PayOp transaction initiated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "paymentId": { "type": "string" },
+                          "checkoutUrl": { "type": "string" },
+                          "amount": { "type": "number" },
+                          "currency": { "type": "string" },
+                          "coins": { "type": "integer" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  },
+  "/api/payment/payop/callback": {
+    "post": {
+      "tags": ["Payments - PayOp"],
+      "summary": "PayOp webhook callback",
+      "description": "Handle webhook notifications from PayOp",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transaction": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "state": { "type": "string" },
+                    "order": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "amount": { "type": "number" },
+                        "currency": { "type": "string" }
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": { "type": "string" },
+                        "code": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "signature": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Webhook processed successfully",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  }
+}

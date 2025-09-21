@@ -45,7 +45,7 @@
   body {
     @apply bg-lafftale-dark text-foreground font-inter;
     background-image: linear-gradient(to bottom, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), 
-                      url('/public/image/web/background.png');
+                      url('/image/web/background.png');
     background-attachment: fixed;
     background-size: cover;
   }

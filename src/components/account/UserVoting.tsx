@@ -1,0 +1,410 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Progress } from '../ui/progress';
+import { Vote, ExternalLink, Clock, Gift, History, Star } from 'lucide-react';
+import { fetchWithAuth, weburl } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { jwtDecode } from 'jwt-decode';
+
+interface VoteSite {
+  id: number;
+  name: string;
+  url: string;
+  logo_url?: string;
+  reward_silk: number;
+  cooldown_hours: number;
+  is_active: boolean;
+}
+
+interface UserVoteStatus {
+  site_id: number;
+  site_name: string;
+  can_vote: boolean;
+  next_vote_at?: string;
+  total_votes: number;
+}
+
+interface VoteHistory {
+  id: number;
+  site_name: string;
+  reward_silk: number;
+  ip_address: string;
+  voted_at: string;
+}
+
+const UserVoting = () => {
+  const [voteSites, setVoteSites] = useState<VoteSite[]>([]);
+  const [voteStatus, setVoteStatus] = useState<UserVoteStatus[]>([]);
+  const [voteHistory, setVoteHistory] = useState<VoteHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const { toast } = useToast();
+  const { token, isAuthenticated } = useAuth();
+  const [userId, setUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token);
+        console.log('Decoded token:', decoded);
+        console.log('Extracted userId (id):', decoded.id);
+        setUserId(decoded.id);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+  }, [token]);
+
+  useEffect(() => {
+    console.log('useEffect triggered - isAuthenticated:', isAuthenticated, 'userId:', userId);
+    if (isAuthenticated && userId) {
+      console.log('Starting loadVoteData...');
+      loadVoteData();
+    }
+  }, [isAuthenticated, userId]);
+
+  const loadVoteData = async () => {
+    try {
+      console.log('loadVoteData started');
+      setLoading(true);
+      await Promise.all([fetchVoteSites(), fetchVoteStatus()]);
+      console.log('loadVoteData completed');
+    } catch (error) {
+      console.error('Error loading vote data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchVoteSites = async () => {
+    try {
+      console.log('Fetching vote sites...');
+      const response = await fetchWithAuth(`http://localhost:3000/api/vote/sites`);
+      console.log('Vote sites response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const sites = await response.json();
+      console.log('Vote sites data:', sites);
+      console.log('Number of sites:', sites.length);
+      setVoteSites(sites);
+    } catch (error) {
+      console.error('Error fetching vote sites:', error);
+      toast({
+        title: 'Fehler',
+        description: `Vote-Sites konnten nicht geladen werden: ${error.message}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const fetchVoteStatus = async () => {
+    if (!userId) {
+      console.log('No userId available for vote status');
+      return;
+    }
+
+    try {
+      console.log('Fetching vote status for userId:', userId);
+      const response = await fetchWithAuth(`http://localhost:3000/api/vote/status/${userId}`);
+      console.log('Vote status response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Vote status data:', data);
+      setVoteStatus(data.sites || []);
+    } catch (error) {
+      console.error('Error fetching vote status:', error);
+      toast({
+        title: 'Fehler',
+        description: `Vote-Status konnte nicht geladen werden: ${error.message}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const fetchVoteHistory = async () => {
+    if (!userId) return;
+
+    try {
+      setHistoryLoading(true);
+      const response = await fetchWithAuth(`http://localhost:3000/api/vote/history/${userId}?limit=50`);
+      const history = await response.json();
+      setVoteHistory(history);
+      setShowHistory(true);
+    } catch (error) {
+      console.error('Error fetching vote history:', error);
+      toast({
+        title: 'Fehler',
+        description: 'Vote-Historie konnte nicht geladen werden',
+        variant: 'destructive',
+      });
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const handleVote = (site: VoteSite) => {
+    // Open voting site in new tab
+    window.open(site.url, '_blank', 'noopener,noreferrer');
+
+    toast({
+      title: 'Voting-Site geöffnet',
+      description: `Du wurdest zu ${site.name} weitergeleitet. Nach dem Voting erhältst du ${site.reward_silk} Silk.`,
+    });
+
+    // Refresh status after a short delay
+    setTimeout(() => {
+      fetchVoteStatus();
+    }, 2000);
+  };
+
+  const getTimeUntilNextVote = (nextVoteAt?: string) => {
+    if (!nextVoteAt) return null;
+
+    const nextVote = new Date(nextVoteAt);
+    const now = new Date();
+    const diff = nextVote.getTime() - now.getTime();
+
+    if (diff <= 0) return null;
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${hours}h ${minutes}m`;
+  };
+
+  const getTotalRewardsEarned = () => {
+    return voteHistory.reduce((total, vote) => total + vote.reward_silk, 0);
+  };
+
+  const getTotalVotes = () => {
+    return voteStatus.reduce((total, status) => total + status.total_votes, 0);
+  };
+
+  const getAvailableVotes = () => {
+    return voteStatus.filter((status) => status.can_vote).length;
+  };
+
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <Vote className='h-8 w-8 animate-spin mx-auto mb-4' />
+          <p>Lade Vote-Sites...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='space-y-6'>
+      {/* Statistics Overview */}
+      <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center space-x-2'>
+              <Star className='h-5 w-5 text-yellow-500' />
+              <div>
+                <p className='text-sm font-medium'>Verfügbare Votes</p>
+                <p className='text-2xl font-bold'>{getAvailableVotes()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center space-x-2'>
+              <Vote className='h-5 w-5 text-blue-500' />
+              <div>
+                <p className='text-sm font-medium'>Gesamt Votes</p>
+                <p className='text-2xl font-bold'>{getTotalVotes()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center space-x-2'>
+              <Gift className='h-5 w-5 text-green-500' />
+              <div>
+                <p className='text-sm font-medium'>Verdiente Silk</p>
+                <p className='text-2xl font-bold'>{getTotalRewardsEarned()}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className='p-4'>
+            <div className='flex items-center space-x-2'>
+              <History className='h-5 w-5 text-purple-500' />
+              <div>
+                <p className='text-sm font-medium'>Historie</p>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={fetchVoteHistory}
+                  disabled={historyLoading}
+                  className='mt-1'
+                >
+                  Anzeigen
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Vote Sites */}
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            <Vote className='h-5 w-5' />
+            Vote für uns
+          </CardTitle>
+          <CardDescription>
+            Vote für unseren Server auf verschiedenen Toplisten und erhalte Belohnungen!
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {voteSites.map((site) => {
+              const status = voteStatus.find((s) => s.site_id === site.id);
+              const canVote = status?.can_vote ?? true;
+              const timeUntilNext = getTimeUntilNextVote(status?.next_vote_at);
+
+              return (
+                <Card
+                  key={site.id}
+                  className={`transition-all hover:shadow-md ${canVote ? 'border-green-200' : 'border-gray-200'}`}
+                >
+                  <CardContent className='p-4'>
+                    <div className='flex items-start justify-between mb-3'>
+                      <div className='flex items-center space-x-3'>
+                        {site.logo_url && (
+                          <img
+                            src={site.logo_url}
+                            alt={site.name}
+                            className='w-10 h-10 rounded object-cover'
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        )}
+                        <div>
+                          <h3 className='font-semibold text-sm'>{site.name}</h3>
+                          <p className='text-xs text-muted-foreground'>{site.reward_silk} Silk Belohnung</p>
+                        </div>
+                      </div>
+                      {canVote ? (
+                        <Badge variant='default' className='bg-green-100 text-green-800'>
+                          Verfügbar
+                        </Badge>
+                      ) : (
+                        <Badge variant='secondary'>Cooldown</Badge>
+                      )}
+                    </div>
+
+                    {!canVote && timeUntilNext && (
+                      <div className='mb-3'>
+                        <div className='flex items-center justify-between text-xs text-muted-foreground mb-1'>
+                          <span>Nächster Vote in:</span>
+                          <span>{timeUntilNext}</span>
+                        </div>
+                        <Progress
+                          value={Math.max(
+                            0,
+                            100 -
+                              ((new Date(status?.next_vote_at!).getTime() - Date.now()) /
+                                (site.cooldown_hours * 3600000)) *
+                                100
+                          )}
+                          className='h-1'
+                        />
+                      </div>
+                    )}
+
+                    <div className='flex items-center justify-between'>
+                      <div className='text-xs text-muted-foreground'>
+                        <Clock className='h-3 w-3 inline mr-1' />
+                        {site.cooldown_hours}h Cooldown
+                      </div>
+                      <Button size='sm' onClick={() => handleVote(site)} disabled={!canVote} className='text-xs'>
+                        <ExternalLink className='h-3 w-3 mr-1' />
+                        Voten
+                      </Button>
+                    </div>
+
+                    {status && status.total_votes > 0 && (
+                      <div className='mt-2 pt-2 border-t text-xs text-muted-foreground'>
+                        Bereits {status.total_votes}x gevoted
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Vote History Dialog */}
+      <Dialog open={showHistory} onOpenChange={setShowHistory}>
+        <DialogContent className='max-w-4xl max-h-[80vh] overflow-y-auto'>
+          <DialogHeader>
+            <DialogTitle>Vote-Historie</DialogTitle>
+            <DialogDescription>Deine letzten 50 Votes mit Belohnungen</DialogDescription>
+          </DialogHeader>
+
+          {historyLoading ? (
+            <div className='flex items-center justify-center py-8'>
+              <History className='h-6 w-6 animate-spin mr-2' />
+              Lade Historie...
+            </div>
+          ) : (
+            <div className='space-y-2'>
+              {voteHistory.length === 0 ? (
+                <p className='text-center text-muted-foreground py-8'>Noch keine Votes vorhanden</p>
+              ) : (
+                voteHistory.map((vote) => (
+                  <div key={vote.id} className='flex items-center justify-between p-3 bg-muted rounded-lg'>
+                    <div>
+                      <p className='font-medium'>{vote.site_name}</p>
+                      <p className='text-sm text-muted-foreground'>
+                        {new Date(vote.voted_at).toLocaleDateString('de-DE', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </div>
+                    <Badge variant='outline' className='text-green-600'>
+                      +{vote.reward_silk} Silk
+                    </Badge>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default UserVoting;

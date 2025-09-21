@@ -1,0 +1,186 @@
+{
+  "Ticket": {
+    "type": "object",
+    "description": "Support ticket",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique ticket ID"
+      },
+      "user_id": {
+        "type": "integer",
+        "description": "ID of user who created the ticket"
+      },
+      "subject": {
+        "type": "string",
+        "description": "Ticket subject/title"
+      },
+      "message": {
+        "type": "string",
+        "description": "Initial ticket message"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["open", "in_progress", "resolved", "closed"],
+        "description": "Current ticket status"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "urgent"],
+        "description": "Ticket priority level"
+      },
+      "category": {
+        "type": "string",
+        "description": "Ticket category"
+      },
+      "assigned_to": {
+        "type": "integer",
+        "description": "ID of staff member assigned to ticket"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Ticket creation timestamp"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last update timestamp"
+      },
+      "resolved_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Resolution timestamp"
+      },
+      "username": {
+        "type": "string",
+        "description": "Username of ticket creator (joined data)"
+      },
+      "assigned_username": {
+        "type": "string",
+        "description": "Username of assigned staff (joined data)"
+      }
+    },
+    "required": ["id", "user_id", "subject", "message", "status"]
+  },
+  "TicketReply": {
+    "type": "object",
+    "description": "Ticket reply/response",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique reply ID"
+      },
+      "ticket_id": {
+        "type": "integer",
+        "description": "ID of parent ticket"
+      },
+      "user_id": {
+        "type": "integer",
+        "description": "ID of user who wrote the reply"
+      },
+      "message": {
+        "type": "string",
+        "description": "Reply message content"
+      },
+      "is_staff": {
+        "type": "boolean",
+        "description": "Whether reply is from staff member"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Reply creation timestamp"
+      },
+      "username": {
+        "type": "string",
+        "description": "Username of reply author (joined data)"
+      }
+    },
+    "required": ["id", "ticket_id", "user_id", "message"]
+  },
+  "TicketStats": {
+    "type": "object",
+    "description": "Ticket system statistics",
+    "properties": {
+      "totalTickets": {
+        "type": "integer",
+        "description": "Total number of tickets"
+      },
+      "openTickets": {
+        "type": "integer",
+        "description": "Number of open tickets"
+      },
+      "inProgressTickets": {
+        "type": "integer",
+        "description": "Number of tickets in progress"
+      },
+      "resolvedTickets": {
+        "type": "integer",
+        "description": "Number of resolved tickets"
+      },
+      "closedTickets": {
+        "type": "integer",
+        "description": "Number of closed tickets"
+      },
+      "todayTickets": {
+        "type": "integer",
+        "description": "Tickets created today"
+      },
+      "weekTickets": {
+        "type": "integer",
+        "description": "Tickets created this week"
+      },
+      "monthTickets": {
+        "type": "integer",
+        "description": "Tickets created this month"
+      },
+      "avgResponseTime": {
+        "type": "number",
+        "description": "Average response time in hours"
+      },
+      "avgResolutionTime": {
+        "type": "number",
+        "description": "Average resolution time in hours"
+      }
+    }
+  },
+  "TicketFilters": {
+    "type": "object",
+    "description": "Ticket filtering options",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["all", "open", "in_progress", "resolved", "closed"],
+        "description": "Filter by status"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["all", "low", "medium", "high", "urgent"],
+        "description": "Filter by priority"
+      },
+      "category": {
+        "type": "string",
+        "description": "Filter by category"
+      },
+      "assigned_to": {
+        "type": "integer",
+        "description": "Filter by assigned staff member"
+      },
+      "date_from": {
+        "type": "string",
+        "format": "date",
+        "description": "Filter tickets from this date"
+      },
+      "date_to": {
+        "type": "string",
+        "format": "date",
+        "description": "Filter tickets until this date"
+      },
+      "search": {
+        "type": "string",
+        "description": "Search in subject and message"
+      }
+    }
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "Character": {
+    "type": "object",
+    "description": "Game character data",
+    "properties": {
+      "CharID": {
+        "type": "integer",
+        "description": "Unique character identifier"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "NickName16": {
+        "type": "string",
+        "description": "Character nickname"
+      },
+      "CurLevel": {
+        "type": "integer",
+        "description": "Current character level"
+      },
+      "MaxLevel": {
+        "type": "integer",
+        "description": "Maximum level achieved"
+      },
+      "ExpOffset": {
+        "type": "integer",
+        "description": "Experience points"
+      },
+      "GMLevel": {
+        "type": "integer",
+        "description": "GM access level"
+      },
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (Trader/Thief/Hunter)"
+      },
+      "JobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "JobExp": {
+        "type": "integer",
+        "description": "Job experience points"
+      },
+      "HP": {
+        "type": "integer",
+        "description": "Current health points"
+      },
+      "MP": {
+        "type": "integer",
+        "description": "Current mana points"
+      },
+      "Gold": {
+        "type": "integer",
+        "description": "Character gold amount"
+      },
+      "SkillPoint": {
+        "type": "integer",
+        "description": "Available skill points"
+      },
+      "StatPoint": {
+        "type": "integer",
+        "description": "Available stat points"
+      },
+      "Strength": {
+        "type": "integer",
+        "description": "Strength stat"
+      },
+      "Intellect": {
+        "type": "integer",
+        "description": "Intelligence stat"
+      },
+      "TelePosX": {
+        "type": "integer",
+        "description": "Teleport position X"
+      },
+      "TelePosY": {
+        "type": "integer",
+        "description": "Teleport position Y"
+      },
+      "TelePosZ": {
+        "type": "integer",
+        "description": "Teleport position Z"
+      },
+      "DiedPosX": {
+        "type": "integer",
+        "description": "Death position X"
+      },
+      "DiedPosY": {
+        "type": "integer",
+        "description": "Death position Y"
+      },
+      "DiedPosZ": {
+        "type": "integer",
+        "description": "Death position Z"
+      },
+      "World": {
+        "type": "integer",
+        "description": "World/Region ID"
+      },
+      "RefObjID": {
+        "type": "integer",
+        "description": "Character model reference"
+      },
+      "RemainTime": {
+        "type": "integer",
+        "description": "Remaining time for temporary effects"
+      },
+      "LogoutTime": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last logout timestamp"
+      },
+      "DeleteTime": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Character deletion timestamp"
+      },
+      "PKFlag": {
+        "type": "integer",
+        "description": "Player killer flag"
+      },
+      "TPFlag": {
+        "type": "integer",
+        "description": "Teleport flag"
+      },
+      "AutoInvestExp": {
+        "type": "integer",
+        "description": "Auto invest experience setting"
+      },
+      "GuildID": {
+        "type": "integer",
+        "description": "Guild ID (if member of guild)"
+      }
+    },
+    "required": ["CharID", "CharName16"]
+  },
+  "CharacterInventory": {
+    "type": "object",
+    "description": "Character inventory item",
+    "properties": {
+      "slot": {
+        "type": "integer",
+        "description": "Inventory slot position"
+      },
+      "itemType": {
+        "type": "string",
+        "description": "Item type identifier"
+      },
+      "quantity": {
+        "type": "integer",
+        "description": "Item quantity"
+      },
+      "enhancement": {
+        "type": "integer",
+        "description": "Enhancement level"
+      },
+      "serialNumber": {
+        "type": "string",
+        "description": "Unique item serial number"
+      }
+    },
+    "required": ["slot", "itemType", "quantity"]
+  },
+  "CharacterStats": {
+    "type": "object",
+    "description": "Character statistics summary",
+    "properties": {
+      "totalLevel": {
+        "type": "integer",
+        "description": "Total character level"
+      },
+      "playTime": {
+        "type": "integer",
+        "description": "Total play time in minutes"
+      },
+      "gold": {
+        "type": "integer",
+        "description": "Total gold amount"
+      },
+      "pkCount": {
+        "type": "integer",
+        "description": "Player kill count"
+      },
+      "deathCount": {
+        "type": "integer",
+        "description": "Death count"
+      },
+      "guildName": {
+        "type": "string",
+        "description": "Current guild name"
+      }
+    }
+  }
+}

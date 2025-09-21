@@ -1,0 +1,369 @@
+{
+  "/api/ranking/honor": {
+    "get": {
+      "summary": "Get honor rankings (Phase 1)",
+      "description": "Retrieves ranked list of players by honor points and Hwan levels",
+      "tags": ["Rankings", "Phase 1"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        },
+        {
+          "name": "race",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["Chinese", "European"]
+          },
+          "description": "Filter by character race"
+        },
+        {
+          "name": "minHonor",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Minimum honor points threshold"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Honor rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/HonorRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "totalHonorPoints": {
+                        "type": "integer",
+                        "description": "Total honor points across all players"
+                      },
+                      "averageHonor": {
+                        "type": "number",
+                        "description": "Average honor points"
+                      },
+                      "topHonorPlayer": {
+                        "type": "string",
+                        "description": "Name of top honor player"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/fortress": {
+    "get": {
+      "summary": "Get fortress kill rankings (Phase 1)",
+      "description": "Retrieves ranked list of players by fortress kills",
+      "tags": ["Rankings", "Phase 1"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        },
+        {
+          "name": "race",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["Chinese", "European"]
+          },
+          "description": "Filter by character race"
+        },
+        {
+          "name": "minKills",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Minimum fortress kills threshold"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Fortress rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/FortressRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "totalFortressKills": {
+                        "type": "integer",
+                        "description": "Total fortress kills across all players"
+                      },
+                      "averageKills": {
+                        "type": "number",
+                        "description": "Average fortress kills"
+                      },
+                      "topKiller": {
+                        "type": "string",
+                        "description": "Name of top fortress killer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/pvp": {
+    "get": {
+      "summary": "Get PvP K/D rankings (Phase 1)",
+      "description": "Retrieves ranked list of players by Kill/Death ratio and PK counts",
+      "tags": ["Rankings", "Phase 1"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        },
+        {
+          "name": "race",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["Chinese", "European"]
+          },
+          "description": "Filter by character race"
+        },
+        {
+          "name": "minKD",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "minimum": 0
+          },
+          "description": "Minimum K/D ratio threshold"
+        },
+        {
+          "name": "minKills",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Minimum PK count threshold"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "PvP rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PvPRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "totalPKs": {
+                        "type": "integer",
+                        "description": "Total player kills across all players"
+                      },
+                      "totalDeaths": {
+                        "type": "integer",
+                        "description": "Total deaths across all players"
+                      },
+                      "averageKD": {
+                        "type": "number",
+                        "description": "Average K/D ratio"
+                      },
+                      "topPvPPlayer": {
+                        "type": "string",
+                        "description": "Name of top PvP player"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/guild": {
+    "get": {
+      "summary": "Get guild rankings (Phase 1)",
+      "description": "Retrieves ranked list of guilds by member count and guild level",
+      "tags": ["Rankings", "Phase 1"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        },
+        {
+          "name": "minMembers",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "Minimum guild member count"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Guild rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/RankingEntry"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }
+}

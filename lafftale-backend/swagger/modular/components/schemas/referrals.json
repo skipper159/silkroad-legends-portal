@@ -1,0 +1,217 @@
+{
+  "Referral": {
+    "type": "object",
+    "description": "Referral system entry with anti-cheat tracking",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique referral ID"
+      },
+      "referrer_id": {
+        "type": "integer",
+        "description": "ID of user who created the referral"
+      },
+      "referred_user_id": {
+        "type": "integer",
+        "description": "ID of user who was referred"
+      },
+      "code": {
+        "type": "string",
+        "description": "Unique referral code"
+      },
+      "used_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp when referral was used"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp when referral was created"
+      },
+      "reward_claimed": {
+        "type": "boolean",
+        "description": "Whether reward has been claimed"
+      },
+      "reward_claimed_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp when reward was claimed"
+      },
+      "ip_address": {
+        "type": "string",
+        "description": "IP address used for referral registration"
+      },
+      "fingerprint": {
+        "type": "string",
+        "description": "Browser fingerprint for anti-cheat detection"
+      },
+      "is_valid": {
+        "type": "boolean",
+        "description": "Whether referral passed anti-cheat validation"
+      },
+      "cheat_reason": {
+        "type": "string",
+        "description": "Reason for marking as suspicious/invalid"
+      },
+      "referrer_username": {
+        "type": "string",
+        "description": "Username of referrer (joined data)"
+      },
+      "referred_username": {
+        "type": "string",
+        "description": "Username of referred user (joined data)"
+      }
+    },
+    "required": ["id", "referrer_id", "code", "created_at"]
+  },
+  "ReferralStats": {
+    "type": "object",
+    "description": "Referral system statistics",
+    "properties": {
+      "totalReferrals": {
+        "type": "integer",
+        "description": "Total number of referrals"
+      },
+      "validReferrals": {
+        "type": "integer",
+        "description": "Number of valid referrals"
+      },
+      "suspiciousReferrals": {
+        "type": "integer",
+        "description": "Number of suspicious referrals"
+      },
+      "claimedRewards": {
+        "type": "integer",
+        "description": "Number of claimed rewards"
+      },
+      "unclaimedRewards": {
+        "type": "integer",
+        "description": "Number of unclaimed rewards"
+      },
+      "totalRewardValue": {
+        "type": "integer",
+        "description": "Total value of all rewards"
+      },
+      "todayReferrals": {
+        "type": "integer",
+        "description": "Referrals created today"
+      },
+      "weekReferrals": {
+        "type": "integer",
+        "description": "Referrals created this week"
+      },
+      "monthReferrals": {
+        "type": "integer",
+        "description": "Referrals created this month"
+      }
+    }
+  },
+  "ReferralSettings": {
+    "type": "object",
+    "description": "Anti-cheat and referral system settings",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether referral system is enabled"
+      },
+      "reward_amount": {
+        "type": "integer",
+        "description": "Reward amount for successful referrals"
+      },
+      "max_per_ip": {
+        "type": "integer",
+        "description": "Maximum referrals allowed per IP address"
+      },
+      "max_per_fingerprint": {
+        "type": "integer",
+        "description": "Maximum referrals allowed per browser fingerprint"
+      },
+      "require_level": {
+        "type": "integer",
+        "description": "Minimum level required for referral eligibility"
+      },
+      "auto_validate": {
+        "type": "boolean",
+        "description": "Whether to automatically validate referrals"
+      },
+      "fingerprint_required": {
+        "type": "boolean",
+        "description": "Whether browser fingerprinting is required"
+      },
+      "ip_validation": {
+        "type": "boolean",
+        "description": "Whether IP address validation is enabled"
+      },
+      "manual_review": {
+        "type": "boolean",
+        "description": "Whether suspicious referrals require manual review"
+      }
+    }
+  },
+  "ReferralCode": {
+    "type": "object",
+    "description": "Referral code creation/usage",
+    "properties": {
+      "code": {
+        "type": "string",
+        "description": "The referral code"
+      },
+      "referrer_id": {
+        "type": "integer",
+        "description": "ID of user who owns the code"
+      },
+      "uses": {
+        "type": "integer",
+        "description": "Number of times code has been used"
+      },
+      "max_uses": {
+        "type": "integer",
+        "description": "Maximum number of uses allowed"
+      },
+      "expires_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Code expiration timestamp"
+      }
+    },
+    "required": ["code", "referrer_id"]
+  },
+  "AntiCheatValidation": {
+    "type": "object",
+    "description": "Anti-cheat validation result",
+    "properties": {
+      "isValid": {
+        "type": "boolean",
+        "description": "Whether referral passed validation"
+      },
+      "warnings": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of validation warnings"
+      },
+      "suspiciousReasons": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Reasons for marking as suspicious"
+      },
+      "requiresManualReview": {
+        "type": "boolean",
+        "description": "Whether manual review is required"
+      },
+      "fingerprint": {
+        "type": "string",
+        "description": "Browser fingerprint used for validation"
+      },
+      "ipAddress": {
+        "type": "string",
+        "description": "IP address used for validation"
+      }
+    },
+    "required": ["isValid"]
+  }
+}

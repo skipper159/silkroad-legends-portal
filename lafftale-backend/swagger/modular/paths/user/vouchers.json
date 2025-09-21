@@ -1,0 +1,107 @@
+{
+  "/api/vouchers/redeem": {
+    "post": {
+      "tags": ["User - Vouchers"],
+      "summary": "Redeem voucher code",
+      "description": "Redeem a voucher code for rewards",
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Voucher code to redeem"
+                }
+              },
+              "required": ["code"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Voucher redeemed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "type": { "type": "string" },
+                          "value": { "type": "integer" },
+                          "description": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "404": {
+          "description": "Invalid or expired voucher",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/vouchers/my-history": {
+    "get": {
+      "tags": ["User - Vouchers"],
+      "summary": "Get user's voucher usage history",
+      "description": "Get the current user's voucher redemption history",
+      "security": [{ "bearerAuth": [] }],
+      "responses": {
+        "200": {
+          "description": "User voucher history retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "voucher_code": { "type": "string" },
+                            "type": { "type": "integer" },
+                            "value": { "type": "integer" },
+                            "status": { "type": "string" },
+                            "redeemed_at": { "type": "string", "format": "date-time" },
+                            "created_at": { "type": "string", "format": "date-time" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
+      }
+    }
+  }
+}

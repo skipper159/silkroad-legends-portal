@@ -1,0 +1,486 @@
+{
+  "RankingPlayer": {
+    "type": "object",
+    "description": "Standard player ranking entry",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Player's ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race (Chinese/European)"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Honor": {
+        "type": "integer",
+        "description": "Honor points"
+      },
+      "HwanLevel": {
+        "type": "integer",
+        "description": "Hwan level"
+      },
+      "HwanTitle": {
+        "type": "string",
+        "description": "Hwan title"
+      },
+      "RefObjID": {
+        "type": "integer",
+        "description": "Reference object ID for race detection"
+      },
+      "FortressKills": {
+        "type": "integer",
+        "description": "Fortress kills count"
+      },
+      "PKCount": {
+        "type": "integer",
+        "description": "Player kill count"
+      },
+      "DiedCount": {
+        "type": "integer",
+        "description": "Death count"
+      },
+      "KDRatio": {
+        "type": "number",
+        "description": "Kill/Death ratio"
+      },
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "JobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "JobExp": {
+        "type": "integer",
+        "description": "Job experience points"
+      },
+      "Contribution": {
+        "type": "integer",
+        "description": "Contribution points"
+      },
+      "Reward": {
+        "type": "integer",
+        "description": "Reward points"
+      }
+    },
+    "required": ["rank", "CharName16"]
+  },
+  "JobRanking": {
+    "type": "object",
+    "description": "Job-specific ranking entry from Phase 2",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Job ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "CurLevel": {
+        "type": "integer",
+        "description": "Current character level"
+      },
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "JobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "JobExp": {
+        "type": "integer",
+        "description": "Job experience points"
+      },
+      "Contribution": {
+        "type": "integer",
+        "description": "Job contribution points"
+      }
+    },
+    "required": [
+      "rank",
+      "CharName16",
+      "CurLevel",
+      "JobType",
+      "JobLevel",
+      "JobExp"
+    ]
+  },
+  "JobStatistics": {
+    "type": "object",
+    "description": "Comprehensive job statistics from Phase 3",
+    "properties": {
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "TotalPlayers": {
+        "type": "integer",
+        "description": "Total number of players with this job"
+      },
+      "AverageLevel": {
+        "type": "number",
+        "description": "Average job level"
+      },
+      "MaxLevel": {
+        "type": "integer",
+        "description": "Maximum job level achieved"
+      },
+      "MinLevel": {
+        "type": "integer",
+        "description": "Minimum job level"
+      },
+      "AverageExperience": {
+        "type": "number",
+        "description": "Average job experience"
+      },
+      "MaxExperience": {
+        "type": "integer",
+        "description": "Maximum job experience"
+      },
+      "TotalContribution": {
+        "type": "integer",
+        "description": "Total contribution points for this job"
+      },
+      "AverageContribution": {
+        "type": "number",
+        "description": "Average contribution per player"
+      },
+      "Level1_10": {
+        "type": "integer",
+        "description": "Number of players with job level 1-10"
+      },
+      "Level11_20": {
+        "type": "integer",
+        "description": "Number of players with job level 11-20"
+      },
+      "Level21_30": {
+        "type": "integer",
+        "description": "Number of players with job level 21-30"
+      },
+      "Level31_40": {
+        "type": "integer",
+        "description": "Number of players with job level 31-40"
+      },
+      "Level41_50": {
+        "type": "integer",
+        "description": "Number of players with job level 41-50"
+      },
+      "Exp0_1M": {
+        "type": "integer",
+        "description": "Players with 0-1M experience"
+      },
+      "Exp1M_5M": {
+        "type": "integer",
+        "description": "Players with 1M-5M experience"
+      },
+      "Exp5M_10M": {
+        "type": "integer",
+        "description": "Players with 5M-10M experience"
+      },
+      "Exp10M_Plus": {
+        "type": "integer",
+        "description": "Players with 10M+ experience"
+      }
+    },
+    "required": [
+      "JobType",
+      "TotalPlayers",
+      "AverageLevel",
+      "MaxLevel",
+      "MinLevel"
+    ]
+  },
+  "JobLeaderboardEntry": {
+    "type": "object",
+    "description": "Job leaderboard comparison entry from Phase 3",
+    "properties": {
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "JobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "JobExp": {
+        "type": "integer",
+        "description": "Job experience points"
+      },
+      "Contribution": {
+        "type": "integer",
+        "description": "Contribution points"
+      },
+      "JobRank": {
+        "type": "integer",
+        "description": "Rank within specific job type"
+      },
+      "OverallRank": {
+        "type": "integer",
+        "description": "Overall rank across all jobs"
+      }
+    },
+    "required": [
+      "JobType",
+      "CharName16",
+      "JobLevel",
+      "JobExp",
+      "JobRank",
+      "OverallRank"
+    ]
+  },
+  "JobProgressionData": {
+    "type": "object",
+    "description": "Job progression analytics data from Phase 3",
+    "properties": {
+      "JobType": {
+        "type": "integer",
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "JobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "PlayerCount": {
+        "type": "integer",
+        "description": "Number of players at this level"
+      },
+      "AverageExp": {
+        "type": "number",
+        "description": "Average experience at this level"
+      },
+      "MinExp": {
+        "type": "integer",
+        "description": "Minimum experience at this level"
+      },
+      "MaxExp": {
+        "type": "integer",
+        "description": "Maximum experience at this level"
+      },
+      "MedianExp": {
+        "type": "number",
+        "description": "Median experience at this level"
+      }
+    },
+    "required": ["JobType", "JobLevel", "PlayerCount", "AverageExp"]
+  },
+  "HonorRanking": {
+    "type": "object",
+    "description": "Honor system ranking entry from Phase 1",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Honor ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "Honor": {
+        "type": "integer",
+        "description": "Honor points"
+      },
+      "HwanLevel": {
+        "type": "integer",
+        "description": "Hwan level"
+      },
+      "HwanTitle": {
+        "type": "string",
+        "description": "Hwan title"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race"
+      }
+    },
+    "required": ["rank", "CharName16", "Honor"]
+  },
+  "FortressRanking": {
+    "type": "object",
+    "description": "Fortress system ranking entry from Phase 1",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Fortress ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "FortressKills": {
+        "type": "integer",
+        "description": "Fortress kills count"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race"
+      }
+    },
+    "required": ["rank", "CharName16", "FortressKills"]
+  },
+  "PvPRanking": {
+    "type": "object",
+    "description": "PvP K/D ranking entry from Phase 1",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "PvP ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "PKCount": {
+        "type": "integer",
+        "description": "Player kill count"
+      },
+      "DiedCount": {
+        "type": "integer",
+        "description": "Death count"
+      },
+      "KDRatio": {
+        "type": "number",
+        "description": "Kill/Death ratio"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race"
+      }
+    },
+    "required": ["rank", "CharName16", "PKCount", "DiedCount", "KDRatio"]
+  },
+  "ItemEnhancementRanking": {
+    "type": "object",
+    "description": "Item enhancement ranking entry for Plus levels",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Enhancement ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "TotalPlus": {
+        "type": "integer",
+        "description": "Total enhancement plus levels"
+      },
+      "HighestPlus": {
+        "type": "integer",
+        "description": "Highest single item plus level"
+      },
+      "ItemCount": {
+        "type": "integer",
+        "description": "Number of enhanced items"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race"
+      },
+      "LastEnhancement": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last enhancement timestamp"
+      }
+    },
+    "required": ["rank", "CharName16", "TotalPlus"]
+  },
+  "ItemDropRanking": {
+    "type": "object",
+    "description": "Rare item drop ranking entry",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Drop ranking position"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Character level"
+      },
+      "SealOfSunDrops": {
+        "type": "integer",
+        "description": "Number of Seal of Sun drops"
+      },
+      "SealOfMoonDrops": {
+        "type": "integer",
+        "description": "Number of Seal of Moon drops"
+      },
+      "SealOfStarDrops": {
+        "type": "integer",
+        "description": "Number of Seal of Star drops"
+      },
+      "SealOfNovaDrops": {
+        "type": "integer",
+        "description": "Number of Seal of Nova drops"
+      },
+      "Guild": {
+        "type": "string",
+        "description": "Guild name"
+      },
+      "Race": {
+        "type": "string",
+        "description": "Character race"
+      },
+      "LastDrop": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last drop timestamp"
+      }
+    },
+    "required": ["rank", "CharName16", "SealOfSunDrops", "SealOfMoonDrops"]
+  }
+}

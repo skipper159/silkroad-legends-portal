@@ -1,0 +1,428 @@
+{
+  "/api/job-statistics": {
+    "get": {
+      "summary": "Get comprehensive job statistics (Phase 3)",
+      "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
+      "tags": ["Rankings", "Phase 3"],
+      "parameters": [
+        {
+          "name": "jobType",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "enum": [1, 2, 3]
+          },
+          "description": "Optional: Filter by specific job type (1=Trader, 2=Thief, 3=Hunter)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job statistics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "statistics": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobStatistics"
+                    }
+                  },
+                  "totalJobs": {
+                    "type": "integer",
+                    "description": "Total number of job types"
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "totalPlayers": {
+                        "type": "integer",
+                        "description": "Total players across all jobs"
+                      },
+                      "mostPopularJob": {
+                        "type": "integer",
+                        "description": "Most popular job type"
+                      },
+                      "averageLevel": {
+                        "type": "number",
+                        "description": "Overall average job level"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No job statistics found"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/job-leaderboard-comparison": {
+    "get": {
+      "summary": "Get cross-job leaderboard comparison (Phase 3)",
+      "description": "Compares top players across different job types with unified ranking system",
+      "tags": ["Rankings", "Phase 3"],
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of top players per job to compare"
+        },
+        {
+          "name": "includeJobs",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated job types to include (e.g., '1,2,3')"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job leaderboard comparison retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "comparison": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobLeaderboardEntry"
+                    }
+                  },
+                  "jobBreakdown": {
+                    "type": "object",
+                    "properties": {
+                      "1": {
+                        "type": "array",
+                        "description": "Trader leaderboard",
+                        "items": {
+                          "$ref": "#/components/schemas/JobLeaderboardEntry"
+                        }
+                      },
+                      "2": {
+                        "type": "array",
+                        "description": "Thief leaderboard",
+                        "items": {
+                          "$ref": "#/components/schemas/JobLeaderboardEntry"
+                        }
+                      },
+                      "3": {
+                        "type": "array",
+                        "description": "Hunter leaderboard",
+                        "items": {
+                          "$ref": "#/components/schemas/JobLeaderboardEntry"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/job-progression": {
+    "get": {
+      "summary": "Get job progression analytics (Phase 3)",
+      "description": "Analyzes job progression patterns and experience distribution across levels",
+      "tags": ["Rankings", "Phase 3"],
+      "parameters": [
+        {
+          "name": "jobType",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "enum": [1, 2, 3]
+          },
+          "description": "Job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
+        },
+        {
+          "name": "minLevel",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Minimum job level to include"
+        },
+        {
+          "name": "maxLevel",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 50
+          },
+          "description": "Maximum job level to include"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job progression analytics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "jobType": {
+                    "type": "integer",
+                    "description": "Analyzed job type"
+                  },
+                  "progression": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobProgressionData"
+                    }
+                  },
+                  "analytics": {
+                    "type": "object",
+                    "properties": {
+                      "totalLevelsAnalyzed": {
+                        "type": "integer"
+                      },
+                      "totalPlayersAnalyzed": {
+                        "type": "integer"
+                      },
+                      "averageProgression": {
+                        "type": "number",
+                        "description": "Average experience gain per level"
+                      },
+                      "progressionTrend": {
+                        "type": "string",
+                        "enum": ["increasing", "decreasing", "stable"],
+                        "description": "Overall progression trend"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid job type or level range"
+        },
+        "404": {
+          "description": "No progression data found"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/trader": {
+    "get": {
+      "summary": "Get trader job rankings (Phase 2)",
+      "description": "Retrieves ranked list of trader job players",
+      "tags": ["Rankings", "Phase 2"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Trader rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/thief": {
+    "get": {
+      "summary": "Get thief job rankings (Phase 2)",
+      "description": "Retrieves ranked list of thief job players",
+      "tags": ["Rankings", "Phase 2"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Thief rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/api/ranking/hunter": {
+    "get": {
+      "summary": "Get hunter job rankings (Phase 2)",
+      "description": "Retrieves ranked list of hunter job players",
+      "tags": ["Rankings", "Phase 2"],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "description": "Page number for PaginationInfo"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Hunter rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobRanking"
+                    }
+                  },
+                  "PaginationInfo": {
+                    "$ref": "#/components/schemas/PaginationInfo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  }
+}
