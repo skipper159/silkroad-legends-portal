@@ -20,16 +20,19 @@ async function getGuildRanking(limit = 100, offset = 0, options = {}) {
       minMembers: options.minMembers || 3,
     });
 
-    const request = queryBuilder.applyParameters(pool.request(), parameters);
-    const result = await request.query(query);
+    const finalQuery = queryBuilder.applyParameters(query, parameters);
+    const result = await pool.request().query(finalQuery);
 
     return result.recordset.map((guild) => ({
-      rank: guild.rank,
-      GuildName: guild.GuildName,
-      Level: guild.Level,
+      ID: guild.GuildID || guild.ID,
+      Name: guild.GuildName,
+      Level: guild.GuildLevel || guild.Level,
+      Lv: guild.GuildLevel || guild.Level,
       MemberCount: guild.MemberCount,
-      AvgLevel: guild.AvgLevel || 0,
-      MaxLevel: guild.MaxLevel || 0,
+      GatheredSP: guild.GuildPoints || guild.GatheredSP || 0,
+      FoundationDate: guild.FoundationDate,
+      Alliance: guild.Alliance || null,
+      Notice: guild.Notice || guild.MasterCommentTitle || null,
     }));
   } catch (error) {
     console.error('Guild ranking query error:', error);
@@ -40,18 +43,32 @@ async function getGuildRanking(limit = 100, offset = 0, options = {}) {
       .input('limit', sql.Int, validatedLimit).query(`
         SELECT * FROM (
           SELECT ROW_NUMBER() OVER (ORDER BY COUNT(c.CharID) DESC, g.Lvl DESC) AS rank,
-                 g.Name as GuildName, g.Lvl as Level, COUNT(c.CharID) as MemberCount,
+                 g.ID as GuildID, g.Name as GuildName, g.Lvl as GuildLevel, 
+                 g.GatheredSP, g.Alliance, g.MasterCommentTitle as Notice,
+                 COUNT(c.CharID) as MemberCount,
                  AVG(CAST(c.CurLevel AS FLOAT)) as AvgLevel,
                  MAX(c.CurLevel) as MaxLevel
           FROM _Guild g
           LEFT JOIN _Char c ON g.ID = c.GuildID AND c.Deleted = 0
-          GROUP BY g.ID, g.Name, g.Lvl
+          WHERE g.Name IS NOT NULL AND g.Name != '' AND g.Name != 'DummyGuild'
+          GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.Alliance, g.MasterCommentTitle
           HAVING COUNT(c.CharID) > 0
         ) AS ranked
         WHERE rank > @offset AND rank <= (@offset + @limit)
         ORDER BY rank
       `);
-    return result.recordset;
+    return result.recordset.map((guild) => ({
+      ID: guild.GuildID,
+      Name: guild.GuildName,
+      Level: guild.GuildLevel,
+      Lv: guild.GuildLevel,
+      MemberCount: guild.MemberCount,
+      GatheredSP: guild.GatheredSP || 0,
+      Alliance: guild.Alliance || null,
+      Notice: guild.Notice || null,
+      AvgLevel: guild.AvgLevel || 0,
+      MaxLevel: guild.MaxLevel || 0,
+    }));
   }
 }
 

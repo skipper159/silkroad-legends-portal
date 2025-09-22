@@ -13,27 +13,27 @@ async function getPvPRanking(
 ) {
   const pool = await getCharDb();
 
-  let whereClause = 'WHERE PKCount2 > 0';
+  let whereClause = 'WHERE TotalPK > 0';
 
-  if (race && race !== 'all') {
-    whereClause += ' AND Race = @race';
-  }
   if (minKills) {
-    whereClause += ' AND PKCount2 >= @minKills';
+    whereClause += ' AND TotalPK >= @minKills';
   }
   if (maxDeaths) {
-    whereClause += ' AND DiedCount <= @maxDeaths';
+    whereClause += ' AND DailyPK <= @maxDeaths';
   }
 
   const query = `
     SELECT * FROM (
-      SELECT ROW_NUMBER() OVER (ORDER BY PKCount2 DESC, DiedCount ASC) AS rank,
-             CharName16, PKCount2 as Kills, DiedCount as Deaths, 
+      SELECT ROW_NUMBER() OVER (ORDER BY TotalPK DESC, DailyPK ASC) AS rank,
+             CharID,
+             CharName16,
+             TotalPK as PK_Count, 
+             DailyPK as PD_Count, 
            CASE 
-             WHEN DiedCount > 0 THEN CAST(PKCount2 AS FLOAT) / DiedCount 
-             ELSE PKCount2 
+             WHEN DailyPK > 0 THEN CAST(TotalPK AS FLOAT) / DailyPK 
+             ELSE TotalPK 
            END as KDRatio,
-           Level, Race
+           CurLevel as Level
     FROM _Char 
     ${whereClause}
   ) AS ranked
@@ -43,9 +43,6 @@ async function getPvPRanking(
 
   const request = pool.request().input('offset', sql.Int, offset).input('limit', sql.Int, limit);
 
-  if (race && race !== 'all') {
-    request.input('race', sql.TinyInt, parseInt(race));
-  }
   if (minKills) {
     request.input('minKills', sql.Int, minKills);
   }

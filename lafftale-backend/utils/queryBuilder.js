@@ -127,33 +127,48 @@ class QueryBuilder {
       c.CharID,
       c.CharName16 as CharName,
       c.CurLevel,
-      1 as Race, -- All characters are human (TypeID2 = 1)
+      CASE 
+        WHEN roc.CodeName128 LIKE 'CHAR_CH_%' THEN 1 
+        WHEN roc.CodeName128 LIKE 'CHAR_EU_%' THEN 2 
+        ELSE 1 
+      END as Race,
       CASE
         WHEN c.Strength > c.Intellect THEN 1 -- Warrior
         WHEN c.Intellect > c.Strength THEN 2 -- Magician
         ELSE 1 -- Default to Warrior
       END as JobType,
       c.RemainGold,
-      g.Name as GuildName
+      g.Name as GuildName,
+      roc.CodeName128 as CharacterModel
     `;
 
     if (includeItemPoints) {
       selectClause += `,
         ISNULL((
-          SELECT SUM(CASE
-            WHEN i.ItemID BETWEEN 1 AND 6 THEN 1  -- Armor pieces
-            WHEN i.ItemID IN (7, 8) THEN 2         -- Weapons
-            WHEN i.ItemID = 9 THEN 3               -- Shield
-            ELSE 0
-          END)
-          FROM _Inventory i
-          WHERE i.CharID = c.CharID AND i.Slot BETWEEN 0 AND 12
+          SELECT 
+            SUM(ISNULL(bow.nOptValue, 0)) +
+            SUM(ISNULL(i.OptLevel, 0)) +
+            SUM(ISNULL(roc.ReqLevel1, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_A_RARE%' THEN 5 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_B_RARE%' THEN 10 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_C_RARE%' THEN 15 ELSE 0 END, 0))
+          FROM _Inventory inv
+          JOIN _Items i ON i.ID64 = inv.ItemID
+          JOIN _RefObjCommon roc ON roc.ID = i.RefItemID
+          LEFT JOIN _BindingOptionWithItem bow ON bow.nItemDBID = i.ID64 
+            AND bow.nOptValue > 0 AND bow.bOptType = 2
+          WHERE inv.CharID = c.CharID 
+            AND inv.Slot < 13 
+            AND inv.Slot NOT IN (7, 8)
+            AND inv.ItemID > 0
         ), 0) as ItemPoints
       `;
     }
 
-    let fromClause = `_Char c LEFT JOIN _Guild g ON c.GuildID = g.ID`;
-    let whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' AND c.CurLevel >= ${minLevel}`;
+    let fromClause = `_Char c 
+      LEFT JOIN _Guild g ON c.GuildID = g.ID
+      LEFT JOIN _RefObjCommon roc ON c.RefObjID = roc.ID`;
+    let whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' AND c.CurLevel >= ${minLevel} AND (g.Name IS NULL OR g.Name != 'DummyGuild')`;
 
     const parameters = {};
 
@@ -172,7 +187,46 @@ class QueryBuilder {
       parameters.race = race;
     }
 
-    const orderByClause = `ORDER BY c.CurLevel DESC, c.CharName16 ASC`;
+    const orderByClause = includeItemPoints
+      ? `ORDER BY ItemPoints DESC, c.CurLevel DESC, c.CharName16 ASC`
+      : `ORDER BY c.CurLevel DESC, c.CharName16 ASC`;
+
+    // Für Item Points Rankings müssen wir eine komplexere Query bauen
+    if (includeItemPoints) {
+      const itemPointsCalculation = `
+        ISNULL((
+          SELECT 
+            SUM(ISNULL(bow.nOptValue, 0)) +
+            SUM(ISNULL(i.OptLevel, 0)) +
+            SUM(ISNULL(roc.ReqLevel1, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_A_RARE%' THEN 5 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_B_RARE%' THEN 10 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_C_RARE%' THEN 15 ELSE 0 END, 0))
+          FROM _Inventory inv
+          JOIN _Items i ON i.ID64 = inv.ItemID
+          JOIN _RefObjCommon roc ON roc.ID = i.RefItemID
+          LEFT JOIN _BindingOptionWithItem bow ON bow.nItemDBID = i.ID64 
+            AND bow.nOptValue > 0 AND bow.bOptType = 2
+          WHERE inv.CharID = c.CharID 
+            AND inv.Slot < 13 
+            AND inv.Slot NOT IN (7, 8)
+            AND inv.ItemID > 0
+        ), 0)
+      `;
+
+      const query = `
+        WITH RankedResults AS (
+          SELECT ${selectClause},
+                 ROW_NUMBER() OVER (ORDER BY ${itemPointsCalculation} DESC, c.CurLevel DESC, c.CharName16 ASC) as rn
+          FROM ${fromClause}
+          ${whereClause ? `WHERE ${whereClause}` : ''}
+        )
+        SELECT * FROM RankedResults
+        WHERE rn > ${offset} AND rn <= ${offset + limit}
+        ORDER BY rn
+      `;
+      return { query, parameters };
+    }
 
     const query = this.buildPaginatedQuery(
       selectClause,
@@ -240,13 +294,15 @@ class QueryBuilder {
       g.ID as GuildID,
       g.Name as GuildName,
       g.Lvl as GuildLevel,
-      g.Point as GuildPoints,
+      g.GatheredSP as GuildPoints,
       COUNT(c.CharID) as MemberCount,
-      g.Foundation as FoundationDate
+      g.FoundationDate as FoundationDate,
+      g.Alliance,
+      g.MasterCommentTitle as Notice
     `;
 
-    let fromClause = `_Guild g LEFT JOIN _Char c ON g.ID = c.GuildID`;
-    let whereClause = `g.Name IS NOT NULL AND g.Name != ''`;
+    let fromClause = `_Guild g LEFT JOIN _Char c ON g.ID = c.GuildID AND c.Deleted = 0`;
+    let whereClause = `g.Name IS NOT NULL AND g.Name != '' AND g.Name != 'DummyGuild'`;
 
     const parameters = {};
 
@@ -255,8 +311,8 @@ class QueryBuilder {
       parameters.guildName = `%${guildName}%`;
     }
 
-    const groupByClause = `GROUP BY g.ID, g.Name, g.Lvl, g.Point, g.Foundation`;
-    const orderByClause = `ORDER BY g.Lvl DESC, g.Point DESC, COUNT(c.CharID) DESC`;
+    const groupByClause = `GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.FoundationDate, g.Alliance, g.MasterCommentTitle`;
+    const orderByClause = `ORDER BY g.Lvl DESC, g.GatheredSP DESC, COUNT(c.CharID) DESC`;
 
     // Custom query building for guild rankings with GROUP BY
     const query = `

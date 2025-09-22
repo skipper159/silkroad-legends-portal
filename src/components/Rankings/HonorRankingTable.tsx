@@ -70,9 +70,9 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({ data, loading, error, 
                 <div className='flex items-center gap-2'>
                   {player.raceInfo && (
                     <img
-                      src={`/images/flags/${player.raceInfo.flag}.png`}
-                      alt={player.raceInfo.name}
-                      className='w-4 h-4'
+                      src={`/assets/race/${player.raceInfo.flag === 'cn' ? 'china' : 'europe'}.png`}
+                      alt={player.raceInfo.flag === 'cn' ? 'Ch' : 'Eu'}
+                      className='w-4 h-4 object-contain'
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}

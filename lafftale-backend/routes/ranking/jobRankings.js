@@ -100,16 +100,16 @@ async function getJobKDRanking(limit = PAGE_SIZE, offset = 0, jobType = null) {
             (ISNULL(c.JobLvl_Trader, 0) + ISNULL(c.JobLvl_Hunter, 0) + ISNULL(c.JobLvl_Robber, 0)) as TotalJobLevel,
             -- Simulated K/D data based on job levels and PK counts
             CASE 
-              WHEN c.PKCount > 0 THEN c.PKCount
+              WHEN c.TotalPK > 0 THEN c.TotalPK
               ELSE FLOOR(RAND() * 20) + 1
             END as JobKills,
           CASE 
-            WHEN c.DiedCount > 0 THEN c.DiedCount  
+            WHEN c.DailyPK > 0 THEN c.DailyPK  
             ELSE FLOOR(RAND() * 10) + 1
           END as JobDeaths,
           CASE 
-            WHEN c.DiedCount > 0 AND c.DiedCount > 0 THEN 
-              CAST(c.PKCount AS FLOAT) / NULLIF(c.DiedCount, 0)
+            WHEN c.DailyPK > 0 AND c.DailyPK > 0 THEN 
+              CAST(c.TotalPK AS FLOAT) / NULLIF(c.DailyPK, 0)
             ELSE 
               CAST((FLOOR(RAND() * 20) + 1) AS FLOAT) / NULLIF((FLOOR(RAND() * 10) + 1), 0)
           END as KDRatio,

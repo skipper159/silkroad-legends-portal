@@ -420,12 +420,10 @@ module.exports = {
     },
   },
 
-  // Race Configuration (Legacy)
+  // Race Configuration (Updated for CHAR_CH_* and CHAR_EU_* pattern)
   characterRace: {
-    0: { name: 'Chinese Male', flag: 'cn', color: '#FF6B6B' },
-    1: { name: 'Chinese Female', flag: 'cn', color: '#FF6B6B' },
-    2: { name: 'European Male', flag: 'eu', color: '#4ECDC4' },
-    3: { name: 'European Female', flag: 'eu', color: '#4ECDC4' },
+    1: { name: 'Chinese', flag: 'cn', color: '#FF6B6B' },
+    2: { name: 'European', flag: 'eu', color: '#4ECDC4' },
   },
 
   // Job Type Configuration

@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { fetchWithAuth, weburl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { useCharacterItemPoints } from '@/hooks/useCharacterItemPoints';
 import { EquipmentWrapper } from './Equipment/EquipmentWrapper';
 import { getSlotNameFromId } from '@/lib/slotmapping';
 import { getRaceInfo, getCharacterImage, getJobIcon, RaceInfo } from '@/utils/characterUtils';
@@ -55,6 +56,9 @@ const CharacterOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { token } = useAuth();
+
+  // Item Points Hook
+  const { itemPoints, isLoading: itemPointsLoading } = useCharacterItemPoints(selectedCharacter?.id || null);
 
   useEffect(() => {
     const loadAccountsAndCharacters = async () => {
@@ -412,6 +416,25 @@ const CharacterOverview = () => {
                     {/* Equipment */}
                     <div className='flex flex-col items-center'>
                       <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Equipment</h3>
+
+                      {/* Item Points Section - direkt unter Equipment Überschrift */}
+                      <div className='mb-4'>
+                        <div className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 min-w-[200px]'>
+                          <div className='text-center'>
+                            <h4 className='text-lafftale-bronze font-bold mb-1 text-sm'>Item Points</h4>
+                            <div className='text-xl font-bold text-lafftale-gold'>
+                              {itemPointsLoading ? (
+                                <div className='flex justify-center'>
+                                  <div className='w-4 h-4 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                                </div>
+                              ) : (
+                                itemPoints.toLocaleString('de-DE')
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       <div className='flex justify-center'>
                         <EquipmentWrapper selectedCharacter={selectedCharacter} />
                       </div>

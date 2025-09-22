@@ -321,4 +321,50 @@ router.get('/inventory/:charId', authenticateToken, async (req, res) => {
   }
 });
 
+// Get Item Points for a specific character
+router.get('/:charId/itempoints', async (req, res) => {
+  const { charId } = req.params;
+
+  if (!charId || isNaN(charId)) {
+    return res.status(400).json({ error: 'Invalid character ID' });
+  }
+
+  try {
+    await charPoolConnect;
+
+    const result = await charPool.request().input('CharID', sql.Int, charId).query(`
+        SELECT c.CharID, c.CharName16,
+          ISNULL((
+            SUM(ISNULL(bio.nOptValue, 0)) +
+            SUM(ISNULL(i.OptLevel, 0)) +
+            SUM(ISNULL(roc.ReqLevel1, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_A_RARE%' THEN 5 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_B_RARE%' THEN 10 ELSE 0 END, 0)) +
+            SUM(ISNULL(CASE WHEN roc.CodeName128 LIKE '%_C_RARE%' THEN 15 ELSE 0 END, 0))
+          ), 0) AS ItemPoints
+        FROM _Char c
+          LEFT JOIN _Inventory inv ON c.CharID = inv.CharID AND inv.Slot BETWEEN 0 AND 12
+          LEFT JOIN _Items i ON inv.ItemID = i.ID64
+          LEFT JOIN _RefObjCommon roc ON i.RefItemID = roc.ID
+          LEFT JOIN _BindingOptionWithItem bio ON i.ID64 = bio.nItemDBID
+        WHERE c.CharID = @CharID AND c.Deleted = 0
+        GROUP BY c.CharID, c.CharName16
+      `);
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: 'Character not found' });
+    }
+
+    const character = result.recordset[0];
+    res.json({
+      characterId: character.CharID,
+      characterName: character.CharName16,
+      itemPoints: character.ItemPoints || 0,
+    });
+  } catch (err) {
+    console.error('Error fetching character item points:', err);
+    res.status(500).json({ error: 'Error fetching character item points' });
+  }
+});
+
 module.exports = router;

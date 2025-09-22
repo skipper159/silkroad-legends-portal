@@ -7,6 +7,7 @@ export interface RankingPlayer {
   Level?: number;
   RemainGold?: number;
   formattedGold?: string;
+  ItemPoints?: number;
   GuildName?: string;
   Guild?: string;
   raceInfo?: {

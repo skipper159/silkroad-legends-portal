@@ -71,9 +71,9 @@ const PvPRankingTable: React.FC<PvPRankingProps> = ({ data, loading, error, sear
                 <div className='flex items-center gap-2'>
                   {player.raceInfo && (
                     <img
-                      src={`/images/flags/${player.raceInfo.flag}.png`}
-                      alt={player.raceInfo.name}
-                      className='w-4 h-4'
+                      src={`/assets/race/${player.raceInfo.flag === 'cn' ? 'china' : 'europe'}.png`}
+                      alt={player.raceInfo.flag === 'cn' ? 'Ch' : 'Eu'}
+                      className='w-4 h-4 object-contain'
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
@@ -82,9 +82,9 @@ const PvPRankingTable: React.FC<PvPRankingProps> = ({ data, loading, error, sear
                   {getPlayerName(player)}
                 </div>
               </TableCell>
-              <TableCell className='text-green-400 font-medium'>{player.PK_Count}</TableCell>
-              <TableCell className='text-red-400 font-medium'>{player.PD_Count}</TableCell>
-              <TableCell className='font-semibold text-lafftale-gold'>{player.KDRatio.toFixed(2)}</TableCell>
+              <TableCell className='text-green-400 font-medium'>{player.PK_Count || 0}</TableCell>
+              <TableCell className='text-red-400 font-medium'>{player.PD_Count || 0}</TableCell>
+              <TableCell className='font-semibold text-lafftale-gold'>{(player.KDRatio || 0).toFixed(2)}</TableCell>
               <TableCell className='hidden md:table-cell'>{player.Level || 'Unknown'}</TableCell>
             </TableRow>
           ))

@@ -79,21 +79,63 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
+  // Pagination states
+  const [pagination, setPagination] = useState<{
+    [key: string]: { currentPage: number; hasMore: boolean; itemsPerPage: number };
+  }>({
+    topPlayers: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    topGuilds: { currentPage: 1, hasMore: false, itemsPerPage: 25 },
+    uniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    monthlyUniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    itemRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    jobKDRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    honorRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    fortressRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    pvpRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+  });
+
   // API base URL
   const API_BASE = 'http://localhost:3000/api';
 
-  // Fetch data function
-  const fetchData = async (endpoint: string, setter: Function, key: string) => {
+  // Fetch data function with pagination and search support
+  const fetchData = async (
+    endpoint: string,
+    setter: Function,
+    key: string,
+    page = 1,
+    limit?: number,
+    search?: string
+  ) => {
     setLoading((prev) => ({ ...prev, [key]: true }));
     setErrors((prev) => ({ ...prev, [key]: null }));
 
     try {
-      const response = await fetch(`${API_BASE}${endpoint}`);
+      const offset = (page - 1) * (limit || pagination[key]?.itemsPerPage || 50);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const response = await fetch(
+        `${API_BASE}${endpoint}?page=${page}&limit=${
+          limit || pagination[key]?.itemsPerPage || 50
+        }&offset=${offset}${searchParam}`
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
-      setter(data.data || []);
+      const results = data.data || [];
+
+      // Update pagination state
+      setPagination((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          currentPage: page,
+          hasMore: data.pagination?.hasMore || results.length === (limit || prev[key]?.itemsPerPage || 50),
+        },
+      }));
+
+      setter(results);
     } catch (error) {
       console.error(`Error fetching ${key}:`, error);
       setErrors((prev) => ({ ...prev, [key]: error instanceof Error ? error.message : 'Unknown error' }));
@@ -102,52 +144,89 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
     }
   };
 
+  // Page change handler
+  const handlePageChange = (key: string, endpoint: string, setter: Function) => (page: number) => {
+    fetchData(endpoint, setter, key, page, undefined, searchTerm);
+  };
+
+  // Search handler - resets to page 1 and performs search
+  const handleSearch = (searchValue: string) => {
+    setSearchTerm(searchValue);
+
+    // Refetch current tab data with search term
+    const currentTabData = {
+      'top-player': { endpoint: '/rankings/top-player', setter: setTopPlayers, key: 'topPlayers' },
+      'top-guild': { endpoint: '/rankings/guild', setter: setTopGuilds, key: 'topGuilds' },
+      unique: { endpoint: '/rankings/unique', setter: setUniqueKills, key: 'uniqueKills' },
+      'monthly-unique': {
+        endpoint: '/rankings/unique-monthly',
+        setter: setMonthlyUniqueKills,
+        key: 'monthlyUniqueKills',
+      },
+      item: { endpoint: '/rankings/item-plus', setter: setItemRankings, key: 'itemRankings' },
+      'job-kd': { endpoint: '/rankings/job-kd', setter: setJobKDRankings, key: 'jobKDRankings' },
+      honor: { endpoint: '/rankings/honor', setter: setHonorRankings, key: 'honorRankings' },
+      fortress: { endpoint: '/rankings/fortress-guild', setter: setFortressRankings, key: 'fortressRankings' },
+      pvp: { endpoint: '/rankings/pvp', setter: setPvpRankings, key: 'pvpRankings' },
+    };
+
+    const tabData = currentTabData[activeTab as keyof typeof currentTabData];
+    if (tabData) {
+      // Reset to page 1 for search
+      setPagination((prev) => ({
+        ...prev,
+        [tabData.key]: { ...prev[tabData.key], currentPage: 1 },
+      }));
+      fetchData(tabData.endpoint, tabData.setter, tabData.key, 1, undefined, searchValue);
+    }
+  };
+
   // Load data based on active tab
   useEffect(() => {
     switch (activeTab) {
       case 'top-player':
         if (topPlayers.length === 0) {
-          fetchData('/rankings/top-player', setTopPlayers, 'topPlayers');
+          fetchData('/rankings/top-player', setTopPlayers, 'topPlayers', 1);
         }
         break;
       case 'top-guild':
         if (topGuilds.length === 0) {
-          fetchData('/rankings/guild', setTopGuilds, 'topGuilds');
+          fetchData('/rankings/guild', setTopGuilds, 'topGuilds', 1);
         }
         break;
       case 'unique':
         if (uniqueKills.length === 0) {
-          fetchData('/rankings/unique', setUniqueKills, 'uniqueKills');
+          fetchData('/rankings/unique', setUniqueKills, 'uniqueKills', 1);
         }
         break;
       case 'monthly-unique':
         if (monthlyUniqueKills.length === 0) {
-          fetchData('/rankings/unique-monthly', setMonthlyUniqueKills, 'monthlyUniqueKills');
+          fetchData('/rankings/unique-monthly', setMonthlyUniqueKills, 'monthlyUniqueKills', 1);
         }
         break;
       case 'item':
         if (itemRankings.length === 0) {
-          fetchData('/rankings/item-plus', setItemRankings, 'itemRankings');
+          fetchData('/rankings/item-plus', setItemRankings, 'itemRankings', 1);
         }
         break;
       case 'job-kd':
         if (jobKDRankings.length === 0) {
-          fetchData('/rankings/job-kd', setJobKDRankings, 'jobKDRankings');
+          fetchData('/rankings/job-kd', setJobKDRankings, 'jobKDRankings', 1);
         }
         break;
       case 'honor':
         if (honorRankings.length === 0) {
-          fetchData('/rankings/honor', setHonorRankings, 'honorRankings');
+          fetchData('/rankings/honor', setHonorRankings, 'honorRankings', 1);
         }
         break;
       case 'fortress':
         if (fortressRankings.length === 0) {
-          fetchData('/rankings/fortress-guild', setFortressRankings, 'fortressRankings');
+          fetchData('/rankings/fortress-guild', setFortressRankings, 'fortressRankings', 1);
         }
         break;
       case 'pvp':
         if (pvpRankings.length === 0) {
-          fetchData('/rankings/pvp', setPvpRankings, 'pvpRankings');
+          fetchData('/rankings/pvp', setPvpRankings, 'pvpRankings', 1);
         }
         break;
     }
@@ -161,7 +240,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         <Input
           placeholder='Search rankings...'
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className='pl-10 bg-black/20 border-lafftale-gold/30 text-white placeholder-gray-400'
         />
       </div>
@@ -186,6 +265,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.topPlayers || false}
               error={errors.topPlayers || null}
               searchTerm={searchTerm}
+              currentPage={pagination.topPlayers?.currentPage || 1}
+              hasMore={pagination.topPlayers?.hasMore || false}
+              onPageChange={handlePageChange('topPlayers', '/rankings/top-player', setTopPlayers)}
+              itemsPerPage={pagination.topPlayers?.itemsPerPage || 50}
             />
           </TabsContent>
 
@@ -195,6 +278,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.topGuilds || false}
               error={errors.topGuilds || null}
               searchTerm={searchTerm}
+              currentPage={pagination.topGuilds?.currentPage || 1}
+              hasMore={pagination.topGuilds?.hasMore || false}
+              onPageChange={handlePageChange('topGuilds', '/rankings/guild', setTopGuilds)}
+              itemsPerPage={pagination.topGuilds?.itemsPerPage || 25}
             />
           </TabsContent>
 

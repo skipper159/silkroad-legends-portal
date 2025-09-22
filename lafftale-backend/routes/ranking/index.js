@@ -256,11 +256,10 @@ router.get('/fortress-players', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 100;
     const offset = parseInt(req.query.offset) || 0;
-    const race = req.query.race;
     const minLevel = req.query.minLevel ? parseInt(req.query.minLevel) : null;
     const guild = req.query.guild;
 
-    const rankings = await getFortressPlayerRanking(limit, offset, race, minLevel, guild);
+    const rankings = await getFortressPlayerRanking(limit, offset, minLevel, guild);
 
     res.json({
       success: true,
@@ -271,7 +270,6 @@ router.get('/fortress-players', async (req, res) => {
         total: rankings.length,
       },
       filters: {
-        race,
         minLevel,
         guild,
       },
@@ -291,11 +289,10 @@ router.get('/pvp', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 100;
     const offset = parseInt(req.query.offset) || 0;
-    const race = req.query.race;
     const minKills = req.query.minKills ? parseInt(req.query.minKills) : null;
     const maxDeaths = req.query.maxDeaths ? parseInt(req.query.maxDeaths) : null;
 
-    const rankings = await getPvPRanking(limit, offset, race, minKills, maxDeaths);
+    const rankings = await getPvPRanking(limit, offset, null, minKills, maxDeaths);
 
     res.json({
       success: true,
@@ -306,7 +303,6 @@ router.get('/pvp', async (req, res) => {
         total: rankings.length,
       },
       filters: {
-        race,
         minKills,
         maxDeaths,
       },
@@ -331,12 +327,13 @@ router.get('/:type', async (req, res) => {
     const { type } = req.params;
     const limit = parseInt(req.query.limit) || 100;
     const offset = parseInt(req.query.offset) || 0;
+    const search = req.query.search || '';
 
     let rankings;
 
     switch (type) {
       case 'top-player':
-        rankings = await getPlayerRanking(limit, offset);
+        rankings = await getPlayerRanking(limit, offset, { charName: search });
         break;
       case 'unique':
         rankings = await getUniqueRanking(limit, offset);
@@ -351,7 +348,7 @@ router.get('/:type', async (req, res) => {
         rankings = await getHunterRanking(limit, offset);
         break;
       case 'guild':
-        rankings = await getGuildRanking(limit, offset);
+        rankings = await getGuildRanking(limit, offset, { guildName: search });
         break;
       default:
         return res.status(400).json({

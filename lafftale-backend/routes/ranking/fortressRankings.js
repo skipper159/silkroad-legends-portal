@@ -8,16 +8,10 @@ const PAGE_SIZE = 25; // Standard page size for rankings
 /**
  * Get fortress player rankings with enhanced filtering
  */
-async function getFortressPlayerRanking(
-  limit = 100,
-  offset = 0,
-  race = null,
-  minLevel = null,
-  guild = null
-) {
+async function getFortressPlayerRanking(limit = 100, offset = 0, minLevel = null, guild = null) {
   const pool = await getCharDb();
 
-  let whereClause = 'WHERE c.Level > 1';
+  let whereClause = 'WHERE c.CurLevel > 1';
   let joinClause = 'FROM _Char c';
 
   if (guild) {
@@ -25,17 +19,15 @@ async function getFortressPlayerRanking(
     whereClause += ' AND g.Name LIKE @guild';
   }
 
-  if (race && race !== 'all') {
-    whereClause += ' AND c.Race = @race';
-  }
+  // Race functionality removed - Race column does not exist in _Char table
   if (minLevel) {
-    whereClause += ' AND c.Level >= @minLevel';
+    whereClause += ' AND c.CurLevel >= @minLevel';
   }
 
   const query = `
     SELECT * FROM (
-      SELECT ROW_NUMBER() OVER (ORDER BY c.Level DESC, c.Exp DESC) AS rank,
-             c.CharName16, c.Level, c.Race, c.JobType,
+      SELECT ROW_NUMBER() OVER (ORDER BY c.CurLevel DESC, c.Exp DESC) AS rank,
+             c.CharName16, c.CurLevel as Level, c.JobType,
              ${guild ? 'g.Name as GuildName' : 'NULL as GuildName'}
       ${joinClause}
       ${whereClause}
@@ -46,8 +38,9 @@ async function getFortressPlayerRanking(
 
   const request = pool.request().input('offset', sql.Int, offset).input('limit', sql.Int, limit);
 
-  if (race && race !== 'all') {
-    request.input('race', sql.TinyInt, parseInt(race));
+  // Race parameter removed as Race column doesn't exist
+  if (minLevel) {
+    request.input('minLevel', sql.TinyInt, minLevel);
   }
   if (minLevel) {
     request.input('minLevel', sql.TinyInt, minLevel);

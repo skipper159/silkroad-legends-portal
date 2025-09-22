@@ -27,11 +27,11 @@ async function getPlayerRanking(limit = 100, offset = 0, options = {}) {
       charName: options.charName,
       race: options.race,
       minLevel: options.minLevel,
-      includeItemPoints: options.includeItemPoints !== false,
+      includeItemPoints: true, // Always include Item Points for top player rankings
     });
 
-    const request = queryBuilder.applyParameters(pool.request(), parameters);
-    const result = await request.query(query);
+    const finalQuery = queryBuilder.applyParameters(query, parameters);
+    const result = await pool.request().query(finalQuery);
 
     return result.recordset.map((player) => ({
       ...player,
@@ -92,8 +92,8 @@ async function getCharacterDetails(charName) {
       const pool = await getCharDb();
       const { query, parameters } = queryBuilder.buildCharacterDetailQuery(charName);
 
-      const request = queryBuilder.applyParameters(pool.request(), parameters);
-      const result = await request.query(query);
+      const finalQuery = queryBuilder.applyParameters(query, parameters);
+      const result = await pool.request().query(finalQuery);
 
       if (result.recordset.length === 0) {
         return null;
