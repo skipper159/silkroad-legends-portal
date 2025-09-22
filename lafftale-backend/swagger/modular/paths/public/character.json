@@ -1,0 +1,66 @@
+{
+  "/api/character/public/{characterName}": {
+    "get": {
+      "tags": ["Public - Characters"],
+      "summary": "Get public character information",
+      "description": "Retrieve public information for a specific character by name. Requires authentication to view.",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "characterName",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "Character name to look up",
+          "example": "Blubber"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Character information retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  { "$ref": "#/components/schemas/SuccessResponse" },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": { "$ref": "#/components/schemas/PublicCharacter" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - character name is required",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" },
+        "403": {
+          "description": "Forbidden - invalid or expired token",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        },
+        "404": {
+          "description": "Character not found",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ const router = express.Router();
 // Import all ranking modules
 const {
   getPlayerRanking,
+  getPlayerRankingOptimized,
   getUniqueRanking,
   getUniqueMonthlyRanking,
   getCharacterDetails,
@@ -333,7 +334,17 @@ router.get('/:type', async (req, res) => {
 
     switch (type) {
       case 'top-player':
-        rankings = await getPlayerRanking(limit, offset, { charName: search });
+        // Use optimized function for search queries, regular function for browsing
+        if (search && search.trim()) {
+          rankings = await getPlayerRankingOptimized(limit, offset, {
+            charName: search.trim(),
+            includeItemPoints: true,
+          });
+        } else {
+          rankings = await getPlayerRanking(limit, offset, {
+            includeItemPoints: true,
+          });
+        }
         break;
       case 'unique':
         rankings = await getUniqueRanking(limit, offset);

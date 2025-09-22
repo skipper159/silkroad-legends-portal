@@ -1,0 +1,56 @@
+{
+  "/guild/overview/{guildName}": {
+    "get": {
+      "tags": ["Guild"],
+      "summary": "Get guild overview with members",
+      "description": "Returns detailed guild information including all members",
+      "parameters": [
+        {
+          "name": "guildName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the guild"
+        }
+      ],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Guild overview data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "$ref": "#/components/schemas/GuildOverview"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Guild not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

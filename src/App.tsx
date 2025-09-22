@@ -12,6 +12,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import ResendVerification from './pages/ResendVerification';
+import CharacterOverview from './components/CharacterOverview';
+import GuildOverview from './components/GuildOverview';
 import { AuthProvider } from './context/AuthContext';
 import './styles/sro-items.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -40,6 +42,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path='/account' element={<Account />} />
             <Route path='/AdminDashboard' element={<AdminDashboard />} />
+            <Route path='/character/:characterName' element={<CharacterOverview />} />
+            <Route path='/guild/:guildName' element={<GuildOverview />} />
           </Route>
           <Route path='*' element={<NotFound />} />
         </Routes>

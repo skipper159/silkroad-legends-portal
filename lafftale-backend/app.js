@@ -84,6 +84,8 @@ app.use('/api/rankings', require('./routes/ranking')); // Main ranking system
 // app.use('/api/enhanced', require('./routes/ranking/enhancedRankings'));
 
 app.use('/api/characters', require('./routes/characters'));
+app.use('/api/character', require('./routes/character/publicCharacter'));
+app.use('/api/guild', require('./routes/guild/guildOverview'));
 app.use('/api/characterdetails', require('./routes/characterdetails'));
 app.use('/api/silk', require('./routes/silk'));
 app.use('/api/gameaccount', require('./routes/gameaccount'));

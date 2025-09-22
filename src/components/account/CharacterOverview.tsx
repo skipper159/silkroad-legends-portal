@@ -20,6 +20,9 @@ interface Character {
   level: number;
   maxLevel: number;
   job: string;
+  currentJobClass?: number; // 0 = Trader, 1 = Hunter, 2 = Thief
+  currentJobLevel?: number;
+  currentPromotionPhase?: number;
   statPoints: number;
   skillPoints: number;
   gold: number;
@@ -155,6 +158,20 @@ const CharacterOverview = () => {
     return 'text-white';
   };
 
+  // Helper function to get job name from job class
+  const getJobNameFromClass = (jobClass: number): string => {
+    switch (jobClass) {
+      case 0:
+        return 'Trader';
+      case 1:
+        return 'Hunter';
+      case 2:
+        return 'Thief';
+      default:
+        return 'Trader';
+    }
+  };
+
   // Character Race and Image helpers
   const getCharacterRaceInfo = (character: Character): RaceInfo => {
     return getRaceInfo(character.CharIcon);
@@ -242,43 +259,82 @@ const CharacterOverview = () => {
                               </div>
 
                               {/* Level */}
-                              <div className='text-sm text-lafftale-bronze'>Level {character.level}</div>
+                              <div className='text-sm text-lafftale-bronze mb-1'>Level {character.level}</div>
 
                               {/* Job Levels */}
                               <div className='flex gap-2 mt-2'>
-                                {character.traderLevel > 0 && (
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <div className='flex items-center gap-1'>
-                                        <img src={getJobIcon('trader')} alt='Trader' className='w-4 h-4' />
-                                        <span className='text-xs text-blue-400'>{character.traderLevel}</span>
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Trader Level: {character.traderLevel}</TooltipContent>
-                                  </Tooltip>
-                                )}
-                                {character.hunterLevel > 0 && (
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <div className='flex items-center gap-1'>
-                                        <img src={getJobIcon('hunter')} alt='Hunter' className='w-4 h-4' />
-                                        <span className='text-xs text-green-400'>{character.hunterLevel}</span>
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Hunter Level: {character.hunterLevel}</TooltipContent>
-                                  </Tooltip>
-                                )}
-                                {character.thiefLevel > 0 && (
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <div className='flex items-center gap-1'>
-                                        <img src={getJobIcon('thief')} alt='Thief' className='w-4 h-4' />
-                                        <span className='text-xs text-red-400'>{character.thiefLevel}</span>
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Thief Level: {character.thiefLevel}</TooltipContent>
-                                  </Tooltip>
-                                )}
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <div className='flex items-center gap-1'>
+                                      <img src={getJobIcon('trader')} alt='Trader' className='w-4 h-4' />
+                                      <span
+                                        className={`text-xs ${
+                                          character.currentJobClass === 0
+                                            ? 'font-bold text-orange-400'
+                                            : 'text-blue-400'
+                                        }`}
+                                      >
+                                        {character.currentJobClass === 0
+                                          ? character.currentJobLevel || 1
+                                          : character.traderLevel || 0}
+                                      </span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Trader Level:{' '}
+                                    {character.currentJobClass === 0
+                                      ? character.currentJobLevel || 1
+                                      : character.traderLevel || 0}
+                                  </TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <div className='flex items-center gap-1'>
+                                      <img src={getJobIcon('hunter')} alt='Hunter' className='w-4 h-4' />
+                                      <span
+                                        className={`text-xs ${
+                                          character.currentJobClass === 1
+                                            ? 'font-bold text-orange-400'
+                                            : 'text-green-400'
+                                        }`}
+                                      >
+                                        {character.currentJobClass === 1
+                                          ? character.currentJobLevel || 1
+                                          : character.hunterLevel || 0}
+                                      </span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Hunter Level:{' '}
+                                    {character.currentJobClass === 1
+                                      ? character.currentJobLevel || 1
+                                      : character.hunterLevel || 0}
+                                  </TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <div className='flex items-center gap-1'>
+                                      <img src={getJobIcon('thief')} alt='Thief' className='w-4 h-4' />
+                                      <span
+                                        className={`text-xs ${
+                                          character.currentJobClass === 2 ? 'font-bold text-orange-400' : 'text-red-400'
+                                        }`}
+                                      >
+                                        {character.currentJobClass === 2
+                                          ? character.currentJobLevel || 1
+                                          : character.thiefLevel || 0}
+                                      </span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Thief Level:{' '}
+                                    {character.currentJobClass === 2
+                                      ? character.currentJobLevel || 1
+                                      : character.thiefLevel || 0}
+                                  </TooltipContent>
+                                </Tooltip>
                               </div>
                             </div>
                           </CardContent>

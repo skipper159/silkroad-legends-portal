@@ -31,7 +31,7 @@ const PvPRankingTable: React.FC<PvPRankingProps> = ({ data, loading, error, sear
     <Table>
       <TableHeader>
         <TableRow className='border-b border-lafftale-gold/20'>
-          <TableHead className='text-lafftale-gold font-semibold'>Rank</TableHead>
+          <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Kills</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Deaths</TableHead>

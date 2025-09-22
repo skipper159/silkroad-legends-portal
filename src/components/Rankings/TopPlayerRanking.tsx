@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getRankIcon, getPlayerName, RankingPlayer } from './types';
+import { useAuth } from '@/context/AuthContext';
 import RankingPagination from './RankingPagination';
 
 interface TopPlayerRankingProps {
@@ -27,6 +29,27 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
   itemsPerPage = 50,
   totalItems,
 }) => {
+  const { isAuthenticated } = useAuth();
+
+  // Component for rendering clickable player name
+  const PlayerNameComponent: React.FC<{ player: RankingPlayer }> = ({ player }) => {
+    const playerName = getPlayerName(player);
+
+    if (isAuthenticated) {
+      return (
+        <Link
+          to={`/character/${encodeURIComponent(playerName)}`}
+          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          title={`View ${playerName}'s character details`}
+        >
+          {playerName}
+        </Link>
+      );
+    }
+
+    return <span>{playerName}</span>;
+  };
+
   // No client-side filtering needed since search is now handled server-side
   const displayData = data;
 
@@ -47,7 +70,7 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
       <Table>
         <TableHeader>
           <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold'>Rank</TableHead>
+            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
             <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
             <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>
             <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Race</TableHead>
@@ -64,8 +87,9 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
             </TableRow>
           ) : (
             displayData.map((player, index) => {
-              // Calculate actual rank based on current page
-              const actualRank = (currentPage - 1) * itemsPerPage + index + 1;
+              // Always prioritize GlobalRank from backend for accurate ranking
+              // This ensures search results show the actual global rank, not just position in search results
+              const actualRank = player.GlobalRank || (currentPage - 1) * itemsPerPage + index + 1;
 
               return (
                 <TableRow
@@ -88,7 +112,9 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className='flex items-center gap-2'>{getPlayerName(player)}</div>
+                    <div className='flex items-center gap-2'>
+                      <PlayerNameComponent player={player} />
+                    </div>
                   </TableCell>
                   <TableCell className='hidden md:table-cell'>{player.CurLevel || player.Level || 'Unknown'}</TableCell>
                   <TableCell className='hidden md:table-cell'>

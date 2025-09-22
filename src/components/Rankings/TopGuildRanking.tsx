@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getRankIcon, RankingGuild } from './types';
 import RankingPagination from './RankingPagination';
@@ -47,7 +48,7 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
       <Table>
         <TableHeader>
           <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold'>Rank</TableHead>
+            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
             <TableHead className='text-lafftale-gold font-semibold'>Guild Name</TableHead>
             <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>
             <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Members</TableHead>
@@ -85,7 +86,14 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
                       actualRank
                     )}
                   </TableCell>
-                  <TableCell className='font-medium'>{guild.Name}</TableCell>
+                  <TableCell className='font-medium'>
+                    <Link
+                      to={`/guild/${encodeURIComponent(guild.Name)}`}
+                      className='text-lafftale-gold hover:text-lafftale-bronze transition-colors'
+                    >
+                      {guild.Name}
+                    </Link>
+                  </TableCell>
                   <TableCell className='hidden md:table-cell'>{guild.Lv || guild.Level || 'Unknown'}</TableCell>
                   <TableCell className='hidden md:table-cell'>{guild.MemberCount || 'Unknown'}</TableCell>
                   <TableCell className='hidden lg:table-cell'>{guild.Alliance || 'no alliance'}</TableCell>

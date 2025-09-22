@@ -366,6 +366,63 @@
           }
         }
       },
+      "PublicCharacter": {
+        "type": "object",
+        "description": "Public character information viewable by authenticated users",
+        "properties": {
+          "CharName": {
+            "type": "string",
+            "description": "Character name",
+            "example": "Blubber"
+          },
+          "Level": {
+            "type": "integer",
+            "description": "Current character level",
+            "example": 120
+          },
+          "Race": {
+            "type": "integer",
+            "description": "Character race (1=Chinese, 2=European)",
+            "example": 1
+          },
+          "JobType": {
+            "type": "integer",
+            "description": "Character job type (1=Warrior, 2=Magician)",
+            "example": 1
+          },
+          "GuildName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Guild name or '-' for DummyGuild",
+            "example": "MyGuild"
+          },
+          "ItemPoints": {
+            "type": "integer",
+            "description": "Total item points calculated from equipment",
+            "example": 15420
+          },
+          "RemainGold": {
+            "type": "integer",
+            "description": "Character's remaining gold",
+            "example": 1000000
+          },
+          "LastLoginTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Last login timestamp",
+            "example": "2025-09-22T10:30:00Z"
+          }
+        },
+        "required": [
+          "CharName",
+          "Level",
+          "Race",
+          "JobType",
+          "ItemPoints",
+          "RemainGold"
+        ]
+      },
       "News": {
         "type": "object",
         "description": "News article",
@@ -565,52 +622,39 @@
       },
       "GuildInfo": {
         "type": "object",
-        "description": "Guild information",
         "properties": {
           "ID": {
             "type": "integer",
-            "description": "Guild ID"
+            "example": 1
           },
           "Name": {
             "type": "string",
-            "description": "Guild name"
+            "example": "TestGuild"
           },
           "Lvl": {
             "type": "integer",
-            "description": "Guild level"
+            "example": 5
           },
-          "MasterID": {
+          "MemberCount": {
             "type": "integer",
-            "description": "Guild master character ID"
+            "example": 25
           },
           "Alliance": {
-            "type": "integer",
-            "description": "Alliance ID"
+            "type": "string",
+            "nullable": true,
+            "example": "TestAlliance"
           },
           "Notice": {
             "type": "string",
-            "description": "Guild notice/description"
+            "nullable": true,
+            "example": "Welcome to our guild!"
           },
-          "FoundationDate": {
+          "CreatedDate": {
             "type": "string",
             "format": "date-time",
-            "description": "Guild foundation date"
-          },
-          "memberCount": {
-            "type": "integer",
-            "description": "Number of guild members"
-          },
-          "masterName": {
-            "type": "string",
-            "description": "Guild master character name (joined data)"
+            "nullable": true
           }
-        },
-        "required": [
-          "ID",
-          "Name",
-          "Lvl",
-          "MasterID"
-        ]
+        }
       },
       "CmsSettings": {
         "type": "object",
@@ -827,6 +871,69 @@
           "cronExpression",
           "enabled"
         ]
+      },
+      "GuildOverview": {
+        "type": "object",
+        "properties": {
+          "guild": {
+            "$ref": "#/components/schemas/GuildInfo"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuildMember"
+            }
+          }
+        }
+      },
+      "GuildMember": {
+        "type": "object",
+        "properties": {
+          "CharID": {
+            "type": "integer",
+            "example": 123
+          },
+          "CharName16": {
+            "type": "string",
+            "example": "TestPlayer"
+          },
+          "CurLevel": {
+            "type": "integer",
+            "example": 100
+          },
+          "Race": {
+            "type": "integer",
+            "example": 1,
+            "description": "1 = Chinese, 2 = European"
+          },
+          "JobType": {
+            "type": "integer",
+            "example": 1,
+            "description": "1 = Warrior, 2 = Magician"
+          },
+          "Strength": {
+            "type": "integer",
+            "example": 474
+          },
+          "Intellect": {
+            "type": "integer",
+            "example": 56
+          },
+          "LastLogout": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ItemPoints": {
+            "type": "integer",
+            "example": 119
+          },
+          "MemberClass": {
+            "type": "integer",
+            "example": 1,
+            "description": "1 = Guild Master, 2 = Deputy Master, 3 = Member"
+          }
+        }
       },
       "Payment": {
         "type": "object",
@@ -6417,6 +6524,62 @@
         }
       }
     },
+    "/guild/overview/{guildName}": {
+      "get": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Get guild overview with members",
+        "description": "Returns detailed guild information including all members",
+        "parameters": [
+          {
+            "name": "guildName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the guild"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Guild overview data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/GuildOverview"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Guild not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/donation/initiate": {
       "post": {
         "tags": [
@@ -7203,6 +7366,92 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/api/character/public/{characterName}": {
+      "get": {
+        "tags": [
+          "Public - Characters"
+        ],
+        "summary": "Get public character information",
+        "description": "Retrieve public information for a specific character by name. Requires authentication to view.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "characterName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Character name to look up",
+            "example": "Blubber"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Character information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublicCharacter"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - character name is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - invalid or expired token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Character not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }

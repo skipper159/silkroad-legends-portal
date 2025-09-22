@@ -192,5 +192,62 @@
         "description": "Current guild name"
       }
     }
+  },
+  "PublicCharacter": {
+    "type": "object",
+    "description": "Public character information viewable by authenticated users",
+    "properties": {
+      "CharName": {
+        "type": "string",
+        "description": "Character name",
+        "example": "Blubber"
+      },
+      "Level": {
+        "type": "integer",
+        "description": "Current character level",
+        "example": 120
+      },
+      "Race": {
+        "type": "integer",
+        "description": "Character race (1=Chinese, 2=European)",
+        "example": 1
+      },
+      "JobType": {
+        "type": "integer",
+        "description": "Character job type (1=Warrior, 2=Magician)",
+        "example": 1
+      },
+      "GuildName": {
+        "type": "string",
+        "nullable": true,
+        "description": "Guild name or '-' for DummyGuild",
+        "example": "MyGuild"
+      },
+      "ItemPoints": {
+        "type": "integer",
+        "description": "Total item points calculated from equipment",
+        "example": 15420
+      },
+      "RemainGold": {
+        "type": "integer",
+        "description": "Character's remaining gold",
+        "example": 1000000
+      },
+      "LastLoginTime": {
+        "type": "string",
+        "nullable": true,
+        "format": "date-time",
+        "description": "Last login timestamp",
+        "example": "2025-09-22T10:30:00Z"
+      }
+    },
+    "required": [
+      "CharName",
+      "Level",
+      "Race",
+      "JobType",
+      "ItemPoints",
+      "RemainGold"
+    ]
   }
 }

@@ -31,7 +31,7 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({ data, loading, error, 
     <Table>
       <TableHeader>
         <TableRow className='border-b border-lafftale-gold/20'>
-          <TableHead className='text-lafftale-gold font-semibold'>Rank</TableHead>
+          <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Honor Points</TableHead>
           <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>

@@ -32,7 +32,7 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({ data, loading, e
     <Table>
       <TableHeader>
         <TableRow className='border-b border-lafftale-gold/20'>
-          <TableHead className='text-lafftale-gold font-semibold'>Rank</TableHead>
+          <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Fortress</TableHead>
           <TableHead className='text-lafftale-gold font-semibold'>Guild</TableHead>
           <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Tax Ratio</TableHead>

@@ -10,6 +10,7 @@ export interface RankingPlayer {
   ItemPoints?: number;
   GuildName?: string;
   Guild?: string;
+  GlobalRank?: number; // Global rank from backend
   raceInfo?: {
     name: string;
     flag: string;

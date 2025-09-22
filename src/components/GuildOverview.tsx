@@ -1,0 +1,359 @@
+import { useEffect, useState } from 'react';
+import { useParams, Navigate, Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { fetchWithAuth, weburl } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { getRaceInfo, getJobIcon, RaceInfo } from '@/utils/characterUtils';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+
+interface GuildMember {
+  CharID: number;
+  CharName16: string;
+  CurLevel: number;
+  Race: number;
+  JobClass: number; // 0 = Trader, 1 = Hunter, 2 = Thief
+  JobLevel: number;
+  PromotionPhase: number;
+  Strength: number;
+  Intellect: number;
+  LastLogout?: string;
+  ItemPoints?: number;
+  MemberClass: number; // Guild rank/role
+  GuildLevel?: number;
+  Donation?: number;
+  JoinDate?: string;
+  Contribution?: number;
+}
+
+interface GuildInfo {
+  ID: number;
+  Name: string;
+  Lvl: number;
+  MemberCount: number;
+  Alliance?: string;
+  Notice?: string;
+  CreatedDate?: string;
+}
+
+interface GuildOverviewData {
+  guild: GuildInfo;
+  members: GuildMember[];
+}
+
+const GuildOverview: React.FC = () => {
+  const { guildName } = useParams<{ guildName: string }>();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const [guildData, setGuildData] = useState<GuildOverviewData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated || !guildName) {
+      setError('No guild name provided or not authenticated');
+      setLoading(false);
+      return;
+    }
+
+    loadGuildData();
+  }, [guildName, isAuthenticated]);
+
+  const loadGuildData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Get guild information and members
+      const response = await fetchWithAuth(`${weburl}/api/guild/overview/${encodeURIComponent(guildName!)}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setGuildData(data.data);
+        } else {
+          setError(data.message || 'Guild not found');
+        }
+      } else {
+        setError('Guild not found');
+      }
+    } catch (err) {
+      console.error('Error loading guild:', err);
+      setError('Failed to load guild information');
+      toast({
+        title: 'Error',
+        description: 'Failed to load guild information',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper functions
+  const getCharacterRaceInfo = (race: number): RaceInfo => {
+    return getRaceInfo(race);
+  };
+
+  const getJobName = (jobClass: number): string => {
+    switch (jobClass) {
+      case 0:
+        return 'Trader';
+      case 1:
+        return 'Hunter';
+      case 2:
+        return 'Thief';
+      default:
+        return 'Trader';
+    }
+  };
+
+  const getJobIcon = (jobClass: number): string => {
+    switch (jobClass) {
+      case 0:
+        return '/images/com_job_merchant.png';
+      case 1:
+        return '/images/com_job_hunter.png';
+      case 2:
+        return '/images/com_job_thief.png';
+      default:
+        return '/images/com_job_merchant.png';
+    }
+  };
+
+  const getGuildRankName = (memberClass: number): string => {
+    switch (memberClass) {
+      case 0:
+        return 'Guild Master';
+      case 10:
+        return 'Member';
+      default:
+        return 'Member';
+    }
+  };
+
+  const getGuildRankColor = (memberClass: number): string => {
+    switch (memberClass) {
+      case 0:
+        return 'text-yellow-400'; // Guild Master
+      case 10:
+        return 'text-green-400'; // Member
+      default:
+        return 'text-gray-400';
+    }
+  };
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
+
+  return (
+    <TooltipProvider>
+      <div className='min-h-screen flex flex-col'>
+        <Navbar />
+        <div className='py-12 bg-header-bg bg-cover bg-center'>
+          <div className='container mx-auto px-4 text-center'>
+            <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
+              Guild <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>Overview</span>
+            </h1>
+            <p className='text-lg max-w-2xl mx-auto mb-10 text-gray-300'>
+              Detailed view of {guildName} guild members and information.
+            </p>
+          </div>
+        </div>
+        <hr />
+        <main className='flex-1 bg-silkroad-darkgray/60'>
+          <div className='container mx-auto px-4 py-8'>
+            <div className='max-w-6xl mx-auto'>
+              {loading ? (
+                <div className='flex justify-center p-12'>
+                  <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                </div>
+              ) : error ? (
+                <Card className='bg-lafftale-dark/80 border-lafftale-gold/20'>
+                  <CardContent className='p-8'>
+                    <div className='text-center'>
+                      <div className='text-red-400 text-lg mb-2'>{error}</div>
+                      <p className='text-gray-400'>
+                        The guild "{guildName}" could not be found or you don't have permission to view it.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : guildData ? (
+                <div className='space-y-6'>
+                  {/* Guild Information Card */}
+                  <Card className='border-lafftale-gold/20 bg-lafftale-dark/70'>
+                    <CardContent className='p-6'>
+                      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                        <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
+                          <h4 className='text-lafftale-bronze font-bold mb-3'>Guild Info</h4>
+                          <div className='space-y-2'>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Name:</span>
+                              <span className='text-lafftale-gold font-bold'>{guildData.guild.Name}</span>
+                            </div>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Level:</span>
+                              <span className='text-lafftale-gold'>{guildData.guild.Lvl}</span>
+                            </div>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Members:</span>
+                              <span className='text-lafftale-gold'>{guildData.guild.MemberCount}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
+                          <h4 className='text-lafftale-bronze font-bold mb-3'>Alliance</h4>
+                          <div className='space-y-2'>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Alliance:</span>
+                              <span className='text-lafftale-gold'>{guildData.guild.Alliance || 'No Alliance'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
+                          <h4 className='text-lafftale-bronze font-bold mb-3'>Statistics</h4>
+                          <div className='space-y-2'>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Online:</span>
+                              <span className='text-green-400'>
+                                {
+                                  guildData.members.filter(
+                                    (m) =>
+                                      m.LastLogout &&
+                                      new Date(m.LastLogout) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                                  ).length
+                                }
+                              </span>
+                            </div>
+                            <div className='flex justify-between'>
+                              <span className='text-gray-300'>Avg Level:</span>
+                              <span className='text-lafftale-gold'>
+                                {Math.round(
+                                  guildData.members.reduce((sum, m) => sum + m.CurLevel, 0) / guildData.members.length
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Guild Members Table */}
+                  <Card className='border-lafftale-gold/20 bg-lafftale-dark/70'>
+                    <CardContent className='p-6'>
+                      <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Guild Members</h3>
+
+                      <Table>
+                        <TableHeader>
+                          <TableRow className='border-b border-lafftale-gold/20'>
+                            <TableHead className='text-lafftale-gold font-semibold'>Name</TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold'>Level</TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold'>Race</TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold'>Job</TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>
+                              Item Points
+                            </TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>
+                              Guild Rank
+                            </TableHead>
+                            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>
+                              Last Login
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {guildData.members.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={7} className='text-center py-8 text-gray-400'>
+                                No members found
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            guildData.members
+                              .sort((a, b) => a.MemberClass - b.MemberClass || b.CurLevel - a.CurLevel)
+                              .map((member) => {
+                                const raceInfo = getCharacterRaceInfo(member.Race);
+                                const isOnline =
+                                  member.LastLogout &&
+                                  new Date(member.LastLogout) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+                                return (
+                                  <TableRow
+                                    key={member.CharID}
+                                    className='border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5'
+                                  >
+                                    <TableCell className='font-medium'>
+                                      <Link
+                                        to={`/character/${encodeURIComponent(member.CharName16)}`}
+                                        className='text-lafftale-gold hover:text-lafftale-bronze transition-colors'
+                                      >
+                                        {member.CharName16}
+                                      </Link>
+                                      {isOnline && (
+                                        <span className='ml-2 w-2 h-2 bg-green-400 rounded-full inline-block'></span>
+                                      )}
+                                    </TableCell>
+                                    <TableCell>{member.CurLevel}</TableCell>
+                                    <TableCell>
+                                      <div className='flex items-center gap-2'>
+                                        <img src={raceInfo.icon} alt={raceInfo.name} className='w-4 h-4' />
+                                        <span className='hidden sm:inline'>{raceInfo.name}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>
+                                      <div className='flex items-center gap-1'>
+                                        <img
+                                          src={getJobIcon(member.JobClass)}
+                                          alt={getJobName(member.JobClass)}
+                                          className='w-5 h-5'
+                                        />
+                                        <span className='font-medium text-lafftale-gold'>
+                                          {getJobName(member.JobClass)}
+                                        </span>
+                                        <span className='hidden sm:inline text-gray-400'>(Lv.{member.JobLevel})</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className='hidden md:table-cell'>
+                                      {member.ItemPoints?.toLocaleString('de-DE') || '0'}
+                                    </TableCell>
+                                    <TableCell
+                                      className={`hidden lg:table-cell ${getGuildRankColor(member.MemberClass)}`}
+                                    >
+                                      {getGuildRankName(member.MemberClass)}
+                                    </TableCell>
+                                    <TableCell className='hidden lg:table-cell text-sm text-gray-400'>
+                                      {member.LastLogout
+                                        ? new Date(member.LastLogout).toLocaleDateString('de-DE')
+                                        : 'Unknown'}
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })
+                          )}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <p className='text-gray-400'>Guild data not available.</p>
+              )}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default GuildOverview;

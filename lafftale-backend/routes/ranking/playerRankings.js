@@ -1,7 +1,7 @@
 // ranking/playerRankings.js
 const { getCharDb, sql } = require('../../db');
 const cache = require('../../utils/cache');
-const queryBuilder = require('../../utils/queryBuilder');
+const QueryBuilder = require('../../utils/queryBuilder');
 const rankingConfig = require('../../config/ranking');
 
 /**
@@ -12,6 +12,11 @@ async function getPlayerRanking(limit = 100, offset = 0, options = {}) {
   const validatedLimit = isNaN(limit) ? 100 : Math.min(Math.max(parseInt(limit), 1), 1000);
   const validatedOffset = isNaN(offset) ? 0 : Math.max(parseInt(offset), 0);
 
+  // For search results, don't use cache as we need to calculate real-time global ranks
+  if (options.charName) {
+    return await getPlayerRankingWithGlobalRank(validatedLimit, validatedOffset, options);
+  }
+
   const cacheKey = cache.generateKey('player_ranking', {
     limit: validatedLimit,
     offset: validatedOffset,
@@ -20,7 +25,7 @@ async function getPlayerRanking(limit = 100, offset = 0, options = {}) {
 
   return await cache.remember(cacheKey, async () => {
     const pool = await getCharDb();
-    const { query, parameters } = queryBuilder.buildPlayerRankingQuery({
+    const { query, parameters } = QueryBuilder.buildPlayerRankingQuery({
       limit: validatedLimit,
       offset: validatedOffset,
       charId: options.charId,
@@ -30,17 +35,117 @@ async function getPlayerRanking(limit = 100, offset = 0, options = {}) {
       includeItemPoints: true, // Always include Item Points for top player rankings
     });
 
-    const finalQuery = queryBuilder.applyParameters(query, parameters);
+    const finalQuery = QueryBuilder.applyParameters(query, parameters);
     const result = await pool.request().query(finalQuery);
 
-    return result.recordset.map((player) => ({
+    // Filter out [GM] characters from results (but allow them in search)
+    const filteredResults = result.recordset.filter((player) => {
+      // Only filter [GM] characters in non-search results
+      if (!options.charName && player.CharName && player.CharName.startsWith('[GM]')) {
+        return false;
+      }
+      return true;
+    });
+
+    // For non-search results, calculate rank based on offset + position
+    return filteredResults.map((player, index) => ({
       ...player,
+      GlobalRank: validatedOffset + index + 1,
+      GuildName: player.GuildName === 'DummyGuild' ? '-' : player.GuildName,
       raceInfo: rankingConfig.characterRace[player.Race] || null,
       jobInfo: rankingConfig.jobType[player.JobType] || null,
       formattedGold: formatNumber(player.RemainGold),
       itemPointsFormatted: player.ItemPoints ? formatNumber(player.ItemPoints) : null,
     }));
   });
+}
+
+/**
+ * Get player rankings with real-time global rank calculation for search results
+ */
+async function getPlayerRankingWithGlobalRank(limit = 100, offset = 0, options = {}) {
+  const pool = await getCharDb();
+  const { query, parameters } = QueryBuilder.buildPlayerRankingQuery({
+    limit,
+    offset,
+    charId: options.charId,
+    charName: options.charName,
+    race: options.race,
+    minLevel: options.minLevel,
+    includeItemPoints: true,
+  });
+
+  const finalQuery = QueryBuilder.applyParameters(query, parameters);
+  const result = await pool.request().query(finalQuery);
+
+  let rankedResults = result.recordset.map((player) => ({
+    ...player,
+    GuildName: player.GuildName === 'DummyGuild' ? '-' : player.GuildName,
+    raceInfo: rankingConfig.characterRace[player.Race] || null,
+    jobInfo: rankingConfig.jobType[player.JobType] || null,
+    formattedGold: formatNumber(player.RemainGold),
+    itemPointsFormatted: player.ItemPoints ? formatNumber(player.ItemPoints) : null,
+  }));
+
+  // Calculate global ranks for each result
+  for (let i = 0; i < rankedResults.length; i++) {
+    const player = rankedResults[i];
+    try {
+      const { query: rankQuery, parameters: rankParams } = QueryBuilder.buildGlobalRankQuery(
+        player.CharID,
+        true
+      );
+      const rankQueryFinal = QueryBuilder.applyParameters(rankQuery, rankParams);
+      const rankResult = await pool.request().query(rankQueryFinal);
+
+      if (rankResult.recordset.length > 0) {
+        rankedResults[i].GlobalRank = rankResult.recordset[0].GlobalRank;
+      } else {
+        rankedResults[i].GlobalRank = 999999; // Fallback rank
+      }
+    } catch (error) {
+      console.error(`Error calculating global rank for ${player.CharName}:`, error);
+      rankedResults[i].GlobalRank = 999999; // Fallback rank
+    }
+  }
+
+  return rankedResults;
+}
+
+/**
+ * Get player rankings with optimized global rank calculation for search results
+ */
+async function getPlayerRankingOptimized(limit = 100, offset = 0, options = {}) {
+  const cacheKey = cache.generateKey('player_ranking_optimized', { limit, offset, ...options });
+
+  return await cache.remember(
+    cacheKey,
+    async () => {
+      const pool = await getCharDb();
+      const { query, parameters } = QueryBuilder.buildPlayerRankingWithGlobalRankQuery({
+        limit,
+        offset,
+        charId: options.charId,
+        charName: options.charName,
+        race: options.race,
+        minLevel: options.minLevel,
+        includeItemPoints: true,
+      });
+
+      const finalQuery = QueryBuilder.applyParameters(query, parameters);
+      const result = await pool.request().query(finalQuery);
+
+      return result.recordset.map((player) => ({
+        ...player,
+        GuildName: player.GuildName === 'DummyGuild' ? '-' : player.GuildName,
+        raceInfo: rankingConfig.characterRace[player.Race] || null,
+        jobInfo: rankingConfig.jobType[player.JobType] || null,
+        formattedGold: formatNumber(player.RemainGold),
+        itemPointsFormatted: player.ItemPoints ? formatNumber(player.ItemPoints) : null,
+      }));
+    },
+    60
+  ); // 1 minute cache for search results
 }
 
 /**
@@ -56,7 +161,7 @@ async function getUniqueRanking(limit = 100, offset = 0, monthly = false) {
   return await cache.remember(cacheKey, async () => {
     const pool = await getCharDb();
     const type = monthly ? 'unique-monthly' : 'unique';
-    const query = queryBuilder.buildUniqueRankingQuery(type, limit, offset);
+    const query = QueryBuilder.buildUniqueRankingQuery(type, limit, offset);
 
     const result = await pool.request().query(query);
 
@@ -90,9 +195,9 @@ async function getCharacterDetails(charName) {
     cacheKey,
     async () => {
       const pool = await getCharDb();
-      const { query, parameters } = queryBuilder.buildCharacterDetailQuery(charName);
+      const { query, parameters } = QueryBuilder.buildCharacterDetailQuery(charName);
 
-      const finalQuery = queryBuilder.applyParameters(query, parameters);
+      const finalQuery = QueryBuilder.applyParameters(query, parameters);
       const result = await pool.request().query(finalQuery);
 
       if (result.recordset.length === 0) {
@@ -123,6 +228,8 @@ function formatNumber(num) {
 
 module.exports = {
   getPlayerRanking,
+  getPlayerRankingWithGlobalRank,
+  getPlayerRankingOptimized,
   getUniqueRanking,
   getUniqueMonthlyRanking,
   getCharacterDetails,

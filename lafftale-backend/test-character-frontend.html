@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Character API Frontend Test</title>
+  </head>
+  <body>
+    <h1>Character API Frontend Test</h1>
+    <div id="result"></div>
+
+    <script>
+      async function testCharacterAPI() {
+        const result = document.getElementById("result")
+        result.innerHTML = "Testing Character API..."
+
+        try {
+          // Test the same way as the frontend
+          const weburl = "http://localhost:3000"
+          const characterName = "Blubber"
+          const token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTcyNjk5MzY0MywiZXhwIjoxNzI2OTk3MjQzfQ.PkIjDQLqsVc-q6bPPZjArvQbxvLaJ4vwgD6IIa3Fhvo"
+
+          const response = await fetch(
+            `${weburl}/api/character/public/${encodeURIComponent(characterName)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          )
+
+          console.log("Response status:", response.status)
+          console.log("Response headers:", response.headers.get("content-type"))
+
+          if (response.ok) {
+            const data = await response.json()
+            console.log("Response data:", data)
+
+            if (data.success) {
+              result.innerHTML = `
+                            <h2>✅ SUCCESS!</h2>
+                            <p><strong>Name:</strong> ${data.data.CharName}</p>
+                            <p><strong>Level:</strong> ${data.data.Level}</p>
+                            <p><strong>Guild:</strong> ${data.data.GuildName || "None"}</p>
+                            <p><strong>ItemPoints:</strong> ${data.data.ItemPoints}</p>
+                            <p><strong>Race:</strong> ${data.data.Race}</p>
+                            <p><strong>JobType:</strong> ${data.data.JobType}</p>
+                            <p><strong>Gold:</strong> ${data.data.RemainGold}</p>
+                            <p><strong>Last Login:</strong> ${
+                              data.data.LastLoginTime || "Unknown"
+                            }</p>
+                        `
+            } else {
+              result.innerHTML = `❌ API Error: ${data.message}`
+            }
+          } else {
+            const errorText = await response.text()
+            console.log("Error response:", errorText)
+
+            if (errorText.startsWith("<!DOCTYPE") || errorText.includes("<html>")) {
+              result.innerHTML = `❌ ERROR: Received HTML response instead of JSON!<br>
+                                           This means the API endpoint is not found.<br>
+                                           Response: ${errorText.substring(0, 100)}...`
+            } else {
+              try {
+                const errorData = JSON.parse(errorText)
+                result.innerHTML = `❌ API Error: ${errorData.message || "Unknown error"}`
+              } catch {
+                result.innerHTML = `❌ Unexpected response: ${errorText.substring(0, 100)}...`
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Test failed:", error)
+          result.innerHTML = `❌ Test failed: ${error.message}`
+        }
+      }
+
+      // Run test when page loads
+      testCharacterAPI()
+    </script>
+  </body>
+</html>

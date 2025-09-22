@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -63,6 +63,8 @@ interface RankingTabsProps {}
 const RankingTabs: React.FC<RankingTabsProps> = () => {
   const [activeTab, setActiveTab] = useState('top-player');
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState(''); // Separate state for input value
+  const [isSearching, setIsSearching] = useState(false); // Loading state for search
 
   // State for all ranking data
   const [topPlayers, setTopPlayers] = useState<RankingPlayer[]>([]);
@@ -152,6 +154,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
   // Search handler - resets to page 1 and performs search
   const handleSearch = (searchValue: string) => {
     setSearchTerm(searchValue);
+    setIsSearching(searchValue !== ''); // Show searching state for non-empty searches
 
     // Refetch current tab data with search term
     const currentTabData = {
@@ -177,7 +180,11 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         ...prev,
         [tabData.key]: { ...prev[tabData.key], currentPage: 1 },
       }));
-      fetchData(tabData.endpoint, tabData.setter, tabData.key, 1, undefined, searchValue);
+
+      // Perform search and then clear searching state
+      fetchData(tabData.endpoint, tabData.setter, tabData.key, 1, undefined, searchValue)
+        .then(() => setIsSearching(false))
+        .catch(() => setIsSearching(false));
     }
   };
 
@@ -232,17 +239,52 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
     }
   }, [activeTab]);
 
+  // Debounce effect for search input (2 seconds delay)
+  useEffect(() => {
+    if (searchInput.trim() === '') {
+      // If search input is empty, immediately clear search
+      if (searchTerm !== '') {
+        handleSearch('');
+      }
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      if (searchInput !== searchTerm) {
+        handleSearch(searchInput);
+      }
+    }, 2000); // 2 second delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]); // Only trigger when searchInput changes
+
+  // Reset search when tab changes
+  useEffect(() => {
+    setSearchInput('');
+    setSearchTerm('');
+    setIsSearching(false);
+  }, [activeTab]);
+
   return (
     <div className='container mx-auto px-4 py-8'>
       {/* Search Input */}
       <div className='relative mb-6'>
         <Search className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
+        {isSearching && (
+          <div className='absolute right-3 top-3 h-4 w-4'>
+            <div className='w-4 h-4 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+          </div>
+        )}
         <Input
-          placeholder='Search rankings...'
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-          className='pl-10 bg-black/20 border-lafftale-gold/30 text-white placeholder-gray-400'
+          placeholder='Search rankings... (searches automatically after 2 seconds)'
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          className='pl-10 pr-10 bg-black/20 border-lafftale-gold/30 text-white placeholder-gray-400'
         />
+        {/* Search countdown indicator */}
+        {searchInput !== searchTerm && searchInput.trim() && (
+          <div className='absolute right-12 top-3 text-xs text-lafftale-gold/70'>Searching in 2s...</div>
+        )}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>

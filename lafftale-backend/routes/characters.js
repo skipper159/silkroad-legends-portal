@@ -106,27 +106,30 @@ router.get('/characters/:gameAccountId', authenticateToken, async (req, res) => 
     // Alle gefundenen Charaktere abrufen
     const result = await charReq.query(`
 SELECT 
-  CharID AS id, 
-  CharName16 AS name, 
-  NickName16 AS nickname,
-  CurLevel AS level, 
-  MaxLevel AS maxLevel,
-  Strength,
-  Intellect,
-  RemainGold AS gold,
-  RemainSkillPoint AS skillPoints,
-  RemainStatPoint AS statPoints,
-  HP,
-  MP,
-  LatestRegion AS region,
-  PosX,
-  PosY,
-  PosZ,
-  JobLvl_Trader AS traderLevel,
-  JobLvl_Hunter AS hunterLevel,
-  JobLvl_Robber AS thiefLevel,
-  GuildID,
-  RefObjID AS CharIcon,
+  _Char.CharID AS id, 
+  _Char.CharName16 AS name, 
+  _Char.NickName16 AS nickname,
+  _Char.CurLevel AS level, 
+  _Char.MaxLevel AS maxLevel,
+  _Char.Strength,
+  _Char.Intellect,
+  _Char.RemainGold AS gold,
+  _Char.RemainSkillPoint AS skillPoints,
+  _Char.RemainStatPoint AS statPoints,
+  _Char.HP,
+  _Char.MP,
+  _Char.LatestRegion AS region,
+  _Char.PosX,
+  _Char.PosY,
+  _Char.PosZ,
+  _Char.JobLvl_Trader AS traderLevel,
+  _Char.JobLvl_Hunter AS hunterLevel,
+  _Char.JobLvl_Robber AS thiefLevel,
+  ISNULL(tcj.Class, 0) as currentJobClass,
+  ISNULL(tcj.JobLevel, 1) as currentJobLevel,
+  ISNULL(tcj.PromotionPhase, 0) as currentPromotionPhase,
+  _Char.GuildID,
+  _Char.RefObjID AS CharIcon,
 
   -- Race-Ermittlung über CodeName128 aus RefObjCommon (verbesserte Logik)
   ISNULL(
@@ -141,7 +144,8 @@ SELECT
 FROM _Char
 LEFT JOIN _RefObjChar rchar ON _Char.RefObjID = rchar.ID
 LEFT JOIN _RefObjCommon roc ON rchar.ID = roc.ID
-WHERE CharID IN (${charIdParams}) AND Deleted = 0
+LEFT JOIN _CharTradeConflictJob tcj ON tcj.CharID = _Char.CharID
+WHERE _Char.CharID IN (${charIdParams}) AND _Char.Deleted = 0
     `);
 
     res.json(result.recordset);

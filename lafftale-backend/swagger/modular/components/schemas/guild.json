@@ -1,0 +1,101 @@
+{
+  "GuildOverview": {
+    "type": "object",
+    "properties": {
+      "guild": {
+        "$ref": "#/components/schemas/GuildInfo"
+      },
+      "members": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/GuildMember"
+        }
+      }
+    }
+  },
+  "GuildInfo": {
+    "type": "object",
+    "properties": {
+      "ID": {
+        "type": "integer",
+        "example": 1
+      },
+      "Name": {
+        "type": "string",
+        "example": "TestGuild"
+      },
+      "Lvl": {
+        "type": "integer",
+        "example": 5
+      },
+      "MemberCount": {
+        "type": "integer",
+        "example": 25
+      },
+      "Alliance": {
+        "type": "string",
+        "nullable": true,
+        "example": "TestAlliance"
+      },
+      "Notice": {
+        "type": "string",
+        "nullable": true,
+        "example": "Welcome to our guild!"
+      },
+      "CreatedDate": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true
+      }
+    }
+  },
+  "GuildMember": {
+    "type": "object",
+    "properties": {
+      "CharID": {
+        "type": "integer",
+        "example": 123
+      },
+      "CharName16": {
+        "type": "string",
+        "example": "TestPlayer"
+      },
+      "CurLevel": {
+        "type": "integer",
+        "example": 100
+      },
+      "Race": {
+        "type": "integer",
+        "example": 1,
+        "description": "1 = Chinese, 2 = European"
+      },
+      "JobType": {
+        "type": "integer",
+        "example": 1,
+        "description": "1 = Warrior, 2 = Magician"
+      },
+      "Strength": {
+        "type": "integer",
+        "example": 474
+      },
+      "Intellect": {
+        "type": "integer",
+        "example": 56
+      },
+      "LastLogout": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true
+      },
+      "ItemPoints": {
+        "type": "integer",
+        "example": 119
+      },
+      "MemberClass": {
+        "type": "integer",
+        "example": 1,
+        "description": "1 = Guild Master, 2 = Deputy Master, 3 = Member"
+      }
+    }
+  }
+}
