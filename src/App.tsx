@@ -5,6 +5,8 @@ import Register from './pages/Register';
 import Account from './pages/Account';
 import Rankings from './pages/Rankings';
 import Download from './pages/Download';
+import News from './pages/News';
+import NewsDetail from './pages/NewsDetail';
 import NotFound from './pages/NotFound';
 import AdminDashboard from './pages/AdminDashboard';
 import ServerInfo from './pages/ServerInfo';
@@ -36,7 +38,8 @@ function App() {
           <Route path='/resend-verification' element={<ResendVerification />} />
           <Route path='/rankings' element={<Rankings />} />
           <Route path='/download' element={<Download />} />
-          <Route path='/News' element={<NewsSection />} />
+          <Route path='/news' element={<News />} />
+          <Route path='/news/:slug' element={<NewsDetail />} />
           <Route path='/server-info' element={<ServerInfo />} />
           <Route path='/rules' element={<ServerRules />} />
           <Route element={<ProtectedRoute />}>

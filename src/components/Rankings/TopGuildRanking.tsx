@@ -25,7 +25,7 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
   currentPage = 1,
   hasMore = false,
   onPageChange,
-  itemsPerPage = 25,
+  itemsPerPage = 100,
   totalItems,
 }) => {
   // No client-side filtering needed since search is now handled server-side

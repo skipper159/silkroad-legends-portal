@@ -16,6 +16,9 @@ const {
   getHunterRanking,
   getJobKDRanking,
 } = require('./jobRankings');
+const { getHunterRankings, getHunterStatistics } = require('./hunter_rankings');
+const { getThiefRankings, getThiefStatistics } = require('./thief_rankings');
+const { getTraderRankings, getTraderStatistics } = require('./trader_rankings');
 const { getHonorRanking } = require('./honorRankings');
 const { getPvPRanking } = require('./pvpRankings');
 const { getFortressPlayerRanking, getFortressGuildRanking } = require('./fortressRankings');
@@ -49,7 +52,7 @@ router.use('/', itemRouter);
 router.get('/job-kd', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 25;
+    const limit = parseInt(req.query.limit) || 100; // Increased default limit
     const offset = (page - 1) * limit;
     const jobType = req.query.jobType ? parseInt(req.query.jobType) : null;
 
@@ -182,6 +185,118 @@ router.get('/job-progression', async (req, res) => {
       success: false,
       message: 'Failed to fetch job progression analytics',
       error: error.message,
+    });
+  }
+});
+
+// =============================================================================
+// iSRO JOB RANKINGS (SEPARATED)
+// =============================================================================
+
+// Hunter Rankings
+router.get('/hunter-rankings', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const offset = (page - 1) * limit;
+
+    let data = await getHunterRankings(limit, offset);
+    let stats = await getHunterStatistics();
+
+    if (!Array.isArray(data)) data = [];
+
+    res.json({
+      success: true,
+      rankings: data,
+      statistics: stats,
+      pagination: {
+        currentPage: page,
+        itemsPerPage: limit,
+        hasMore: data.length === limit,
+      },
+      metadata: {
+        type: 'hunter-rankings',
+        jobType: 'Hunter',
+        generatedAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Hunter ranking error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Database error',
+    });
+  }
+});
+
+// Thief Rankings
+router.get('/thief-rankings', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const offset = (page - 1) * limit;
+
+    let data = await getThiefRankings(limit, offset);
+    let stats = await getThiefStatistics();
+
+    if (!Array.isArray(data)) data = [];
+
+    res.json({
+      success: true,
+      rankings: data,
+      statistics: stats,
+      pagination: {
+        currentPage: page,
+        itemsPerPage: limit,
+        hasMore: data.length === limit,
+      },
+      metadata: {
+        type: 'thief-rankings',
+        jobType: 'Thief',
+        generatedAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Thief ranking error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Database error',
+    });
+  }
+});
+
+// Trader Rankings
+router.get('/trader-rankings', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const offset = (page - 1) * limit;
+
+    let data = await getTraderRankings(limit, offset);
+    let stats = await getTraderStatistics();
+
+    if (!Array.isArray(data)) data = [];
+
+    res.json({
+      success: true,
+      rankings: data,
+      statistics: stats,
+      pagination: {
+        currentPage: page,
+        itemsPerPage: limit,
+        hasMore: data.length === limit,
+      },
+      metadata: {
+        type: 'trader-rankings',
+        jobType: 'Trader',
+        generatedAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Trader ranking error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Database error',
     });
   }
 });
@@ -387,6 +502,7 @@ router.get('/:type', async (req, res) => {
         limit,
         offset,
         total: Array.isArray(rankings) ? rankings.length : 0,
+        hasMore: Array.isArray(rankings) ? rankings.length === limit : false,
       },
     });
   } catch (error) {

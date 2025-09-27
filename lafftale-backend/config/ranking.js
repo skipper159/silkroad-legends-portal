@@ -4,7 +4,7 @@ module.exports = {
   cache: {
     ttl: 60 * 60, // 1 hour in seconds
     keyPrefix: 'lafftale_ranking',
-    enabled: true,
+    enabled: true, // Re-aktiviert mit verbesserten Cache-Mechanismen
     ranking_player: 60, // minutes
     ranking_guild: 60,
     ranking_unique: 30,

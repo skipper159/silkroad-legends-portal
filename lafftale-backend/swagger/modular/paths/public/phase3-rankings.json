@@ -1,9 +1,9 @@
 {
   "/api/job-statistics": {
     "get": {
-      "summary": "Get comprehensive job statistics (Phase 3)",
+      "summary": "Get comprehensive job statistics",
       "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
-      "tags": ["Rankings", "Phase 3"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "jobType",
@@ -70,9 +70,9 @@
   },
   "/api/job-leaderboard-comparison": {
     "get": {
-      "summary": "Get cross-job leaderboard comparison (Phase 3)",
+      "summary": "Get cross-job leaderboard comparison",
       "description": "Compares top players across different job types with unified ranking system",
-      "tags": ["Rankings", "Phase 3"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "limit",
@@ -151,9 +151,9 @@
   },
   "/api/job-progression": {
     "get": {
-      "summary": "Get job progression analytics (Phase 3)",
+      "summary": "Get job progression analytics",
       "description": "Analyzes job progression patterns and experience distribution across levels",
-      "tags": ["Rankings", "Phase 3"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "jobType",
@@ -238,186 +238,6 @@
         },
         "404": {
           "description": "No progression data found"
-        },
-        "500": {
-          "description": "Internal server error"
-        }
-      }
-    }
-  },
-  "/api/ranking/trader": {
-    "get": {
-      "summary": "Get trader job rankings (Phase 2)",
-      "description": "Retrieves ranked list of trader job players",
-      "tags": ["Rankings", "Phase 2"],
-      "parameters": [
-        {
-          "name": "page",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 1
-          },
-          "description": "Page number for PaginationInfo"
-        },
-        {
-          "name": "limit",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 10,
-            "minimum": 1,
-            "maximum": 100
-          },
-          "description": "Number of entries per page"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Trader rankings retrieved successfully",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "data": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/JobRanking"
-                    }
-                  },
-                  "PaginationInfo": {
-                    "$ref": "#/components/schemas/PaginationInfo"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error"
-        }
-      }
-    }
-  },
-  "/api/ranking/thief": {
-    "get": {
-      "summary": "Get thief job rankings (Phase 2)",
-      "description": "Retrieves ranked list of thief job players",
-      "tags": ["Rankings", "Phase 2"],
-      "parameters": [
-        {
-          "name": "page",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 1
-          },
-          "description": "Page number for PaginationInfo"
-        },
-        {
-          "name": "limit",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 10,
-            "minimum": 1,
-            "maximum": 100
-          },
-          "description": "Number of entries per page"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Thief rankings retrieved successfully",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "data": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/JobRanking"
-                    }
-                  },
-                  "PaginationInfo": {
-                    "$ref": "#/components/schemas/PaginationInfo"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "500": {
-          "description": "Internal server error"
-        }
-      }
-    }
-  },
-  "/api/ranking/hunter": {
-    "get": {
-      "summary": "Get hunter job rankings (Phase 2)",
-      "description": "Retrieves ranked list of hunter job players",
-      "tags": ["Rankings", "Phase 2"],
-      "parameters": [
-        {
-          "name": "page",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 1
-          },
-          "description": "Page number for PaginationInfo"
-        },
-        {
-          "name": "limit",
-          "in": "query",
-          "schema": {
-            "type": "integer",
-            "default": 10,
-            "minimum": 1,
-            "maximum": 100
-          },
-          "description": "Number of entries per page"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Hunter rankings retrieved successfully",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "success": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "data": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/JobRanking"
-                    }
-                  },
-                  "PaginationInfo": {
-                    "$ref": "#/components/schemas/PaginationInfo"
-                  }
-                }
-              }
-            }
-          }
         },
         "500": {
           "description": "Internal server error"

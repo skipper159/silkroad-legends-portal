@@ -757,21 +757,23 @@
         "properties": {
           "success": {
             "type": "boolean",
-            "example": false,
-            "description": "Indicates failed operation"
+            "description": "Always false for error responses",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "News post not found"
           },
           "error": {
             "type": "string",
-            "description": "Error message"
-          },
-          "details": {
-            "type": "string",
-            "description": "Additional error details"
+            "description": "Technical error details (only in development)",
+            "example": "Cannot read properties of null"
           }
         },
         "required": [
           "success",
-          "error"
+          "message"
         ]
       },
       "RankingEntry": {
@@ -934,6 +936,252 @@
             "description": "1 = Guild Master, 2 = Deputy Master, 3 = Member"
           }
         }
+      },
+      "NewsItem": {
+        "type": "object",
+        "description": "Basic news item for public display",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the news article",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the news article",
+            "example": "Server Update v2.1.5 Released"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly slug for the article",
+            "example": "server-update-v2-1-5-released"
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Brief summary of the article",
+            "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the news article",
+            "enum": [
+              "Update",
+              "Event",
+              "Community"
+            ],
+            "example": "Update"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL to the news article image",
+            "example": "/images/news/update-2-1-5.jpg"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp",
+            "example": "2024-03-15T10:30:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-03-15T10:30:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "category",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "NewsItemFull": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewsItem"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "Full content of the news article",
+                "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements..."
+              }
+            },
+            "required": [
+              "content"
+            ]
+          }
+        ]
+      },
+      "NewsItemAdmin": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewsItemFull"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "published": {
+                "type": "boolean",
+                "description": "Whether the article is published",
+                "example": true
+              }
+            },
+            "required": [
+              "published"
+            ]
+          }
+        ]
+      },
+      "NewsCreateRequest": {
+        "type": "object",
+        "description": "Request body for creating a new news article",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the news article",
+            "example": "Server Update v2.1.5 Released",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly slug (auto-generated if not provided)",
+            "example": "server-update-v2-1-5-released",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Brief summary of the article",
+            "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full content of the news article",
+            "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements...",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the news article",
+            "enum": [
+              "Update",
+              "Event",
+              "Community"
+            ],
+            "example": "Update"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to the news article image",
+            "example": "/images/news/update-2-1-5.jpg"
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Whether to publish the article immediately",
+            "example": false,
+            "default": false
+          }
+        },
+        "required": [
+          "title",
+          "content",
+          "category"
+        ],
+        "additionalProperties": false
+      },
+      "NewsUpdateRequest": {
+        "type": "object",
+        "description": "Request body for updating a news article",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the news article",
+            "example": "Server Update v2.1.5 Released",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly slug",
+            "example": "server-update-v2-1-5-released",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Brief summary of the article",
+            "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full content of the news article",
+            "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements...",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the news article",
+            "enum": [
+              "Update",
+              "Event",
+              "Community"
+            ],
+            "example": "Update"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to the news article image",
+            "example": "/images/news/update-2-1-5.jpg"
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Whether the article is published",
+            "example": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Pagination": {
+        "type": "object",
+        "description": "Pagination information",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number",
+            "example": 1,
+            "minimum": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 10,
+            "minimum": 1
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of items",
+            "example": 25,
+            "minimum": 0
+          },
+          "pages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 3,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "page",
+          "limit",
+          "total",
+          "pages"
+        ]
       },
       "Payment": {
         "type": "object",
@@ -1291,7 +1539,7 @@
       },
       "JobRanking": {
         "type": "object",
-        "description": "Job-specific ranking entry from Phase 2",
+        "description": "Job-specific ranking entry",
         "properties": {
           "rank": {
             "type": "integer",
@@ -1333,7 +1581,7 @@
       },
       "JobStatistics": {
         "type": "object",
-        "description": "Comprehensive job statistics from Phase 3",
+        "description": "Comprehensive job statistics",
         "properties": {
           "JobType": {
             "type": "integer",
@@ -1418,7 +1666,7 @@
       },
       "JobLeaderboardEntry": {
         "type": "object",
-        "description": "Job leaderboard comparison entry from Phase 3",
+        "description": "Job leaderboard comparison entry",
         "properties": {
           "JobType": {
             "type": "integer",
@@ -1460,7 +1708,7 @@
       },
       "JobProgressionData": {
         "type": "object",
-        "description": "Job progression analytics data from Phase 3",
+        "description": "Job progression analytics data",
         "properties": {
           "JobType": {
             "type": "integer",
@@ -1500,7 +1748,7 @@
       },
       "HonorRanking": {
         "type": "object",
-        "description": "Honor system ranking entry from Phase 1",
+        "description": "Honor system ranking entry",
         "properties": {
           "rank": {
             "type": "integer",
@@ -1543,7 +1791,7 @@
       },
       "FortressRanking": {
         "type": "object",
-        "description": "Fortress system ranking entry from Phase 1",
+        "description": "Fortress system ranking entry",
         "properties": {
           "rank": {
             "type": "integer",
@@ -1578,7 +1826,7 @@
       },
       "PvPRanking": {
         "type": "object",
-        "description": "PvP K/D ranking entry from Phase 1",
+        "description": "PvP K/D ranking entry",
         "properties": {
           "rank": {
             "type": "integer",
@@ -1720,6 +1968,163 @@
           "CharName16",
           "SealOfSunDrops",
           "SealOfMoonDrops"
+        ]
+      },
+      "JobLeaderboardComparison": {
+        "type": "object",
+        "description": "Job leaderboard comparison entry",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "description": "Overall unified rank"
+          },
+          "CharName16": {
+            "type": "string",
+            "description": "Character name"
+          },
+          "jobType": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3
+            ],
+            "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+          },
+          "jobLevel": {
+            "type": "integer",
+            "description": "Job level"
+          },
+          "reputationPoint": {
+            "type": "integer",
+            "description": "Reputation points"
+          },
+          "jobExp": {
+            "type": "integer",
+            "description": "Job experience"
+          },
+          "unifiedScore": {
+            "type": "number",
+            "description": "Unified ranking score across job types"
+          },
+          "race": {
+            "type": "string",
+            "enum": [
+              "Chinese",
+              "European"
+            ],
+            "description": "Character race"
+          }
+        },
+        "required": [
+          "rank",
+          "CharName16",
+          "jobType",
+          "jobLevel",
+          "reputationPoint",
+          "unifiedScore"
+        ]
+      },
+      "JobProgressionAnalytics": {
+        "type": "object",
+        "description": "Job progression analytics data",
+        "properties": {
+          "jobType": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3
+            ],
+            "description": "Job type analyzed (1=Trader, 2=Thief, 3=Hunter)"
+          },
+          "timeframe": {
+            "type": "string",
+            "enum": [
+              "week",
+              "month",
+              "quarter",
+              "year"
+            ],
+            "description": "Analysis timeframe"
+          },
+          "totalPlayers": {
+            "type": "integer",
+            "description": "Total players in this job type"
+          },
+          "averageLevel": {
+            "type": "number",
+            "description": "Average job level"
+          },
+          "levelDistribution": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "integer"
+                },
+                "playerCount": {
+                  "type": "integer"
+                },
+                "percentage": {
+                  "type": "number"
+                }
+              }
+            },
+            "description": "Distribution of players across levels"
+          },
+          "experienceGrowth": {
+            "type": "object",
+            "properties": {
+              "totalExpGained": {
+                "type": "integer"
+              },
+              "averageExpPerPlayer": {
+                "type": "number"
+              },
+              "topExpGainer": {
+                "type": "object",
+                "properties": {
+                  "CharName16": {
+                    "type": "string"
+                  },
+                  "expGained": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "progressionTrends": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "newPlayers": {
+                  "type": "integer"
+                },
+                "levelUps": {
+                  "type": "integer"
+                },
+                "averageProgress": {
+                  "type": "number"
+                }
+              }
+            },
+            "description": "Daily/weekly progression trends"
+          }
+        },
+        "required": [
+          "jobType",
+          "timeframe",
+          "totalPlayers",
+          "averageLevel",
+          "levelDistribution"
         ]
       },
       "Referral": {
@@ -2171,29 +2576,6 @@
           "success",
           "error",
           "jid"
-        ]
-      },
-      "DeprecatedEndpointError": {
-        "type": "object",
-        "description": "Error for deprecated endpoints",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": false
-          },
-          "error": {
-            "type": "string",
-            "example": "This endpoint is deprecated. Use the new SRO-CMS pattern endpoints instead."
-          },
-          "migration": {
-            "type": "string",
-            "example": "Please update your client to use the new SRO-CMS pattern with proper JID linking."
-          }
-        },
-        "required": [
-          "success",
-          "error",
-          "migration"
         ]
       },
       "AdminSilkAccount": {
@@ -4643,6 +5025,386 @@
         }
       }
     },
+    "/api/upload/test": {
+      "get": {
+        "summary": "Test upload endpoint",
+        "description": "Test if upload service is working",
+        "tags": [
+          "Upload"
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload service is working",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Upload route is working!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload/image": {
+      "post": {
+        "summary": "Upload single image",
+        "description": "Upload a single image file for news articles",
+        "tags": [
+          "Upload"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Image file to upload (JPG, PNG, WebP, GIF, max 5MB)"
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Image uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bild erfolgreich hochgeladen"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "filename": {
+                          "type": "string",
+                          "example": "news_1234567890_abc123.jpg"
+                        },
+                        "originalName": {
+                          "type": "string",
+                          "example": "my-image.jpg"
+                        },
+                        "url": {
+                          "type": "string",
+                          "example": "/images/news/news_1234567890_abc123.jpg"
+                        },
+                        "size": {
+                          "type": "number",
+                          "example": 154256
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no file uploaded or invalid file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Keine Datei hochgeladen"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - admin access required"
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fehler beim Hochladen des Bildes"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error details"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload/images": {
+      "post": {
+        "summary": "Upload multiple images",
+        "description": "Upload multiple image files for news articles",
+        "tags": [
+          "Upload"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Image files to upload (max 10 files, JPG, PNG, WebP, GIF, max 5MB each)"
+                  }
+                },
+                "required": [
+                  "images"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Images uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "3 Bild(er) erfolgreich hochgeladen"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string",
+                            "example": "news_1234567890_abc123.jpg"
+                          },
+                          "originalName": {
+                            "type": "string",
+                            "example": "my-image.jpg"
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "/images/news/news_1234567890_abc123.jpg"
+                          },
+                          "size": {
+                            "type": "number",
+                            "example": 154256
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - no files uploaded"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - admin access required"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get uploaded images list",
+        "description": "Get list of all uploaded images",
+        "tags": [
+          "Upload"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of uploaded images",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "filename": {
+                            "type": "string",
+                            "example": "news_1234567890_abc123.jpg"
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "/images/news/news_1234567890_abc123.jpg"
+                          },
+                          "size": {
+                            "type": "number",
+                            "example": 154256
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2023-12-01T10:30:00.000Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - admin access required"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/upload/image/{filename}": {
+      "delete": {
+        "summary": "Delete uploaded image",
+        "description": "Delete an uploaded image file",
+        "tags": [
+          "Upload"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "description": "Name of the file to delete",
+            "schema": {
+              "type": "string",
+              "example": "news_1234567890_abc123.jpg"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bild erfolgreich gelöscht"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid filename"
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - admin access required"
+          },
+          "404": {
+            "description": "File not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/api/admin/webaccounts": {
       "get": {
         "tags": [
@@ -6374,102 +7136,6 @@
         }
       }
     },
-    "/api/silk/balance/{gameAccountId}": {
-      "get": {
-        "tags": [
-          "Game - Silk",
-          "Deprecated"
-        ],
-        "summary": "Get silk balance by game account ID (DEPRECATED)",
-        "description": "This endpoint is deprecated. Use /api/silk/balance with authentication instead.",
-        "deprecated": true,
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "gameAccountId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Game account ID (deprecated parameter)"
-          }
-        ],
-        "responses": {
-          "410": {
-            "description": "Endpoint deprecated - use new SRO-CMS pattern",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeprecatedEndpointError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/silk/add": {
-      "post": {
-        "tags": [
-          "Game - Silk",
-          "Deprecated"
-        ],
-        "summary": "Add silk to account (DEPRECATED)",
-        "description": "This endpoint is deprecated. Use /api/silk/process-paypal for donations or admin-specific endpoints instead.",
-        "deprecated": true,
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "gameAccountId": {
-                    "type": "integer",
-                    "description": "Target game account ID"
-                  },
-                  "amount": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "description": "Amount of silk to add"
-                  },
-                  "reason": {
-                    "type": "string",
-                    "description": "Reason for adding silk"
-                  }
-                },
-                "required": [
-                  "gameAccountId",
-                  "amount"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "410": {
-            "description": "Endpoint deprecated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeprecatedEndpointError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/silk/balance": {
       "get": {
         "tags": [
@@ -6569,6 +7235,603 @@
           },
           "404": {
             "description": "Guild not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "get": {
+        "summary": "Get all published news",
+        "description": "Retrieve all published news articles with optional category filtering and pagination",
+        "tags": [
+          "News"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter by news category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Update",
+                "Event",
+                "Community"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "News retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/NewsItem"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/categories": {
+      "get": {
+        "summary": "Get all news categories",
+        "description": "Retrieve all available news categories",
+        "tags": [
+          "News"
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "Update",
+                        "Event",
+                        "Community"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/{slug}": {
+      "get": {
+        "summary": "Get single news by slug",
+        "description": "Retrieve a single published news article by its URL slug",
+        "tags": [
+          "News"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "URL slug of the news article",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "News article retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/NewsItemFull"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "News article not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/admin/all": {
+      "get": {
+        "summary": "Get all news for admin (includes unpublished)",
+        "description": "Retrieve all news articles including unpublished ones - Admin only",
+        "tags": [
+          "News - Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "News retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/NewsItemAdmin"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/admin": {
+      "post": {
+        "summary": "Create new news article",
+        "description": "Create a new news article - Admin only",
+        "tags": [
+          "News - Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "News article created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "News post created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 123
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Slug already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/admin/{id}": {
+      "put": {
+        "summary": "Update news article",
+        "description": "Update an existing news article - Admin only",
+        "tags": [
+          "News - Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "News article ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "News article updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "News post updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - No fields provided for update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "News article not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Slug already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete news article",
+        "description": "Delete a news article - Admin only",
+        "tags": [
+          "News - Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "News article ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "News article deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "News post deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "News article not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -7650,6 +8913,480 @@
         }
       }
     },
+    "/api/rankings/hunter-rankings": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get hunter job rankings",
+        "description": "Retrieve hunter job rankings with detailed statistics",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 200
+            },
+            "description": "Number of entries per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hunter rankings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "rankings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": {
+                            "type": "integer"
+                          },
+                          "CharID": {
+                            "type": "integer"
+                          },
+                          "CharName16": {
+                            "type": "string"
+                          },
+                          "NickName16": {
+                            "type": "string"
+                          },
+                          "RefObjID": {
+                            "type": "integer"
+                          },
+                          "JobType": {
+                            "type": "integer"
+                          },
+                          "JobLevel": {
+                            "type": "integer"
+                          },
+                          "JobExp": {
+                            "type": "integer"
+                          },
+                          "ReputationPoint": {
+                            "type": "integer"
+                          },
+                          "KillCount": {
+                            "type": "integer"
+                          },
+                          "DeathCount": {
+                            "type": "integer"
+                          },
+                          "Class": {
+                            "type": "integer"
+                          },
+                          "JobRank": {
+                            "type": "integer"
+                          },
+                          "GuildName": {
+                            "type": "string"
+                          },
+                          "Race": {
+                            "type": "string"
+                          },
+                          "JobTypeName": {
+                            "type": "string",
+                            "enum": [
+                              "Hunter"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "statistics": {
+                      "type": "object",
+                      "properties": {
+                        "totalHunters": {
+                          "type": "integer"
+                        },
+                        "averageLevel": {
+                          "type": "number"
+                        },
+                        "maxLevel": {
+                          "type": "integer"
+                        },
+                        "totalKills": {
+                          "type": "integer"
+                        },
+                        "averageReputation": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "currentPage": {
+                          "type": "integer"
+                        },
+                        "itemsPerPage": {
+                          "type": "integer"
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "jobType": {
+                          "type": "string"
+                        },
+                        "generatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/thief-rankings": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get thief job rankings",
+        "description": "Retrieve thief job rankings with detailed statistics",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 200
+            },
+            "description": "Number of entries per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thief rankings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "rankings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": {
+                            "type": "integer"
+                          },
+                          "CharID": {
+                            "type": "integer"
+                          },
+                          "CharName16": {
+                            "type": "string"
+                          },
+                          "NickName16": {
+                            "type": "string"
+                          },
+                          "RefObjID": {
+                            "type": "integer"
+                          },
+                          "JobType": {
+                            "type": "integer"
+                          },
+                          "JobLevel": {
+                            "type": "integer"
+                          },
+                          "JobExp": {
+                            "type": "integer"
+                          },
+                          "ReputationPoint": {
+                            "type": "integer"
+                          },
+                          "KillCount": {
+                            "type": "integer"
+                          },
+                          "DeathCount": {
+                            "type": "integer"
+                          },
+                          "Class": {
+                            "type": "integer"
+                          },
+                          "JobRank": {
+                            "type": "integer"
+                          },
+                          "GuildName": {
+                            "type": "string"
+                          },
+                          "Race": {
+                            "type": "string"
+                          },
+                          "JobTypeName": {
+                            "type": "string",
+                            "enum": [
+                              "Thief"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "statistics": {
+                      "type": "object",
+                      "properties": {
+                        "totalThieves": {
+                          "type": "integer"
+                        },
+                        "averageLevel": {
+                          "type": "number"
+                        },
+                        "maxLevel": {
+                          "type": "integer"
+                        },
+                        "totalKills": {
+                          "type": "integer"
+                        },
+                        "averageReputation": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "currentPage": {
+                          "type": "integer"
+                        },
+                        "itemsPerPage": {
+                          "type": "integer"
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "jobType": {
+                          "type": "string"
+                        },
+                        "generatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/trader-rankings": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get trader job rankings",
+        "description": "Retrieve trader job rankings with detailed statistics",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 200
+            },
+            "description": "Number of entries per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trader rankings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "rankings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": {
+                            "type": "integer"
+                          },
+                          "CharID": {
+                            "type": "integer"
+                          },
+                          "CharName16": {
+                            "type": "string"
+                          },
+                          "NickName16": {
+                            "type": "string"
+                          },
+                          "RefObjID": {
+                            "type": "integer"
+                          },
+                          "JobType": {
+                            "type": "integer"
+                          },
+                          "JobLevel": {
+                            "type": "integer"
+                          },
+                          "JobExp": {
+                            "type": "integer"
+                          },
+                          "ReputationPoint": {
+                            "type": "integer"
+                          },
+                          "KillCount": {
+                            "type": "integer"
+                          },
+                          "DeathCount": {
+                            "type": "integer"
+                          },
+                          "Class": {
+                            "type": "integer"
+                          },
+                          "JobRank": {
+                            "type": "integer"
+                          },
+                          "GuildName": {
+                            "type": "string"
+                          },
+                          "Race": {
+                            "type": "string"
+                          },
+                          "JobTypeName": {
+                            "type": "string",
+                            "enum": [
+                              "Trader"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "statistics": {
+                      "type": "object",
+                      "properties": {
+                        "totalTraders": {
+                          "type": "integer"
+                        },
+                        "averageLevel": {
+                          "type": "number"
+                        },
+                        "maxLevel": {
+                          "type": "integer"
+                        },
+                        "totalKills": {
+                          "type": "integer"
+                        },
+                        "averageReputation": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "currentPage": {
+                          "type": "integer"
+                        },
+                        "itemsPerPage": {
+                          "type": "integer"
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "jobType": {
+                          "type": "string"
+                        },
+                        "generatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/api/pages": {
       "get": {
         "tags": [
@@ -7823,11 +9560,10 @@
     },
     "/api/ranking/honor": {
       "get": {
-        "summary": "Get honor rankings (Phase 1)",
+        "summary": "Get honor rankings",
         "description": "Retrieves ranked list of players by honor points and Hwan levels",
         "tags": [
-          "Rankings",
-          "Phase 1"
+          "Rankings"
         ],
         "parameters": [
           {
@@ -7924,11 +9660,10 @@
     },
     "/api/ranking/fortress": {
       "get": {
-        "summary": "Get fortress kill rankings (Phase 1)",
+        "summary": "Get fortress kill rankings",
         "description": "Retrieves ranked list of players by fortress kills",
         "tags": [
-          "Rankings",
-          "Phase 1"
+          "Rankings"
         ],
         "parameters": [
           {
@@ -8025,11 +9760,10 @@
     },
     "/api/ranking/pvp": {
       "get": {
-        "summary": "Get PvP K/D rankings (Phase 1)",
+        "summary": "Get PvP K/D rankings",
         "description": "Retrieves ranked list of players by Kill/Death ratio and PK counts",
         "tags": [
-          "Rankings",
-          "Phase 1"
+          "Rankings"
         ],
         "parameters": [
           {
@@ -8139,11 +9873,10 @@
     },
     "/api/ranking/guild": {
       "get": {
-        "summary": "Get guild rankings (Phase 1)",
+        "summary": "Get guild rankings",
         "description": "Retrieves ranked list of guilds by member count and guild level",
         "tags": [
-          "Rankings",
-          "Phase 1"
+          "Rankings"
         ],
         "parameters": [
           {
@@ -8211,12 +9944,11 @@
     },
     "/api/job-statistics": {
       "get": {
-        "summary": "Get comprehensive job statistics (Phase 3)",
-        "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
         "tags": [
-          "Rankings",
-          "Phase 3"
+          "Rankings"
         ],
+        "summary": "Get comprehensive job statistics",
+        "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
         "parameters": [
           {
             "name": "jobType",
@@ -8241,58 +9973,29 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean",
-                      "example": true
+                      "type": "boolean"
                     },
-                    "statistics": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/JobStatistics"
-                      }
-                    },
-                    "totalJobs": {
-                      "type": "integer",
-                      "description": "Total number of job types"
-                    },
-                    "summary": {
-                      "type": "object",
-                      "properties": {
-                        "totalPlayers": {
-                          "type": "integer",
-                          "description": "Total players across all jobs"
-                        },
-                        "mostPopularJob": {
-                          "type": "integer",
-                          "description": "Most popular job type"
-                        },
-                        "averageLevel": {
-                          "type": "number",
-                          "description": "Overall average job level"
-                        }
-                      }
+                    "data": {
+                      "$ref": "#/components/schemas/JobStatistics"
                     }
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "No job statistics found"
-          },
-          "500": {
-            "description": "Internal server error"
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
     "/api/job-leaderboard-comparison": {
       "get": {
-        "summary": "Get cross-job leaderboard comparison (Phase 3)",
-        "description": "Compares top players across different job types with unified ranking system",
         "tags": [
-          "Rankings",
-          "Phase 3"
+          "Rankings"
         ],
+        "summary": "Get cross-job leaderboard comparison",
+        "description": "Compares top players across different job types with unified ranking system",
         "parameters": [
           {
             "name": "limit",
@@ -8303,15 +10006,7 @@
               "minimum": 1,
               "maximum": 100
             },
-            "description": "Number of top players per job to compare"
-          },
-          {
-            "name": "includeJobs",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Comma-separated job types to include (e.g., '1,2,3')"
+            "description": "Number of top players per job type"
           }
         ],
         "responses": {
@@ -8323,39 +10018,12 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean",
-                      "example": true
+                      "type": "boolean"
                     },
-                    "comparison": {
+                    "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/JobLeaderboardEntry"
-                      }
-                    },
-                    "jobBreakdown": {
-                      "type": "object",
-                      "properties": {
-                        "1": {
-                          "type": "array",
-                          "description": "Trader leaderboard",
-                          "items": {
-                            "$ref": "#/components/schemas/JobLeaderboardEntry"
-                          }
-                        },
-                        "2": {
-                          "type": "array",
-                          "description": "Thief leaderboard",
-                          "items": {
-                            "$ref": "#/components/schemas/JobLeaderboardEntry"
-                          }
-                        },
-                        "3": {
-                          "type": "array",
-                          "description": "Hunter leaderboard",
-                          "items": {
-                            "$ref": "#/components/schemas/JobLeaderboardEntry"
-                          }
-                        }
+                        "$ref": "#/components/schemas/JobLeaderboardComparison"
                       }
                     }
                   }
@@ -8363,20 +10031,19 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error"
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
     "/api/job-progression": {
       "get": {
-        "summary": "Get job progression analytics (Phase 3)",
-        "description": "Analyzes job progression patterns and experience distribution across levels",
         "tags": [
-          "Rankings",
-          "Phase 3"
+          "Rankings"
         ],
+        "summary": "Get job progression analytics",
+        "description": "Analyzes job progression patterns and experience distribution across levels",
         "parameters": [
           {
             "name": "jobType",
@@ -8393,24 +10060,19 @@
             "description": "Job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
           },
           {
-            "name": "minLevel",
+            "name": "timeframe",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 1
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter",
+                "year"
+              ],
+              "default": "month"
             },
-            "description": "Minimum job level to include"
-          },
-          {
-            "name": "maxLevel",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 50,
-              "maximum": 50
-            },
-            "description": "Maximum job level to include"
+            "description": "Analysis timeframe"
           }
         ],
         "responses": {
@@ -8422,42 +10084,10 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean",
-                      "example": true
+                      "type": "boolean"
                     },
-                    "jobType": {
-                      "type": "integer",
-                      "description": "Analyzed job type"
-                    },
-                    "progression": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/JobProgressionData"
-                      }
-                    },
-                    "analytics": {
-                      "type": "object",
-                      "properties": {
-                        "totalLevelsAnalyzed": {
-                          "type": "integer"
-                        },
-                        "totalPlayersAnalyzed": {
-                          "type": "integer"
-                        },
-                        "averageProgression": {
-                          "type": "number",
-                          "description": "Average experience gain per level"
-                        },
-                        "progressionTrend": {
-                          "type": "string",
-                          "enum": [
-                            "increasing",
-                            "decreasing",
-                            "stable"
-                          ],
-                          "description": "Overall progression trend"
-                        }
-                      }
+                    "data": {
+                      "$ref": "#/components/schemas/JobProgressionAnalytics"
                     }
                   }
                 }
@@ -8465,202 +10095,10 @@
             }
           },
           "400": {
-            "description": "Invalid job type or level range"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
             "description": "No progression data found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/api/ranking/trader": {
-      "get": {
-        "summary": "Get trader job rankings (Phase 2)",
-        "description": "Retrieves ranked list of trader job players",
-        "tags": [
-          "Rankings",
-          "Phase 2"
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 1
-            },
-            "description": "Page number for PaginationInfo"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10,
-              "minimum": 1,
-              "maximum": 100
-            },
-            "description": "Number of entries per page"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Trader rankings retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/JobRanking"
-                      }
-                    },
-                    "PaginationInfo": {
-                      "$ref": "#/components/schemas/PaginationInfo"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/api/ranking/thief": {
-      "get": {
-        "summary": "Get thief job rankings (Phase 2)",
-        "description": "Retrieves ranked list of thief job players",
-        "tags": [
-          "Rankings",
-          "Phase 2"
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 1
-            },
-            "description": "Page number for PaginationInfo"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10,
-              "minimum": 1,
-              "maximum": 100
-            },
-            "description": "Number of entries per page"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Thief rankings retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/JobRanking"
-                      }
-                    },
-                    "PaginationInfo": {
-                      "$ref": "#/components/schemas/PaginationInfo"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/api/ranking/hunter": {
-      "get": {
-        "summary": "Get hunter job rankings (Phase 2)",
-        "description": "Retrieves ranked list of hunter job players",
-        "tags": [
-          "Rankings",
-          "Phase 2"
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 1
-            },
-            "description": "Page number for PaginationInfo"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 10,
-              "minimum": 1,
-              "maximum": 100
-            },
-            "description": "Number of entries per page"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Hunter rankings retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/JobRanking"
-                      }
-                    },
-                    "PaginationInfo": {
-                      "$ref": "#/components/schemas/PaginationInfo"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
           }
         }
       }
@@ -8668,10 +10106,10 @@
     "/api/ranking/{type}": {
       "get": {
         "tags": [
-          "Public - Rankings"
+          "Rankings"
         ],
         "summary": "Get player rankings",
-        "description": "Retrieve player rankings by type including all Phase 1-3 ranking types",
+        "description": "Retrieve player rankings by type",
         "parameters": [
           {
             "name": "type",
@@ -8698,10 +10136,11 @@
                 "pvp-kd",
                 "job-kd",
                 "item-plus",
-                "item-drop"
+                "item-drop",
+                "guild"
               ]
             },
-            "description": "Ranking type - supports all Phase 1-3 ranking systems"
+            "description": "Ranking type"
           },
           {
             "name": "limit",
@@ -8844,7 +10283,7 @@
     "/api/rankings-extended/{type}": {
       "get": {
         "tags": [
-          "Public - Rankings"
+          "Rankings"
         ],
         "summary": "Get extended player rankings",
         "description": "Retrieve extended player rankings with more detailed information",
@@ -10639,8 +12078,5 @@
         }
       }
     }
-  },
-  "tags": {
-    "$ref": "./tags.json#/tags"
   }
 }

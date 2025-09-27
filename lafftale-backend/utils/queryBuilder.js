@@ -30,58 +30,55 @@ class QueryBuilder {
   }
 
   /**
-   * Unique Player Rankings - vereinfacht für SQL Server 2008
+   * Unique Player Rankings - basierend auf _CharUniqueKill Tabelle
+   * Spezielle Implementierung wegen GROUP BY
    */
-  static buildUniqueRankingQuery(type = 'all', limit = 50, offset = 0) {
-    let selectClause,
-      fromClause,
-      whereClause = '',
-      orderByClause;
+  static buildUniqueRankingQuery(type = 'unique', limit = 50, offset = 0) {
+    const CalendarUtils = require('./calendarUtils');
+    let whereFilter = '';
 
     switch (type) {
-      case 'unique':
-        selectClause = `
-                    c.CharName16 as playerName,
-                    c.CurLevel as level,
-                    g.Name as guildName
-                `;
-        fromClause = `_Char c LEFT JOIN _Guild g ON c.GuildID = g.ID`;
-        whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' AND c.CurLevel > 1`;
-        orderByClause = `ORDER BY c.CurLevel DESC`;
-        break;
-
       case 'unique-monthly':
-        selectClause = `
-                    c.CharName16 as playerName,
-                    c.CurLevel as level,
-                    g.Name as guildName
-                `;
-        fromClause = `_Char c LEFT JOIN _Guild g ON c.GuildID = g.ID`;
-        whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' 
-                             AND c.CurLevel > 1 
-                             AND c.LastLogout >= DATEADD(month, -1, GETDATE())`;
-        orderByClause = `ORDER BY c.CurLevel DESC`;
+        // Korrekte Monatsberechnung: 1. bis letzter Tag des aktuellen Monats
+        const monthInfo = CalendarUtils.getCurrentMonthInfo();
+        whereFilter = `AND uk.EventDate >= '${monthInfo.startSQL}' AND uk.EventDate <= '${monthInfo.endSQL}'`;
         break;
-
       default:
-        selectClause = `
-                    c.CharName16 as playerName,
-                    c.CurLevel as level,
-                    g.Name as guildName
-                `;
-        fromClause = `_Char c LEFT JOIN _Guild g ON c.GuildID = g.ID`;
-        whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' AND c.CurLevel > 1`;
-        orderByClause = `ORDER BY c.CurLevel DESC`;
+        whereFilter = '';
     }
 
-    return this.buildPaginatedQuery(
-      selectClause,
-      fromClause,
-      whereClause,
-      orderByClause,
-      limit,
-      offset
-    );
+    const query = `
+      WITH RankedResults AS (
+        SELECT 
+          c.CharName16 as playerName,
+          c.CurLevel as level,
+          ISNULL(g.Name, '') as guildName,
+          COUNT(uk.MobID) as UniqueKills,
+          COUNT(uk.MobID) * 10 as TotalPoints,
+          MAX(uk.EventDate) as LastKill,
+          CASE 
+            WHEN roc.CodeName128 LIKE 'CH_%' OR roc.CodeName128 LIKE '%Chinese%' THEN 'Chinese'
+            WHEN roc.CodeName128 LIKE 'EU_%' OR roc.CodeName128 LIKE '%European%' THEN 'European'
+            ELSE 'Chinese'
+          END as Race,
+          ROW_NUMBER() OVER (ORDER BY COUNT(uk.MobID) DESC, COUNT(uk.MobID) * 10 DESC) as rn
+        FROM _CharUniqueKill uk
+        INNER JOIN _Char c ON uk.CharID = c.CharID
+        LEFT JOIN _Guild g ON c.GuildID = g.ID
+        LEFT JOIN _RefObjChar rchar ON c.RefObjID = rchar.ID
+        LEFT JOIN _RefObjCommon roc ON rchar.ID = roc.ID
+        WHERE c.CharName16 IS NOT NULL 
+          AND c.CharName16 != '' 
+          AND c.Deleted = 0
+          ${whereFilter}
+        GROUP BY c.CharName16, c.CurLevel, g.Name, roc.CodeName128
+      )
+      SELECT * FROM RankedResults
+      WHERE rn > ${offset} AND rn <= ${offset + limit}
+      ORDER BY rn
+    `;
+
+    return query.trim();
   }
 
   /**
@@ -169,6 +166,11 @@ class QueryBuilder {
       LEFT JOIN _Guild g ON c.GuildID = g.ID
       LEFT JOIN _RefObjCommon roc ON c.RefObjID = roc.ID`;
     let whereClause = `c.CharName16 IS NOT NULL AND c.CharName16 != '' AND c.CurLevel >= ${minLevel} AND c.CharID > 0`;
+
+    // Filter out [GM] characters in SQL query to maintain proper pagination
+    if (!charName) {
+      whereClause += ` AND (c.CharName16 NOT LIKE '[GM]%' OR c.CharName16 IS NULL)`;
+    }
 
     const parameters = {};
 

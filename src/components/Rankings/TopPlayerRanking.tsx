@@ -26,7 +26,7 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
   currentPage = 1,
   hasMore = false,
   onPageChange,
-  itemsPerPage = 50,
+  itemsPerPage = 100,
   totalItems,
 }) => {
   const { isAuthenticated } = useAuth();

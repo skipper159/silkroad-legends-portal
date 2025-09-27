@@ -1,0 +1,238 @@
+{
+  "NewsItem": {
+    "type": "object",
+    "description": "Basic news item for public display",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier for the news article",
+        "example": 1
+      },
+      "title": {
+        "type": "string",
+        "description": "Title of the news article",
+        "example": "Server Update v2.1.5 Released"
+      },
+      "slug": {
+        "type": "string",
+        "description": "URL-friendly slug for the article",
+        "example": "server-update-v2-1-5-released"
+      },
+      "excerpt": {
+        "type": "string",
+        "description": "Brief summary of the article",
+        "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+      },
+      "category": {
+        "type": "string",
+        "description": "Category of the news article",
+        "enum": ["Update", "Event", "Community"],
+        "example": "Update"
+      },
+      "image": {
+        "type": "string",
+        "nullable": true,
+        "description": "URL to the news article image",
+        "example": "/images/news/update-2-1-5.jpg"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Creation timestamp",
+        "example": "2024-03-15T10:30:00Z"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last update timestamp",
+        "example": "2024-03-15T10:30:00Z"
+      }
+    },
+    "required": ["id", "title", "slug", "category", "created_at", "updated_at"]
+  },
+  "NewsItemFull": {
+    "allOf": [
+      {
+        "$ref": "#/components/schemas/NewsItem"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Full content of the news article",
+            "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements..."
+          }
+        },
+        "required": ["content"]
+      }
+    ]
+  },
+  "NewsItemAdmin": {
+    "allOf": [
+      {
+        "$ref": "#/components/schemas/NewsItemFull"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "published": {
+            "type": "boolean",
+            "description": "Whether the article is published",
+            "example": true
+          }
+        },
+        "required": ["published"]
+      }
+    ]
+  },
+  "NewsCreateRequest": {
+    "type": "object",
+    "description": "Request body for creating a new news article",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Title of the news article",
+        "example": "Server Update v2.1.5 Released",
+        "minLength": 1,
+        "maxLength": 255
+      },
+      "slug": {
+        "type": "string",
+        "description": "URL-friendly slug (auto-generated if not provided)",
+        "example": "server-update-v2-1-5-released",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "excerpt": {
+        "type": "string",
+        "description": "Brief summary of the article",
+        "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+      },
+      "content": {
+        "type": "string",
+        "description": "Full content of the news article",
+        "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements...",
+        "minLength": 1
+      },
+      "category": {
+        "type": "string",
+        "description": "Category of the news article",
+        "enum": ["Update", "Event", "Community"],
+        "example": "Update"
+      },
+      "image": {
+        "type": "string",
+        "description": "URL to the news article image",
+        "example": "/images/news/update-2-1-5.jpg"
+      },
+      "published": {
+        "type": "boolean",
+        "description": "Whether to publish the article immediately",
+        "example": false,
+        "default": false
+      }
+    },
+    "required": ["title", "content", "category"],
+    "additionalProperties": false
+  },
+  "NewsUpdateRequest": {
+    "type": "object",
+    "description": "Request body for updating a news article",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Title of the news article",
+        "example": "Server Update v2.1.5 Released",
+        "minLength": 1,
+        "maxLength": 255
+      },
+      "slug": {
+        "type": "string",
+        "description": "URL-friendly slug",
+        "example": "server-update-v2-1-5-released",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "excerpt": {
+        "type": "string",
+        "description": "Brief summary of the article",
+        "example": "This update includes balance changes to the Hunter class and new dungeon rewards."
+      },
+      "content": {
+        "type": "string",
+        "description": "Full content of the news article",
+        "example": "We are excited to announce the release of server update v2.1.5! This update brings significant improvements...",
+        "minLength": 1
+      },
+      "category": {
+        "type": "string",
+        "description": "Category of the news article",
+        "enum": ["Update", "Event", "Community"],
+        "example": "Update"
+      },
+      "image": {
+        "type": "string",
+        "description": "URL to the news article image",
+        "example": "/images/news/update-2-1-5.jpg"
+      },
+      "published": {
+        "type": "boolean",
+        "description": "Whether the article is published",
+        "example": true
+      }
+    },
+    "additionalProperties": false
+  },
+  "Pagination": {
+    "type": "object",
+    "description": "Pagination information",
+    "properties": {
+      "page": {
+        "type": "integer",
+        "description": "Current page number",
+        "example": 1,
+        "minimum": 1
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Number of items per page",
+        "example": 10,
+        "minimum": 1
+      },
+      "total": {
+        "type": "integer",
+        "description": "Total number of items",
+        "example": 25,
+        "minimum": 0
+      },
+      "pages": {
+        "type": "integer",
+        "description": "Total number of pages",
+        "example": 3,
+        "minimum": 0
+      }
+    },
+    "required": ["page", "limit", "total", "pages"]
+  },
+  "ErrorResponse": {
+    "type": "object",
+    "description": "Standard error response format",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "description": "Always false for error responses",
+        "example": false
+      },
+      "message": {
+        "type": "string",
+        "description": "Human-readable error message",
+        "example": "News post not found"
+      },
+      "error": {
+        "type": "string",
+        "description": "Technical error details (only in development)",
+        "example": "Cannot read properties of null"
+      }
+    },
+    "required": ["success", "message"]
+  }
+}

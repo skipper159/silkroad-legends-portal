@@ -7,8 +7,8 @@ import { Search } from 'lucide-react';
 import TopPlayerRanking from './TopPlayerRanking';
 import TopGuildRanking from './TopGuildRanking';
 import UniqueRankingTable from './UniqueRankingTable';
-import ItemRankingTable from './ItemRankingTable';
 import JobKDRankingTable from './JobKDRankingTable';
+import JobRankingsContainer from './JobRankingsContainer';
 import HonorRankingTable from './HonorRankingTable';
 import FortressRankingTable from './FortressRankingTable';
 import PvPRankingTable from './PvPRankingTable';
@@ -27,23 +27,6 @@ interface UniqueRanking {
   LastKill?: string;
   Race: string;
   GuildName?: string;
-}
-
-interface ItemRankingData {
-  rank: number;
-  CharName16: string;
-  Level: number;
-  Race: string;
-  GuildName?: string;
-  HighEnhancements?: number;
-  MaxEnhancement?: number;
-  TotalEnhancements?: number;
-  SealOfSunDrops?: number;
-  SealOfMoonDrops?: number;
-  SealOfStarDrops?: number;
-  SealOfNovaDrops?: number;
-  TotalRareDrops?: number;
-  LastDrop?: string;
 }
 
 interface JobKDRankingData {
@@ -71,7 +54,6 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
   const [topGuilds, setTopGuilds] = useState<RankingGuild[]>([]);
   const [uniqueKills, setUniqueKills] = useState<UniqueRanking[]>([]);
   const [monthlyUniqueKills, setMonthlyUniqueKills] = useState<UniqueRanking[]>([]);
-  const [itemRankings, setItemRankings] = useState<ItemRankingData[]>([]);
   const [jobKDRankings, setJobKDRankings] = useState<JobKDRankingData[]>([]);
   const [honorRankings, setHonorRankings] = useState<HonorRanking[]>([]);
   const [fortressRankings, setFortressRankings] = useState<FortressRanking[]>([]);
@@ -85,19 +67,18 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
   const [pagination, setPagination] = useState<{
     [key: string]: { currentPage: number; hasMore: boolean; itemsPerPage: number };
   }>({
-    topPlayers: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    topGuilds: { currentPage: 1, hasMore: false, itemsPerPage: 25 },
-    uniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    monthlyUniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    itemRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    jobKDRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    honorRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    fortressRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
-    pvpRankings: { currentPage: 1, hasMore: false, itemsPerPage: 50 },
+    topPlayers: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    topGuilds: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    uniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    monthlyUniqueKills: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    jobKDRankings: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    honorRankings: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    fortressRankings: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
+    pvpRankings: { currentPage: 1, hasMore: false, itemsPerPage: 100 },
   });
 
-  // API base URL
-  const API_BASE = 'http://localhost:3000/api';
+  // API base URL from environment variables
+  const API_BASE = `${import.meta.env.VITE_API_baseurl}/api`;
 
   // Fetch data function with pagination and search support
   const fetchData = async (
@@ -112,11 +93,11 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
     setErrors((prev) => ({ ...prev, [key]: null }));
 
     try {
-      const offset = (page - 1) * (limit || pagination[key]?.itemsPerPage || 50);
+      const offset = (page - 1) * (limit || pagination[key]?.itemsPerPage || 100);
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
       const response = await fetch(
         `${API_BASE}${endpoint}?page=${page}&limit=${
-          limit || pagination[key]?.itemsPerPage || 50
+          limit || pagination[key]?.itemsPerPage || 100
         }&offset=${offset}${searchParam}`
       );
 
@@ -133,7 +114,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         [key]: {
           ...prev[key],
           currentPage: page,
-          hasMore: data.pagination?.hasMore || results.length === (limit || prev[key]?.itemsPerPage || 50),
+          hasMore: data.pagination?.hasMore || results.length === (limit || prev[key]?.itemsPerPage || 100),
         },
       }));
 
@@ -166,7 +147,6 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         setter: setMonthlyUniqueKills,
         key: 'monthlyUniqueKills',
       },
-      item: { endpoint: '/rankings/item-plus', setter: setItemRankings, key: 'itemRankings' },
       'job-kd': { endpoint: '/rankings/job-kd', setter: setJobKDRankings, key: 'jobKDRankings' },
       honor: { endpoint: '/rankings/honor', setter: setHonorRankings, key: 'honorRankings' },
       fortress: { endpoint: '/rankings/fortress-guild', setter: setFortressRankings, key: 'fortressRankings' },
@@ -211,10 +191,8 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
           fetchData('/rankings/unique-monthly', setMonthlyUniqueKills, 'monthlyUniqueKills', 1);
         }
         break;
-      case 'item':
-        if (itemRankings.length === 0) {
-          fetchData('/rankings/item-plus', setItemRankings, 'itemRankings', 1);
-        }
+      case 'job-rankings':
+        // Job rankings data is managed by JobRankingsContainer
         break;
       case 'job-kd':
         if (jobKDRankings.length === 0) {
@@ -293,7 +271,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
           <TabsTrigger value='top-guild'>Top Guild</TabsTrigger>
           <TabsTrigger value='unique'>Unique</TabsTrigger>
           <TabsTrigger value='monthly-unique'>Monthly Unique</TabsTrigger>
-          <TabsTrigger value='item'>Item</TabsTrigger>
+          <TabsTrigger value='job-rankings'>Job Rankings</TabsTrigger>
           <TabsTrigger value='job-kd'>Job K/D</TabsTrigger>
           <TabsTrigger value='honor'>Honor</TabsTrigger>
           <TabsTrigger value='fortress'>Fortress</TabsTrigger>
@@ -310,7 +288,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               currentPage={pagination.topPlayers?.currentPage || 1}
               hasMore={pagination.topPlayers?.hasMore || false}
               onPageChange={handlePageChange('topPlayers', '/rankings/top-player', setTopPlayers)}
-              itemsPerPage={pagination.topPlayers?.itemsPerPage || 50}
+              itemsPerPage={pagination.topPlayers?.itemsPerPage || 100}
             />
           </TabsContent>
 
@@ -323,7 +301,7 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               currentPage={pagination.topGuilds?.currentPage || 1}
               hasMore={pagination.topGuilds?.hasMore || false}
               onPageChange={handlePageChange('topGuilds', '/rankings/guild', setTopGuilds)}
-              itemsPerPage={pagination.topGuilds?.itemsPerPage || 25}
+              itemsPerPage={pagination.topGuilds?.itemsPerPage || 100}
             />
           </TabsContent>
 
@@ -333,6 +311,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.uniqueKills || false}
               error={errors.uniqueKills || null}
               searchTerm={searchTerm}
+              currentPage={pagination.uniqueKills?.currentPage || 1}
+              hasMore={pagination.uniqueKills?.hasMore || false}
+              onPageChange={handlePageChange('uniqueKills', '/rankings/unique', setUniqueKills)}
+              itemsPerPage={pagination.uniqueKills?.itemsPerPage || 100}
             />
           </TabsContent>
 
@@ -342,17 +324,16 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.monthlyUniqueKills || false}
               error={errors.monthlyUniqueKills || null}
               searchTerm={searchTerm}
+              isMonthly={true}
+              currentPage={pagination.monthlyUniqueKills?.currentPage || 1}
+              hasMore={pagination.monthlyUniqueKills?.hasMore || false}
+              onPageChange={handlePageChange('monthlyUniqueKills', '/rankings/unique-monthly', setMonthlyUniqueKills)}
+              itemsPerPage={pagination.monthlyUniqueKills?.itemsPerPage || 100}
             />
           </TabsContent>
 
-          <TabsContent value='item' className='mt-0'>
-            <ItemRankingTable
-              data={itemRankings || []}
-              loading={loading.itemRankings || false}
-              error={errors.itemRankings || null}
-              searchTerm={searchTerm}
-              rankingType='enhancement'
-            />
+          <TabsContent value='job-rankings' className='mt-0'>
+            <JobRankingsContainer searchTerm={searchTerm} />
           </TabsContent>
 
           <TabsContent value='job-kd' className='mt-0'>
@@ -361,6 +342,15 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.jobKDRankings || false}
               error={errors.jobKDRankings || null}
               searchTerm={searchTerm}
+              currentPage={pagination.jobKDRankings.currentPage}
+              hasMore={pagination.jobKDRankings.hasMore}
+              itemsPerPage={pagination.jobKDRankings.itemsPerPage}
+              totalItems={
+                pagination.jobKDRankings.hasMore
+                  ? pagination.jobKDRankings.currentPage * pagination.jobKDRankings.itemsPerPage + 1
+                  : jobKDRankings?.length || 0
+              }
+              onPageChange={handlePageChange('jobKDRankings', '/rankings/job-kd', setJobKDRankings)}
             />
           </TabsContent>
 
@@ -370,6 +360,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.honorRankings || false}
               error={errors.honorRankings || null}
               searchTerm={searchTerm}
+              currentPage={pagination.honorRankings?.currentPage || 1}
+              hasMore={pagination.honorRankings?.hasMore || false}
+              onPageChange={handlePageChange('honorRankings', '/rankings/honor', setHonorRankings)}
+              itemsPerPage={pagination.honorRankings?.itemsPerPage || 100}
             />
           </TabsContent>
 
@@ -379,6 +373,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.fortressRankings || false}
               error={errors.fortressRankings || null}
               searchTerm={searchTerm}
+              currentPage={pagination.fortressRankings?.currentPage || 1}
+              hasMore={pagination.fortressRankings?.hasMore || false}
+              onPageChange={handlePageChange('fortressRankings', '/rankings/fortress-guild', setFortressRankings)}
+              itemsPerPage={pagination.fortressRankings?.itemsPerPage || 100}
             />
           </TabsContent>
 
@@ -388,6 +386,10 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
               loading={loading.pvpRankings || false}
               error={errors.pvpRankings || null}
               searchTerm={searchTerm}
+              currentPage={pagination.pvpRankings?.currentPage || 1}
+              hasMore={pagination.pvpRankings?.hasMore || false}
+              onPageChange={handlePageChange('pvpRankings', '/rankings/pvp', setPvpRankings)}
+              itemsPerPage={pagination.pvpRankings?.itemsPerPage || 100}
             />
           </TabsContent>
         </div>

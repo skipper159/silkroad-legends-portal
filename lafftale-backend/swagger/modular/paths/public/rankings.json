@@ -1,9 +1,9 @@
 {
   "/api/ranking/{type}": {
     "get": {
-      "tags": ["Public - Rankings"],
+      "tags": ["Rankings"],
       "summary": "Get player rankings",
-      "description": "Retrieve player rankings by type including all Phase 1-3 ranking types",
+      "description": "Retrieve player rankings by type",
       "parameters": [
         {
           "name": "type",
@@ -30,10 +30,11 @@
               "pvp-kd",
               "job-kd",
               "item-plus",
-              "item-drop"
+              "item-drop",
+              "guild"
             ]
           },
-          "description": "Ranking type - supports all Phase 1-3 ranking systems"
+          "description": "Ranking type"
         },
         {
           "name": "limit",
@@ -152,7 +153,7 @@
   },
   "/api/rankings-extended/{type}": {
     "get": {
-      "tags": ["Public - Rankings"],
+      "tags": ["Rankings"],
       "summary": "Get extended player rankings",
       "description": "Retrieve extended player rankings with more detailed information",
       "parameters": [
@@ -233,6 +234,134 @@
           }
         },
         "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  },
+  "/api/job-statistics": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get comprehensive job statistics",
+      "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
+      "parameters": [
+        {
+          "name": "jobType",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "enum": [1, 2, 3]
+          },
+          "description": "Optional: Filter by specific job type (1=Trader, 2=Thief, 3=Hunter)"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job statistics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": { "$ref": "#/components/schemas/JobStatistics" }
+                }
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  },
+  "/api/job-leaderboard-comparison": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get cross-job leaderboard comparison",
+      "description": "Compares top players across different job types with unified ranking system",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "Number of top players per job type"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job leaderboard comparison retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/JobLeaderboardComparison"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" }
+      }
+    }
+  },
+  "/api/job-progression": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get job progression analytics",
+      "description": "Analyzes job progression patterns and experience distribution across levels",
+      "parameters": [
+        {
+          "name": "jobType",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "enum": [1, 2, 3]
+          },
+          "description": "Job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["week", "month", "quarter", "year"],
+            "default": "month"
+          },
+          "description": "Analysis timeframe"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Job progression analytics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": {
+                    "$ref": "#/components/schemas/JobProgressionAnalytics"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": { "$ref": "#/components/responses/BadRequest" },
+        "404": {
+          "description": "No progression data found"
+        }
       }
     }
   }

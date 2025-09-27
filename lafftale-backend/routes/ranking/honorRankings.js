@@ -25,13 +25,15 @@ async function getHonorRanking(
   const query = `
     SELECT * FROM (
       SELECT ROW_NUMBER() OVER (ORDER BY TotalPK DESC) AS rank,
-             CharID,
-             CharName16,
-             TotalPK as HonorPoint,
-             DailyPK as Kills,
-             CurLevel as Level,
-             NULL as LatestHKTime
-      FROM _Char 
+             c.CharID,
+             c.CharName16,
+             c.TotalPK as HonorPoint,
+             c.DailyPK as Kills,
+             c.CurLevel as Level,
+             NULL as LatestHKTime,
+             ISNULL(g.Name, '') as GuildName
+      FROM _Char c
+      LEFT JOIN _Guild g ON c.GuildID = g.ID
       ${whereClause}
     ) AS ranked
     WHERE rank > @offset AND rank <= (@offset + @limit)

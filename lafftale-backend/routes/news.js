@@ -1,34 +1,52 @@
 // routes/news.js
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../middleware/adminAuth');
-const { pool, poolConnect, sql } = require('../db');
+const { getWebDb, sql } = require('../db');
+const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
-// Get all published news/posts
+// Get all published news/posts with optional category filtering
 router.get('/', async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
+  const category = req.query.category;
 
-  await poolConnect;
   try {
-    const result = await pool
-      .request()
-      .input('offset', sql.Int, offset)
-      .input('limit', sql.Int, limit).query(`
-        SELECT id, title, slug, excerpt, created_at, updated_at
-        FROM news 
-        WHERE published = 1
-        ORDER BY created_at DESC
-        OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
-      `);
+    const pool = await getWebDb();
+    const request = pool.request().input('offset', sql.Int, offset).input('limit', sql.Int, limit);
 
-    const countResult = await pool
-      .request()
-      .query('SELECT COUNT(*) as total FROM news WHERE published = 1');
+    let query = `
+      SELECT id, title, slug, category, image, created_at, updated_at, content, featured, views
+      FROM news 
+      WHERE active = 1
+    `;
+
+    let countQuery = 'SELECT COUNT(*) as total FROM news WHERE active = 1';
+
+    // Filter by category if provided
+    if (category) {
+      query += ' AND category = @category';
+      countQuery += ' AND category = @category';
+      request.input('category', sql.NVarChar, category);
+    }
+
+    query += `
+      ORDER BY created_at DESC
+      OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
+    `;
+
+    const result = await request.query(query);
+
+    // Count query needs separate request with category parameter if provided
+    const countRequest = pool.request();
+    if (category) {
+      countRequest.input('category', sql.NVarChar, category);
+    }
+    const countResult = await countRequest.query(countQuery);
 
     res.json({
-      news: result.recordset,
+      success: true,
+      data: result.recordset,
       pagination: {
         page,
         limit,
@@ -38,7 +56,36 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching news:', err);
-    res.status(500).json({ error: 'Failed to fetch news' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch news',
+      error: err.message,
+    });
+  }
+});
+
+// Get all news categories
+router.get('/categories', async (req, res) => {
+  try {
+    const pool = await getWebDb();
+    const result = await pool.request().query(`
+      SELECT DISTINCT category 
+      FROM news 
+      WHERE active = 1
+      ORDER BY category
+    `);
+
+    res.json({
+      success: true,
+      data: result.recordset.map((item) => item.category),
+    });
+  } catch (err) {
+    console.error('Error fetching news categories:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch news categories',
+      error: err.message,
+    });
   }
 });
 
@@ -46,40 +93,48 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
   const { slug } = req.params;
 
-  await poolConnect;
   try {
+    const pool = await getWebDb();
     const result = await pool
       .request()
       .input('slug', sql.NVarChar, slug)
-      .query('SELECT * FROM news WHERE slug = @slug AND published = 1');
+      .query('SELECT * FROM news WHERE slug = @slug AND active = 1');
 
     if (result.recordset.length === 0) {
-      return res.status(404).json({ error: 'News post not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'News post not found',
+      });
     }
 
-    res.json(result.recordset[0]);
+    res.json({
+      success: true,
+      data: result.recordset[0],
+    });
   } catch (err) {
     console.error('Error fetching news post:', err);
-    res.status(500).json({ error: 'Failed to fetch news post' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch news post',
+      error: err.message,
+    });
   }
 });
 
 // Admin routes - require authentication
-router.use(adminAuth);
-
 // Get all news (including unpublished) for admin
-router.get('/admin/all', async (req, res) => {
+router.get('/admin/all', verifyToken, verifyAdmin, async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   const offset = (page - 1) * limit;
 
-  await poolConnect;
   try {
+    const pool = await getWebDb();
     const result = await pool
       .request()
       .input('offset', sql.Int, offset)
       .input('limit', sql.Int, limit).query(`
-        SELECT id, title, slug, excerpt, published, created_at, updated_at
+        SELECT id, title, slug, category, image, active, created_at, updated_at, featured, views
         FROM news 
         ORDER BY created_at DESC
         OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
@@ -88,7 +143,8 @@ router.get('/admin/all', async (req, res) => {
     const countResult = await pool.request().query('SELECT COUNT(*) as total FROM news');
 
     res.json({
-      news: result.recordset,
+      success: true,
+      data: result.recordset,
       pagination: {
         page,
         limit,
@@ -98,104 +154,199 @@ router.get('/admin/all', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching admin news:', err);
-    res.status(500).json({ error: 'Failed to fetch news' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch news',
+      error: err.message,
+    });
   }
 });
 
 // Create new news post
-router.post('/', async (req, res) => {
-  const { title, slug, content, excerpt, published } = req.body;
+router.post('/admin', verifyToken, verifyAdmin, async (req, res) => {
+  const { title, slug, content, category, image, active } = req.body;
 
-  if (!title || !slug || !content) {
-    return res.status(400).json({ error: 'Title, slug, and content are required' });
+  if (!title || !content || !category) {
+    return res.status(400).json({
+      success: false,
+      message: 'Title, content, and category are required',
+    });
   }
 
-  await poolConnect;
   try {
+    const pool = await getWebDb();
+
+    // Get author_id from authenticated user
+    const authorId = req.user.id;
+
+    // Generate slug if not provided
+    const finalSlug =
+      slug ||
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
     const result = await pool
       .request()
+      .input('authorId', sql.Int, authorId)
       .input('title', sql.NVarChar, title)
-      .input('slug', sql.NVarChar, slug)
+      .input('slug', sql.NVarChar, finalSlug)
       .input('content', sql.Text, content)
-      .input('excerpt', sql.NVarChar, excerpt || '')
-      .input('published', sql.Bit, published || false)
+      .input('category', sql.NVarChar, category)
+      .input('image', sql.NVarChar, image || null)
+      .input('active', sql.Bit, active || false)
       .input('createdAt', sql.DateTime, new Date())
-      .input('updatedAt', sql.DateTime, new Date()).query(`
-        INSERT INTO news (title, slug, content, excerpt, published, created_at, updated_at)
+      .input('updatedAt', sql.DateTime, new Date())
+      .input('publishedAt', sql.DateTime, active ? new Date() : new Date()).query(`
+        INSERT INTO news (author_id, title, slug, content, category, image, active, created_at, updated_at, published_at)
         OUTPUT INSERTED.id
-        VALUES (@title, @slug, @content, @excerpt, @published, @createdAt, @updatedAt)
+        VALUES (@authorId, @title, @slug, @content, @category, @image, @active, @createdAt, @updatedAt, @publishedAt)
       `);
 
     res.status(201).json({
+      success: true,
       message: 'News post created successfully',
-      id: result.recordset[0].id,
+      data: { id: result.recordset[0].id },
     });
   } catch (err) {
     console.error('Error creating news post:', err);
     if (err.number === 2627) {
-      // Unique constraint violation
-      return res.status(409).json({ error: 'Slug already exists' });
+      return res.status(409).json({
+        success: false,
+        message: 'Slug already exists',
+      });
     }
-    res.status(500).json({ error: 'Failed to create news post' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create news post',
+      error: err.message,
+    });
   }
 });
 
 // Update news post
-router.put('/:id', async (req, res) => {
+router.put('/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
   const { id } = req.params;
-  const { title, slug, content, excerpt, published } = req.body;
+  const { title, slug, content, category, image, active } = req.body;
 
-  await poolConnect;
   try {
-    const result = await pool
-      .request()
-      .input('id', sql.Int, id)
-      .input('title', sql.NVarChar, title)
-      .input('slug', sql.NVarChar, slug)
-      .input('content', sql.Text, content)
-      .input('excerpt', sql.NVarChar, excerpt || '')
-      .input('published', sql.Bit, published || false)
-      .input('updatedAt', sql.DateTime, new Date()).query(`
-        UPDATE news 
-        SET title = @title, slug = @slug, content = @content, 
-            excerpt = @excerpt, published = @published, updated_at = @updatedAt
-        WHERE id = @id
-      `);
+    const pool = await getWebDb();
 
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: 'News post not found' });
+    // Build dynamic update query
+    let updateFields = [];
+    const request = pool.request().input('id', sql.Int, id);
+
+    if (title) {
+      updateFields.push('title = @title');
+      request.input('title', sql.NVarChar, title);
     }
 
-    res.json({ message: 'News post updated successfully' });
+    if (slug) {
+      updateFields.push('slug = @slug');
+      request.input('slug', sql.NVarChar, slug);
+    }
+
+    if (content) {
+      updateFields.push('content = @content');
+      request.input('content', sql.Text, content);
+    }
+
+    if (category) {
+      updateFields.push('category = @category');
+      request.input('category', sql.NVarChar, category);
+    }
+
+    if (image !== undefined) {
+      updateFields.push('image = @image');
+      request.input('image', sql.NVarChar, image);
+    }
+
+    if (active !== undefined) {
+      updateFields.push('active = @active');
+      request.input('active', sql.Bit, active);
+    }
+
+    updateFields.push('updated_at = @updatedAt');
+    request.input('updatedAt', sql.DateTime, new Date());
+
+    if (updateFields.length === 1) {
+      // Only updated_at was added
+      return res.status(400).json({
+        success: false,
+        message: 'At least one field is required for update',
+      });
+    }
+
+    const updateQuery = `
+      UPDATE news 
+      SET ${updateFields.join(', ')} 
+      WHERE id = @id;
+      
+      SELECT @@ROWCOUNT as count;
+    `;
+
+    const result = await request.query(updateQuery);
+
+    if (result.recordset[0].count === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'News post not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'News post updated successfully',
+    });
   } catch (err) {
     console.error('Error updating news post:', err);
     if (err.number === 2627) {
-      // Unique constraint violation
-      return res.status(409).json({ error: 'Slug already exists' });
+      return res.status(409).json({
+        success: false,
+        message: 'Slug already exists',
+      });
     }
-    res.status(500).json({ error: 'Failed to update news post' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update news post',
+      error: err.message,
+    });
   }
 });
 
 // Delete news post
-router.delete('/:id', async (req, res) => {
+router.delete('/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
   const { id } = req.params;
 
-  await poolConnect;
   try {
-    const result = await pool
-      .request()
-      .input('id', sql.Int, id)
-      .query('DELETE FROM news WHERE id = @id');
+    const pool = await getWebDb();
 
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: 'News post not found' });
+    const result = await pool.request().input('id', sql.Int, id).query(`
+        DELETE FROM news 
+        WHERE id = @id;
+        
+        SELECT @@ROWCOUNT as count;
+      `);
+
+    if (result.recordset[0].count === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'News post not found',
+      });
     }
 
-    res.json({ message: 'News post deleted successfully' });
+    res.json({
+      success: true,
+      message: 'News post deleted successfully',
+    });
   } catch (err) {
     console.error('Error deleting news post:', err);
-    res.status(500).json({ error: 'Failed to delete news post' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete news post',
+      error: err.message,
+    });
   }
 });
 

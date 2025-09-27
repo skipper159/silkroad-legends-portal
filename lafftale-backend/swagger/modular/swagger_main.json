@@ -170,7 +170,19 @@
     },
     "/api/characters/{charId}/details": {
       "$ref": "./paths/user/characters.json#/getCharacterDetails"
+    },
+
+    "/api/upload/test": {
+      "$ref": "./paths/admin/upload.json#/api/upload/test"
+    },
+    "/api/upload/image": {
+      "$ref": "./paths/admin/upload.json#/api/upload/image"
+    },
+    "/api/upload/images": {
+      "$ref": "./paths/admin/upload.json#/api/upload/images"
+    },
+    "/api/upload/image/{filename}": {
+      "$ref": "./paths/admin/upload.json#/api/upload/image/{filename}"
     }
-  },
-  "tags": { "$ref": "./tags.json#/tags" }
+  }
 }

@@ -180,25 +180,6 @@
     },
     "required": ["success", "error", "jid"]
   },
-  "DeprecatedEndpointError": {
-    "type": "object",
-    "description": "Error for deprecated endpoints",
-    "properties": {
-      "success": {
-        "type": "boolean",
-        "example": false
-      },
-      "error": {
-        "type": "string",
-        "example": "This endpoint is deprecated. Use the new SRO-CMS pattern endpoints instead."
-      },
-      "migration": {
-        "type": "string",
-        "example": "Please update your client to use the new SRO-CMS pattern with proper JID linking."
-      }
-    },
-    "required": ["success", "error", "migration"]
-  },
   "AdminSilkAccount": {
     "type": "object",
     "description": "Account with silk balance for admin view",

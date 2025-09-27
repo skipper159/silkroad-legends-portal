@@ -1,0 +1,263 @@
+{
+  "/api/rankings/hunter-rankings": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get hunter job rankings",
+      "description": "Retrieve hunter job rankings with detailed statistics",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number for pagination"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 100, "maximum": 200 },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Hunter rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "rankings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rank": { "type": "integer" },
+                        "CharID": { "type": "integer" },
+                        "CharName16": { "type": "string" },
+                        "NickName16": { "type": "string" },
+                        "RefObjID": { "type": "integer" },
+                        "JobType": { "type": "integer" },
+                        "JobLevel": { "type": "integer" },
+                        "JobExp": { "type": "integer" },
+                        "ReputationPoint": { "type": "integer" },
+                        "KillCount": { "type": "integer" },
+                        "DeathCount": { "type": "integer" },
+                        "Class": { "type": "integer" },
+                        "JobRank": { "type": "integer" },
+                        "GuildName": { "type": "string" },
+                        "Race": { "type": "string" },
+                        "JobTypeName": { "type": "string", "enum": ["Hunter"] }
+                      }
+                    }
+                  },
+                  "statistics": {
+                    "type": "object",
+                    "properties": {
+                      "totalHunters": { "type": "integer" },
+                      "averageLevel": { "type": "number" },
+                      "maxLevel": { "type": "integer" },
+                      "totalKills": { "type": "integer" },
+                      "averageReputation": { "type": "number" }
+                    }
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "currentPage": { "type": "integer" },
+                      "itemsPerPage": { "type": "integer" },
+                      "hasMore": { "type": "boolean" }
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "jobType": { "type": "string" },
+                      "generatedAt": { "type": "string", "format": "date-time" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/rankings/thief-rankings": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get thief job rankings",
+      "description": "Retrieve thief job rankings with detailed statistics",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number for pagination"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 100, "maximum": 200 },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Thief rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "rankings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rank": { "type": "integer" },
+                        "CharID": { "type": "integer" },
+                        "CharName16": { "type": "string" },
+                        "NickName16": { "type": "string" },
+                        "RefObjID": { "type": "integer" },
+                        "JobType": { "type": "integer" },
+                        "JobLevel": { "type": "integer" },
+                        "JobExp": { "type": "integer" },
+                        "ReputationPoint": { "type": "integer" },
+                        "KillCount": { "type": "integer" },
+                        "DeathCount": { "type": "integer" },
+                        "Class": { "type": "integer" },
+                        "JobRank": { "type": "integer" },
+                        "GuildName": { "type": "string" },
+                        "Race": { "type": "string" },
+                        "JobTypeName": { "type": "string", "enum": ["Thief"] }
+                      }
+                    }
+                  },
+                  "statistics": {
+                    "type": "object",
+                    "properties": {
+                      "totalThieves": { "type": "integer" },
+                      "averageLevel": { "type": "number" },
+                      "maxLevel": { "type": "integer" },
+                      "totalKills": { "type": "integer" },
+                      "averageReputation": { "type": "number" }
+                    }
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "currentPage": { "type": "integer" },
+                      "itemsPerPage": { "type": "integer" },
+                      "hasMore": { "type": "boolean" }
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "jobType": { "type": "string" },
+                      "generatedAt": { "type": "string", "format": "date-time" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/rankings/trader-rankings": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get trader job rankings",
+      "description": "Retrieve trader job rankings with detailed statistics",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": { "type": "integer", "default": 1 },
+          "description": "Page number for pagination"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": { "type": "integer", "default": 100, "maximum": 200 },
+          "description": "Number of entries per page"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Trader rankings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "rankings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rank": { "type": "integer" },
+                        "CharID": { "type": "integer" },
+                        "CharName16": { "type": "string" },
+                        "NickName16": { "type": "string" },
+                        "RefObjID": { "type": "integer" },
+                        "JobType": { "type": "integer" },
+                        "JobLevel": { "type": "integer" },
+                        "JobExp": { "type": "integer" },
+                        "ReputationPoint": { "type": "integer" },
+                        "KillCount": { "type": "integer" },
+                        "DeathCount": { "type": "integer" },
+                        "Class": { "type": "integer" },
+                        "JobRank": { "type": "integer" },
+                        "GuildName": { "type": "string" },
+                        "Race": { "type": "string" },
+                        "JobTypeName": { "type": "string", "enum": ["Trader"] }
+                      }
+                    }
+                  },
+                  "statistics": {
+                    "type": "object",
+                    "properties": {
+                      "totalTraders": { "type": "integer" },
+                      "averageLevel": { "type": "number" },
+                      "maxLevel": { "type": "integer" },
+                      "totalKills": { "type": "integer" },
+                      "averageReputation": { "type": "number" }
+                    }
+                  },
+                  "pagination": {
+                    "type": "object",
+                    "properties": {
+                      "currentPage": { "type": "integer" },
+                      "itemsPerPage": { "type": "integer" },
+                      "hasMore": { "type": "boolean" }
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "jobType": { "type": "string" },
+                      "generatedAt": { "type": "string", "format": "date-time" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  }
+}

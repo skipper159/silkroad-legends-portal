@@ -1,0 +1,368 @@
+{
+  "/api/upload/test": {
+    "get": {
+      "summary": "Test upload endpoint",
+      "description": "Test if upload service is working",
+      "tags": ["Upload"],
+      "responses": {
+        "200": {
+          "description": "Upload service is working",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Upload route is working!"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/upload/image": {
+    "post": {
+      "summary": "Upload single image",
+      "description": "Upload a single image file for news articles",
+      "tags": ["Upload"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "Image file to upload (JPG, PNG, WebP, GIF, max 5MB)"
+                }
+              },
+              "required": ["image"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Image uploaded successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Bild erfolgreich hochgeladen"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "filename": {
+                        "type": "string",
+                        "example": "news_1234567890_abc123.jpg"
+                      },
+                      "originalName": {
+                        "type": "string",
+                        "example": "my-image.jpg"
+                      },
+                      "url": {
+                        "type": "string",
+                        "example": "/images/news/news_1234567890_abc123.jpg"
+                      },
+                      "size": {
+                        "type": "number",
+                        "example": 154256
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - no file uploaded or invalid file type",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Keine Datei hochgeladen"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid or missing token"
+        },
+        "403": {
+          "description": "Forbidden - admin access required"
+        },
+        "500": {
+          "description": "Server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Fehler beim Hochladen des Bildes"
+                  },
+                  "error": {
+                    "type": "string",
+                    "example": "Error details"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/upload/images": {
+    "post": {
+      "summary": "Upload multiple images",
+      "description": "Upload multiple image files for news articles",
+      "tags": ["Upload"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "description": "Image files to upload (max 10 files, JPG, PNG, WebP, GIF, max 5MB each)"
+                }
+              },
+              "required": ["images"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Images uploaded successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "3 Bild(er) erfolgreich hochgeladen"
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "filename": {
+                          "type": "string",
+                          "example": "news_1234567890_abc123.jpg"
+                        },
+                        "originalName": {
+                          "type": "string",
+                          "example": "my-image.jpg"
+                        },
+                        "url": {
+                          "type": "string",
+                          "example": "/images/news/news_1234567890_abc123.jpg"
+                        },
+                        "size": {
+                          "type": "number",
+                          "example": 154256
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - no files uploaded"
+        },
+        "401": {
+          "description": "Unauthorized - invalid or missing token"
+        },
+        "403": {
+          "description": "Forbidden - admin access required"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    },
+    "get": {
+      "summary": "Get uploaded images list",
+      "description": "Get list of all uploaded images",
+      "tags": ["Upload"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "List of uploaded images",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "filename": {
+                          "type": "string",
+                          "example": "news_1234567890_abc123.jpg"
+                        },
+                        "url": {
+                          "type": "string",
+                          "example": "/images/news/news_1234567890_abc123.jpg"
+                        },
+                        "size": {
+                          "type": "number",
+                          "example": 154256
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2023-12-01T10:30:00.000Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid or missing token"
+        },
+        "403": {
+          "description": "Forbidden - admin access required"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    }
+  },
+  "/api/upload/image/{filename}": {
+    "delete": {
+      "summary": "Delete uploaded image",
+      "description": "Delete an uploaded image file",
+      "tags": ["Upload"],
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "filename",
+          "in": "path",
+          "required": true,
+          "description": "Name of the file to delete",
+          "schema": {
+            "type": "string",
+            "example": "news_1234567890_abc123.jpg"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Image deleted successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Bild erfolgreich gelöscht"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - invalid filename"
+        },
+        "401": {
+          "description": "Unauthorized - invalid or missing token"
+        },
+        "403": {
+          "description": "Forbidden - admin access required"
+        },
+        "404": {
+          "description": "File not found"
+        },
+        "500": {
+          "description": "Server error"
+        }
+      }
+    }
+  }
+}

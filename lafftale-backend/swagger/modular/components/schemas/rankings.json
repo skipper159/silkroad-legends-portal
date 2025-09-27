@@ -80,7 +80,7 @@
   },
   "JobRanking": {
     "type": "object",
-    "description": "Job-specific ranking entry from Phase 2",
+    "description": "Job-specific ranking entry",
     "properties": {
       "rank": {
         "type": "integer",
@@ -122,7 +122,7 @@
   },
   "JobStatistics": {
     "type": "object",
-    "description": "Comprehensive job statistics from Phase 3",
+    "description": "Comprehensive job statistics",
     "properties": {
       "JobType": {
         "type": "integer",
@@ -207,7 +207,7 @@
   },
   "JobLeaderboardEntry": {
     "type": "object",
-    "description": "Job leaderboard comparison entry from Phase 3",
+    "description": "Job leaderboard comparison entry",
     "properties": {
       "JobType": {
         "type": "integer",
@@ -249,7 +249,7 @@
   },
   "JobProgressionData": {
     "type": "object",
-    "description": "Job progression analytics data from Phase 3",
+    "description": "Job progression analytics data",
     "properties": {
       "JobType": {
         "type": "integer",
@@ -284,7 +284,7 @@
   },
   "HonorRanking": {
     "type": "object",
-    "description": "Honor system ranking entry from Phase 1",
+    "description": "Honor system ranking entry",
     "properties": {
       "rank": {
         "type": "integer",
@@ -323,7 +323,7 @@
   },
   "FortressRanking": {
     "type": "object",
-    "description": "Fortress system ranking entry from Phase 1",
+    "description": "Fortress system ranking entry",
     "properties": {
       "rank": {
         "type": "integer",
@@ -354,7 +354,7 @@
   },
   "PvPRanking": {
     "type": "object",
-    "description": "PvP K/D ranking entry from Phase 1",
+    "description": "PvP K/D ranking entry",
     "properties": {
       "rank": {
         "type": "integer",
@@ -482,5 +482,123 @@
       }
     },
     "required": ["rank", "CharName16", "SealOfSunDrops", "SealOfMoonDrops"]
+  },
+  "JobLeaderboardComparison": {
+    "type": "object",
+    "description": "Job leaderboard comparison entry",
+    "properties": {
+      "rank": {
+        "type": "integer",
+        "description": "Overall unified rank"
+      },
+      "CharName16": {
+        "type": "string",
+        "description": "Character name"
+      },
+      "jobType": {
+        "type": "integer",
+        "enum": [1, 2, 3],
+        "description": "Job type (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "jobLevel": {
+        "type": "integer",
+        "description": "Job level"
+      },
+      "reputationPoint": {
+        "type": "integer",
+        "description": "Reputation points"
+      },
+      "jobExp": {
+        "type": "integer",
+        "description": "Job experience"
+      },
+      "unifiedScore": {
+        "type": "number",
+        "description": "Unified ranking score across job types"
+      },
+      "race": {
+        "type": "string",
+        "enum": ["Chinese", "European"],
+        "description": "Character race"
+      }
+    },
+    "required": [
+      "rank",
+      "CharName16",
+      "jobType",
+      "jobLevel",
+      "reputationPoint",
+      "unifiedScore"
+    ]
+  },
+  "JobProgressionAnalytics": {
+    "type": "object",
+    "description": "Job progression analytics data",
+    "properties": {
+      "jobType": {
+        "type": "integer",
+        "enum": [1, 2, 3],
+        "description": "Job type analyzed (1=Trader, 2=Thief, 3=Hunter)"
+      },
+      "timeframe": {
+        "type": "string",
+        "enum": ["week", "month", "quarter", "year"],
+        "description": "Analysis timeframe"
+      },
+      "totalPlayers": {
+        "type": "integer",
+        "description": "Total players in this job type"
+      },
+      "averageLevel": {
+        "type": "number",
+        "description": "Average job level"
+      },
+      "levelDistribution": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "integer" },
+            "playerCount": { "type": "integer" },
+            "percentage": { "type": "number" }
+          }
+        },
+        "description": "Distribution of players across levels"
+      },
+      "experienceGrowth": {
+        "type": "object",
+        "properties": {
+          "totalExpGained": { "type": "integer" },
+          "averageExpPerPlayer": { "type": "number" },
+          "topExpGainer": {
+            "type": "object",
+            "properties": {
+              "CharName16": { "type": "string" },
+              "expGained": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "progressionTrends": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string", "format": "date" },
+            "newPlayers": { "type": "integer" },
+            "levelUps": { "type": "integer" },
+            "averageProgress": { "type": "number" }
+          }
+        },
+        "description": "Daily/weekly progression trends"
+      }
+    },
+    "required": [
+      "jobType",
+      "timeframe",
+      "totalPlayers",
+      "averageLevel",
+      "levelDistribution"
+    ]
   }
 }

@@ -122,6 +122,7 @@ export interface HonorRanking {
   HonorPoint: number;
   LatestHKTime?: string;
   Level?: number;
+  GuildName?: string;
   raceInfo?: {
     name: string;
     flag: string;

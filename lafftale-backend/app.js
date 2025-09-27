@@ -92,6 +92,7 @@ app.use('/api/gameaccount', require('./routes/gameaccount'));
 app.use('/api/inventory', require('./routes/inventory'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/news', require('./routes/news'));
+app.use('/api/upload', require('./routes/upload'));
 app.use('/api/pages', require('./routes/pages'));
 app.use('/api/downloads', require('./routes/downloads'));
 app.use('/api/vouchers', require('./routes/vouchers'));

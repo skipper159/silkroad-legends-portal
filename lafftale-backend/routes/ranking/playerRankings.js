@@ -38,14 +38,8 @@ async function getPlayerRanking(limit = 100, offset = 0, options = {}) {
     const finalQuery = QueryBuilder.applyParameters(query, parameters);
     const result = await pool.request().query(finalQuery);
 
-    // Filter out [GM] characters from results (but allow them in search)
-    const filteredResults = result.recordset.filter((player) => {
-      // Only filter [GM] characters in non-search results
-      if (!options.charName && player.CharName && player.CharName.startsWith('[GM]')) {
-        return false;
-      }
-      return true;
-    });
+    // GM filtering is now done in SQL query, no need for additional filtering
+    const filteredResults = result.recordset;
 
     // For non-search results, calculate rank based on offset + position
     return filteredResults.map((player, index) => ({
@@ -169,10 +163,18 @@ async function getUniqueRanking(limit = 100, offset = 0, monthly = false) {
       return [];
     }
 
-    return result.recordset.map((player) => ({
-      ...player,
+    return result.recordset.map((player, index) => ({
+      rank: offset + index + 1,
+      CharName16: player.playerName,
+      Level: player.level,
+      GuildName: player.guildName || null,
+      Race: player.Race,
+      UniqueCount: player.UniqueKills,
+      TotalKills: player.UniqueKills, // Alias für Kompatibilität
+      TotalPoints: player.TotalPoints,
+      LastKill: player.LastKill,
       raceInfo: rankingConfig.characterRace[player.Race] || null,
-      pointsFormatted: formatNumber(player.Points),
+      pointsFormatted: formatNumber(player.TotalPoints),
       killsFormatted: formatNumber(player.UniqueKills),
     }));
   });

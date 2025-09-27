@@ -1,9 +1,9 @@
 {
   "/api/ranking/honor": {
     "get": {
-      "summary": "Get honor rankings (Phase 1)",
+      "summary": "Get honor rankings",
       "description": "Retrieves ranked list of players by honor points and Hwan levels",
-      "tags": ["Rankings", "Phase 1"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "page",
@@ -96,9 +96,9 @@
   },
   "/api/ranking/fortress": {
     "get": {
-      "summary": "Get fortress kill rankings (Phase 1)",
+      "summary": "Get fortress kill rankings",
       "description": "Retrieves ranked list of players by fortress kills",
-      "tags": ["Rankings", "Phase 1"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "page",
@@ -191,9 +191,9 @@
   },
   "/api/ranking/pvp": {
     "get": {
-      "summary": "Get PvP K/D rankings (Phase 1)",
+      "summary": "Get PvP K/D rankings",
       "description": "Retrieves ranked list of players by Kill/Death ratio and PK counts",
-      "tags": ["Rankings", "Phase 1"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "page",
@@ -299,9 +299,9 @@
   },
   "/api/ranking/guild": {
     "get": {
-      "summary": "Get guild rankings (Phase 1)",
+      "summary": "Get guild rankings",
       "description": "Retrieves ranked list of guilds by member count and guild level",
-      "tags": ["Rankings", "Phase 1"],
+      "tags": ["Rankings"],
       "parameters": [
         {
           "name": "page",
