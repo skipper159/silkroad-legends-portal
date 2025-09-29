@@ -38,7 +38,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
       setLoading(true);
       setError(null);
 
-      // Nur cached Stats abrufen - KEINE Live-Abfrage!
+      // Only fetch cached stats - NO live query!
       const response = await fetch(`${weburl}/api/admin/silk/server-stats?cached=true`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
       const result = await response.json();
 
       if (result.success && result.data) {
-        // Prüfe ob Daten älter als 1 Stunde sind
+        // Check if data is older than 1 hour
         const lastUpdated = new Date(result.data.lastCalculated);
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
         const isStale = lastUpdated < oneHourAgo;
@@ -63,7 +63,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
           isStale,
         });
       } else {
-        // Fallback auf leere Stats wenn keine cached Daten verfügbar
+        // Fallback to empty stats if no cached data available
         setServerStats({
           totalPremiumSilk: 0,
           totalSilk: 0,
@@ -77,15 +77,15 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
             totalDonatedSilk: 0,
             uniqueDonors: 0,
           },
-          lastCalculated: 'Nie',
+          lastCalculated: 'Never',
           cached: false,
           isStale: true,
         });
       }
       setError(null);
     } catch (err) {
-      console.error('Fehler beim Laden der cached Silk Stats:', err);
-      setError('Fehler beim Laden der Silk-Statistiken');
+      console.error('Error loading cached Silk Stats:', err);
+      setError('Error loading Silk statistics');
       // Fallback auf leere Stats
       setServerStats({
         totalPremiumSilk: 0,
@@ -100,7 +100,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
           totalDonatedSilk: 0,
           uniqueDonors: 0,
         },
-        lastCalculated: 'Fehler',
+        lastCalculated: 'Error',
         cached: false,
         isStale: true,
       });
@@ -110,7 +110,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('de-DE').format(num);
+    return new Intl.NumberFormat('en-US').format(num);
   };
 
   const formatCompactNumber = (num: number) => {
@@ -128,17 +128,17 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
     const diff = now - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
 
-    if (minutes < 1) return 'vor wenigen Sekunden';
-    if (minutes < 60) return `vor ${minutes} Min.`;
-    if (minutes < 1440) return `vor ${Math.floor(minutes / 60)} Std.`;
-    return date.toLocaleDateString('de-DE');
+    if (minutes < 1) return 'a few seconds ago';
+    if (minutes < 60) return `${minutes} min. ago`;
+    if (minutes < 1440) return `${Math.floor(minutes / 60)} hrs. ago`;
+    return date.toLocaleDateString('en-US');
   };
 
   useEffect(() => {
     fetchCachedServerStats();
 
-    // Entferne Auto-refresh - nur manuell aktualisieren!
-    // Dashboard Widget soll nicht automatisch Live-Abfragen starten
+    // Remove auto-refresh - only manual updates!
+    // Dashboard Widget should not start automatic live queries
   }, []);
 
   if (loading && !serverStats) {
@@ -146,7 +146,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
       <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
         <div className='flex items-center justify-center h-20'>
           <Loader2 className='h-6 w-6 animate-spin text-lafftale-gold' />
-          <span className='ml-2 text-gray-400'>Lade Silk Statistiken...</span>
+          <span className='ml-2 text-gray-400'>Loading Silk Statistics...</span>
         </div>
       </Card>
     );
@@ -173,7 +173,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-yellow-600/20 to-lafftale-gold/20 border-lafftale-gold/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Total Silk Volumen</p>
+              <p className='text-xs text-gray-300 mb-1'>Total Silk Volume</p>
               <p className='text-xl font-bold text-lafftale-gold'>{formatCompactNumber(serverStats.totalSilkValue)}</p>
               <p className='text-xs text-gray-400'>{formatNumber(serverStats.totalSilkValue)} Silk</p>
             </div>
@@ -187,7 +187,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
               <p className='text-xs text-gray-300 mb-1'>Premium Silk</p>
               <p className='text-xl font-bold text-purple-400'>{formatCompactNumber(serverStats.totalPremiumSilk)}</p>
               <p className='text-xs text-gray-400'>
-                {Math.round((serverStats.totalPremiumSilk / serverStats.totalSilkValue) * 100)}% vom Total
+                {Math.round((serverStats.totalPremiumSilk / serverStats.totalSilkValue) * 100)}% of total
               </p>
             </div>
             <Crown className='h-8 w-8 text-purple-400' />
@@ -197,9 +197,9 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-green-600/20 to-green-400/20 border-green-400/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Aktive Accounts</p>
+              <p className='text-xs text-gray-300 mb-1'>Active Accounts</p>
               <p className='text-xl font-bold text-green-400'>{formatCompactNumber(serverStats.accountsWithSilk)}</p>
-              <p className='text-xs text-gray-400'>von {formatNumber(serverStats.totalAccounts)}</p>
+              <p className='text-xs text-gray-400'>of {formatNumber(serverStats.totalAccounts)}</p>
             </div>
             <Users className='h-8 w-8 text-green-400' />
           </div>
@@ -212,7 +212,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
               <p className='text-xl font-bold text-blue-400'>
                 ${formatCompactNumber(serverStats.donations.totalDonatedUSD)}
               </p>
-              <p className='text-xs text-gray-400'>{formatNumber(serverStats.donations.totalDonations)} Käufe</p>
+              <p className='text-xs text-gray-400'>{formatNumber(serverStats.donations.totalDonations)} Purchases</p>
             </div>
             <DollarSign className='h-8 w-8 text-blue-400' />
           </div>
@@ -225,18 +225,18 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-2xl font-bold text-lafftale-gold'>Server Silk Übersicht</h2>
+        <h2 className='text-2xl font-bold text-lafftale-gold'>Server Silk Overview</h2>
         <div className='flex items-center gap-4'>
           <span className='text-sm text-gray-400'>
             Aktualisiert: {formatDate(serverStats.lastCalculated)}
             {serverStats.cached && ' (cached)'}
-            {serverStats.isStale && <span className='ml-2 text-yellow-400 text-xs'>• Veraltet (&gt;1h)</span>}
+            {serverStats.isStale && <span className='ml-2 text-yellow-400 text-xs'>• Outdated (&gt;1h)</span>}
           </span>
           <button
             onClick={fetchCachedServerStats}
             disabled={loading}
             className='p-2 rounded-md border border-lafftale-gold/30 hover:bg-lafftale-gold/10 transition-colors'
-            title='Cached Statistiken neu laden'
+            title='Reload cached statistics'
           >
             {loading ? (
               <Loader2 className='h-4 w-4 animate-spin text-lafftale-gold' />
@@ -252,7 +252,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-yellow-600/20 to-lafftale-gold/20 border-lafftale-gold/50 p-6 md:col-span-2 lg:col-span-1'>
           <div className='text-center'>
             <Coins className='h-12 w-12 text-lafftale-gold mx-auto mb-4' />
-            <h3 className='text-lg font-semibold text-lafftale-gold mb-2'>Total Silk Volumen</h3>
+            <h3 className='text-lg font-semibold text-lafftale-gold mb-2'>Total Silk Volume</h3>
             <p className='text-4xl font-bold text-white mb-2'>{formatNumber(serverStats.totalSilkValue)}</p>
             <div className='grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-lafftale-gold/30'>
               <div>
@@ -271,9 +271,9 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-green-600/20 to-green-400/20 border-green-400/50 p-6'>
           <div className='text-center'>
             <Users className='h-12 w-12 text-green-400 mx-auto mb-4' />
-            <h3 className='text-lg font-semibold text-green-400 mb-2'>Account Aktivität</h3>
+            <h3 className='text-lg font-semibold text-green-400 mb-2'>Account Activity</h3>
             <p className='text-3xl font-bold text-white mb-2'>{formatNumber(serverStats.accountsWithSilk)}</p>
-            <p className='text-sm text-gray-400 mb-4'>Accounts mit Silk</p>
+            <p className='text-sm text-gray-400 mb-4'>Accounts with Silk</p>
             <div className='space-y-2'>
               <div className='flex justify-between'>
                 <span className='text-xs text-gray-400'>Total Accounts:</span>

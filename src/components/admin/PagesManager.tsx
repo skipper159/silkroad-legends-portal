@@ -132,13 +132,8 @@ const PagesManager: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/pages', {
+      const response = await fetchWithAuth(`${weburl}/api/pages`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(newPage),
       });
 
@@ -179,13 +174,8 @@ const PagesManager: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/pages/${editingPage.id}`, {
+      const response = await fetchWithAuth(`${weburl}/api/pages/${editingPage.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           title: editingPage.title,
           slug: editingPage.slug,
@@ -223,12 +213,8 @@ const PagesManager: React.FC = () => {
     if (!confirm('Are you sure you want to delete this page?')) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/pages/${pageId}`, {
+      const response = await fetchWithAuth(`${weburl}/api/pages/${pageId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       const data = await response.json();

@@ -62,8 +62,8 @@ const VoucherManager: React.FC = () => {
     } catch (error) {
       console.error('Error fetching vouchers:', error);
       toast({
-        title: 'Fehler',
-        description: 'Voucher konnten nicht geladen werden',
+        title: 'Error',
+        description: 'Vouchers could not be loaded',
         variant: 'destructive',
       });
     } finally {
@@ -83,8 +83,8 @@ const VoucherManager: React.FC = () => {
   const handleCreateVoucher = async () => {
     if (!newVoucher.code || !newVoucher.value) {
       toast({
-        title: 'Fehler',
-        description: 'Bitte fülle alle Pflichtfelder aus',
+        title: 'Error',
+        description: 'Please fill in all required fields',
         variant: 'destructive',
       });
       return;
@@ -98,8 +98,8 @@ const VoucherManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Voucher wurde erstellt',
+          title: 'Success!',
+          description: 'Voucher was created',
         });
         setShowCreateForm(false);
         setNewVoucher({
@@ -113,22 +113,22 @@ const VoucherManager: React.FC = () => {
       } else {
         const data = await response.json();
         toast({
-          title: 'Fehler',
-          description: data.message || 'Voucher konnte nicht erstellt werden',
+          title: 'Error',
+          description: data.message || 'Voucher could not be created',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Voucher konnte nicht erstellt werden',
+        title: 'Error',
+        description: 'Voucher could not be created',
         variant: 'destructive',
       });
     }
   };
 
   const handleDeleteVoucher = async (voucherId: number) => {
-    if (!confirm('Möchtest du diesen Voucher wirklich löschen?')) {
+    if (!confirm('Do you really want to delete this voucher?')) {
       return;
     }
 
@@ -139,21 +139,21 @@ const VoucherManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Voucher wurde gelöscht',
+          title: 'Success!',
+          description: 'Voucher was deleted',
         });
         fetchVouchers();
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Voucher konnte nicht gelöscht werden',
+          title: 'Error',
+          description: 'Voucher could not be deleted',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Voucher konnte nicht gelöscht werden',
+        title: 'Error',
+        description: 'Voucher could not be deleted',
         variant: 'destructive',
       });
     }
@@ -162,8 +162,8 @@ const VoucherManager: React.FC = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: 'Kopiert!',
-      description: 'Voucher-Code wurde kopiert',
+      title: 'Copied!',
+      description: 'Voucher code was copied',
     });
   };
 
@@ -183,14 +183,16 @@ const VoucherManager: React.FC = () => {
   };
 
   const filteredVouchers = vouchers.filter((voucher) => {
-    const matchesSearch = voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         voucher.type.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' ||
-                         (statusFilter === 'active' && voucher.is_active) ||
-                         (statusFilter === 'inactive' && !voucher.is_active) ||
-                         (statusFilter === 'expired' && voucher.expires_at && new Date(voucher.expires_at) < new Date());
-    
+    const matchesSearch =
+      voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      voucher.type.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'active' && voucher.is_active) ||
+      (statusFilter === 'inactive' && !voucher.is_active) ||
+      (statusFilter === 'expired' && voucher.expires_at && new Date(voucher.expires_at) < new Date());
+
     return matchesSearch && matchesStatus;
   });
 
@@ -200,44 +202,41 @@ const VoucherManager: React.FC = () => {
         <div className='flex items-center gap-3'>
           <Gift className='h-8 w-8 text-blue-600' />
           <div>
-            <h2 className='text-2xl font-bold text-gray-900'>Voucher Verwaltung</h2>
-            <p className='text-gray-600'>Erstelle und verwalte Voucher-Codes</p>
+            <h2 className='text-2xl font-bold text-gray-900'>Voucher Management</h2>
+            <p className='text-gray-600'>Create and manage voucher codes</p>
           </div>
         </div>
-        <Button 
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Neuer Voucher
+        <Button onClick={() => setShowCreateForm(!showCreateForm)} className='bg-blue-600 hover:bg-blue-700'>
+          <Plus className='h-4 w-4 mr-2' />
+          New Voucher
         </Button>
       </div>
 
       {/* Filter und Suche */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <CardContent className='pt-6'>
+          <div className='flex gap-4'>
+            <div className='flex-1'>
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
                 <Input
-                  placeholder="Nach Code oder Typ suchen..."
+                  placeholder='Search by code or type...'
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className='pl-10'
                 />
               </div>
             </div>
-            <div className="w-48">
+            <div className='w-48'>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
               >
-                <option value="all">Alle Status</option>
-                <option value="active">Aktiv</option>
-                <option value="inactive">Inaktiv</option>
-                <option value="expired">Abgelaufen</option>
+                <option value='all'>All Status</option>
+                <option value='active'>Active</option>
+                <option value='inactive'>Inactive</option>
+                <option value='expired'>Expired</option>
               </select>
             </div>
           </div>
@@ -248,79 +247,73 @@ const VoucherManager: React.FC = () => {
       {showCreateForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Neuen Voucher erstellen</CardTitle>
-            <CardDescription>Erstelle einen neuen Voucher-Code</CardDescription>
+            <CardTitle>Create New Voucher</CardTitle>
+            <CardDescription>Create a new voucher code</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <Label htmlFor="voucher-code">Voucher Code</Label>
-                <div className="flex gap-2">
+                <Label htmlFor='voucher-code'>Voucher Code</Label>
+                <div className='flex gap-2'>
                   <Input
-                    id="voucher-code"
+                    id='voucher-code'
                     value={newVoucher.code}
                     onChange={(e) => setNewVoucher({ ...newVoucher, code: e.target.value.toUpperCase() })}
-                    placeholder="VOUCHER123"
+                    placeholder='VOUCHER123'
                   />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={generateVoucherCode}
-                  >
-                    Generieren
+                  <Button type='button' variant='outline' onClick={generateVoucherCode}>
+                    Generate
                   </Button>
                 </div>
               </div>
               <div>
-                <Label htmlFor="voucher-type">Typ</Label>
+                <Label htmlFor='voucher-type'>Type</Label>
                 <select
-                  id="voucher-type"
+                  id='voucher-type'
                   value={newVoucher.type}
                   onChange={(e) => setNewVoucher({ ...newVoucher, type: e.target.value })}
-                  className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                  className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
                 >
-                  <option value="silk">Silk</option>
-                  <option value="gold">Gold</option>
-                  <option value="experience">Experience</option>
-                  <option value="item">Item</option>
+                  <option value='silk'>Silk</option>
+                  <option value='gold'>Gold</option>
+                  <option value='experience'>Experience</option>
+                  <option value='item'>Item</option>
                 </select>
               </div>
               <div>
-                <Label htmlFor="voucher-value">Wert</Label>
+                <Label htmlFor='voucher-value'>Value</Label>
                 <Input
-                  id="voucher-value"
-                  type="number"
+                  id='voucher-value'
+                  type='number'
                   value={newVoucher.value}
                   onChange={(e) => setNewVoucher({ ...newVoucher, value: parseInt(e.target.value) || 0 })}
-                  placeholder="1000"
+                  placeholder='1000'
                 />
               </div>
               <div>
-                <Label htmlFor="voucher-uses">Maximale Verwendungen</Label>
+                <Label htmlFor='voucher-uses'>Maximum Uses</Label>
                 <Input
-                  id="voucher-uses"
-                  type="number"
+                  id='voucher-uses'
+                  type='number'
                   value={newVoucher.max_uses}
                   onChange={(e) => setNewVoucher({ ...newVoucher, max_uses: parseInt(e.target.value) || 1 })}
-                  placeholder="1"
+                  placeholder='1'
                 />
               </div>
               <div>
-                <Label htmlFor="voucher-expires">Ablaufdatum (optional)</Label>
+                <Label htmlFor='voucher-expires'>Expiration Date (optional)</Label>
                 <Input
-                  id="voucher-expires"
-                  type="datetime-local"
+                  id='voucher-expires'
+                  type='datetime-local'
                   value={newVoucher.expires_at || ''}
                   onChange={(e) => setNewVoucher({ ...newVoucher, expires_at: e.target.value || null })}
                 />
               </div>
             </div>
-            <div className="flex gap-2 mt-4">
-              <Button onClick={handleCreateVoucher}>
-                Voucher erstellen
-              </Button>
-              <Button variant="outline" onClick={() => setShowCreateForm(false)}>
-                Abbrechen
+            <div className='flex gap-2 mt-4'>
+              <Button onClick={handleCreateVoucher}>Create Voucher</Button>
+              <Button variant='outline' onClick={() => setShowCreateForm(false)}>
+                Cancel
               </Button>
             </div>
           </CardContent>
@@ -330,69 +323,61 @@ const VoucherManager: React.FC = () => {
       {/* Voucher Liste */}
       <Card>
         <CardHeader>
-          <CardTitle>Voucher Übersicht</CardTitle>
+          <CardTitle>Voucher Overview</CardTitle>
           <CardDescription>
             {filteredVouchers.length} von {vouchers.length} Vouchers
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">
-              <div className="text-gray-500">Lade Vouchers...</div>
+            <div className='text-center py-8'>
+              <div className='text-gray-500'>Loading Vouchers...</div>
             </div>
           ) : filteredVouchers.length === 0 ? (
-            <div className="text-center py-8">
-              <Gift className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Keine Vouchers gefunden</p>
+            <div className='text-center py-8'>
+              <Gift className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+              <p className='text-gray-500'>No vouchers found</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className='space-y-3'>
               {filteredVouchers.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
                 >
-                  <div className="flex items-center gap-4">
+                  <div className='flex items-center gap-4'>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold">{voucher.code}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => copyToClipboard(voucher.code)}
-                        >
-                          <Copy className="h-3 w-3" />
+                      <div className='flex items-center gap-2'>
+                        <span className='font-mono font-bold'>{voucher.code}</span>
+                        <Button size='sm' variant='ghost' onClick={() => copyToClipboard(voucher.code)}>
+                          <Copy className='h-3 w-3' />
                         </Button>
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge className={getTypeColor(voucher.type)}>
-                          {voucher.type}
-                        </Badge>
-                        <span className="text-sm text-gray-500">
-                          {voucher.used_count}/{voucher.max_uses} verwendet
+                      <div className='flex items-center gap-2 mt-1'>
+                        <Badge className={getTypeColor(voucher.type)}>{voucher.type}</Badge>
+                        <span className='text-sm text-gray-500'>
+                          {voucher.used_count}/{voucher.max_uses} used
                         </span>
                         {voucher.expires_at && (
-                          <span className="text-sm text-gray-500">
-                            Läuft ab: {new Date(voucher.expires_at).toLocaleDateString('de-DE')}
+                          <span className='text-sm text-gray-500'>
+                            Expires: {new Date(voucher.expires_at).toLocaleDateString('de-DE')}
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-right">
-                      <div className="font-bold text-lg">+{voucher.value}</div>
-                      <div className="text-sm text-gray-500">
-                        {voucher.is_active ? 'Aktiv' : 'Inaktiv'}
-                      </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='text-right'>
+                      <div className='font-bold text-lg'>+{voucher.value}</div>
+                      <div className='text-sm text-gray-500'>{voucher.is_active ? 'Active' : 'Inactive'}</div>
                     </div>
                     <Button
-                      size="sm"
-                      variant="ghost"
+                      size='sm'
+                      variant='ghost'
                       onClick={() => handleDeleteVoucher(voucher.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className='text-red-600 hover:text-red-700 hover:bg-red-50'
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className='h-4 w-4' />
                     </Button>
                   </div>
                 </div>

@@ -21,7 +21,7 @@ const { getThiefRankings, getThiefStatistics } = require('./thief_rankings');
 const { getTraderRankings, getTraderStatistics } = require('./trader_rankings');
 const { getHonorRanking } = require('./honorRankings');
 const { getPvPRanking } = require('./pvpRankings');
-const { getFortressPlayerRanking, getFortressGuildRanking } = require('./fortressRankings');
+const { getFortressPlayerRanking, getFortressGuildRanking, getCurrentFortressOwner } = require('./fortressRankings');
 const {
   getJobStatistics,
   getJobLeaderboardComparison,
@@ -397,6 +397,30 @@ router.get('/fortress-players', async (req, res) => {
       message: 'Failed to fetch fortress player rankings',
       error: error.message,
     });
+  }
+});
+
+// GET /api/rankings/fortress-current - Current fortress owner summary
+router.get('/fortress-current', async (req, res) => {
+  try {
+    // Prefer direct log-based query for current fortress owner
+    const owner = await getCurrentFortressOwner();
+
+    if (!owner) {
+      return res.json({ success: true, data: { guild: null, fortress: null, timeHeld: null }, timestamp: new Date().toISOString() });
+    }
+
+    // Normalize shape expected by frontend
+    const payload = {
+      guild: owner.guild ? { name: owner.guild } : null,
+      fortress: owner.fortress || null,
+      heldSince: owner.timeHeld || null,
+    };
+
+    res.json({ success: true, data: payload, timestamp: new Date().toISOString() });
+  } catch (error) {
+    console.error('Error fetching fortress current owner:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch fortress owner' });
   }
 });
 

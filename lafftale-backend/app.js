@@ -79,6 +79,7 @@ app.use('/api/admin_tickets', require('./routes/admin_tickets'));
 app.use('/api/user_tickets', require('./routes/user_tickets'));
 app.use('/api/donation', require('./routes/donation'));
 app.use('/api/rankings', require('./routes/ranking')); // Main ranking system
+app.use('/api/metrics', require('./routes/metrics'));
 
 // Enhanced Rankings API v2 - DISABLED (buggy schema compatibility)
 // app.use('/api/enhanced', require('./routes/ranking/enhancedRankings'));
@@ -108,6 +109,12 @@ app.use('/api/user-roles', require('./routes/user-roles'));
 // Initialisiere Cron Jobs
 const CronJobService = require('./services/cronJobService');
 CronJobService.initializeJobs().catch(console.error);
+
+// Ensure players_online_collector job is registered with a sensible default (every minute)
+// This will create/update the job setting and start the scheduled task according to the service logic
+CronJobService.updateJobSetting('players_online_collector', '*/1 * * * *', true).catch((err) => {
+  console.warn('Could not register players_online_collector job at startup:', err && err.message ? err.message : err);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Lafftale backend running on port ${PORT}`));

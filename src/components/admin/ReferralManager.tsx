@@ -158,8 +158,8 @@ const ReferralManager: React.FC = () => {
       console.error('Error fetching referrals:', error);
       setReferrals([]);
       toast({
-        title: 'Fehler',
-        description: 'Referrals konnten nicht geladen werden',
+        title: 'Error',
+        description: 'Referrals could not be loaded',
         variant: 'destructive',
       });
     } finally {
@@ -200,7 +200,7 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Neue API Struktur: data.data.settings
+        // New API structure: data.data.settings
         setSettings(data.data?.settings || data.data || null);
       }
     } catch (error) {
@@ -211,14 +211,14 @@ const ReferralManager: React.FC = () => {
 
   const fetchAntiCheatData = async () => {
     try {
-      // Anti-Cheat Statistiken
+      // Anti-cheat statistics
       const statsResponse = await fetchWithAuth(`${weburl}/api/admin/referrals/anticheat/stats`);
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setAntiCheatStats(statsData.data || null);
       }
 
-      // Verdächtige Referrals
+      // Suspicious referrals
       const suspiciousResponse = await fetchWithAuth(`${weburl}/api/admin/referrals/anticheat/suspicious`);
       if (suspiciousResponse.ok) {
         const suspiciousData = await suspiciousResponse.json();
@@ -244,11 +244,11 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolg',
-          description: `Referral wurde ${isValid ? 'als gültig markiert' : 'als ungültig markiert'}`,
+          title: 'Success',
+          description: `Referral was ${isValid ? 'marked as valid' : 'marked as invalid'}`,
         });
 
-        // Daten neu laden
+        // Reload data
         await fetchAntiCheatData();
         await fetchReferralData();
       } else {
@@ -257,8 +257,8 @@ const ReferralManager: React.FC = () => {
     } catch (error) {
       console.error('Error validating referral:', error);
       toast({
-        title: 'Fehler',
-        description: 'Referral-Validierung fehlgeschlagen',
+        title: 'Error',
+        description: 'Referral validation failed',
         variant: 'destructive',
       });
     }
@@ -276,18 +276,18 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Referral-Einstellungen wurden aktualisiert',
+          title: 'Success!',
+          description: 'Referral settings updated',
         });
-        fetchSettings(); // Neu laden
+        fetchSettings(); // Reload
       } else {
         throw new Error('Failed to update settings');
       }
     } catch (error) {
       console.error('Error updating settings:', error);
       toast({
-        title: 'Fehler',
-        description: 'Einstellungen konnten nicht gespeichert werden',
+        title: 'Error',
+        description: 'Settings could not be saved',
         variant: 'destructive',
       });
     }
@@ -302,29 +302,29 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: `Referral Status wurde auf ${newStatus} geändert`,
+          title: 'Success!',
+          description: `Referral status changed to ${newStatus}`,
         });
         fetchReferralData();
         fetchStatistics();
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Status konnte nicht geändert werden',
+          title: 'Error',
+          description: 'Status could not be changed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Status konnte nicht geändert werden',
+        title: 'Error',
+        description: 'Status could not be changed',
         variant: 'destructive',
       });
     }
   };
 
   const handleDeleteReward = async (rewardId: number) => {
-    if (!confirm('Möchtest du diese Belohnung wirklich löschen?')) {
+    if (!confirm('Do you really want to delete this reward?')) {
       return;
     }
 
@@ -335,21 +335,21 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Belohnung wurde gelöscht',
+          title: 'Success!',
+          description: 'Reward was deleted',
         });
         fetchRewards();
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Belohnung konnte nicht gelöscht werden',
+          title: 'Error',
+          description: 'Reward could not be deleted',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Belohnung konnte nicht gelöscht werden',
+        title: 'Error',
+        description: 'Reward could not be deleted',
         variant: 'destructive',
       });
     }
@@ -377,30 +377,30 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Belohnung wurde aktualisiert',
+          title: 'Success!',
+          description: 'Reward was updated',
         });
         setShowEditModal(false);
         setEditingReward(null);
         fetchRewards();
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Belohnung konnte nicht aktualisiert werden',
+          title: 'Error',
+          description: 'Reward could not be updated',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Belohnung konnte nicht aktualisiert werden',
+        title: 'Error',
+        description: 'Reward could not be updated',
         variant: 'destructive',
       });
     }
   };
 
   const handleDeleteReferral = async (referralId: number) => {
-    if (!confirm('Möchtest du dieses Referral wirklich löschen?')) {
+    if (!confirm('Do you really want to delete this referral?')) {
       return;
     }
 
@@ -411,22 +411,22 @@ const ReferralManager: React.FC = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich!',
-          description: 'Referral wurde gelöscht',
+          title: 'Success!',
+          description: 'Referral was deleted',
         });
         fetchReferralData();
         fetchStatistics();
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Referral konnte nicht gelöscht werden',
+          title: 'Error',
+          description: 'Referral could not be deleted',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Referral konnte nicht gelöscht werden',
+        title: 'Error',
+        description: 'Referral could not be deleted',
         variant: 'destructive',
       });
     }
@@ -465,8 +465,8 @@ const ReferralManager: React.FC = () => {
       <div className='flex items-center gap-3'>
         <UserPlus className='h-8 w-8 text-blue-600' />
         <div>
-          <h2 className='text-2xl font-bold text-gray-900'>Referral Verwaltung</h2>
-          <p className='text-gray-600'>Verwalte Referrals und Belohnungen</p>
+          <h2 className='text-2xl font-bold text-gray-900'>Referral Management</h2>
+          <p className='text-gray-600'>Manage referrals and rewards</p>
         </div>
       </div>
 
@@ -483,7 +483,7 @@ const ReferralManager: React.FC = () => {
           >
             <div className='flex items-center gap-2'>
               <BarChart3 className='h-4 w-4' />
-              Übersicht & Verwaltung
+              Overview
             </div>
           </button>
           <button
@@ -496,7 +496,7 @@ const ReferralManager: React.FC = () => {
           >
             <div className='flex items-center gap-2'>
               <Settings className='h-4 w-4' />
-              Systemeinstellungen
+              System Settings
             </div>
           </button>
           <button
@@ -509,7 +509,7 @@ const ReferralManager: React.FC = () => {
           >
             <div className='flex items-center gap-2'>
               <Award className='h-4 w-4' />
-              Belohnungen verwalten
+              Manage Rewards
             </div>
           </button>
           <button
@@ -538,7 +538,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='pt-6'>
                   <div className='text-center'>
                     <div className='text-2xl font-bold text-blue-600'>{statistics.total_referrals}</div>
-                    <div className='text-sm text-gray-500'>Gesamt Referrals</div>
+                    <div className='text-sm text-gray-500'>Total referrals</div>
                   </div>
                 </CardContent>
               </Card>
@@ -546,7 +546,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='pt-6'>
                   <div className='text-center'>
                     <div className='text-2xl font-bold text-yellow-600'>{statistics.pending_referrals}</div>
-                    <div className='text-sm text-gray-500'>Wartend</div>
+                    <div className='text-sm text-gray-500'>Pending</div>
                   </div>
                 </CardContent>
               </Card>
@@ -554,7 +554,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='pt-6'>
                   <div className='text-center'>
                     <div className='text-2xl font-bold text-green-600'>{statistics.completed_referrals}</div>
-                    <div className='text-sm text-gray-500'>Abgeschlossen</div>
+                    <div className='text-sm text-gray-500'>Completed</div>
                   </div>
                 </CardContent>
               </Card>
@@ -564,7 +564,7 @@ const ReferralManager: React.FC = () => {
                     <div className='text-2xl font-bold text-red-600'>
                       {statistics.total_referrals - statistics.completed_referrals - statistics.pending_referrals}
                     </div>
-                    <div className='text-sm text-gray-500'>Fehler/Andere</div>
+                    <div className='text-sm text-gray-500'>Error/Other</div>
                   </div>
                 </CardContent>
               </Card>
@@ -572,7 +572,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='pt-6'>
                   <div className='text-center'>
                     <div className='text-2xl font-bold text-purple-600'>{statistics.total_rewards_paid}</div>
-                    <div className='text-sm text-gray-500'>Belohnungen</div>
+                    <div className='text-sm text-gray-500'>Rewards</div>
                   </div>
                 </CardContent>
               </Card>
@@ -580,14 +580,14 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='pt-6'>
                   <div className='text-center'>
                     <div className='text-2xl font-bold text-indigo-600'>{statistics.unique_referrers}</div>
-                    <div className='text-sm text-gray-500'>Aktive Werber</div>
+                    <div className='text-sm text-gray-500'>Active referrers</div>
                   </div>
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Filter und Suche */}
+          {/* Filters and search */}
           <Card>
             <CardContent className='pt-6'>
               <div className='flex gap-4'>
@@ -595,7 +595,7 @@ const ReferralManager: React.FC = () => {
                   <div className='relative'>
                     <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
                     <Input
-                      placeholder='Nach Benutzername oder Code suchen...'
+                      placeholder='Search by username or code...'
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className='pl-10'
@@ -608,9 +608,9 @@ const ReferralManager: React.FC = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                     className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
                   >
-                    <option value='all'>Alle</option>
-                    <option value='pending'>Wartend</option>
-                    <option value='completed'>Abgeschlossen</option>
+                    <option value='all'>All</option>
+                    <option value='pending'>Pending</option>
+                    <option value='completed'>Completed</option>
                   </select>
                 </div>
                 <div className='w-32'>
@@ -619,33 +619,33 @@ const ReferralManager: React.FC = () => {
                     onChange={(e) => setTimeframe(e.target.value)}
                     className='w-full h-10 px-3 rounded-md border border-input bg-background text-sm'
                   >
-                    <option value='7'>7 Tage</option>
-                    <option value='30'>30 Tage</option>
-                    <option value='90'>90 Tage</option>
-                    <option value='365'>1 Jahr</option>
+                    <option value='7'>7 days</option>
+                    <option value='30'>30 days</option>
+                    <option value='90'>90 days</option>
+                    <option value='365'>1 year</option>
                   </select>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Referral Liste */}
+          {/* Referral List */}
           <Card>
             <CardHeader>
-              <CardTitle>Referral Übersicht</CardTitle>
+              <CardTitle>Referral Overview</CardTitle>
               <CardDescription>
-                {filteredReferrals.length} von {referrals.length} Referrals
+                {filteredReferrals.length} of {referrals.length} referrals
               </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className='text-center py-8'>
-                  <div className='text-gray-500'>Lade Referrals...</div>
+                  <div className='text-gray-500'>Loading referrals...</div>
                 </div>
               ) : filteredReferrals.length === 0 ? (
                 <div className='text-center py-8'>
                   <Users className='h-12 w-12 text-gray-400 mx-auto mb-4' />
-                  <p className='text-gray-500'>Keine Referrals gefunden</p>
+                  <p className='text-gray-500'>No referrals found</p>
                 </div>
               ) : (
                 <div className='space-y-3'>
@@ -657,9 +657,9 @@ const ReferralManager: React.FC = () => {
                       <div className='flex items-center gap-4'>
                         <div>
                           <div className='flex items-center gap-2'>
-                            <span className='font-medium'>{referral.referrer_username || 'Unbekannt'}</span>
+                            <span className='font-medium'>{referral.referrer_username || 'Unknown'}</span>
                             <span className='text-gray-400'>→</span>
-                            <span className='font-medium'>{referral.referred_username || 'Unbekannt'}</span>
+                            <span className='font-medium'>{referral.referred_username || 'Unknown'}</span>
                           </div>
                           <div className='flex items-center gap-2 mt-1'>
                             <span className='text-sm text-gray-500 font-mono'>{referral.code}</span>
@@ -668,10 +668,10 @@ const ReferralManager: React.FC = () => {
                                 referral.redeemed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                               }
                             >
-                              {referral.redeemed ? 'Eingelöst' : 'Wartend'}
+                              {referral.redeemed ? 'Redeemed' : 'Pending'}
                             </Badge>
                             <span className='text-sm text-gray-500'>
-                              {new Date(referral.created_at).toLocaleDateString('de-DE')}
+                              {new Date(referral.created_at).toLocaleDateString('en-US')}
                             </span>
                           </div>
                         </div>
@@ -679,9 +679,7 @@ const ReferralManager: React.FC = () => {
                       <div className='flex items-center gap-2'>
                         <div className='text-right mr-4'>
                           <div className='font-bold text-lg'>+{referral.reward_silk}</div>
-                          <div className='text-sm text-gray-500'>
-                            {referral.redeemed_at ? 'Ausgezahlt' : 'Ausstehend'}
-                          </div>
+                          <div className='text-sm text-gray-500'>{referral.redeemed_at ? 'Paid' : 'Pending'}</div>
                         </div>
 
                         {!referral.redeemed && referral.invited_jid && (
@@ -691,7 +689,7 @@ const ReferralManager: React.FC = () => {
                               onClick={() => handleStatusUpdate(referral.id, 'completed')}
                               className='bg-green-600 hover:bg-green-700 text-white'
                             >
-                              Auszahlen
+                              Payout
                             </Button>
                           </>
                         )}
@@ -716,21 +714,21 @@ const ReferralManager: React.FC = () => {
 
       {activeTab === 'settings' && (
         <div className='space-y-6'>
-          {/* Referral-Einstellungen */}
+          {/* Referral Settings */}
           <Card>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Settings className='h-5 w-5' />
-                Referral-Systemeinstellungen
+                Referral System Settings
               </CardTitle>
-              <CardDescription>Konfiguriere das Referral-System</CardDescription>
+              <CardDescription>Configure the referral system</CardDescription>
             </CardHeader>
             <CardContent>
               {settings ? (
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div className='space-y-2'>
                     <label htmlFor='points_per_referral' className='text-sm font-medium'>
-                      Punkte pro Referral
+                      Points per referral
                     </label>
                     <Input
                       id='points_per_referral'
@@ -752,7 +750,7 @@ const ReferralManager: React.FC = () => {
 
                   <div className='space-y-2'>
                     <label htmlFor='minimum_redeem_points' className='text-sm font-medium'>
-                      Mindest-Einlösung (Punkte)
+                      Minimum redeem points
                     </label>
                     <Input
                       id='minimum_redeem_points'
@@ -774,7 +772,7 @@ const ReferralManager: React.FC = () => {
 
                   <div className='space-y-2'>
                     <label htmlFor='silk_per_point' className='text-sm font-medium'>
-                      Silk pro Punkt
+                      Silk per point
                     </label>
                     <Input
                       id='silk_per_point'
@@ -796,7 +794,7 @@ const ReferralManager: React.FC = () => {
 
                   <div className='space-y-2'>
                     <label htmlFor='referral_enabled' className='text-sm font-medium'>
-                      System aktiviert
+                      System enabled
                     </label>
                     <select
                       id='referral_enabled'
@@ -811,31 +809,31 @@ const ReferralManager: React.FC = () => {
                         });
                       }}
                     >
-                      <option value='true'>Aktiviert</option>
-                      <option value='false'>Deaktiviert</option>
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
                     </select>
                     <p className='text-xs text-gray-500'>{settings.referral_enabled.description}</p>
                   </div>
                 </div>
               ) : (
-                <div className='text-center py-4 text-gray-500'>Lade Einstellungen...</div>
+                <div className='text-center py-4 text-gray-500'>Loading settings...</div>
               )}
             </CardContent>
           </Card>
 
-          {/* Anti-Cheat Einstellungen */}
+          {/* Anti-Cheat Settings */}
           <Card>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <BarChart3 className='h-5 w-5' />
-                Anti-Cheat Einstellungen
+                Anti-Cheat Settings
               </CardTitle>
-              <CardDescription>Konfiguriere Betrugsschutz-Maßnahmen</CardDescription>
+              <CardDescription>Configure anti-cheat measures</CardDescription>
             </CardHeader>
             <CardContent>
               {settings ? (
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  {/* Anti-Cheat aktiviert */}
+                  {/* Anti-cheat enabled */}
                   <div className='space-y-2'>
                     <label htmlFor='anticheat_enabled' className='text-sm font-medium'>
                       Anti-Cheat System
@@ -860,18 +858,18 @@ const ReferralManager: React.FC = () => {
                         });
                       }}
                     >
-                      <option value='true'>Aktiviert</option>
-                      <option value='false'>Deaktiviert</option>
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
                     </select>
                     <p className='text-xs text-gray-500'>
-                      {settings.anticheat_enabled?.description || 'Aktiviert automatische Betrugserkennung'}
+                      {settings.anticheat_enabled?.description || 'Enables automatic anti-cheat detection'}
                     </p>
                   </div>
 
                   {/* Max Referrals pro IP */}
                   <div className='space-y-2'>
                     <label htmlFor='max_referrals_per_ip_per_day' className='text-sm font-medium'>
-                      Max. Referrals pro IP/Tag
+                      Max referrals per IP/day
                     </label>
                     <Input
                       id='max_referrals_per_ip_per_day'
@@ -898,15 +896,14 @@ const ReferralManager: React.FC = () => {
                       }}
                     />
                     <p className='text-xs text-gray-500'>
-                      {settings.max_referrals_per_ip_per_day?.description ||
-                        'Maximale Anzahl Referrals pro IP-Adresse pro Tag'}
+                      {settings.max_referrals_per_ip_per_day?.description || 'Maximum referrals per IP address per day'}
                     </p>
                   </div>
 
                   {/* Max Referrals pro Fingerprint */}
                   <div className='space-y-2'>
                     <label htmlFor='max_referrals_per_fingerprint_per_day' className='text-sm font-medium'>
-                      Max. Referrals pro Browser/Tag
+                      Max referrals per fingerprint/day
                     </label>
                     <Input
                       id='max_referrals_per_fingerprint_per_day'
@@ -935,14 +932,14 @@ const ReferralManager: React.FC = () => {
                     />
                     <p className='text-xs text-gray-500'>
                       {settings.max_referrals_per_fingerprint_per_day?.description ||
-                        'Maximale Anzahl Referrals pro Browser-Fingerprint pro Tag'}
+                        'Maximum referrals per browser fingerprint per day'}
                     </p>
                   </div>
 
                   {/* Blockiere gleiche IP */}
                   <div className='space-y-2'>
                     <label htmlFor='block_duplicate_ip_referrals' className='text-sm font-medium'>
-                      Gleiche IP blockieren
+                      Block duplicate IP
                     </label>
                     <select
                       id='block_duplicate_ip_referrals'
@@ -964,19 +961,19 @@ const ReferralManager: React.FC = () => {
                         });
                       }}
                     >
-                      <option value='true'>Aktiviert</option>
-                      <option value='false'>Deaktiviert</option>
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
                     </select>
                     <p className='text-xs text-gray-500'>
                       {settings.block_duplicate_ip_referrals?.description ||
-                        'Blockiert Referrals von derselben IP wie der Referrer'}
+                        'Blocks referrals from the same IP as the referrer'}
                     </p>
                   </div>
 
                   {/* Blockiere gleichen Browser */}
                   <div className='space-y-2'>
                     <label htmlFor='block_duplicate_fingerprint_referrals' className='text-sm font-medium'>
-                      Gleichen Browser blockieren
+                      Block duplicate browser
                     </label>
                     <select
                       id='block_duplicate_fingerprint_referrals'
@@ -998,19 +995,19 @@ const ReferralManager: React.FC = () => {
                         });
                       }}
                     >
-                      <option value='true'>Aktiviert</option>
-                      <option value='false'>Deaktiviert</option>
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
                     </select>
                     <p className='text-xs text-gray-500'>
                       {settings.block_duplicate_fingerprint_referrals?.description ||
-                        'Blockiert Referrals vom selben Browser-Fingerprint wie der Referrer'}
+                        'Blocks referrals from the same browser fingerprint as the referrer'}
                     </p>
                   </div>
 
-                  {/* Manuelle Prüfung erforderlich */}
+                  {/* Manual review required */}
                   <div className='space-y-2'>
                     <label htmlFor='suspicious_referral_review_required' className='text-sm font-medium'>
-                      Manuelle Prüfung verdächtiger Referrals
+                      Manual review of suspicious referrals
                     </label>
                     <select
                       id='suspicious_referral_review_required'
@@ -1032,17 +1029,17 @@ const ReferralManager: React.FC = () => {
                         });
                       }}
                     >
-                      <option value='true'>Aktiviert</option>
-                      <option value='false'>Deaktiviert</option>
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
                     </select>
                     <p className='text-xs text-gray-500'>
                       {settings.suspicious_referral_review_required?.description ||
-                        'Verdächtige Referrals erfordern manuelle Admin-Freigabe'}
+                        'Suspicious referrals require manual admin approval'}
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className='text-center py-4 text-gray-500'>Lade Anti-Cheat Einstellungen...</div>
+                <div className='text-center py-4 text-gray-500'>Loading anti-cheat settings...</div>
               )}
             </CardContent>
           </Card>
@@ -1051,14 +1048,14 @@ const ReferralManager: React.FC = () => {
 
       {activeTab === 'rewards' && (
         <div className='space-y-6'>
-          {/* Belohnungen verwalten */}
+          {/* Manage rewards */}
           <Card>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Award className='h-5 w-5' />
-                Belohnungen verwalten
+                Manage rewards
               </CardTitle>
-              <CardDescription>Konfiguriere verfügbare Referral-Belohnungen</CardDescription>
+              <CardDescription>Configure available referral rewards</CardDescription>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -1067,15 +1064,15 @@ const ReferralManager: React.FC = () => {
                     <div className='flex justify-between items-start mb-2'>
                       <h4 className='font-medium'>{reward.description}</h4>
                       <Badge variant={reward.is_active ? 'default' : 'secondary'}>
-                        {reward.is_active ? 'Aktiv' : 'Inaktiv'}
+                        {reward.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
                     <div className='space-y-2 mb-3'>
                       <div className='text-sm text-gray-600'>
-                        <span className='font-medium'>Benötigte Punkte:</span> {reward.points_required}
+                        <span className='font-medium'>Required points:</span> {reward.points_required}
                       </div>
                       <div className='text-sm text-gray-600'>
-                        <span className='font-medium'>Silk Belohnung:</span> {reward.silk_reward}
+                        <span className='font-medium'>Silk reward:</span> {reward.silk_reward}
                       </div>
                       {reward.item_id && (
                         <div className='text-sm text-gray-600'>
@@ -1084,7 +1081,7 @@ const ReferralManager: React.FC = () => {
                       )}
                     </div>
                     <div className='flex justify-between items-center'>
-                      <span className='font-bold text-blue-600'>{reward.points_required} Punkte</span>
+                      <span className='font-bold text-blue-600'>{reward.points_required} points</span>
                       <div className='flex gap-2'>
                         <Button size='sm' variant='outline' onClick={() => handleEditReward(reward)}>
                           <Edit className='h-3 w-3' />
@@ -1107,12 +1104,12 @@ const ReferralManager: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Reward Modal - Verbessertes Design */}
+      {/* Edit Reward Modal - Enhanced design */}
       {showEditModal && editingReward && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
           <div className='bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700'>
             <div className='flex justify-between items-center mb-4'>
-              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>Belohnung bearbeiten</h3>
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>Edit Reward</h3>
               <Button
                 variant='ghost'
                 size='sm'
@@ -1132,13 +1129,13 @@ const ReferralManager: React.FC = () => {
                   htmlFor='edit-description'
                   className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
                 >
-                  Beschreibung
+                  Description
                 </label>
                 <Input
                   id='edit-description'
                   value={editingReward.description}
                   onChange={(e) => setEditingReward({ ...editingReward, description: e.target.value })}
-                  placeholder='z.B. 100 Silk für 100 Punkte'
+                  placeholder='e.g. 100 Silk for 100 points'
                   className='bg-white dark:bg-gray-800'
                 />
               </div>
@@ -1148,7 +1145,7 @@ const ReferralManager: React.FC = () => {
                   htmlFor='edit-points'
                   className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
                 >
-                  Benötigte Punkte
+                  Required points
                 </label>
                 <Input
                   id='edit-points'
@@ -1164,7 +1161,7 @@ const ReferralManager: React.FC = () => {
 
               <div>
                 <label htmlFor='edit-silk' className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'>
-                  Silk Belohnung
+                  Silk reward
                 </label>
                 <Input
                   id='edit-silk'
@@ -1190,7 +1187,7 @@ const ReferralManager: React.FC = () => {
                       item_id: e.target.value ? parseInt(e.target.value) : null,
                     })
                   }
-                  placeholder='z.B. 12345'
+                  placeholder='e.g. 12345'
                   className='bg-white dark:bg-gray-800'
                 />
               </div>
@@ -1204,7 +1201,7 @@ const ReferralManager: React.FC = () => {
                   className='rounded text-blue-600 focus:ring-blue-500'
                 />
                 <label htmlFor='edit-active' className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                  Belohnung aktiv
+                  Reward active
                 </label>
               </div>
             </div>
@@ -1218,10 +1215,10 @@ const ReferralManager: React.FC = () => {
                   setEditingReward(null);
                 }}
               >
-                Abbrechen
+                Cancel
               </Button>
               <Button className='flex-1 bg-blue-600 hover:bg-blue-700' onClick={handleSaveReward}>
-                Speichern
+                Save
               </Button>
             </div>
           </div>
@@ -1231,14 +1228,14 @@ const ReferralManager: React.FC = () => {
       {/* Anti-Cheat Tab */}
       {activeTab === 'anticheat' && (
         <div className='space-y-6'>
-          {/* Anti-Cheat Statistiken */}
+          {/* Anti-Cheat Statistics */}
           {antiCheatStats && (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
               <Card className='bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'>
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-blue-600 text-sm font-medium'>Gesamte Referrals</p>
+                      <p className='text-blue-600 text-sm font-medium'>Total referrals</p>
                       <p className='text-2xl font-bold text-blue-800'>
                         {antiCheatStats.total_stats.total_referrals.toLocaleString()}
                       </p>
@@ -1252,7 +1249,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-green-600 text-sm font-medium'>Gültige Referrals</p>
+                      <p className='text-green-600 text-sm font-medium'>Valid referrals</p>
                       <p className='text-2xl font-bold text-green-800'>
                         {antiCheatStats.total_stats.valid_referrals.toLocaleString()}
                       </p>
@@ -1266,7 +1263,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-red-600 text-sm font-medium'>Blockierte Referrals</p>
+                      <p className='text-red-600 text-sm font-medium'>Blocked referrals</p>
                       <p className='text-2xl font-bold text-red-800'>
                         {antiCheatStats.total_stats.blocked_referrals.toLocaleString()}
                       </p>
@@ -1280,7 +1277,7 @@ const ReferralManager: React.FC = () => {
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-yellow-600 text-sm font-medium'>Block-Rate</p>
+                      <p className='text-yellow-600 text-sm font-medium'>Block rate</p>
                       <p className='text-2xl font-bold text-yellow-800'>
                         {antiCheatStats.total_stats.block_rate_percent.toFixed(1)}%
                       </p>
@@ -1292,14 +1289,14 @@ const ReferralManager: React.FC = () => {
             </div>
           )}
 
-          {/* Verdächtige Referrals */}
+          {/* Suspicious referrals */}
           <Card>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Eye className='h-5 w-5 text-red-600' />
-                Verdächtige Referral-Aktivitäten
+                Suspicious Referral Activity
               </CardTitle>
-              <CardDescription>Übersicht über blockierte und verdächtige Referral-Versuche</CardDescription>
+              <CardDescription>Overview of blocked and suspicious referral attempts</CardDescription>
             </CardHeader>
             <CardContent>
               <div className='overflow-x-auto'>
@@ -1308,11 +1305,11 @@ const ReferralManager: React.FC = () => {
                     <tr className='border-b border-gray-200'>
                       <th className='text-left py-3 px-4 font-medium text-gray-900'>Code</th>
                       <th className='text-left py-3 px-4 font-medium text-gray-900'>Referrer</th>
-                      <th className='text-left py-3 px-4 font-medium text-gray-900'>IP-Adresse</th>
-                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Grund</th>
-                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Duplikate</th>
-                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Datum</th>
-                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Aktionen</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>IP Address</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Reason</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Duplicates</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Date</th>
+                      <th className='text-left py-3 px-4 font-medium text-gray-900'>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1337,10 +1334,10 @@ const ReferralManager: React.FC = () => {
                                 : 'outline'
                             }
                           >
-                            {referral.cheat_reason === 'IP_DUPLICATE' && 'Doppelte IP'}
-                            {referral.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Doppelter Browser'}
+                            {referral.cheat_reason === 'IP_DUPLICATE' && 'Duplicate IP'}
+                            {referral.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Duplicate Browser'}
                             {referral.cheat_reason === 'RATE_LIMIT_IP' && 'Rate Limit'}
-                            {referral.cheat_reason === 'ANTICHEAT_ERROR' && 'System Fehler'}
+                            {referral.cheat_reason === 'ANTICHEAT_ERROR' && 'System Error'}
                             {!['IP_DUPLICATE', 'FINGERPRINT_DUPLICATE', 'RATE_LIMIT_IP', 'ANTICHEAT_ERROR'].includes(
                               referral.cheat_reason
                             ) && referral.cheat_reason}
@@ -1352,7 +1349,7 @@ const ReferralManager: React.FC = () => {
                           </div>
                         </td>
                         <td className='py-3 px-4 text-sm text-gray-600'>
-                          {new Date(referral.created_at).toLocaleDateString('de-DE', {
+                          {new Date(referral.created_at).toLocaleDateString('en-US', {
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric',
@@ -1368,7 +1365,7 @@ const ReferralManager: React.FC = () => {
                               className='text-green-600 border-green-300 hover:bg-green-50'
                               onClick={() => validateSuspiciousReferral(referral.id, true, 'Admin validated')}
                             >
-                              Freigeben
+                              Approve
                             </Button>
                             <Button
                               size='sm'
@@ -1376,7 +1373,7 @@ const ReferralManager: React.FC = () => {
                               className='text-red-600 border-red-300 hover:bg-red-50'
                               onClick={() => validateSuspiciousReferral(referral.id, false, 'Admin rejected')}
                             >
-                              Ablehnen
+                              Reject
                             </Button>
                           </div>
                         </td>
@@ -1386,32 +1383,32 @@ const ReferralManager: React.FC = () => {
                 </table>
 
                 {suspiciousReferrals.length === 0 && (
-                  <div className='text-center py-8 text-gray-500'>Keine verdächtigen Referral-Aktivitäten gefunden</div>
+                  <div className='text-center py-8 text-gray-500'>No suspicious referral activity found</div>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Häufigste Cheat-Gründe */}
+          {/* Top cheat reasons */}
           {antiCheatStats && antiCheatStats.cheat_reasons.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Häufigste Cheat-Gründe (letzte 30 Tage)</CardTitle>
+                <CardTitle>Top cheat reasons (last 30 days)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
                   {antiCheatStats.cheat_reasons.map((reason, index) => (
                     <div key={index} className='flex items-center justify-between p-3 bg-gray-50 rounded'>
                       <span className='font-medium text-gray-900'>
-                        {reason.cheat_reason === 'IP_DUPLICATE' && 'Doppelte IP-Adresse'}
-                        {reason.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Doppelter Browser-Fingerprint'}
-                        {reason.cheat_reason === 'RATE_LIMIT_IP' && 'IP Rate Limit erreicht'}
-                        {reason.cheat_reason === 'ANTICHEAT_ERROR' && 'Anti-Cheat System Fehler'}
+                        {reason.cheat_reason === 'IP_DUPLICATE' && 'Duplicate IP Address'}
+                        {reason.cheat_reason === 'FINGERPRINT_DUPLICATE' && 'Duplicate Browser Fingerprint'}
+                        {reason.cheat_reason === 'RATE_LIMIT_IP' && 'IP Rate Limit Reached'}
+                        {reason.cheat_reason === 'ANTICHEAT_ERROR' && 'Anti-Cheat System Error'}
                         {!['IP_DUPLICATE', 'FINGERPRINT_DUPLICATE', 'RATE_LIMIT_IP', 'ANTICHEAT_ERROR'].includes(
                           reason.cheat_reason
                         ) && reason.cheat_reason}
                       </span>
-                      <Badge variant='secondary'>{reason.count} Fälle</Badge>
+                      <Badge variant='secondary'>{reason.count} Cases</Badge>
                     </div>
                   ))}
                 </div>
@@ -1419,23 +1416,23 @@ const ReferralManager: React.FC = () => {
             </Card>
           )}
 
-          {/* Top verdächtige IPs */}
+          {/* Top suspicious IPs */}
           {antiCheatStats && antiCheatStats.suspicious_ips.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Verdächtige IP-Adressen</CardTitle>
-                <CardDescription>IPs mit mehreren blockierten Referral-Versuchen</CardDescription>
+                <CardTitle>Suspicious IP Addresses</CardTitle>
+                <CardDescription>IPs with multiple blocked referral attempts</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className='overflow-x-auto'>
                   <table className='w-full'>
                     <thead>
                       <tr className='border-b border-gray-200'>
-                        <th className='text-left py-3 px-4 font-medium text-gray-900'>IP-Adresse</th>
-                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Gesamt Referrals</th>
-                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Blockiert</th>
-                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Einzigartige Referrer</th>
-                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Verdächtigkeitsgrad</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>IP Address</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Total Referrals</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Blocked</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Unique Referrers</th>
+                        <th className='text-left py-3 px-4 font-medium text-gray-900'>Suspiciousness</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1459,7 +1456,7 @@ const ReferralManager: React.FC = () => {
                                     : 'outline'
                                 }
                               >
-                                {(suspiciousness * 100).toFixed(0)}% verdächtig
+                                {(suspiciousness * 100).toFixed(0)}% suspicious
                               </Badge>
                             </td>
                           </tr>

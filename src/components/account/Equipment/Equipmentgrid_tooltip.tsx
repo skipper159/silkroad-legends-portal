@@ -1,30 +1,30 @@
-import React from "react";
-import { getItemImagePath } from "@/lib/itemimage"; // Pfad anpassen je nach Projektstruktur
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { getSROInterfaceUrl, getSROEffectUrl } from '@/utils/assetUtils';
+import { getItemImagePath } from '@/lib/itemimage'; // Pfad anpassen je nach Projektstruktur
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface EquipmentGridProps {
-  side: "left" | "right";
+  side: 'left' | 'right';
   equipment: Record<string, any>;
 }
 
 const slotMap = {
   left: [
-    "equip_slot_weapon",
-    "equip_slot_helm",
-    "equip_slot_mail",
-    "equip_slot_pants",
-    "equip_slot_earring",
-    "equip_slot_l_ring",
-    "equip_slot_avata_button",
+    'equip_slot_weapon',
+    'equip_slot_helm',
+    'equip_slot_mail',
+    'equip_slot_pants',
+    'equip_slot_earring',
+    'equip_slot_l_ring',
+    'equip_slot_avata_button',
   ],
   right: [
-    "equip_slot_shield",
-    "equip_slot_shoulderguard",
-    "equip_slot_gauntlet",
-    "equip_slot_boots",
-    "equip_slot_necklace",
-    "equip_slot_r_ring",
-    "equip_slot_specialdress",
+    'equip_slot_shield',
+    'equip_slot_shoulderguard',
+    'equip_slot_gauntlet',
+    'equip_slot_boots',
+    'equip_slot_necklace',
+    'equip_slot_r_ring',
+    'equip_slot_specialdress',
   ],
 };
 
@@ -32,25 +32,22 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
   const slots = slotMap[side];
 
   return (
-    <div className="flex flex-col">
+    <div className='flex flex-col'>
       {slots.map((slot, i) => {
         const item = equipment?.[slot]; // Item-Daten aus Backend
-        const topMargin =
-          i === 1 ? "mt-[24px]" :
-          i === slots.length - 1 ? "mt-[12px]" :
-          "mt-[3px]";
+        const topMargin = i === 1 ? 'mt-[24px]' : i === slots.length - 1 ? 'mt-[12px]' : 'mt-[3px]';
 
-        const imageSrc = item?.iconUrl || `/image/sro/interface/equipment/${slot}.png`;
-        const glowVariants = ["rare-glow-a", "rare-glow-b", "rare-glow-c"];
+        const imageSrc = item?.iconUrl || getSROInterfaceUrl('equipment', `${slot}.png`);
+        const glowVariants = ['rare-glow-a', 'rare-glow-b', 'rare-glow-c'];
         const glowClass = glowVariants[Math.floor(Math.random() * glowVariants.length)];
 
         return (
-          <div key={slot} className={`w-[48px] h-[48px] relative ${i > 0 ? topMargin : ""}`}>
+          <div key={slot} className={`w-[48px] h-[48px] relative ${i > 0 ? topMargin : ''}`}>
             {/* Slot-Hintergrund */}
             <img
-              src={`/image/sro/interface/equipment/${slot}.png`}
+              src={getSROInterfaceUrl('equipment', `${slot}.png`)}
               alt={`${slot}-background`}
-              className="absolute top-0 left-0 w-full h-full z-0"
+              className='absolute top-0 left-0 w-full h-full z-0'
             />
 
             {/* Itembild mit Tooltip */}
@@ -60,41 +57,90 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
                   <img
                     src={item.iconUrl}
                     alt={slot}
-                    className="absolute top-1/2 left-1/2 w-[32px] h-[32px] z-10 -translate-x-1/2 -translate-y-1/2 object-contain cursor-help"
+                    className='absolute top-1/2 left-1/2 w-[32px] h-[32px] z-10 -translate-x-1/2 -translate-y-1/2 object-contain cursor-help'
                   />
                 </TooltipTrigger>
-                <TooltipContent 
-                  side="right" 
-                  className="bg-blue-900/80 border border-blue-400 rounded-md p-3 shadow-lg max-w-xs text-white"
+                <TooltipContent
+                  side='right'
+                  className='bg-blue-900/80 border border-blue-400 rounded-md p-3 shadow-lg max-w-xs text-white'
                 >
                   {/* Itemname + Plus */}
-                  <div className={`text-sm font-bold ${
-                    item.rarity === 'normal' && item.plus === 0
-                      ? 'text-white'
-                      : item.rarity === 'normal'
-                      ? 'text-blue-400'
-                      : 'text-amber-400'
-                  }`}>
-                    {item.name}{item.plus > 0 ? ` +${item.plus}` : ""}
+                  <div
+                    className={`text-sm font-bold ${
+                      item.rarity === 'normal' && item.plus === 0
+                        ? 'text-white'
+                        : item.rarity === 'normal'
+                        ? 'text-blue-400'
+                        : 'text-amber-400'
+                    }`}
+                  >
+                    {item.name}
+                    {item.plus > 0 ? ` +${item.plus}` : ''}
                   </div>
 
                   {/* Basiswerte */}
-                  <div className="mt-2 text-sm text-white">
-                    Typ: {item.type || "Unbekannt"}<br />
-                    {item.phyAttack && <>Phys. Atk: {item.phyAttack}<br /></>}
-                    {item.magAttack && <>Mag. Atk: {item.magAttack}<br /></>}
-                    {item.atkRate && <>Attack Rate: {item.atkRate}<br /></>}
-                    {item.parryRate && <>Parry Rate: {item.parryRate}<br /></>}
-                    {item.durability && <>Durability: {item.durability}<br /></>}
-                    {item.phyDef && <>Phys. Def: {item.phyDef}<br /></>}
-                    {item.magDef && <>Mag. Def: {item.magDef}<br /></>}
-                    {item.phyReinforce && <>Phy Reinforce: {item.phyReinforce}<br /></>}
-                    {item.magReinforce && <>Mag Reinforce: {item.magReinforce}<br /></>}
+                  <div className='mt-2 text-sm text-white'>
+                    Typ: {item.type || 'Unbekannt'}
+                    <br />
+                    {item.phyAttack && (
+                      <>
+                        Phys. Atk: {item.phyAttack}
+                        <br />
+                      </>
+                    )}
+                    {item.magAttack && (
+                      <>
+                        Mag. Atk: {item.magAttack}
+                        <br />
+                      </>
+                    )}
+                    {item.atkRate && (
+                      <>
+                        Attack Rate: {item.atkRate}
+                        <br />
+                      </>
+                    )}
+                    {item.parryRate && (
+                      <>
+                        Parry Rate: {item.parryRate}
+                        <br />
+                      </>
+                    )}
+                    {item.durability && (
+                      <>
+                        Durability: {item.durability}
+                        <br />
+                      </>
+                    )}
+                    {item.phyDef && (
+                      <>
+                        Phys. Def: {item.phyDef}
+                        <br />
+                      </>
+                    )}
+                    {item.magDef && (
+                      <>
+                        Mag. Def: {item.magDef}
+                        <br />
+                      </>
+                    )}
+                    {item.phyReinforce && (
+                      <>
+                        Phy Reinforce: {item.phyReinforce}
+                        <br />
+                      </>
+                    )}
+                    {item.magReinforce && (
+                      <>
+                        Mag Reinforce: {item.magReinforce}
+                        <br />
+                      </>
+                    )}
                   </div>
 
                   {/* Blues */}
                   {item.blues?.length > 0 && (
-                    <div className="mt-2 text-sm text-blue-300">
+                    <div className='mt-2 text-sm text-blue-300'>
                       {item.blues.map((blue: string, idx: number) => (
                         <div key={idx}>+ {blue}</div>
                       ))}
@@ -105,10 +151,10 @@ export const EquipmentGrid: React.FC<EquipmentGridProps> = ({ side, equipment })
             )}
 
             {/* ✨ SOX Effekt bei Rare */}
-            {item?.rarity && item.rarity !== "normal" && (
+            {item?.rarity && item.rarity !== 'normal' && (
               <img
-                src={`/image/sro/SOX.gif?rnd=${Math.floor(Math.random() * 5)}`}
-                alt="Sox-Glitzer"
+                src={getSROEffectUrl(`SOX.gif?rnd=${Math.floor(Math.random() * 5)}`)}
+                alt='Sox-Glitzer'
                 className={`absolute top-1/2 left-1/2 w-[32px] h-[32px] z-20 -translate-x-1/2 -translate-y-1/2 ${glowClass}`}
               />
             )}

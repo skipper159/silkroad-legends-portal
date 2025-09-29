@@ -1,0 +1,32 @@
+{
+  "/api/metrics/players-online": {
+    "get": {
+      "tags": ["Metrics"],
+      "summary": "Get current players online",
+      "description": "Returns current online player count. This endpoint reads from a cache or an integrated game-server metric source.",
+      "responses": {
+        "200": {
+          "description": "Players online retrieved",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "count": { "type": "integer", "description": "Number of players currently online" }
+                    }
+                  },
+                  "timestamp": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  }
+}

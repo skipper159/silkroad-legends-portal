@@ -128,8 +128,7 @@ const News = () => {
             News <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>& Updates</span>
           </h1>
           <p className='text-lg max-w-2xl mx-auto mb-10 text-gray-300'>
-            Bleiben Sie auf dem neuesten Stand mit den aktuellen Updates, Events und Community-Nachrichten aus Lafftale
-            Silkroad Online.
+            Stay up to date with the latest updates, events and community news from Lafftale Silkroad Online.
           </p>
         </div>
       </div>
@@ -142,7 +141,7 @@ const News = () => {
             <TabsList className='grid grid-cols-2 md:grid-cols-4 gap-2'>
               <TabsTrigger value='all' className='flex items-center gap-2'>
                 <Newspaper size={16} />
-                Alle
+                All
               </TabsTrigger>
               {categories.map((category) => (
                 <TabsTrigger key={category} value={category} className='flex items-center gap-2'>
@@ -199,11 +198,11 @@ const News = () => {
                         <p className='text-gray-400 mb-4 line-clamp-2'>
                           {item.content && typeof item.content === 'string'
                             ? item.content.substring(0, 150) + '...'
-                            : 'Kein Inhalt verfügbar'}
+                            : 'No content available'}
                         </p>
 
                         <Button variant='link' asChild className='p-0 text-silkroad-gold hover:text-silkroad-blue'>
-                          <Link to={`/news/${item.slug}`}>Weiterlesen →</Link>
+                          <Link to={`/news/${item.slug}`}>Read more →</Link>
                         </Button>
                       </article>
                     ))
@@ -211,8 +210,8 @@ const News = () => {
                     <div className='col-span-full text-center py-10'>
                       <p className='text-gray-400'>
                         {activeCategory === 'all'
-                          ? 'Keine News verfügbar.'
-                          : `Keine News in der Kategorie "${activeCategory}" verfügbar.`}
+                          ? 'No news available.'
+                          : `No news available in category "${activeCategory}".`}
                       </p>
                     </div>
                   )}

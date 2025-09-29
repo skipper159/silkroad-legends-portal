@@ -8,21 +8,24 @@
  * @returns Complete URL to the asset
  */
 export const getAssetUrl = (assetPath: string): string => {
-  // Remove leading slash if present to avoid double slashes
-  const cleanPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
+  // Remove leading slash if present and collapse any repeated slashes to avoid internal '//' sequences
+  let cleanPath = assetPath.startsWith('/') ? assetPath.substring(1) : assetPath;
+  // Collapse multiple slashes (e.g. 'assets/items//Premium///etc' -> 'assets/items/Premium/etc')
+  cleanPath = cleanPath.replace(/\/+/g, '/');
 
   // In development mode
   if (import.meta.env.DEV) {
     // Check if custom dev URL is set
     const devAssetUrl = import.meta.env.VITE_ASSETS_DEV_URL;
     if (devAssetUrl) {
-      return `${devAssetUrl}/${cleanPath}`;
+      const baseUrl = devAssetUrl.endsWith('/') ? devAssetUrl.slice(0, -1) : devAssetUrl;
+      return `${baseUrl}/${cleanPath}`;
     }
 
-    // Fallback: detect port and handle accordingly
+    // For localhost:8080 (your dev setup), assets are served from root
     const currentOrigin = window.location.origin;
     if (currentOrigin.includes('8080')) {
-      return `${currentOrigin}/public/${cleanPath}`;
+      return `${currentOrigin}/${cleanPath}`;
     } else {
       // Standard Vite dev server (5173)
       return `/${cleanPath}`;
@@ -33,10 +36,81 @@ export const getAssetUrl = (assetPath: string): string => {
   const baseUrl = import.meta.env.VITE_ASSETS_weburl || import.meta.env.VITE_API_weburl || '';
 
   if (baseUrl) {
-    return `${baseUrl}/${cleanPath}`;
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    return `${cleanBaseUrl}/${cleanPath}`;
   }
 
   // Fallback to relative path
+  return `/${cleanPath}`;
+};
+
+/**
+ * Generate URL for files in the /image directory (SRO game assets)
+ * @param imagePath - Path relative to image directory (e.g., 'sro/item/icon.png')
+ * @returns Complete URL to the image
+ */
+export const getImageUrl = (imagePath: string): string => {
+  const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+  return getAssetUrl(`image/${cleanPath}`);
+};
+
+/**
+ * Generate URL for files in the /images directory (web assets like logos)
+ * @param imagePath - Path relative to images directory (e.g., 'logos/lafftale.png')
+ * @returns Complete URL to the image
+ */
+export const getWebImageUrl = (imagePath: string): string => {
+  const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+  return getAssetUrl(`image/${cleanPath}`);
+};
+
+/**
+ * Generate URL for SRO game interface elements in /image/sro/interface/
+ * @param category - Interface category (e.g., 'equipment', 'inventory')
+ * @param filename - Interface element filename
+ * @returns Complete URL to interface element
+ */
+export const getSROInterfaceUrl = (category: string, filename: string): string => {
+  return getImageUrl(`sro/interface/${category}/${filename}`);
+};
+
+/**
+ * Generate URL for SRO game effects and animations in /image/sro/
+ * @param effectPath - Path relative to sro directory (e.g., 'SOX.gif', 'seal.gif')
+ * @returns Complete URL to SRO effect
+ */
+export const getSROEffectUrl = (effectPath: string): string => {
+  return getImageUrl(`sro/${effectPath}`);
+};
+
+/**
+ * Generate URL for files in the public directory (legacy compatibility)
+ * @param publicPath - Path relative to public directory (e.g., 'images/logo.png', 'image/sro/item.png')
+ * @returns Complete URL to public file
+ */
+export const getPublicUrl = (publicPath: string): string => {
+  // Remove leading slash if present
+  const cleanPath = publicPath.startsWith('/') ? publicPath.substring(1) : publicPath;
+
+  // In development
+  if (import.meta.env.DEV) {
+    const devAssetUrl = import.meta.env.VITE_ASSETS_DEV_URL;
+    if (devAssetUrl) {
+      const baseUrl = devAssetUrl.endsWith('/') ? devAssetUrl.slice(0, -1) : devAssetUrl;
+      return `${baseUrl}/${cleanPath}`;
+    }
+    const currentOrigin = window.location.origin;
+    return `${currentOrigin}/${cleanPath}`;
+  }
+
+  // In production
+  const baseUrl = import.meta.env.VITE_ASSETS_weburl || import.meta.env.VITE_API_weburl || '';
+
+  if (baseUrl) {
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    return `${cleanBaseUrl}/${cleanPath}`;
+  }
+
   return `/${cleanPath}`;
 };
 
@@ -92,7 +166,10 @@ export const getJobIconUrl = (jobType: 'hunter' | 'merchant' | 'thief' | 'trader
  * @returns Complete URL to item icon
  */
 export const getItemIconUrl = (category: string, filename: string): string => {
-  return getAssetUrl(`assets/items/${category}/${filename}`);
+  // Normalize category and filename to avoid double slashes when category is empty
+  const cleanCategory = category ? `${category.replace(/^\/+|\/+$/g, '')}/` : '';
+  const cleanFilename = filename.startsWith('/') ? filename.substring(1) : filename;
+  return getAssetUrl(`assets/items/${cleanCategory}${cleanFilename}`);
 };
 
 /**

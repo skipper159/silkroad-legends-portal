@@ -96,8 +96,8 @@ const SilkAdminPanel = () => {
       setPagination(result.pagination);
       setError(null);
     } catch (err) {
-      console.error('Fehler beim Laden der Silk Accounts:', err);
-      setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+      console.error('Error loading Silk Accounts:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
       setIsSearching(false);
@@ -108,7 +108,7 @@ const SilkAdminPanel = () => {
     try {
       setStatsLoading(true);
 
-      // Nur cached Stats laden - KEINE Live-Berechnung!
+      // Only load cached stats - NO live calculation!
       const response = await fetch(`${weburl}/api/admin/silk/server-stats?cached=true`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -124,7 +124,7 @@ const SilkAdminPanel = () => {
       if (result.success && result.data) {
         setServerStats(result.data);
       } else {
-        // Keine cached Daten verfügbar
+        // No cached data available
         setServerStats({
           totalPremiumSilk: 0,
           totalSilk: 0,
@@ -138,12 +138,12 @@ const SilkAdminPanel = () => {
             totalDonatedSilk: 0,
             uniqueDonors: 0,
           },
-          lastCalculated: 'Nie berechnet',
+          lastCalculated: 'Never calculated',
           cached: false,
         });
       }
     } catch (err) {
-      console.error('Fehler beim Laden der cached Server Stats:', err);
+      console.error('Error loading cached Server Stats:', err);
     } finally {
       setStatsLoading(false);
     }
@@ -168,7 +168,7 @@ const SilkAdminPanel = () => {
       const result = await response.json();
       setServerStats(result.data);
     } catch (err) {
-      console.error('Fehler beim Laden der Server Stats:', err);
+      console.error('Error loading Server Stats:', err);
     } finally {
       setStatsLoading(false);
     }
@@ -193,7 +193,7 @@ const SilkAdminPanel = () => {
 
   const handleGiveSilk = async () => {
     if (!selectedAccount || !giveAmount || parseInt(giveAmount) <= 0) {
-      alert('Bitte wählen Sie einen Account und geben Sie eine gültige Silk Menge ein.');
+      alert('Please select an account and enter a valid Silk amount.');
       return;
     }
 
@@ -220,7 +220,7 @@ const SilkAdminPanel = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ ${giveAmount} Silk erfolgreich an ${selectedAccount.username} vergeben!`);
+        alert(`✅ ${giveAmount} Silk successfully granted to ${selectedAccount.username}!`);
         setGiveAmount('');
         setGiveReason('');
         setSelectedAccount(null);
@@ -229,34 +229,34 @@ const SilkAdminPanel = () => {
         await fetchAccounts(currentPage, searchTerm);
         await fetchServerStats(true);
       } else {
-        throw new Error(result.error || 'Unbekannter Fehler');
+        throw new Error(result.error || 'Unknown error');
       }
     } catch (err) {
-      console.error('Fehler beim Vergeben von Silk:', err);
-      alert(`❌ Fehler: ${err instanceof Error ? err.message : 'Unbekannter Fehler'}`);
+      console.error('Error granting Silk:', err);
+      alert(`❌ Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsGivingProcess(false);
     }
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('de-DE').format(num);
+    return new Intl.NumberFormat('en-US').format(num);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('de-DE');
+    return new Date(dateString).toLocaleString('en-US');
   };
 
   useEffect(() => {
     fetchAccounts();
-    fetchCachedServerStats(); // Nur cached Daten laden, keine Live-Berechnung
+    fetchCachedServerStats(); // Only load cached data, no live calculation
   }, []);
 
   if (loading) {
     return (
       <div className='flex items-center justify-center p-8'>
         <Loader2 className='h-8 w-8 animate-spin' />
-        <span className='ml-2'>Lade Silk Administration...</span>
+        <span className='ml-2'>Loading Silk Administration...</span>
       </div>
     );
   }
@@ -268,7 +268,7 @@ const SilkAdminPanel = () => {
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Total Silk Volumen</p>
+              <p className='text-sm text-gray-400'>Total Silk Volume</p>
               <p className='text-2xl font-bold text-lafftale-gold'>
                 {serverStats ? formatNumber(serverStats.totalSilkValue) : '---'}
               </p>
@@ -292,7 +292,7 @@ const SilkAdminPanel = () => {
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Accounts mit Silk</p>
+              <p className='text-sm text-gray-400'>Accounts with Silk</p>
               <p className='text-2xl font-bold text-green-400'>
                 {serverStats ? formatNumber(serverStats.accountsWithSilk) : '---'}
               </p>
@@ -319,7 +319,7 @@ const SilkAdminPanel = () => {
         <div className='text-sm text-gray-400'>
           {serverStats && (
             <span>
-              Letzte Aktualisierung: {formatDate(serverStats.lastCalculated)}
+              Last update: {formatDate(serverStats.lastCalculated)}
               {serverStats.cached && ' (cached)'}
               {serverStats.calculationDuration && ` - ${serverStats.calculationDuration}s`}
             </span>
@@ -327,7 +327,7 @@ const SilkAdminPanel = () => {
         </div>
         <Button onClick={() => fetchServerStats(true)} disabled={statsLoading} variant='outline' size='sm'>
           {statsLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <RefreshCw className='h-4 w-4' />}
-          <span className='ml-2'>Statistiken aktualisieren</span>
+          <span className='ml-2'>Update Statistics</span>
         </Button>
       </div>
 
@@ -338,7 +338,7 @@ const SilkAdminPanel = () => {
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
               <Input
-                placeholder='Suche nach Username...'
+                placeholder='Search by username...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -352,7 +352,7 @@ const SilkAdminPanel = () => {
             className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/80'
           >
             {isSearching ? <Loader2 className='h-4 w-4 animate-spin' /> : <Search className='h-4 w-4' />}
-            <span className='ml-2'>Suchen</span>
+            <span className='ml-2'>Search</span>
           </Button>
         </div>
       </Card>
@@ -360,13 +360,13 @@ const SilkAdminPanel = () => {
       {/* Give Silk Panel */}
       {selectedAccount && (
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <h3 className='text-lg font-bold mb-4 text-lafftale-gold'>Silk vergeben an: {selectedAccount.username}</h3>
+          <h3 className='text-lg font-bold mb-4 text-lafftale-gold'>Give Silk to: {selectedAccount.username}</h3>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div>
-              <label className='block text-sm text-gray-400 mb-2'>Silk Menge</label>
+              <label className='block text-sm text-gray-400 mb-2'>Silk Amount</label>
               <Input
                 type='number'
-                placeholder='z.B. 1000'
+                placeholder='e.g. 1000'
                 value={giveAmount}
                 onChange={(e) => setGiveAmount(e.target.value)}
                 className='bg-lafftale-dark border-lafftale-gold/30'
@@ -374,9 +374,9 @@ const SilkAdminPanel = () => {
               />
             </div>
             <div>
-              <label className='block text-sm text-gray-400 mb-2'>Grund (optional)</label>
+              <label className='block text-sm text-gray-400 mb-2'>Reason (optional)</label>
               <Input
-                placeholder='z.B. Event Belohnung'
+                placeholder='e.g. Event Reward'
                 value={giveReason}
                 onChange={(e) => setGiveReason(e.target.value)}
                 className='bg-lafftale-dark border-lafftale-gold/30'
@@ -389,10 +389,10 @@ const SilkAdminPanel = () => {
                 className='bg-green-600 hover:bg-green-700'
               >
                 {isGivingProcess ? <Loader2 className='h-4 w-4 animate-spin' /> : <Gift className='h-4 w-4' />}
-                <span className='ml-2'>Vergeben</span>
+                <span className='ml-2'>Give</span>
               </Button>
               <Button onClick={() => setSelectedAccount(null)} variant='outline'>
-                Abbrechen
+                Cancel
               </Button>
             </div>
           </div>
@@ -411,8 +411,8 @@ const SilkAdminPanel = () => {
                 <th className='text-left p-4 text-lafftale-gold'>Premium Silk</th>
                 <th className='text-left p-4 text-lafftale-gold'>Silk</th>
                 <th className='text-left p-4 text-lafftale-gold'>VIP Level</th>
-                <th className='text-left p-4 text-lafftale-gold'>Reg. Datum</th>
-                <th className='text-left p-4 text-lafftale-gold'>Aktionen</th>
+                <th className='text-left p-4 text-lafftale-gold'>Reg. Date</th>
+                <th className='text-left p-4 text-lafftale-gold'>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -441,7 +441,7 @@ const SilkAdminPanel = () => {
                   <td className='p-4'>
                     <Button size='sm' variant='outline' onClick={() => setSelectedAccount(account)} className='text-xs'>
                       <Gift className='h-3 w-3 mr-1' />
-                      Silk geben
+                      Give Silk
                     </Button>
                   </td>
                 </tr>
@@ -454,8 +454,8 @@ const SilkAdminPanel = () => {
         {pagination && pagination.totalPages > 1 && (
           <div className='p-4 border-t border-lafftale-gold/30 flex items-center justify-between'>
             <div className='text-sm text-gray-400'>
-              Seite {pagination.currentPage} von {pagination.totalPages}({formatNumber(pagination.totalCount)} Accounts
-              gesamt)
+              Page {pagination.currentPage} of {pagination.totalPages} ({formatNumber(pagination.totalCount)} Accounts
+              total)
             </div>
             <div className='flex gap-2'>
               <Button
@@ -464,7 +464,7 @@ const SilkAdminPanel = () => {
                 onClick={() => handlePageChange(pagination.currentPage - 1)}
                 disabled={!pagination.hasPrev}
               >
-                Zurück
+                Back
               </Button>
               <Button
                 size='sm'
@@ -472,7 +472,7 @@ const SilkAdminPanel = () => {
                 onClick={() => handlePageChange(pagination.currentPage + 1)}
                 disabled={!pagination.hasNext}
               >
-                Weiter
+                Next
               </Button>
             </div>
           </div>
@@ -481,7 +481,7 @@ const SilkAdminPanel = () => {
 
       {error && (
         <Card className='bg-red-900/20 border-red-500/30 p-4'>
-          <p className='text-red-400'>❌ Fehler: {error}</p>
+          <p className='text-red-400'>❌ Error: {error}</p>
         </Card>
       )}
     </div>

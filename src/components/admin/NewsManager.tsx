@@ -90,8 +90,8 @@ const NewsManager = () => {
     } catch (error) {
       console.error('Error fetching news:', error);
       toast({
-        title: 'Fehler',
-        description: 'News konnten nicht geladen werden.',
+        title: 'Error',
+        description: 'News could not be loaded.',
         variant: 'destructive',
       });
     } finally {
@@ -120,8 +120,8 @@ const NewsManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolg',
-          description: isEditing ? 'News erfolgreich aktualisiert!' : 'News erfolgreich erstellt!',
+          title: 'Success',
+          description: isEditing ? 'News updated successfully!' : 'News created successfully!',
         });
 
         // Reset form and refresh list
@@ -134,8 +134,8 @@ const NewsManager = () => {
     } catch (error) {
       console.error('Error saving news:', error);
       toast({
-        title: 'Fehler',
-        description: 'News konnte nicht gespeichert werden.',
+        title: 'Error',
+        description: 'News could not be saved.',
         variant: 'destructive',
       });
     }
@@ -143,7 +143,7 @@ const NewsManager = () => {
 
   // Delete news
   const deleteNews = async (id: number) => {
-    if (!confirm('Sind Sie sicher, dass Sie diese News löschen möchten?')) {
+    if (!confirm('Are you sure you want to delete this news?')) {
       return;
     }
 
@@ -160,8 +160,8 @@ const NewsManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolg',
-          description: 'News erfolgreich gelöscht!',
+          title: 'Success',
+          description: 'News deleted successfully!',
         });
         fetchNews();
       } else {
@@ -170,8 +170,8 @@ const NewsManager = () => {
     } catch (error) {
       console.error('Error deleting news:', error);
       toast({
-        title: 'Fehler',
-        description: 'News konnte nicht gelöscht werden.',
+        title: 'Error',
+        description: 'News could not be deleted.',
         variant: 'destructive',
       });
     }
@@ -262,15 +262,15 @@ const NewsManager = () => {
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <div>
-          <h2 className='text-2xl font-bold text-lafftale-gold'>News-Verwaltung</h2>
-          <p className='text-gray-400'>Verwalten Sie die News und Updates für das Portal</p>
+          <h2 className='text-2xl font-bold text-lafftale-gold'>News Management</h2>
+          <p className='text-gray-400'>Manage news and updates for the portal</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='list'>News Liste</TabsTrigger>
-          <TabsTrigger value='form'>{editingNews ? 'News Bearbeiten' : 'News Erstellen'}</TabsTrigger>
+          <TabsTrigger value='form'>{editingNews ? 'Edit News' : 'Create News'}</TabsTrigger>
         </TabsList>
 
         <TabsContent value='list' className='space-y-4'>
@@ -326,7 +326,7 @@ const NewsManager = () => {
                       </Button>
                       <Button variant='destructive' size='sm' onClick={() => deleteNews(item.id)}>
                         <Trash2 size={14} className='mr-1' />
-                        Löschen
+                        Delete
                       </Button>
                     </div>
                   </div>
@@ -344,7 +344,7 @@ const NewsManager = () => {
             {news.length === 0 && (
               <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='text-center py-10'>
-                  <p className='text-gray-400'>Keine News vorhanden.</p>
+                  <p className='text-gray-400'>No news available.</p>
                   <Button
                     onClick={() => {
                       resetForm();
@@ -364,22 +364,18 @@ const NewsManager = () => {
         <TabsContent value='form' className='space-y-6'>
           <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='text-lafftale-gold'>
-                {editingNews ? 'News Bearbeiten' : 'Neue News Erstellen'}
-              </CardTitle>
-              <CardDescription>
-                Füllen Sie die Felder aus, um eine neue News zu erstellen oder zu bearbeiten
-              </CardDescription>
+              <CardTitle className='text-lafftale-gold'>{editingNews ? 'Edit News' : 'Create New News'}</CardTitle>
+              <CardDescription>Fill out the fields to create or edit news</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='title'>Titel *</Label>
+                  <Label htmlFor='title'>Title *</Label>
                   <Input
                     id='title'
                     value={formData.title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder='News Titel eingeben...'
+                    placeholder='Enter news title...'
                   />
                 </div>
                 <div className='space-y-2'>
@@ -388,20 +384,20 @@ const NewsManager = () => {
                     id='slug'
                     value={formData.slug}
                     onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
-                    placeholder='url-slug-eingeben'
+                    placeholder='enter-url-slug'
                   />
                 </div>
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='category'>Kategorie *</Label>
+                  <Label htmlFor='category'>Category *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Kategorie auswählen' />
+                      <SelectValue placeholder='Select category' />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='Update'>Update</SelectItem>
@@ -411,12 +407,12 @@ const NewsManager = () => {
                   </Select>
                 </div>
                 <div className='space-y-2'>
-                  <Label htmlFor='image'>Bild-URL</Label>
+                  <Label htmlFor='image'>Image URL</Label>
                   <Input
                     id='image'
                     value={formData.image}
                     onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
-                    placeholder='https://example.com/image.jpg oder /path/to/image.jpg'
+                    placeholder='https://example.com/image.jpg or /path/to/image.jpg'
                   />
                 </div>
               </div>
@@ -429,24 +425,24 @@ const NewsManager = () => {
               />
 
               <div className='space-y-2'>
-                <Label htmlFor='content'>Inhalt * (Unterstützt Markdown und HTML)</Label>
+                <Label htmlFor='content'>Content * (Supports Markdown and HTML)</Label>
                 <Textarea
                   id='content'
                   value={formData.content}
                   onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                  placeholder="News-Inhalt eingeben...
+                  placeholder="Enter news content...
 
-Sie können Bilder einfügen mit:
-- Markdown: ![Beschreibung](URL)  
-- HTML: <img src='URL' alt='Beschreibung' />
+                        You can insert images with:
+- Markdown: ![Description](URL)  
+- HTML: <img src='URL' alt='Description' />
 
-Verwenden Sie den Image Upload oben, um Bilder hochzuladen."
+                        Use the Image Upload above to upload images."
                   rows={15}
                   required
                   className='font-mono text-sm'
                 />
                 <div className='text-xs text-gray-400'>
-                  Tipp: Nutzen Sie den Image Upload oben und kopieren Sie das Markdown/HTML für Bilder in den Text.
+                  Tip: Use the Image Upload above and copy the Markdown/HTML for images into the text.
                 </div>
               </div>
 
@@ -456,7 +452,7 @@ Verwenden Sie den Image Upload oben, um Bilder hochzuladen."
                   checked={formData.active}
                   onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, active: checked }))}
                 />
-                <Label htmlFor='active'>News veröffentlichen (sichtbar für Benutzer)</Label>
+                <Label htmlFor='active'>Publish news (visible to users)</Label>
               </div>
 
               <div className='flex gap-4 pt-4'>
@@ -466,7 +462,7 @@ Verwenden Sie den Image Upload oben, um Bilder hochzuladen."
                   disabled={!formData.title || !formData.content || !formData.category}
                 >
                   <Save size={16} className='mr-2' />
-                  {editingNews ? 'News Aktualisieren' : 'News Erstellen'}
+                  {editingNews ? 'Update News' : 'Create News'}
                 </Button>
                 <Button
                   variant='outline'
@@ -476,7 +472,7 @@ Verwenden Sie den Image Upload oben, um Bilder hochzuladen."
                   }}
                 >
                   <X size={16} className='mr-2' />
-                  Abbrechen
+                  Cancel
                 </Button>
               </div>
             </CardContent>

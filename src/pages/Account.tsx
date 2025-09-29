@@ -146,7 +146,7 @@ const Account = () => {
         }
       } catch (err) {
         console.error('Failed to load silk balance:', err);
-        // Setze Default-Werte bei Fehlern
+        // Set default values on errors
         setSilkBalance({
           jid: 0,
           silk: 0,

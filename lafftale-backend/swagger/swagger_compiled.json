@@ -9387,6 +9387,48 @@
         }
       }
     },
+    "/api/metrics/players-online": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "summary": "Get current players online",
+        "description": "Returns current online player count. This endpoint reads from a cache or an integrated game-server metric source.",
+        "responses": {
+          "200": {
+            "description": "Players online retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "description": "Number of players currently online"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/api/pages": {
       "get": {
         "tags": [
@@ -10099,6 +10141,53 @@
           },
           "404": {
             "description": "No progression data found"
+          },
+          "/api/rankings/fortress-current": {
+            "get": {
+              "tags": [
+                "Rankings"
+              ],
+              "summary": "Get current fortress owner",
+              "description": "Returns a small summary object with the current fortress owner guild and time held. This endpoint may use fortress guild rankings as approximation.",
+              "responses": {
+                "200": {
+                  "description": "Fortress owner retrieved",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "data": {
+                            "type": "object",
+                            "properties": {
+                              "guild": {
+                                "type": "string"
+                              },
+                              "fortress": {
+                                "type": "string"
+                              },
+                              "timeHeld": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "timestamp": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "$ref": "#/components/responses/InternalServerError"
+                }
+              }
+            }
           }
         }
       }

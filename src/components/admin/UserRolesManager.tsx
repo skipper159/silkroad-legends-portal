@@ -62,8 +62,8 @@ const UserRolesManager = () => {
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Benutzer konnten nicht geladen werden',
+        title: 'Error',
+        description: 'Users could not be loaded',
         variant: 'destructive',
       });
     } finally {
@@ -94,16 +94,16 @@ const UserRolesManager = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich',
-          description: `Admin-Rechte wurden ${!isAdmin ? 'gewährt' : 'entzogen'}`,
+          title: 'Success',
+          description: `Admin rights were ${!isAdmin ? 'granted' : 'revoked'}`,
         });
         fetchUsers();
         fetchUserStats();
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Admin-Status konnte nicht geändert werden',
+        title: 'Error',
+        description: 'Admin status could not be changed',
         variant: 'destructive',
       });
     }
@@ -120,16 +120,16 @@ const UserRolesManager = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich',
-          description: `Benutzer wurde ${!isActive ? 'aktiviert' : 'deaktiviert'}`,
+          title: 'Success',
+          description: `User was ${!isActive ? 'activated' : 'deactivated'}`,
         });
         fetchUsers();
         fetchUserStats();
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Benutzer-Status konnte nicht geändert werden',
+        title: 'Error',
+        description: 'User status could not be changed',
         variant: 'destructive',
       });
     }
@@ -138,8 +138,8 @@ const UserRolesManager = () => {
   const resetPassword = async () => {
     if (!selectedUserId || !newPassword.trim()) {
       toast({
-        title: 'Fehler',
-        description: 'Bitte geben Sie ein neues Passwort ein',
+        title: 'Error',
+        description: 'Please enter a new password',
         variant: 'destructive',
       });
       return;
@@ -155,8 +155,8 @@ const UserRolesManager = () => {
 
       if (response.ok) {
         toast({
-          title: 'Erfolgreich',
-          description: 'Passwort wurde zurückgesetzt',
+          title: 'Success',
+          description: 'Password was reset',
         });
         setPasswordModalOpen(false);
         setNewPassword('');
@@ -164,8 +164,8 @@ const UserRolesManager = () => {
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Passwort konnte nicht zurückgesetzt werden',
+        title: 'Error',
+        description: 'Password could not be reset',
         variant: 'destructive',
       });
     }
@@ -217,7 +217,7 @@ const UserRolesManager = () => {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Gesamt Benutzer</CardTitle>
+              <CardTitle className='text-sm font-medium'>Total Users</CardTitle>
               <Users className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
@@ -227,7 +227,7 @@ const UserRolesManager = () => {
 
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Aktive</CardTitle>
+              <CardTitle className='text-sm font-medium'>Active</CardTitle>
               <UserCheck className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
@@ -261,18 +261,18 @@ const UserRolesManager = () => {
       <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
-            <DialogTitle>Passwort zurücksetzen</DialogTitle>
-            <DialogDescription>Geben Sie ein neues Passwort für den Benutzer ein.</DialogDescription>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>Enter a new password for the user.</DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
             <div>
-              <Label htmlFor='new_password'>Neues Passwort</Label>
+              <Label htmlFor='new_password'>New Password</Label>
               <Input
                 id='new_password'
                 type='password'
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder='Neues Passwort eingeben...'
+                placeholder='Enter new password...'
                 autoComplete='new-password'
               />
             </div>
@@ -286,9 +286,9 @@ const UserRolesManager = () => {
                 setSelectedUserId(null);
               }}
             >
-              Abbrechen
+              Cancel
             </Button>
-            <Button onClick={resetPassword}>Passwort zurücksetzen</Button>
+            <Button onClick={resetPassword}>Reset Password</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -300,9 +300,9 @@ const UserRolesManager = () => {
             <div>
               <CardTitle className='flex items-center gap-2'>
                 <Users className='h-5 w-5' />
-                Benutzer & Rollen Verwaltung
+                User & Role Management
               </CardTitle>
-              <CardDescription>Verwalten Sie Benutzerkonten, Rollen und Berechtigungen</CardDescription>
+              <CardDescription>Manage user accounts, roles and permissions</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -313,7 +313,7 @@ const UserRolesManager = () => {
             <div className='relative flex-1'>
               <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Benutzer durchsuchen...'
+                placeholder='Search users...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='pl-8'
@@ -326,7 +326,7 @@ const UserRolesManager = () => {
               <SelectContent>
                 <SelectItem value='all'>Alle Rollen</SelectItem>
                 <SelectItem value='admin'>Admin</SelectItem>
-                <SelectItem value='user'>Benutzer</SelectItem>
+                <SelectItem value='user'>User</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -347,13 +347,13 @@ const UserRolesManager = () => {
               <table className='w-full'>
                 <thead>
                   <tr className='border-b bg-muted/50'>
-                    <th className='h-12 px-4 text-left align-middle font-medium'>Benutzer</th>
+                    <th className='h-12 px-4 text-left align-middle font-medium'>User</th>
                     <th className='h-12 px-4 text-left align-middle font-medium'>Email</th>
                     <th className='h-12 px-4 text-left align-middle font-medium'>JID</th>
-                    <th className='h-12 px-4 text-left align-middle font-medium'>Rolle</th>
+                    <th className='h-12 px-4 text-left align-middle font-medium'>Role</th>
                     <th className='h-12 px-4 text-left align-middle font-medium'>Status</th>
-                    <th className='h-12 px-4 text-left align-middle font-medium'>Letzter Login</th>
-                    <th className='h-12 px-4 text-left align-middle font-medium'>Aktionen</th>
+                    <th className='h-12 px-4 text-left align-middle font-medium'>Last Login</th>
+                    <th className='h-12 px-4 text-left align-middle font-medium'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -383,7 +383,7 @@ const UserRolesManager = () => {
                             </>
                           ) : (
                             <>
-                              <Users className='h-3 w-3 mr-1' /> Benutzer
+                              <Users className='h-3 w-3 mr-1' /> User
                             </>
                           )}
                         </Badge>
@@ -416,7 +416,7 @@ const UserRolesManager = () => {
                             variant='outline'
                             size='sm'
                             onClick={() => openPasswordModal(user.id)}
-                            title='Passwort zurücksetzen'
+                            title='Reset Password'
                           >
                             <Key className='h-4 w-4' />
                           </Button>
@@ -432,7 +432,7 @@ const UserRolesManager = () => {
                             variant='outline'
                             size='sm'
                             onClick={() => toggleUserStatus(user.id, user.is_active)}
-                            title={user.is_active ? 'Deaktivieren' : 'Aktivieren'}
+                            title={user.is_active ? 'Deactivate' : 'Activate'}
                           >
                             {user.is_active ? <UserX className='h-4 w-4' /> : <UserCheck className='h-4 w-4' />}
                           </Button>
@@ -443,7 +443,7 @@ const UserRolesManager = () => {
                   {filteredUsers.length === 0 && (
                     <tr>
                       <td colSpan={7} className='p-8 text-center text-muted-foreground'>
-                        Keine Benutzer gefunden
+                        No users found
                       </td>
                     </tr>
                   )}

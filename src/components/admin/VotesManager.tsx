@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
+
 import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
   Dialog,
@@ -59,7 +60,7 @@ const VotesManager = () => {
 
   const fetchVotes = async () => {
     try {
-      const url = `http://localhost:3000/api/vote/admin/sites`;
+      const url = `${weburl}/api/vote/admin/sites`;
 
       const response = await fetchWithAuth(url);
 
@@ -75,16 +76,16 @@ const VotesManager = () => {
         setVotes(data.data || []);
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Vote-Sites konnten nicht geladen werden',
+          title: 'Error',
+          description: 'Vote sites could not be loaded',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching votes:', error);
       toast({
-        title: 'Fehler',
-        description: `Verbindungsfehler beim Laden der Vote-Sites: ${error.message}`,
+        title: 'Error',
+        description: `Connection error loading vote sites: ${error.message}`,
         variant: 'destructive',
       });
     } finally {
@@ -97,9 +98,7 @@ const VotesManager = () => {
     setLoading(true);
 
     try {
-      const url = editingVote
-        ? `http://localhost:3000/api/vote/admin/sites/${editingVote.id}`
-        : `http://localhost:3000/api/vote/admin/sites`;
+      const url = editingVote ? `${weburl}/api/vote/admin/sites/${editingVote.id}` : `${weburl}/api/vote/admin/sites`;
 
       const method = editingVote ? 'PUT' : 'POST';
 
@@ -112,8 +111,8 @@ const VotesManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich',
-          description: `Vote-Site wurde ${editingVote ? 'aktualisiert' : 'erstellt'}`,
+          title: 'Success',
+          description: `Vote site was ${editingVote ? 'updated' : 'created'}`,
         });
 
         setModalOpen(false);
@@ -121,16 +120,16 @@ const VotesManager = () => {
         fetchVotes();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Ein Fehler ist aufgetreten',
+          title: 'Error',
+          description: data.message || 'An error occurred',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error submitting vote:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler',
+        title: 'Error',
+        description: 'Connection error',
         variant: 'destructive',
       });
     } finally {
@@ -139,12 +138,12 @@ const VotesManager = () => {
   };
 
   const deleteVote = async (id: number) => {
-    if (!confirm('Sind Sie sicher, dass Sie diese Vote-Site löschen möchten?')) {
+    if (!confirm('Are you sure you want to delete this vote site?')) {
       return;
     }
 
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/vote/admin/sites/${id}`, {
+      const response = await fetchWithAuth(`${weburl}/api/vote/admin/sites/${id}`, {
         method: 'DELETE',
       });
 
@@ -152,22 +151,22 @@ const VotesManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich',
-          description: 'Vote-Site wurde gelöscht',
+          title: 'Success',
+          description: 'Vote site was deleted',
         });
         fetchVotes();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Löschen fehlgeschlagen',
+          title: 'Error',
+          description: data.message || 'Deletion failed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error deleting vote:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler beim Löschen',
+        title: 'Error',
+        description: 'Connection error during deletion',
         variant: 'destructive',
       });
     }
@@ -175,7 +174,7 @@ const VotesManager = () => {
 
   const toggleActive = async (id: number, currentActive: boolean) => {
     try {
-      const response = await fetchWithAuth(`http://localhost:3000/api/vote/admin/sites/${id}`, {
+      const response = await fetchWithAuth(`${weburl}/api/vote/admin/sites/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ active: !currentActive }),
       });
@@ -184,22 +183,22 @@ const VotesManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich',
-          description: `Vote-Site wurde ${!currentActive ? 'aktiviert' : 'deaktiviert'}`,
+          title: 'Success',
+          description: `Vote site was ${!currentActive ? 'activated' : 'deactivated'}`,
         });
         fetchVotes();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Aktualisierung fehlgeschlagen',
+          title: 'Error',
+          description: data.message || 'Update failed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error toggling vote status:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler',
+        title: 'Error',
+        description: 'Connection error',
         variant: 'destructive',
       });
     }
@@ -258,16 +257,16 @@ const VotesManager = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Vote className='h-5 w-5' />
-            Vote System verwalten
+            Manage Vote System
           </CardTitle>
-          <CardDescription>Verwalten Sie Vote-Sites und Belohnungen</CardDescription>
+          <CardDescription>Manage vote sites and rewards</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
             <div className='relative flex-1'>
               <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Vote-Sites durchsuchen...'
+                placeholder='Search vote sites...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='pl-8'
@@ -283,20 +282,20 @@ const VotesManager = () => {
                   }}
                 >
                   <Plus className='h-4 w-4 mr-2' />
-                  Vote-Site hinzufügen
+                  Add Vote Site
                 </Button>
               </DialogTrigger>
               <DialogContent className='sm:max-w-2xl'>
                 <DialogHeader>
-                  <DialogTitle>{editingVote ? 'Vote-Site bearbeiten' : 'Neue Vote-Site hinzufügen'}</DialogTitle>
+                  <DialogTitle>{editingVote ? 'Edit Vote Site' : 'Add New Vote Site'}</DialogTitle>
                   <DialogDescription>
-                    {editingVote ? 'Bearbeiten Sie die Vote-Site-Details' : 'Fügen Sie eine neue Vote-Site hinzu'}
+                    {editingVote ? 'Edit the vote site details' : 'Add a new vote site'}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className='space-y-4'>
                   <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor='title'>Titel</Label>
+                      <Label htmlFor='title'>Title</Label>
                       <Input
                         id='title'
                         value={formData.title}
@@ -328,7 +327,7 @@ const VotesManager = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor='image'>Bild URL</Label>
+                    <Label htmlFor='image'>Image URL</Label>
                     <Input
                       id='image'
                       type='url'
@@ -360,7 +359,7 @@ const VotesManager = () => {
 
                   <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <Label htmlFor='reward'>Belohnung (Punkte)</Label>
+                      <Label htmlFor='reward'>Reward (Points)</Label>
                       <Input
                         id='reward'
                         type='number'
@@ -372,7 +371,7 @@ const VotesManager = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor='timeout'>Timeout (Stunden)</Label>
+                      <Label htmlFor='timeout'>Timeout (Hours)</Label>
                       <Input
                         id='timeout'
                         type='number'
@@ -390,16 +389,16 @@ const VotesManager = () => {
                       checked={formData.active}
                       onCheckedChange={(checked) => setFormData({ ...formData, active: checked })}
                     />
-                    <Label htmlFor='active'>Aktiv</Label>
+                    <Label htmlFor='active'>Active</Label>
                   </div>
 
                   <DialogFooter>
                     <Button type='button' variant='outline' onClick={() => setModalOpen(false)}>
-                      Abbrechen
+                      Cancel
                     </Button>
                     <Button type='submit' disabled={loading}>
                       {loading ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
-                      {editingVote ? 'Aktualisieren' : 'Hinzufügen'}
+                      {editingVote ? 'Update' : 'Add'}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -413,18 +412,18 @@ const VotesManager = () => {
                 <thead>
                   <tr className='border-b bg-muted/50'>
                     <th className='text-left p-4 font-medium'>Site</th>
-                    <th className='text-left p-4 font-medium'>Titel</th>
-                    <th className='text-left p-4 font-medium'>Belohnung</th>
+                    <th className='text-left p-4 font-medium'>Title</th>
+                    <th className='text-left p-4 font-medium'>Reward</th>
                     <th className='text-left p-4 font-medium'>Timeout</th>
                     <th className='text-left p-4 font-medium'>Status</th>
-                    <th className='text-left p-4 font-medium'>Aktionen</th>
+                    <th className='text-left p-4 font-medium'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredVotes.length === 0 ? (
                     <tr>
                       <td colSpan={6} className='text-center p-8 text-muted-foreground'>
-                        {searchTerm ? 'Keine Vote-Sites gefunden' : 'Noch keine Vote-Sites vorhanden'}
+                        {searchTerm ? 'No vote sites found' : 'No vote sites available'}
                       </td>
                     </tr>
                   ) : (
@@ -443,7 +442,7 @@ const VotesManager = () => {
                                   className='flex items-center gap-1 hover:underline'
                                 >
                                   <ExternalLink className='h-3 w-3' />
-                                  Zur Site
+                                  Visit site
                                 </a>
                               </div>
                             </div>
@@ -453,7 +452,7 @@ const VotesManager = () => {
                           <div className='font-medium'>{vote.title}</div>
                         </td>
                         <td className='p-4'>
-                          <Badge variant='secondary'>{vote.reward} Punkte</Badge>
+                          <Badge variant='secondary'>{vote.reward} Points</Badge>
                         </td>
                         <td className='p-4'>
                           <span className='text-sm'>{vote.timeout}h</span>
@@ -464,7 +463,7 @@ const VotesManager = () => {
                             className='cursor-pointer'
                             onClick={() => toggleActive(vote.id, vote.active)}
                           >
-                            {vote.active ? 'Aktiv' : 'Inaktiv'}
+                            {vote.active ? 'Active' : 'Inactive'}
                           </Badge>
                         </td>
                         <td className='p-4'>

@@ -2,22 +2,23 @@
 // Generated on: 2025-09-16T19:08:12.964Z
 // DO NOT EDIT MANUALLY
 
-import type { 
-  ApiResponse, 
-  PaginatedResponse, 
+import { weburl } from '../api';
+import type {
+  ApiResponse,
+  PaginatedResponse,
   ErrorResponse,
   User,
   Character,
   Ticket,
   Payment,
-  Referral
+  Referral,
 } from './types';
 
 export class LafftaleApiClient {
   private baseUrl: string;
   private token: string | null = null;
 
-  constructor(baseUrl: string = 'http://localhost:3000') {
+  constructor(baseUrl: string = weburl) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
   }
 
@@ -37,7 +38,7 @@ export class LafftaleApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -60,11 +61,11 @@ export class LafftaleApiClient {
     try {
       const response = await fetch(url, config);
       const result = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(result.message || 'API request failed');
       }
-      
+
       return result;
     } catch (error) {
       throw new Error(`API request failed: ${error.message}`);
@@ -72,16 +73,19 @@ export class LafftaleApiClient {
   }
 
   // Authentication Methods
-  async login(username: string, password: string): Promise<ApiResponse<{ token: string; user: User }>> {
+  async login(
+    username: string,
+    password: string
+  ): Promise<ApiResponse<{ token: string; user: User }>> {
     const response = await this.request<{ token: string; user: User }>('POST', '/auth/login', {
       username,
-      password
+      password,
     });
-    
+
     if (response.data?.token) {
       this.setToken(response.data.token);
     }
-    
+
     return response;
   }
 
@@ -147,12 +151,27 @@ export class LafftaleApiClient {
   }
 
   // Public Methods (no auth required)
-  async getPlayerRankings(): Promise<ApiResponse<any[]>> {
-    return this.request('GET', '/api/rankings/players');
+
+  // Rankings/Overview
+  async getTopPlayerRanking(): Promise<ApiResponse<any[]>> {
+    return this.getPaginated('/api/rankings/top-player', 1);
   }
 
-  async getGuildRankings(): Promise<ApiResponse<any[]>> {
-    return this.request('GET', '/api/rankings/guilds');
+  async getTopGuildRanking(): Promise<ApiResponse<any[]>> {
+    return this.getPaginated('/api/rankings/guild', 1);
+  }
+
+  async getFortressOwner(): Promise<ApiResponse<any>> {
+    return this.request('GET', '/api/rankings/fortress-current');
+  }
+
+  async getPlayersOnline(): Promise<ApiResponse<any>> {
+    return this.request('GET', '/api/metrics/players-online');
+  }
+
+  // Helper for paginated endpoints
+  private async getPaginated(endpoint: string, limit: number = 1): Promise<ApiResponse<any[]>> {
+    return this.request('GET', `${endpoint}?limit=${limit}`);
   }
 
   async getDownloads(): Promise<ApiResponse<any[]>> {
@@ -175,7 +194,7 @@ export class LafftaleApiClient {
   async transferSilk(targetAccount: string, amount: number): Promise<ApiResponse<any>> {
     return this.request('POST', '/api/game/silk/transfer', {
       target_account: targetAccount,
-      amount
+      amount,
     });
   }
 }

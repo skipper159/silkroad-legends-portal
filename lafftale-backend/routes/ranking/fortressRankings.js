@@ -1,5 +1,5 @@
 // ranking/fortressRankings.js
-const { getCharDb, sql } = require('../../db');
+const { getCharDb, getAccountDb, sql } = require('../../db');
 const cache = require('../../utils/cache');
 const rankingConfig = require('../../config/ranking');
 
@@ -105,7 +105,41 @@ async function getFortressGuildRanking(limit = PAGE_SIZE, offset = 0) {
   }
 }
 
+/**
+ * Get the current fortress owner by inspecting the latest LogEventSiegeFortress entries.
+ * Returns an object { guild, fortress, timeHeld } or null when unknown.
+ */
+async function getCurrentFortressOwner() {
+  try {
+  const pool = await getAccountDb();
+    // Lese aktuellen Fortress-Owner aus dbo.__SiegeFortressStatus__
+    const result = await pool
+      .request()
+      .query(`
+        SELECT TOP 1 FortressName, OwnerGuildName, OwnerGuildMaster, OwnerUpdateDate
+        FROM [dbo].[__SiegeFortressStatus__]
+        ORDER BY FortressName ASC
+      `);
+
+    if (!result || !result.recordset || result.recordset.length === 0) {
+      return null;
+    }
+
+    const row = result.recordset[0];
+
+    return {
+      guild: row.OwnerGuildName,
+      fortress: row.FortressName,
+      timeHeld: row.OwnerUpdateDate ? new Date(row.OwnerUpdateDate).toISOString() : null
+    };
+  } catch (error) {
+    console.error('Error fetching current fortress owner:', error);
+    return null;
+  }
+}
+
 module.exports = {
   getFortressPlayerRanking,
   getFortressGuildRanking,
+  getCurrentFortressOwner,
 };

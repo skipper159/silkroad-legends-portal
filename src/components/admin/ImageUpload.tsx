@@ -64,8 +64,8 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
       if (data.success) {
         setUploadedImages((prev) => [...prev, ...data.data]);
         toast({
-          title: 'Erfolgreich!',
-          description: `${data.data.length} Bild(er) hochgeladen`,
+          title: 'Success!',
+          description: `${data.data.length} image(s) uploaded`,
           variant: 'default',
         });
 
@@ -74,13 +74,13 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
           onImageUploaded(data.data[0].url);
         }
       } else {
-        throw new Error(data.message || 'Upload fehlgeschlagen');
+        throw new Error(data.message || 'Upload failed');
       }
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: 'Fehler',
-        description: `Upload fehlgeschlagen: ${error.message}`,
+        title: 'Error',
+        description: `Upload failed: ${error.message}`,
         variant: 'destructive',
       });
     } finally {
@@ -110,8 +110,8 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
       setCopiedUrl(url);
       setTimeout(() => setCopiedUrl(null), 2000);
       toast({
-        title: 'Kopiert!',
-        description: 'Bild-URL wurde kopiert',
+        title: 'Copied!',
+        description: 'Image URL was copied',
         variant: 'default',
       });
     } catch (error) {
@@ -120,11 +120,11 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
   };
 
   const insertImageMarkdown = (url: string) => {
-    const markdown = `![Bild](${url})`;
+    const markdown = `![Image](${url})`;
     navigator.clipboard.writeText(markdown).then(() => {
       toast({
-        title: 'Markdown kopiert!',
-        description: 'Fügen Sie es in den Texteditor ein',
+        title: 'Markdown copied!',
+        description: 'Insert it into the text editor',
         variant: 'default',
       });
     });
@@ -135,7 +135,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <ImageIcon className='h-5 w-5' />
-          Bilder Upload
+          Image Upload
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -150,7 +150,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload className='h-12 w-12 mx-auto mb-4 text-gray-400' />
-          <p className='text-lg mb-2'>{uploading ? 'Lade hoch...' : 'Bilder hier ablegen oder klicken'}</p>
+          <p className='text-lg mb-2'>{uploading ? 'Uploading...' : 'Drop images here or click'}</p>
           <p className='text-sm text-gray-400'>JPG, PNG, WebP, GIF bis 5MB</p>
 
           <input
@@ -172,7 +172,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
         {/* Uploaded Images */}
         {uploadedImages.length > 0 && (
           <div className='mt-6'>
-            <h4 className='font-semibold mb-4'>Hochgeladene Bilder:</h4>
+            <h4 className='font-semibold mb-4'>Uploaded Images:</h4>
             <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
               {uploadedImages.map((image) => (
                 <div key={image.filename} className='relative group'>
@@ -213,15 +213,15 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
 
             <div className='mt-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded'>
               <p className='text-sm text-blue-200 mb-2'>
-                <strong>So fügen Sie Bilder in den Text ein:</strong>
+                <strong>How to insert images into text:</strong>
               </p>
               <ol className='text-sm text-blue-200 list-decimal list-inside space-y-1'>
-                <li>Klicken Sie auf "MD" um Markdown zu kopieren</li>
+                <li>Click "MD" to copy Markdown</li>
                 <li>
-                  Fügen Sie es in den Texteditor ein: <code>![Bild](URL)</code>
+                  Insert it into the text editor: <code>![Image](URL)</code>
                 </li>
                 <li>
-                  Oder verwenden Sie HTML: <code>&lt;img src="URL" alt="Beschreibung" /&gt;</code>
+                  Or use HTML: <code>&lt;img src="URL" alt="Description" /&gt;</code>
                 </li>
               </ol>
             </div>

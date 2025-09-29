@@ -56,16 +56,16 @@ const DownloadsManager = () => {
         setDownloads(data.data || []);
       } else {
         toast({
-          title: 'Fehler',
-          description: 'Downloads konnten nicht geladen werden',
+          title: 'Error',
+          description: 'Downloads could not be loaded',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching downloads:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler beim Laden der Downloads',
+        title: 'Error',
+        description: 'Connection error while loading downloads',
         variant: 'destructive',
       });
     } finally {
@@ -91,8 +91,8 @@ const DownloadsManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich',
-          description: `Download wurde ${editingDownload ? 'aktualisiert' : 'erstellt'}`,
+          title: 'Success',
+          description: `Download was ${editingDownload ? 'updated' : 'created'}`,
         });
 
         setModalOpen(false);
@@ -100,16 +100,16 @@ const DownloadsManager = () => {
         fetchDownloads();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Ein Fehler ist aufgetreten',
+          title: 'Error',
+          description: data.message || 'An error occurred',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error submitting download:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler',
+        title: 'Error',
+        description: 'Connection error',
         variant: 'destructive',
       });
     } finally {
@@ -118,7 +118,7 @@ const DownloadsManager = () => {
   };
 
   const deleteDownload = async (id: number) => {
-    if (!confirm('Sind Sie sicher, dass Sie diesen Download löschen möchten?')) {
+    if (!confirm('Are you sure you want to delete this download?')) {
       return;
     }
 
@@ -131,22 +131,22 @@ const DownloadsManager = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich',
-          description: 'Download wurde gelöscht',
+          title: 'Success',
+          description: 'Download was deleted',
         });
         fetchDownloads();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Löschen fehlgeschlagen',
+          title: 'Error',
+          description: data.message || 'Deletion failed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error deleting download:', error);
       toast({
-        title: 'Fehler',
-        description: 'Verbindungsfehler beim Löschen',
+        title: 'Error',
+        description: 'Connection error during deletion',
         variant: 'destructive',
       });
     }
@@ -195,16 +195,16 @@ const DownloadsManager = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Download className='h-5 w-5' />
-            Downloads verwalten
+            Downloads Management
           </CardTitle>
-          <CardDescription>Verwalten Sie Downloads für Benutzer</CardDescription>
+          <CardDescription>Manage downloads for users</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
             <div className='relative flex-1'>
               <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Downloads durchsuchen...'
+                placeholder='Search downloads...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='pl-8'
@@ -220,19 +220,19 @@ const DownloadsManager = () => {
                   }}
                 >
                   <Plus className='h-4 w-4 mr-2' />
-                  Download hinzufügen
+                  Add Download
                 </Button>
               </DialogTrigger>
               <DialogContent className='sm:max-w-md'>
                 <DialogHeader>
-                  <DialogTitle>{editingDownload ? 'Download bearbeiten' : 'Neuen Download hinzufügen'}</DialogTitle>
+                  <DialogTitle>{editingDownload ? 'Edit Download' : 'Add New Download'}</DialogTitle>
                   <DialogDescription>
-                    {editingDownload ? 'Bearbeiten Sie die Download-Details' : 'Fügen Sie einen neuen Download hinzu'}
+                    {editingDownload ? 'Edit the download details' : 'Add a new download'}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className='space-y-4'>
                   <div>
-                    <Label htmlFor='title'>Titel</Label>
+                    <Label htmlFor='title'>Title</Label>
                     <Input
                       id='title'
                       value={formData.title}
@@ -242,7 +242,7 @@ const DownloadsManager = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor='description'>Beschreibung</Label>
+                    <Label htmlFor='description'>Description</Label>
                     <Textarea
                       id='description'
                       value={formData.description}
@@ -263,7 +263,7 @@ const DownloadsManager = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor='image'>Bild URL (optional)</Label>
+                    <Label htmlFor='image'>Image URL (optional)</Label>
                     <Input
                       id='image'
                       type='url'
@@ -274,11 +274,11 @@ const DownloadsManager = () => {
 
                   <DialogFooter>
                     <Button type='button' variant='outline' onClick={() => setModalOpen(false)}>
-                      Abbrechen
+                      Cancel
                     </Button>
                     <Button type='submit' disabled={loading}>
                       {loading ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
-                      {editingDownload ? 'Aktualisieren' : 'Hinzufügen'}
+                      {editingDownload ? 'Update' : 'Add'}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -291,17 +291,17 @@ const DownloadsManager = () => {
               <table className='w-full'>
                 <thead>
                   <tr className='border-b bg-muted/50'>
-                    <th className='text-left p-4 font-medium'>Titel</th>
-                    <th className='text-left p-4 font-medium'>Beschreibung</th>
-                    <th className='text-left p-4 font-medium'>Erstellt am</th>
-                    <th className='text-left p-4 font-medium'>Aktionen</th>
+                    <th className='text-left p-4 font-medium'>Title</th>
+                    <th className='text-left p-4 font-medium'>Description</th>
+                    <th className='text-left p-4 font-medium'>Created</th>
+                    <th className='text-left p-4 font-medium'>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredDownloads.length === 0 ? (
                     <tr>
                       <td colSpan={4} className='text-center p-8 text-muted-foreground'>
-                        {searchTerm ? 'Keine Downloads gefunden' : 'Noch keine Downloads vorhanden'}
+                        {searchTerm ? 'No downloads found' : 'No downloads available'}
                       </td>
                     </tr>
                   ) : (
@@ -315,11 +315,11 @@ const DownloadsManager = () => {
                         </td>
                         <td className='p-4'>
                           <div className='text-sm text-muted-foreground max-w-xs truncate'>
-                            {download.description || 'Keine Beschreibung'}
+                            {download.description || 'No description'}
                           </div>
                         </td>
                         <td className='p-4'>
-                          <div className='text-sm'>{new Date(download.created_at).toLocaleDateString('de-DE')}</div>
+                          <div className='text-sm'>{new Date(download.created_at).toLocaleDateString('en-US')}</div>
                         </td>
                         <td className='p-4'>
                           <div className='flex gap-2'>

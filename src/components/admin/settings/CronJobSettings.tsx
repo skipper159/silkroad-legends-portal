@@ -23,7 +23,7 @@ interface CronConfig {
   type: 'custom' | 'daily' | 'weekly' | 'monthly';
   hour: number;
   minute: number;
-  dayOfWeek?: number; // 0 = Sonntag, 1 = Montag, etc.
+  dayOfWeek?: number; // 0 = Sunday, 1 = Monday, etc.
   dayOfMonth?: number; // 1-31
   customExpression?: string;
 }
@@ -41,13 +41,13 @@ const CronJobSettings = () => {
   const { token } = useAuth();
 
   const weekdays = [
-    { value: 0, label: 'Sonntag' },
-    { value: 1, label: 'Montag' },
-    { value: 2, label: 'Dienstag' },
-    { value: 3, label: 'Mittwoch' },
-    { value: 4, label: 'Donnerstag' },
-    { value: 5, label: 'Freitag' },
-    { value: 6, label: 'Samstag' },
+    { value: 0, label: 'Sunday' },
+    { value: 1, label: 'Monday' },
+    { value: 2, label: 'Tuesday' },
+    { value: 3, label: 'Wednesday' },
+    { value: 4, label: 'Thursday' },
+    { value: 5, label: 'Friday' },
+    { value: 6, label: 'Saturday' },
   ];
 
   const buildCronExpression = (config: CronConfig): string => {
@@ -107,16 +107,16 @@ const CronJobSettings = () => {
 
     switch (config.type) {
       case 'daily':
-        return `Täglich um ${timeStr} Uhr`;
+        return `Daily at ${timeStr}`;
       case 'weekly':
         const weekday = weekdays.find((w) => w.value === config.dayOfWeek);
-        return `Wöchentlich ${weekday?.label} um ${timeStr} Uhr`;
+        return `Weekly on ${weekday?.label} at ${timeStr}`;
       case 'monthly':
-        return `Monatlich am ${config.dayOfMonth}. um ${timeStr} Uhr`;
+        return `Monthly on ${config.dayOfMonth} at ${timeStr}`;
       case 'custom':
-        return `Benutzerdefiniert: ${config.customExpression}`;
+        return `Custom: ${config.customExpression}`;
       default:
-        return 'Unbekannt';
+        return 'Unknown';
     }
   };
 
@@ -138,8 +138,8 @@ const CronJobSettings = () => {
       setJobs(result.data);
       setError(null);
     } catch (err) {
-      console.error('Fehler beim Laden der Cron Jobs:', err);
-      setError('Fehler beim Laden der Cron Job Konfiguration');
+      console.error('Error loading cron jobs:', err);
+      setError('Error loading cron job configuration');
     } finally {
       setLoading(false);
     }
@@ -166,8 +166,8 @@ const CronJobSettings = () => {
       setEditingJob(null);
       setError(null);
     } catch (err) {
-      console.error('Fehler beim Aktualisieren des Jobs:', err);
-      setError('Fehler beim Aktualisieren der Job-Konfiguration');
+      console.error('Error updating job:', err);
+      setError('Error updating job configuration');
     }
   };
 
@@ -187,20 +187,20 @@ const CronJobSettings = () => {
 
       setError(null);
     } catch (err) {
-      console.error('Fehler beim Triggern des Jobs:', err);
-      setError('Fehler beim manuellen Ausführen des Jobs');
+      console.error('Error triggering job:', err);
+      setError('Error executing job manually');
     }
   };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Nie';
-    return new Date(dateString).toLocaleString('de-DE');
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleString('en-US');
   };
 
   const getJobDisplayName = (jobName: string) => {
     switch (jobName) {
       case 'silk_stats_calculation':
-        return 'Silk Statistik Berechnung';
+        return 'Silk Stats Calculation';
       default:
         return jobName;
     }
@@ -223,7 +223,7 @@ const CronJobSettings = () => {
     return (
       <div className='text-center py-8'>
         <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-lafftale-gold mx-auto'></div>
-        <p className='text-sm text-gray-400 mt-2'>Lade Cron Jobs...</p>
+        <p className='text-sm text-gray-400 mt-2'>Loading cron jobs...</p>
       </div>
     );
   }
@@ -251,12 +251,12 @@ const CronJobSettings = () => {
                       {job.isRunning ? (
                         <span className='inline-flex items-center gap-1 px-3 py-1 bg-green-900/20 text-green-400 rounded-md text-sm'>
                           <div className='w-2 h-2 bg-green-400 rounded-full animate-pulse'></div>
-                          Aktiv
+                          Active
                         </span>
                       ) : (
                         <span className='inline-flex items-center gap-1 px-3 py-1 bg-gray-700 text-gray-400 rounded-md text-sm'>
                           <Square className='w-2 h-2' />
-                          Inaktiv
+                          Inactive
                         </span>
                       )}
                     </div>
@@ -278,10 +278,10 @@ const CronJobSettings = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='daily'>Täglich</SelectItem>
-                            <SelectItem value='weekly'>Wöchentlich</SelectItem>
-                            <SelectItem value='monthly'>Monatlich</SelectItem>
-                            <SelectItem value='custom'>Benutzerdefiniert</SelectItem>
+                            <SelectItem value='daily'>Daily</SelectItem>
+                            <SelectItem value='weekly'>Weekly</SelectItem>
+                            <SelectItem value='monthly'>Monthly</SelectItem>
+                            <SelectItem value='custom'>Custom</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -364,7 +364,7 @@ const CronJobSettings = () => {
 
                       <div className='pt-2 border-t border-gray-600'>
                         <p className='text-sm text-gray-400 mb-3'>
-                          Vorschau: <span className='text-lafftale-gold'>{getScheduleDescription(cronConfig)}</span>
+                          Preview: <span className='text-lafftale-gold'>{getScheduleDescription(cronConfig)}</span>
                         </p>
                         <p className='text-xs text-gray-500 mb-3'>
                           Cron Expression:{' '}
@@ -376,7 +376,7 @@ const CronJobSettings = () => {
                             onClick={() => updateJob(job.job_name, cronConfig, job.enabled)}
                             className='bg-lafftale-gold text-black hover:bg-yellow-500'
                           >
-                            Speichern
+                            Save
                           </Button>
                           <Button
                             size='sm'
@@ -384,7 +384,7 @@ const CronJobSettings = () => {
                             onClick={() => setEditingJob(null)}
                             className='border-gray-600 hover:bg-gray-700'
                           >
-                            Abbrechen
+                            Cancel
                           </Button>
                         </div>
                       </div>
@@ -404,15 +404,15 @@ const CronJobSettings = () => {
                       </div>
 
                       <div>
-                        <span className='text-gray-400'>Letzte Ausführung:</span>
+                        <span className='text-gray-400'>Last run:</span>
                         <p className='text-white mt-1'>{formatDate(job.last_run)}</p>
-                        <p className='text-xs text-gray-500'>Ausführungen: {job.run_count}</p>
+                        <p className='text-xs text-gray-500'>Runs: {job.run_count}</p>
                       </div>
 
                       <div>
-                        <span className='text-gray-400'>Nächste Ausführung:</span>
+                        <span className='text-gray-400'>Next run:</span>
                         <p className='text-white mt-1'>
-                          {job.enabled && job.nextRunEstimate ? formatDate(job.nextRunEstimate) : 'Deaktiviert'}
+                          {job.enabled && job.nextRunEstimate ? formatDate(job.nextRunEstimate) : 'Disabled'}
                         </p>
                       </div>
                     </div>
@@ -428,7 +428,7 @@ const CronJobSettings = () => {
                         updateJob(job.job_name, config, enabled);
                       }}
                     />
-                    <span className='text-sm text-gray-400'>Aktiv</span>
+                    <span className='text-sm text-gray-400'>Enabled</span>
                   </div>
 
                   <Button
@@ -457,7 +457,7 @@ const CronJobSettings = () => {
       {jobs.length === 0 && !loading && (
         <div className='text-center py-8 text-gray-400'>
           <Clock className='h-12 w-12 mx-auto mb-4 opacity-50' />
-          <p>Keine Cron Jobs konfiguriert</p>
+          <p>No cron jobs configured</p>
         </div>
       )}
 
@@ -465,39 +465,39 @@ const CronJobSettings = () => {
         <CardHeader>
           <CardTitle className='text-blue-400 text-sm flex items-center gap-2'>
             <Calendar className='h-4 w-4' />
-            Schedule-Hilfe
+            Schedule Help
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className='text-xs space-y-2 text-gray-300'>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <p className='font-medium text-blue-400 mb-2'>Vordefinierte Schedules:</p>
+                <p className='font-medium text-blue-400 mb-2'>Predefined schedules:</p>
                 <p>
-                  <strong>Täglich:</strong> Jeden Tag zur angegebenen Zeit
+                  <strong>Daily:</strong> Every day at the configured time
                 </p>
                 <p>
-                  <strong>Wöchentlich:</strong> Jeden Wochentag zur angegebenen Zeit
+                  <strong>Weekly:</strong> On the configured weekday at the configured time
                 </p>
                 <p>
-                  <strong>Monatlich:</strong> Jeden Monat am angegebenen Tag
+                  <strong>Monthly:</strong> On the configured day of month at the configured time
                 </p>
               </div>
               <div>
-                <p className='font-medium text-blue-400 mb-2'>Beispiele für Custom:</p>
+                <p className='font-medium text-blue-400 mb-2'>Examples for custom expressions:</p>
                 <p>
-                  <code>0 */6 * * *</code> - Alle 6 Stunden
+                  <code>0 */6 * * *</code> - Every 6 hours
                 </p>
                 <p>
-                  <code>30 1 * * 1-5</code> - Werktags um 01:30
+                  <code>30 1 * * 1-5</code> - Weekdays at 01:30
                 </p>
                 <p>
-                  <code>0 0 1 * *</code> - Jeden 1. des Monats
+                  <code>0 0 1 * *</code> - On the 1st of each month
                 </p>
               </div>
             </div>
             <p className='text-gray-400 pt-2 border-t border-gray-600'>
-              Format: Minute (0-59) Stunde (0-23) Tag (1-31) Monat (1-12) Wochentag (0-6, 0=Sonntag)
+              Format: Minute (0-59) Hour (0-23) Day (1-31) Month (1-12) Weekday (0-6, 0=Sunday)
             </p>
           </div>
         </CardContent>

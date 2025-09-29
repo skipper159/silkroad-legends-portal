@@ -115,7 +115,7 @@ const NewsSection = () => {
   // Format date helper function
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
+    return date.toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -163,7 +163,7 @@ const NewsSection = () => {
                   <p className='text-gray-400 mb-4 line-clamp-2'>{item.excerpt}</p>
 
                   <Button variant='link' asChild className='p-0 text-silkroad-gold hover:text-silkroad-blue'>
-                    <Link to={`/news/${item.slug}`}>Weiterlesen →</Link>
+                    <Link to={`/news/${item.slug}`}>Read More →</Link>
                   </Button>
                 </article>
               ))}
@@ -171,7 +171,7 @@ const NewsSection = () => {
 
             <div className='text-center mt-10'>
               <Button asChild variant='outline' className='btn-outline'>
-                <Link to='/news'>Alle News anzeigen</Link>
+                <Link to='/news'>View All News</Link>
               </Button>
             </div>
           </>

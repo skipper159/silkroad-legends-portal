@@ -40,9 +40,9 @@ const NewsDetail = () => {
 
         if (!response.ok) {
           if (response.status === 404) {
-            setError('Artikel nicht gefunden');
+            setError('Article not found');
           } else {
-            setError('Fehler beim Laden des Artikels');
+            setError('Error loading article');
           }
           return;
         }
@@ -51,11 +51,11 @@ const NewsDetail = () => {
         if (data.success) {
           setArticle(data.data);
         } else {
-          setError(data.message || 'Fehler beim Laden des Artikels');
+          setError(data.message || 'Error loading article');
         }
       } catch (err) {
         console.error('Error fetching article:', err);
-        setError('Netzwerkfehler beim Laden des Artikels');
+        setError('Network error loading article');
       } finally {
         setLoading(false);
       }
@@ -107,12 +107,12 @@ const NewsDetail = () => {
         <Navbar />
         <main className='container mx-auto px-4 py-8'>
           <div className='text-center py-16'>
-            <h1 className='text-4xl font-bold text-white mb-4'>Artikel nicht gefunden</h1>
+            <h1 className='text-4xl font-bold text-white mb-4'>Article not found</h1>
             <p className='text-gray-300 mb-8'>{error}</p>
             <Link to='/news'>
               <Button className='bg-silkroad-gold hover:bg-silkroad-gold/80 text-black'>
                 <ArrowLeft className='h-4 w-4 mr-2' />
-                Zurück zu den News
+                Back to News
               </Button>
             </Link>
           </div>
@@ -131,7 +131,7 @@ const NewsDetail = () => {
           <Link to='/news'>
             <Button variant='outline' className='border-silkroad-gold/30 text-silkroad-gold hover:bg-silkroad-gold/10'>
               <ArrowLeft className='h-4 w-4 mr-2' />
-              Zurück zu den News
+              Back to News
             </Button>
           </Link>
         </div>

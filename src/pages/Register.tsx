@@ -135,8 +135,7 @@ const Register = () => {
                 {referralCode && (
                   <div className='mt-4 p-3 bg-lafftale-gold/10 border border-lafftale-gold/30 rounded-lg'>
                     <p className='text-sm text-lafftale-gold'>
-                      🎉 Sie wurden eingeladen! Referral-Code:{' '}
-                      <span className='font-mono font-bold'>{referralCode}</span>
+                      🎉 You've been invited! Referral code: <span className='font-mono font-bold'>{referralCode}</span>
                     </p>
                   </div>
                 )}
@@ -158,7 +157,7 @@ const Register = () => {
                     ) : (
                       <>
                         <div className='w-4 h-4 bg-red-500 rounded-full'></div>
-                        <span className='text-sm text-red-400'>Anti-Cheat Fehler</span>
+                        <span className='text-sm text-red-400'>Anti-Cheat Error</span>
                       </>
                     )}
                   </div>

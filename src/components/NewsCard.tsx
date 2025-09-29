@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Tag, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 // News Item Interface Definition
 export interface NewsItem {
@@ -35,7 +35,7 @@ const getCategoryColor = (category: string) => {
 };
 
 const getCategoryIcon = (category: string) => {
-  // Je nach Kategorie könnte man hier verschiedene Icons zurückgeben
+  // Depending on category, different icons could be returned here
   return <Tag size={14} />;
 };
 
@@ -43,7 +43,7 @@ export const NewsCard = ({ news }: NewsCardProps) => {
   // Format date as relative time (e.g., "3 days ago")
   const formattedDate = formatDistanceToNow(new Date(news.created_at), {
     addSuffix: true,
-    locale: de,
+    locale: enUS,
   });
 
   return (
@@ -86,7 +86,7 @@ export const NewsCard = ({ news }: NewsCardProps) => {
 
           <Link to={`/news/${news.slug}`}>
             <Button className='btn-primary flex items-center gap-2' size='sm'>
-              Weiterlesen
+              Read More
               <ArrowRight size={16} />
             </Button>
           </Link>

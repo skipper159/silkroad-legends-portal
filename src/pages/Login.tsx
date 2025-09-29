@@ -43,7 +43,7 @@ const Login = () => {
           console.log('JWT Payload:', payload);
           console.log('User data being sent:', data.user);
 
-          // Auth-Kontext aktualisieren und Token speichern
+          // Update auth context and save token
           const isAdmin = payload.isAdmin || false;
           console.log('isAdmin status:', isAdmin);
           login(data.token, isAdmin);

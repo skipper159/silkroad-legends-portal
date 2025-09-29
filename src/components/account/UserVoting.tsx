@@ -84,7 +84,7 @@ const UserVoting = () => {
   const fetchVoteSites = async () => {
     try {
       console.log('Fetching vote sites...');
-      const response = await fetchWithAuth(`http://localhost:3000/api/vote/sites`);
+      const response = await fetchWithAuth(`${weburl}/api/vote/sites`);
       console.log('Vote sites response status:', response.status);
 
       if (!response.ok) {
@@ -98,8 +98,8 @@ const UserVoting = () => {
     } catch (error) {
       console.error('Error fetching vote sites:', error);
       toast({
-        title: 'Fehler',
-        description: `Vote-Sites konnten nicht geladen werden: ${error.message}`,
+        title: 'Error',
+        description: `Vote sites could not be loaded: ${error.message}`,
         variant: 'destructive',
       });
     }
@@ -113,7 +113,7 @@ const UserVoting = () => {
 
     try {
       console.log('Fetching vote status for userId:', userId);
-      const response = await fetchWithAuth(`http://localhost:3000/api/vote/status/${userId}`);
+      const response = await fetchWithAuth(`${weburl}/api/vote/status/${userId}`);
       console.log('Vote status response status:', response.status);
 
       if (!response.ok) {
@@ -126,8 +126,8 @@ const UserVoting = () => {
     } catch (error) {
       console.error('Error fetching vote status:', error);
       toast({
-        title: 'Fehler',
-        description: `Vote-Status konnte nicht geladen werden: ${error.message}`,
+        title: 'Error',
+        description: `Vote status could not be loaded: ${error.message}`,
         variant: 'destructive',
       });
     }
@@ -138,15 +138,15 @@ const UserVoting = () => {
 
     try {
       setHistoryLoading(true);
-      const response = await fetchWithAuth(`http://localhost:3000/api/vote/history/${userId}?limit=50`);
+      const response = await fetchWithAuth(`${weburl}/api/vote/history/${userId}?limit=50`);
       const history = await response.json();
       setVoteHistory(history);
       setShowHistory(true);
     } catch (error) {
       console.error('Error fetching vote history:', error);
       toast({
-        title: 'Fehler',
-        description: 'Vote-Historie konnte nicht geladen werden',
+        title: 'Error',
+        description: 'Vote history could not be loaded',
         variant: 'destructive',
       });
     } finally {
@@ -159,8 +159,8 @@ const UserVoting = () => {
     window.open(site.url, '_blank', 'noopener,noreferrer');
 
     toast({
-      title: 'Voting-Site geöffnet',
-      description: `Du wurdest zu ${site.name} weitergeleitet. Nach dem Voting erhältst du ${site.reward_silk} Silk.`,
+      title: 'Voting site opened',
+      description: `You have been redirected to ${site.name}. After voting you will receive ${site.reward_silk} Silk.`,
     });
 
     // Refresh status after a short delay
@@ -201,7 +201,7 @@ const UserVoting = () => {
       <div className='flex items-center justify-center min-h-[400px]'>
         <div className='text-center'>
           <Vote className='h-8 w-8 animate-spin mx-auto mb-4' />
-          <p>Lade Vote-Sites...</p>
+          <p>Loading vote sites...</p>
         </div>
       </div>
     );
@@ -216,7 +216,7 @@ const UserVoting = () => {
             <div className='flex items-center space-x-2'>
               <Star className='h-5 w-5 text-yellow-500' />
               <div>
-                <p className='text-sm font-medium'>Verfügbare Votes</p>
+                <p className='text-sm font-medium'>Available Votes</p>
                 <p className='text-2xl font-bold'>{getAvailableVotes()}</p>
               </div>
             </div>
@@ -228,7 +228,7 @@ const UserVoting = () => {
             <div className='flex items-center space-x-2'>
               <Vote className='h-5 w-5 text-blue-500' />
               <div>
-                <p className='text-sm font-medium'>Gesamt Votes</p>
+                <p className='text-sm font-medium'>Total Votes</p>
                 <p className='text-2xl font-bold'>{getTotalVotes()}</p>
               </div>
             </div>
@@ -240,7 +240,7 @@ const UserVoting = () => {
             <div className='flex items-center space-x-2'>
               <Gift className='h-5 w-5 text-green-500' />
               <div>
-                <p className='text-sm font-medium'>Verdiente Silk</p>
+                <p className='text-sm font-medium'>Earned Silk</p>
                 <p className='text-2xl font-bold'>{getTotalRewardsEarned()}</p>
               </div>
             </div>
@@ -252,7 +252,7 @@ const UserVoting = () => {
             <div className='flex items-center space-x-2'>
               <History className='h-5 w-5 text-purple-500' />
               <div>
-                <p className='text-sm font-medium'>Historie</p>
+                <p className='text-sm font-medium'>History</p>
                 <Button
                   variant='outline'
                   size='sm'
@@ -260,7 +260,7 @@ const UserVoting = () => {
                   disabled={historyLoading}
                   className='mt-1'
                 >
-                  Anzeigen
+                  Show
                 </Button>
               </div>
             </div>
@@ -273,11 +273,9 @@ const UserVoting = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Vote className='h-5 w-5' />
-            Vote für uns
+            Vote for us
           </CardTitle>
-          <CardDescription>
-            Vote für unseren Server auf verschiedenen Toplisten und erhalte Belohnungen!
-          </CardDescription>
+          <CardDescription>Vote for our server on various toplists and receive rewards!</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -306,12 +304,12 @@ const UserVoting = () => {
                         )}
                         <div>
                           <h3 className='font-semibold text-sm'>{site.name}</h3>
-                          <p className='text-xs text-muted-foreground'>{site.reward_silk} Silk Belohnung</p>
+                          <p className='text-xs text-muted-foreground'>{site.reward_silk} Silk Reward</p>
                         </div>
                       </div>
                       {canVote ? (
                         <Badge variant='default' className='bg-green-100 text-green-800'>
-                          Verfügbar
+                          Available
                         </Badge>
                       ) : (
                         <Badge variant='secondary'>Cooldown</Badge>
@@ -321,7 +319,7 @@ const UserVoting = () => {
                     {!canVote && timeUntilNext && (
                       <div className='mb-3'>
                         <div className='flex items-center justify-between text-xs text-muted-foreground mb-1'>
-                          <span>Nächster Vote in:</span>
+                          <span>Next vote in:</span>
                           <span>{timeUntilNext}</span>
                         </div>
                         <Progress
@@ -344,13 +342,13 @@ const UserVoting = () => {
                       </div>
                       <Button size='sm' onClick={() => handleVote(site)} disabled={!canVote} className='text-xs'>
                         <ExternalLink className='h-3 w-3 mr-1' />
-                        Voten
+                        Vote
                       </Button>
                     </div>
 
                     {status && status.total_votes > 0 && (
                       <div className='mt-2 pt-2 border-t text-xs text-muted-foreground'>
-                        Bereits {status.total_votes}x gevoted
+                        Already voted {status.total_votes}x
                       </div>
                     )}
                   </CardContent>
@@ -365,26 +363,26 @@ const UserVoting = () => {
       <Dialog open={showHistory} onOpenChange={setShowHistory}>
         <DialogContent className='max-w-4xl max-h-[80vh] overflow-y-auto'>
           <DialogHeader>
-            <DialogTitle>Vote-Historie</DialogTitle>
-            <DialogDescription>Deine letzten 50 Votes mit Belohnungen</DialogDescription>
+            <DialogTitle>Vote History</DialogTitle>
+            <DialogDescription>Your last 50 votes with rewards</DialogDescription>
           </DialogHeader>
 
           {historyLoading ? (
             <div className='flex items-center justify-center py-8'>
               <History className='h-6 w-6 animate-spin mr-2' />
-              Lade Historie...
+              Loading history...
             </div>
           ) : (
             <div className='space-y-2'>
               {voteHistory.length === 0 ? (
-                <p className='text-center text-muted-foreground py-8'>Noch keine Votes vorhanden</p>
+                <p className='text-center text-muted-foreground py-8'>No votes yet</p>
               ) : (
                 voteHistory.map((vote) => (
                   <div key={vote.id} className='flex items-center justify-between p-3 bg-muted rounded-lg'>
                     <div>
                       <p className='font-medium'>{vote.site_name}</p>
                       <p className='text-sm text-muted-foreground'>
-                        {new Date(vote.voted_at).toLocaleDateString('de-DE', {
+                        {new Date(vote.voted_at).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
