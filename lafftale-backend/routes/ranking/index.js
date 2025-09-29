@@ -21,7 +21,11 @@ const { getThiefRankings, getThiefStatistics } = require('./thief_rankings');
 const { getTraderRankings, getTraderStatistics } = require('./trader_rankings');
 const { getHonorRanking } = require('./honorRankings');
 const { getPvPRanking } = require('./pvpRankings');
-const { getFortressPlayerRanking, getFortressGuildRanking, getCurrentFortressOwner } = require('./fortressRankings');
+const {
+  getFortressPlayerRanking,
+  getFortressGuildRanking,
+  getCurrentFortressOwner,
+} = require('./fortressRankings');
 const {
   getJobStatistics,
   getJobLeaderboardComparison,
@@ -407,7 +411,11 @@ router.get('/fortress-current', async (req, res) => {
     const owner = await getCurrentFortressOwner();
 
     if (!owner) {
-      return res.json({ success: true, data: { guild: null, fortress: null, timeHeld: null }, timestamp: new Date().toISOString() });
+      return res.json({
+        success: true,
+        data: { guild: null, fortress: null, timeHeld: null },
+        timestamp: new Date().toISOString(),
+      });
     }
 
     // Normalize shape expected by frontend

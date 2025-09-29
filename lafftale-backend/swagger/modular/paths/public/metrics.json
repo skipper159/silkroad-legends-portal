@@ -16,7 +16,10 @@
                   "data": {
                     "type": "object",
                     "properties": {
-                      "count": { "type": "integer", "description": "Number of players currently online" }
+                      "count": {
+                        "type": "integer",
+                        "description": "Number of players currently online"
+                      }
                     }
                   },
                   "timestamp": { "type": "string", "format": "date-time" }

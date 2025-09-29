@@ -111,11 +111,9 @@ async function getFortressGuildRanking(limit = PAGE_SIZE, offset = 0) {
  */
 async function getCurrentFortressOwner() {
   try {
-  const pool = await getAccountDb();
+    const pool = await getAccountDb();
     // Lese aktuellen Fortress-Owner aus dbo.__SiegeFortressStatus__
-    const result = await pool
-      .request()
-      .query(`
+    const result = await pool.request().query(`
         SELECT TOP 1 FortressName, OwnerGuildName, OwnerGuildMaster, OwnerUpdateDate
         FROM [dbo].[__SiegeFortressStatus__]
         ORDER BY FortressName ASC
@@ -130,7 +128,7 @@ async function getCurrentFortressOwner() {
     return {
       guild: row.OwnerGuildName,
       fortress: row.FortressName,
-      timeHeld: row.OwnerUpdateDate ? new Date(row.OwnerUpdateDate).toISOString() : null
+      timeHeld: row.OwnerUpdateDate ? new Date(row.OwnerUpdateDate).toISOString() : null,
     };
   } catch (error) {
     console.error('Error fetching current fortress owner:', error);

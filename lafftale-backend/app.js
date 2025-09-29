@@ -113,7 +113,10 @@ CronJobService.initializeJobs().catch(console.error);
 // Ensure players_online_collector job is registered with a sensible default (every minute)
 // This will create/update the job setting and start the scheduled task according to the service logic
 CronJobService.updateJobSetting('players_online_collector', '*/1 * * * *', true).catch((err) => {
-  console.warn('Could not register players_online_collector job at startup:', err && err.message ? err.message : err);
+  console.warn(
+    'Could not register players_online_collector job at startup:',
+    err && err.message ? err.message : err
+  );
 });
 
 const PORT = process.env.PORT || 3000;

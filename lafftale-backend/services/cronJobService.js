@@ -148,28 +148,29 @@ class CronJobService {
           );
           break;
 
-        case 'players_online_collector': {
-          // Collect players-online metric periodically. Default schedule example: every minute
-          const MetricsService = require('./metricsService');
-          task = cron.schedule(
-            cronExpression,
-            async () => {
-              try {
-                // TODO: replace with actual integration (DB query or game-server API)
-                // For now we set a placeholder value (0) so the metric endpoint returns something
-                const placeholderValue = 0;
-                MetricsService.setPlayersOnline(placeholderValue, 120);
-              } catch (err) {
-                console.error('players_online_collector job failed:', err);
+        case 'players_online_collector':
+          {
+            // Collect players-online metric periodically. Default schedule example: every minute
+            const MetricsService = require('./metricsService');
+            task = cron.schedule(
+              cronExpression,
+              async () => {
+                try {
+                  // TODO: replace with actual integration (DB query or game-server API)
+                  // For now we set a placeholder value (0) so the metric endpoint returns something
+                  const placeholderValue = 0;
+                  MetricsService.setPlayersOnline(placeholderValue, 120);
+                } catch (err) {
+                  console.error('players_online_collector job failed:', err);
+                }
+              },
+              {
+                scheduled: false,
+                timezone: 'Europe/Berlin',
               }
-            },
-            {
-              scheduled: false,
-              timezone: 'Europe/Berlin',
-            }
-          );
-        }
-        break;
+            );
+          }
+          break;
 
         default:
           throw new Error(`Unbekannter Job: ${jobName}`);
