@@ -1,66 +1,74 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const BeginnerGuide = () => {
   return (
     <>
       <Navbar />
 
-      {/* Sticky Header with Table of Contents */}
-      <header className="sticky top-0 bg-background/90 backdrop-blur-lg border-b border-border z-40">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Silkroad Online (iSRO) – Complete Game Guide
+      <div className="py-12 bg-header-bg bg-cover bg-center">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Beginner Guide <span className="text-lafftale-bronze font-cinzel text-4xl font-bold">Lafftale</span>
           </h1>
-          <p className="text-muted-foreground mb-4">
-            Structured, practical guide with visual aids. Organized in sections for easy navigation.
+          <p className="text-lg max-w-2xl mx-auto mb-10 text-gray-300">
+            Structured, practical guide with visual aids. Everything you need to know to get started.
           </p>
-          <nav className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2" aria-label="Table of Contents">
-            <a href="#intro" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              1. Introduction
-            </a>
-            <a href="#start" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              2. Getting Started
-            </a>
-            <a href="#leveling" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              3. Leveling Routes
-            </a>
-            <a href="#mastery" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              4. Mastery Guide
-            </a>
-            <a href="#job" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              5. Job System
-            </a>
-            <a href="#alchemy" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              6. Equipment & Alchemy
-            </a>
-            <a href="#grinding" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              7. Grinding Spots
-            </a>
-            <a href="#dungeons" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              8. Dungeons & Special Content
-            </a>
-            <a href="#economy" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              9. Economy & Trading
-            </a>
-            <a href="#endgame" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              10. Endgame
-            </a>
-            <a href="#crafting" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              Crafting/Manufacturing
-            </a>
-            <a href="#fortress" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              Fortress War
-            </a>
-            <a href="#tips" className="block bg-card border border-border rounded-lg px-3 py-2 text-sm hover:bg-accent transition-colors">
-              Tips & Resources
-            </a>
-          </nav>
         </div>
-      </header>
+      </div>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Table of Contents */}
+        <Card className="mb-12">
+          <CardHeader>
+            <CardTitle>Table of Contents</CardTitle>
+            <CardDescription>Quick navigation to all guide sections</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <nav className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" aria-label="Table of Contents">
+              <a href="#intro" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                1. Introduction
+              </a>
+              <a href="#start" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                2. Getting Started
+              </a>
+              <a href="#leveling" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                3. Leveling Routes
+              </a>
+              <a href="#mastery" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                4. Mastery Guide
+              </a>
+              <a href="#job" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                5. Job System
+              </a>
+              <a href="#alchemy" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                6. Equipment & Alchemy
+              </a>
+              <a href="#grinding" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                7. Grinding Spots
+              </a>
+              <a href="#dungeons" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                8. Dungeons & Special Content
+              </a>
+              <a href="#economy" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                9. Economy & Trading
+              </a>
+              <a href="#endgame" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                10. Endgame
+              </a>
+              <a href="#crafting" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                Crafting/Manufacturing
+              </a>
+              <a href="#fortress" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                Fortress War
+              </a>
+              <a href="#tips" className="block bg-secondary/20 border border-border rounded-lg px-4 py-3 text-sm hover:bg-accent transition-colors">
+                Tips & Resources
+              </a>
+            </nav>
+          </CardContent>
+        </Card>
         {/* 1. Introduction */}
         <section id="intro" className="border-t border-border pt-8 mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">1. Introduction</h2>
