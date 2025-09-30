@@ -23,6 +23,8 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import NewsSection from './components/NewsSection';
 import ServerRules from './components/Legal/Server Rules';
 import Guide from './pages/Guide';
+import BeginnerGuide from './pages/BeginnerGuide';
+import ServerGuide from './pages/ServerGuide';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path='/server-info' element={<ServerInfo />} />
           <Route path='/rules' element={<ServerRules />} />
           <Route path='/guide' element={<Guide />} />
+          <Route path='/guide/beginner' element={<BeginnerGuide />} />
+          <Route path='/guide/server' element={<ServerGuide />} />
           <Route element={<ProtectedRoute />}>
             <Route path='/account' element={<Account />} />
             <Route path='/AdminDashboard' element={<AdminDashboard />} />
