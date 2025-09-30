@@ -424,7 +424,7 @@ const UserRolesManager = () => {
                             variant='outline'
                             size='sm'
                             onClick={() => toggleAdminRole(user.id, user.is_admin)}
-                            title={user.is_admin ? 'Admin-Rechte entziehen' : 'Admin-Rechte gewähren'}
+                            title={user.is_admin ? 'Remove admin rights' : 'Grant admin rights'}
                           >
                             <Shield className='h-4 w-4' />
                           </Button>

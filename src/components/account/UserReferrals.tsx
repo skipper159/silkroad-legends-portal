@@ -136,8 +136,8 @@ const UserReferrals: React.FC = () => {
     if (!stats || stats.available_points < 100) {
       console.log('Not enough points for redemption');
       toast({
-        title: 'Fehler',
-        description: 'Du benötigst mindestens 100 Punkte zum Einlösen',
+        title: 'Error',
+        description: 'You need at least 100 points to redeem',
         variant: 'destructive',
       });
       return;
@@ -160,22 +160,22 @@ const UserReferrals: React.FC = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich!',
-          description: data.message || `${stats.available_points} Punkte wurden erfolgreich eingelöst!`,
+          title: 'Success!',
+          description: data.message || `${stats.available_points} points redeemed successfully!`,
         });
-        fetchReferralData(); // Daten neu laden
+        fetchReferralData(); // Reload data
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Punkte konnten nicht eingelöst werden',
+          title: 'Error',
+          description: data.message || 'Points could not be redeemed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Redeem error:', error);
       toast({
-        title: 'Fehler',
-        description: 'Punkte konnten nicht eingelöst werden. Bitte versuche es erneut.',
+        title: 'Error',
+        description: 'Points could not be redeemed. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -187,8 +187,8 @@ const UserReferrals: React.FC = () => {
     if (referralCode) {
       navigator.clipboard.writeText(referralCode);
       toast({
-        title: 'Kopiert!',
-        description: 'Referral-Code wurde in die Zwischenablage kopiert',
+        title: 'Copied!',
+        description: 'Referral code copied to clipboard',
       });
     }
   };
@@ -197,8 +197,8 @@ const UserReferrals: React.FC = () => {
     const referralLink = `${window.location.origin}/register?ref=${referralCode}`;
     navigator.clipboard.writeText(referralLink);
     toast({
-      title: 'Link kopiert!',
-      description: 'Referral-Link wurde in die Zwischenablage kopiert',
+      title: 'Link copied!',
+      description: 'Referral link copied to clipboard',
     });
   };
 
@@ -218,7 +218,7 @@ const UserReferrals: React.FC = () => {
   if (loading) {
     return (
       <div className='text-center py-8'>
-        <div className='text-gray-400'>Lade Referral-Daten...</div>
+        <div className='text-gray-400'>Loading referral data...</div>
       </div>
     );
   }
@@ -229,23 +229,23 @@ const UserReferrals: React.FC = () => {
         <UserPlus className='h-8 w-8 text-lafftale-gold' />
         <div>
           <h2 className='text-2xl font-bold text-gray-100'>Referral System</h2>
-          <p className='text-gray-400'>Lade Freunde ein und erhalte Belohnungen</p>
+          <p className='text-gray-400'>Invite friends and earn rewards</p>
         </div>
       </div>
 
       {/* Referral Code */}
       <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Dein Referral-Code</CardTitle>
+          <CardTitle className='text-lafftale-gold'>Your Referral Code</CardTitle>
           <CardDescription className='text-gray-400'>
-            Teile diesen Code mit deinen Freunden bei der Registrierung
+            Share this code with your friends during registration
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
             <div className='flex items-center gap-2'>
               <div className='flex-1 p-3 bg-lafftale-dark rounded-lg border border-lafftale-gold/30'>
-                <span className='font-mono text-lafftale-gold text-lg'>{referralCode || 'Wird generiert...'}</span>
+                <span className='font-mono text-lafftale-gold text-lg'>{referralCode || 'Generating...'}</span>
               </div>
               <Button
                 onClick={copyReferralCode}
@@ -263,58 +263,58 @@ const UserReferrals: React.FC = () => {
               disabled={!referralCode}
             >
               <Share2 className='h-4 w-4 mr-2' />
-              Referral-Link teilen
+              Share Referral Link
             </Button>
             <p className='text-xs text-gray-500 text-center'>
-              Freunde müssen diesen Code bei der Registrierung eingeben
+              Friends must enter this code during registration
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Statistiken und Punkte einlösen */}
+      {/* Statistics and points redemption */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
           <CardHeader>
-            <CardTitle className='text-lafftale-gold'>Statistiken</CardTitle>
-            <CardDescription className='text-gray-400'>Deine Referral-Übersicht</CardDescription>
+            <CardTitle className='text-lafftale-gold'>Statistics</CardTitle>
+            <CardDescription className='text-gray-400'>Your referral overview</CardDescription>
           </CardHeader>
           <CardContent>
             {stats ? (
               <div className='space-y-3'>
                 <div className='flex justify-between'>
-                  <span className='text-gray-400'>Gesamt Referrals:</span>
+                  <span className='text-gray-400'>Total Referrals:</span>
                   <span className='text-lafftale-gold font-bold'>{stats.total_referrals}</span>
                 </div>
                 <div className='flex justify-between'>
-                  <span className='text-gray-400'>Bestätigt:</span>
+                  <span className='text-gray-400'>Confirmed:</span>
                   <span className='text-green-400 font-bold'>{stats.approved_referrals}</span>
                 </div>
                 <div className='flex justify-between'>
-                  <span className='text-gray-400'>Wartend:</span>
+                  <span className='text-gray-400'>Pending:</span>
                   <span className='text-yellow-400 font-bold'>{stats.pending_referrals}</span>
                 </div>
                 <div className='flex justify-between border-t border-lafftale-gold/30 pt-3'>
-                  <span className='text-gray-400'>Verfügbare Punkte:</span>
+                  <span className='text-gray-400'>Available Points:</span>
                   <span className='text-lafftale-gold font-bold text-lg'>{stats.available_points}</span>
                 </div>
               </div>
             ) : (
-              <div className='text-center text-gray-400'>Keine Statistiken verfügbar</div>
+              <div className='text-center text-gray-400'>No statistics available</div>
             )}
           </CardContent>
         </Card>
 
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
           <CardHeader>
-            <CardTitle className='text-lafftale-gold'>Punkte einlösen</CardTitle>
-            <CardDescription className='text-gray-400'>Tausche Punkte gegen Silk ein</CardDescription>
+            <CardTitle className='text-lafftale-gold'>Redeem Points</CardTitle>
+            <CardDescription className='text-gray-400'>Exchange points for Silk</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
               <div className='text-center'>
                 <div className='text-2xl font-bold text-lafftale-gold'>{stats?.available_points || 0}</div>
-                <div className='text-sm text-gray-400'>Verfügbare Punkte</div>
+                <div className='text-sm text-gray-400'>Available Points</div>
               </div>
               <Button
                 onClick={handleRedeemPoints}
@@ -322,16 +322,16 @@ const UserReferrals: React.FC = () => {
                 disabled={!stats || stats.available_points < 100 || redeemLoading}
               >
                 {redeemLoading ? (
-                  'Wird eingelöst...'
+                  'Redeeming...'
                 ) : (
                   <>
                     <Gift className='h-4 w-4 mr-2' />
-                    Alle Punkte einlösen
+                    Redeem All Points
                   </>
                 )}
               </Button>
               {stats && stats.available_points < 100 && (
-                <p className='text-xs text-gray-500 text-center'>Mindestens 100 Punkte erforderlich</p>
+                <p className='text-xs text-gray-500 text-center'>Minimum 100 points required</p>
               )}
             </div>
           </CardContent>
@@ -341,15 +341,15 @@ const UserReferrals: React.FC = () => {
       {/* Referral Liste */}
       <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Deine Referrals</CardTitle>
-          <CardDescription className='text-gray-400'>Übersicht über deine geworbenen Spieler</CardDescription>
+          <CardTitle className='text-lafftale-gold'>Your Referrals</CardTitle>
+          <CardDescription className='text-gray-400'>Overview of your recruited players</CardDescription>
         </CardHeader>
         <CardContent>
           {referrals.length === 0 ? (
             <div className='text-center py-8'>
               <Users className='h-12 w-12 text-gray-500 mx-auto mb-4' />
-              <p className='text-gray-400'>Du hast noch keine Referrals</p>
-              <p className='text-gray-500 text-sm'>Teile deinen Referral-Code mit Freunden</p>
+              <p className='text-gray-400'>You don't have any referrals yet</p>
+              <p className='text-gray-500 text-sm'>Share your referral code with friends</p>
             </div>
           ) : (
             <div className='space-y-3'>
@@ -362,7 +362,7 @@ const UserReferrals: React.FC = () => {
                     <Users className='h-5 w-5 text-lafftale-gold' />
                     <div>
                       <div className='font-medium text-gray-100'>
-                        {referral.referred_username || `Spieler ${referral.invited_jid || 'Unbekannt'}`}
+                        {referral.referred_username || `Player ${referral.invited_jid || 'Unknown'}`}
                       </div>
                       <div className='text-sm text-gray-400'>
                         {new Date(referral.created_at).toLocaleDateString('de-DE')}
@@ -377,11 +377,11 @@ const UserReferrals: React.FC = () => {
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
                       }
                     >
-                      {referral.invited_jid ? 'Verwendet' : 'Wartend'}
+                      {referral.invited_jid ? 'Used' : 'Pending'}
                     </Badge>
                     <div className='text-right'>
                       <div className='text-sm font-bold text-lafftale-gold'>+{referral.points}</div>
-                      <div className='text-xs text-gray-400'>Punkte</div>
+                      <div className='text-xs text-gray-400'>Points</div>
                     </div>
                   </div>
                 </div>
@@ -391,16 +391,16 @@ const UserReferrals: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Verfügbare Belohnungen */}
+      {/* Available Rewards */}
       {rewards.length > 0 && (
         <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
           <CardHeader>
             <CardTitle className='text-lafftale-gold flex items-center gap-2'>
               <Award className='h-5 w-5' />
-              Verfügbare Belohnungen
+              Available Rewards
             </CardTitle>
             <CardDescription className='text-gray-400'>
-              Tausche deine Referral-Punkte gegen Belohnungen ein
+              Exchange your referral points for rewards
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -413,13 +413,13 @@ const UserReferrals: React.FC = () => {
                   </div>
                   <p className='text-sm text-gray-400 mb-3'>{reward.description}</p>
                   <div className='flex justify-between items-center'>
-                    <span className='text-lafftale-gold font-bold'>{reward.points_required} Punkte</span>
+                    <span className='text-lafftale-gold font-bold'>{reward.points_required} Points</span>
                     <Button
                       size='sm'
                       disabled={!stats || stats.available_points < reward.points_required}
                       className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
                     >
-                      Einlösen
+                      Redeem
                     </Button>
                   </div>
                 </div>

@@ -170,7 +170,7 @@ const Account = () => {
         <main className='flex-grow bg-lafftale-dark flex items-center justify-center'>
           <div className='flex flex-col items-center'>
             <Loader2 size={40} className='text-lafftale-gold animate-spin mb-4' />
-            <p className='text-lafftale-gold'>Lade Kontodaten...</p>
+            <p className='text-lafftale-gold'>Loading account data...</p>
           </div>
         </main>
         <Footer />

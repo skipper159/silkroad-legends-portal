@@ -335,7 +335,7 @@ const NewsManager = () => {
                   <p className='text-sm text-gray-300'>
                     {item.content && typeof item.content === 'string'
                       ? item.content.substring(0, 150) + '...'
-                      : 'Kein Inhalt verfügbar'}
+                      : 'No content available'}
                   </p>
                 </CardContent>
               </Card>

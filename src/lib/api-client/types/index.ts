@@ -320,7 +320,7 @@ export interface SuccessResponse {
 
 export interface ErrorResponse {
   /** Indicates failed operation */
-  success: boolean;
+  success: false;
   /** Error message */
   error: string;
   /** Additional error details */

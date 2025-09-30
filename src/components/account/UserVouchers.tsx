@@ -51,8 +51,8 @@ const UserVouchers: React.FC = () => {
   const handleRedeemVoucher = async () => {
     if (!redeemCode.trim()) {
       toast({
-        title: 'Fehler',
-        description: 'Bitte gib einen Voucher-Code ein',
+        title: 'Error',
+        description: 'Please enter a voucher code',
         variant: 'destructive',
       });
       return;
@@ -69,23 +69,23 @@ const UserVouchers: React.FC = () => {
 
       if (data.success) {
         toast({
-          title: 'Erfolgreich!',
-          description: data.message || 'Voucher erfolgreich eingelöst',
+          title: 'Success!',
+          description: data.message || 'Voucher redeemed successfully',
         });
         setRedeemCode('');
-        // Lade Historie neu, um den neuen Voucher anzuzeigen
+        // Reload history to show the new voucher
         fetchVoucherHistory();
       } else {
         toast({
-          title: 'Fehler',
-          description: data.message || 'Voucher konnte nicht eingelöst werden',
+          title: 'Error',
+          description: data.message || 'Voucher could not be redeemed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Fehler',
-        description: 'Voucher konnte nicht eingelöst werden. Bitte versuche es erneut.',
+        title: 'Error',
+        description: 'Voucher could not be redeemed. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -144,16 +144,16 @@ const UserVouchers: React.FC = () => {
         <Gift className='h-8 w-8 text-lafftale-gold' />
         <div>
           <h2 className='text-2xl font-bold text-gray-100'>Voucher System</h2>
-          <p className='text-gray-400'>Löse Voucher-Codes ein und erhalte Belohnungen</p>
+          <p className='text-gray-400'>Redeem voucher codes and receive rewards</p>
         </div>
       </div>
 
-      {/* Voucher einlösen */}
+      {/* Redeem Voucher */}
       <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Voucher einlösen</CardTitle>
+          <CardTitle className='text-lafftale-gold'>Redeem Voucher</CardTitle>
           <CardDescription className='text-gray-400'>
-            Gib einen Voucher-Code ein, um deine Belohnung zu erhalten
+            Enter a voucher code to receive your reward
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -165,7 +165,7 @@ const UserVouchers: React.FC = () => {
               <Input
                 id='voucher-code'
                 type='text'
-                placeholder='Voucher-Code eingeben...'
+                placeholder='Enter voucher code...'
                 value={redeemCode}
                 onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
                 className='mt-1 bg-lafftale-dark border-lafftale-gold/30 text-gray-100'
@@ -178,32 +178,32 @@ const UserVouchers: React.FC = () => {
                 disabled={redeeming || !redeemCode.trim()}
                 className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
               >
-                {redeeming ? 'Einlösen...' : 'Einlösen'}
+                {redeeming ? 'Redeeming...' : 'Redeem'}
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Voucher Historie */}
+      {/* Voucher History */}
       <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
         <CardHeader>
           <CardTitle className='text-lafftale-gold flex items-center gap-2'>
             <History className='h-5 w-5' />
-            Voucher Historie
+            Voucher History
           </CardTitle>
-          <CardDescription className='text-gray-400'>Übersicht über deine eingelösten Voucher</CardDescription>
+          <CardDescription className='text-gray-400'>Overview of your redeemed vouchers</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className='text-center py-8'>
-              <div className='text-gray-400'>Lade Voucher-Historie...</div>
+              <div className='text-gray-400'>Loading voucher history...</div>
             </div>
           ) : voucherHistory.length === 0 ? (
             <div className='text-center py-8'>
               <Gift className='h-12 w-12 text-gray-500 mx-auto mb-4' />
-              <p className='text-gray-400'>Du hast noch keine Voucher eingelöst</p>
-              <p className='text-gray-500 text-sm'>Deine eingelösten Voucher werden hier angezeigt</p>
+              <p className='text-gray-400'>You haven't redeemed any vouchers yet</p>
+              <p className='text-gray-500 text-sm'>Your redeemed vouchers will be displayed here</p>
             </div>
           ) : (
             <div className='space-y-3'>
