@@ -72,6 +72,14 @@ const Navbar = () => {
             >
               Server Info
             </Link>
+            <Link
+              to='/guide'
+              className={`font-medium hover:text-lafftale-gold ${
+                isActive('/guide') ? 'text-lafftale-gold' : 'text-gray-300'
+              }`}
+            >
+              Guide
+            </Link>
 
             {isAuthenticated ? (
               <>
@@ -180,6 +188,17 @@ const Navbar = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               Server Info
+            </Link>
+            <Link
+              to='/guide'
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActive('/guide')
+                  ? 'bg-lafftale-gold/20 text-lafftale-gold'
+                  : 'text-gray-300 hover:text-lafftale-gold'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Guide
             </Link>
 
             {isAuthenticated ? (

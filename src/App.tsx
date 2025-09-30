@@ -22,6 +22,7 @@ import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from './routes/ProtectedRoute';
 import NewsSection from './components/NewsSection';
 import ServerRules from './components/Legal/Server Rules';
+import Guide from './pages/Guide';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path='/news/:slug' element={<NewsDetail />} />
           <Route path='/server-info' element={<ServerInfo />} />
           <Route path='/rules' element={<ServerRules />} />
+          <Route path='/guide' element={<Guide />} />
           <Route element={<ProtectedRoute />}>
             <Route path='/account' element={<Account />} />
             <Route path='/AdminDashboard' element={<AdminDashboard />} />
