@@ -166,7 +166,7 @@ const News = () => {
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
                   {news.length > 0 ? (
                     news.map((item) => (
-                      <article key={item.id} className='card overflow-hidden group'>
+                      <article key={item.id} className='card-gradient overflow-hidden group'>
                         <div className='relative h-60 overflow-hidden mb-3'>
                           <img
                             src={item.image?.startsWith('http') ? item.image : `${weburl}${item.image}`}
