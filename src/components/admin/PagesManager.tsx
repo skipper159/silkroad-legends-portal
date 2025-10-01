@@ -269,16 +269,16 @@ const PagesManager: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <div className='text-3xl'>📄</div>
+          <FileText className='h-8 w-8 text-lafftale-gold' />
           <div>
-            <h2 className='text-2xl font-bold text-gray-900'>Pages Manager</h2>
-            <p className='text-gray-600'>Create and manage static pages</p>
+            <h2 className='text-2xl font-bold text-lafftale-gold'>Pages Manager</h2>
+            <p className='text-gray-400'>Create and manage static pages</p>
           </div>
         </div>
 
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className='btn-primary'>
               <Plus className='h-4 w-4 mr-2' />
               Create Page
             </Button>
@@ -335,14 +335,14 @@ const PagesManager: React.FC = () => {
               <Button variant='outline' onClick={() => setIsCreateDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreatePage}>Create Page</Button>
+              <Button onClick={handleCreatePage} className='btn-primary'>Create Page</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
         <CardContent className='p-4'>
           <div className='flex gap-4 items-center'>
             <div className='flex-1'>
@@ -373,17 +373,17 @@ const PagesManager: React.FC = () => {
       {/* Pages List */}
       <div className='space-y-4'>
         {filteredPages.map((page) => (
-          <Card key={page.id} className='hover:shadow-md transition-shadow'>
+          <Card key={page.id} className='bg-silkroad-dark/30 border-silkroad-gold/20 hover:shadow-md transition-shadow'>
             <CardContent className='p-6'>
               <div className='flex justify-between items-start gap-4'>
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-2'>
-                    <FileText className='h-5 w-5 text-blue-600' />
-                    <h3 className='text-lg font-semibold'>{page.title}</h3>
+                    <FileText className='h-5 w-5 text-lafftale-gold' />
+                    <h3 className='text-lg font-semibold text-lafftale-gold'>{page.title}</h3>
                     {getStatusBadge(page.status)}
                   </div>
 
-                  <p className='text-gray-600 mb-3'>{truncateContent(page.content)}</p>
+                  <p className='text-gray-300 mb-3'>{truncateContent(page.content)}</p>
 
                   <div className='flex items-center gap-4 text-sm text-gray-500'>
                     <div className='flex items-center gap-1'>
@@ -482,7 +482,7 @@ const PagesManager: React.FC = () => {
             <Button variant='outline' onClick={() => setEditingPage(null)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdatePage}>Update Page</Button>
+            <Button onClick={handleUpdatePage} className='btn-primary'>Update Page</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

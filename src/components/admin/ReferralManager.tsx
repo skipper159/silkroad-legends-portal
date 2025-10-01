@@ -463,22 +463,22 @@ const ReferralManager: React.FC = () => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center gap-3'>
-        <UserPlus className='h-8 w-8 text-blue-600' />
+        <UserPlus className='h-8 w-8 text-lafftale-gold' />
         <div>
-          <h2 className='text-2xl font-bold text-gray-900'>Referral Management</h2>
-          <p className='text-gray-600'>Manage referrals and rewards</p>
+          <h2 className='text-2xl font-bold text-lafftale-gold'>Referral Management</h2>
+          <p className='text-gray-400'>Manage referrals and rewards</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className='border-b border-gray-200'>
+      <div className='border-b border-gray-700'>
         <nav className='flex space-x-8'>
           <button
             onClick={() => setActiveTab('overview')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'overview'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-lafftale-gold text-lafftale-gold'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             <div className='flex items-center gap-2'>
@@ -490,8 +490,8 @@ const ReferralManager: React.FC = () => {
             onClick={() => setActiveTab('settings')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'settings'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-lafftale-gold text-lafftale-gold'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             <div className='flex items-center gap-2'>
@@ -503,8 +503,8 @@ const ReferralManager: React.FC = () => {
             onClick={() => setActiveTab('rewards')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'rewards'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-lafftale-gold text-lafftale-gold'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             <div className='flex items-center gap-2'>
@@ -516,8 +516,8 @@ const ReferralManager: React.FC = () => {
             onClick={() => setActiveTab('anticheat')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'anticheat'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-lafftale-gold text-lafftale-gold'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             <div className='flex items-center gap-2'>
@@ -534,53 +534,53 @@ const ReferralManager: React.FC = () => {
           {/* Statistiken */}
           {statistics && (
             <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4'>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-blue-600'>{statistics.total_referrals}</div>
-                    <div className='text-sm text-gray-500'>Total referrals</div>
+                    <div className='text-2xl font-bold text-lafftale-gold'>{statistics.total_referrals}</div>
+                    <div className='text-sm text-gray-400'>Total referrals</div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-yellow-600'>{statistics.pending_referrals}</div>
-                    <div className='text-sm text-gray-500'>Pending</div>
+                    <div className='text-2xl font-bold text-yellow-500'>{statistics.pending_referrals}</div>
+                    <div className='text-sm text-gray-400'>Pending</div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-green-600'>{statistics.completed_referrals}</div>
-                    <div className='text-sm text-gray-500'>Completed</div>
+                    <div className='text-2xl font-bold text-green-500'>{statistics.completed_referrals}</div>
+                    <div className='text-sm text-gray-400'>Completed</div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-red-600'>
+                    <div className='text-2xl font-bold text-red-500'>
                       {statistics.total_referrals - statistics.completed_referrals - statistics.pending_referrals}
                     </div>
-                    <div className='text-sm text-gray-500'>Error/Other</div>
+                    <div className='text-sm text-gray-400'>Error/Other</div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-purple-600'>{statistics.total_rewards_paid}</div>
-                    <div className='text-sm text-gray-500'>Rewards</div>
+                    <div className='text-2xl font-bold text-purple-500'>{statistics.total_rewards_paid}</div>
+                    <div className='text-sm text-gray-400'>Rewards</div>
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='pt-6'>
                   <div className='text-center'>
-                    <div className='text-2xl font-bold text-indigo-600'>{statistics.unique_referrers}</div>
-                    <div className='text-sm text-gray-500'>Active referrers</div>
+                    <div className='text-2xl font-bold text-indigo-500'>{statistics.unique_referrers}</div>
+                    <div className='text-sm text-gray-400'>Active referrers</div>
                   </div>
                 </CardContent>
               </Card>
@@ -588,7 +588,7 @@ const ReferralManager: React.FC = () => {
           )}
 
           {/* Filters and search */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardContent className='pt-6'>
               <div className='flex gap-4'>
                 <div className='flex-1'>
@@ -630,9 +630,9 @@ const ReferralManager: React.FC = () => {
           </Card>
 
           {/* Referral List */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle>Referral Overview</CardTitle>
+              <CardTitle className='text-lafftale-gold'>Referral Overview</CardTitle>
               <CardDescription>
                 {filteredReferrals.length} of {referrals.length} referrals
               </CardDescription>
@@ -687,7 +687,7 @@ const ReferralManager: React.FC = () => {
                             <Button
                               size='sm'
                               onClick={() => handleStatusUpdate(referral.id, 'completed')}
-                              className='bg-green-600 hover:bg-green-700 text-white'
+                              className='btn-primary'
                             >
                               Payout
                             </Button>
@@ -715,9 +715,9 @@ const ReferralManager: React.FC = () => {
       {activeTab === 'settings' && (
         <div className='space-y-6'>
           {/* Referral Settings */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
+              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
                 <Settings className='h-5 w-5' />
                 Referral System Settings
               </CardTitle>
@@ -822,9 +822,9 @@ const ReferralManager: React.FC = () => {
           </Card>
 
           {/* Anti-Cheat Settings */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
+              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
                 <BarChart3 className='h-5 w-5' />
                 Anti-Cheat Settings
               </CardTitle>
@@ -1049,9 +1049,9 @@ const ReferralManager: React.FC = () => {
       {activeTab === 'rewards' && (
         <div className='space-y-6'>
           {/* Manage rewards */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
+              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
                 <Award className='h-5 w-5' />
                 Manage rewards
               </CardTitle>
@@ -1081,7 +1081,7 @@ const ReferralManager: React.FC = () => {
                       )}
                     </div>
                     <div className='flex justify-between items-center'>
-                      <span className='font-bold text-blue-600'>{reward.points_required} points</span>
+                      <span className='font-bold text-lafftale-gold'>{reward.points_required} points</span>
                       <div className='flex gap-2'>
                         <Button size='sm' variant='outline' onClick={() => handleEditReward(reward)}>
                           <Edit className='h-3 w-3' />
@@ -1217,7 +1217,7 @@ const ReferralManager: React.FC = () => {
               >
                 Cancel
               </Button>
-              <Button className='flex-1 bg-blue-600 hover:bg-blue-700' onClick={handleSaveReward}>
+              <Button className='flex-1 btn-primary' onClick={handleSaveReward}>
                 Save
               </Button>
             </div>
@@ -1231,58 +1231,58 @@ const ReferralManager: React.FC = () => {
           {/* Anti-Cheat Statistics */}
           {antiCheatStats && (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-              <Card className='bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-blue-600 text-sm font-medium'>Total referrals</p>
-                      <p className='text-2xl font-bold text-blue-800'>
+                      <p className='text-gray-400 text-sm font-medium'>Total referrals</p>
+                      <p className='text-2xl font-bold text-lafftale-gold'>
                         {antiCheatStats.total_stats.total_referrals.toLocaleString()}
                       </p>
                     </div>
-                    <Users className='h-8 w-8 text-blue-600' />
+                    <Users className='h-8 w-8 text-lafftale-gold' />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className='bg-gradient-to-br from-green-50 to-green-100 border-green-200'>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-green-600 text-sm font-medium'>Valid referrals</p>
-                      <p className='text-2xl font-bold text-green-800'>
+                      <p className='text-gray-400 text-sm font-medium'>Valid referrals</p>
+                      <p className='text-2xl font-bold text-green-500'>
                         {antiCheatStats.total_stats.valid_referrals.toLocaleString()}
                       </p>
                     </div>
-                    <Trophy className='h-8 w-8 text-green-600' />
+                    <Trophy className='h-8 w-8 text-green-500' />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className='bg-gradient-to-br from-red-50 to-red-100 border-red-200'>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-red-600 text-sm font-medium'>Blocked referrals</p>
-                      <p className='text-2xl font-bold text-red-800'>
+                      <p className='text-gray-400 text-sm font-medium'>Blocked referrals</p>
+                      <p className='text-2xl font-bold text-red-500'>
                         {antiCheatStats.total_stats.blocked_referrals.toLocaleString()}
                       </p>
                     </div>
-                    <Eye className='h-8 w-8 text-red-600' />
+                    <Eye className='h-8 w-8 text-red-500' />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className='bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200'>
+              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
                 <CardContent className='p-6'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <p className='text-yellow-600 text-sm font-medium'>Block rate</p>
-                      <p className='text-2xl font-bold text-yellow-800'>
+                      <p className='text-gray-400 text-sm font-medium'>Block rate</p>
+                      <p className='text-2xl font-bold text-yellow-500'>
                         {antiCheatStats.total_stats.block_rate_percent.toFixed(1)}%
                       </p>
                     </div>
-                    <BarChart3 className='h-8 w-8 text-yellow-600' />
+                    <BarChart3 className='h-8 w-8 text-yellow-500' />
                   </div>
                 </CardContent>
               </Card>
@@ -1290,10 +1290,10 @@ const ReferralManager: React.FC = () => {
           )}
 
           {/* Suspicious referrals */}
-          <Card>
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Eye className='h-5 w-5 text-red-600' />
+              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
+                <Eye className='h-5 w-5 text-lafftale-gold' />
                 Suspicious Referral Activity
               </CardTitle>
               <CardDescription>Overview of blocked and suspicious referral attempts</CardDescription>
@@ -1391,9 +1391,9 @@ const ReferralManager: React.FC = () => {
 
           {/* Top cheat reasons */}
           {antiCheatStats && antiCheatStats.cheat_reasons.length > 0 && (
-            <Card>
+            <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
               <CardHeader>
-                <CardTitle>Top cheat reasons (last 30 days)</CardTitle>
+                <CardTitle className='text-lafftale-gold'>Top cheat reasons (last 30 days)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
@@ -1418,9 +1418,9 @@ const ReferralManager: React.FC = () => {
 
           {/* Top suspicious IPs */}
           {antiCheatStats && antiCheatStats.suspicious_ips.length > 0 && (
-            <Card>
+            <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
               <CardHeader>
-                <CardTitle>Suspicious IP Addresses</CardTitle>
+                <CardTitle className='text-lafftale-gold'>Suspicious IP Addresses</CardTitle>
                 <CardDescription>IPs with multiple blocked referral attempts</CardDescription>
               </CardHeader>
               <CardContent>

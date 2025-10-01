@@ -253,13 +253,18 @@ const VotesManager = () => {
 
   return (
     <div className='space-y-6'>
-      <Card>
+      <div className='flex items-center gap-3 mb-6'>
+        <Vote className='h-8 w-8 text-lafftale-gold' />
+        <div>
+          <h2 className='text-2xl font-bold text-lafftale-gold'>Vote System Management</h2>
+          <p className='text-gray-400'>Manage vote sites and rewards</p>
+        </div>
+      </div>
+      
+      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Vote className='h-5 w-5' />
-            Manage Vote System
-          </CardTitle>
-          <CardDescription>Manage vote sites and rewards</CardDescription>
+          <CardTitle className='text-lafftale-gold'>Vote Sites</CardTitle>
+          <CardDescription>Manage your voting platforms</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
@@ -276,6 +281,7 @@ const VotesManager = () => {
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
                 <Button
+                  className='btn-primary'
                   onClick={() => {
                     resetForm();
                     setModalOpen(true);
@@ -396,7 +402,7 @@ const VotesManager = () => {
                     <Button type='button' variant='outline' onClick={() => setModalOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type='submit' disabled={loading}>
+                    <Button type='submit' disabled={loading} className='btn-primary'>
                       {loading ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
                       {editingVote ? 'Update' : 'Add'}
                     </Button>

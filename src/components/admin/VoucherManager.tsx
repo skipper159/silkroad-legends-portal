@@ -200,20 +200,20 @@ const VoucherManager: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <Gift className='h-8 w-8 text-blue-600' />
+          <Gift className='h-8 w-8 text-lafftale-gold' />
           <div>
-            <h2 className='text-2xl font-bold text-gray-900'>Voucher Management</h2>
-            <p className='text-gray-600'>Create and manage voucher codes</p>
+            <h2 className='text-2xl font-bold text-lafftale-gold'>Voucher Management</h2>
+            <p className='text-gray-400'>Create and manage voucher codes</p>
           </div>
         </div>
-        <Button onClick={() => setShowCreateForm(!showCreateForm)} className='bg-blue-600 hover:bg-blue-700'>
+        <Button onClick={() => setShowCreateForm(!showCreateForm)} className='btn-primary'>
           <Plus className='h-4 w-4 mr-2' />
           New Voucher
         </Button>
       </div>
 
       {/* Filter und Suche */}
-      <Card>
+      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
         <CardContent className='pt-6'>
           <div className='flex gap-4'>
             <div className='flex-1'>
@@ -245,9 +245,9 @@ const VoucherManager: React.FC = () => {
 
       {/* Voucher erstellen */}
       {showCreateForm && (
-        <Card>
+        <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
           <CardHeader>
-            <CardTitle>Create New Voucher</CardTitle>
+            <CardTitle className='text-lafftale-gold'>Create New Voucher</CardTitle>
             <CardDescription>Create a new voucher code</CardDescription>
           </CardHeader>
           <CardContent>
@@ -311,7 +311,7 @@ const VoucherManager: React.FC = () => {
               </div>
             </div>
             <div className='flex gap-2 mt-4'>
-              <Button onClick={handleCreateVoucher}>Create Voucher</Button>
+              <Button onClick={handleCreateVoucher} className='btn-primary'>Create Voucher</Button>
               <Button variant='outline' onClick={() => setShowCreateForm(false)}>
                 Cancel
               </Button>
@@ -321,9 +321,9 @@ const VoucherManager: React.FC = () => {
       )}
 
       {/* Voucher Liste */}
-      <Card>
+      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
         <CardHeader>
-          <CardTitle>Voucher Overview</CardTitle>
+          <CardTitle className='text-lafftale-gold'>Voucher Overview</CardTitle>
           <CardDescription>
             {filteredVouchers.length} von {vouchers.length} Vouchers
           </CardDescription>
