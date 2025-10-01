@@ -36,7 +36,7 @@ const featuresData = [
 
 const Features = () => {
   return (
-    <section className="py-20 bg-silkroad-dark/80">
+    <section className="py-20 bg-black/20">
       <div className="container mx-auto px-4">
         <h2 className="decorated-heading text-3xl md:text-4xl text-center">
           Server Features
@@ -46,14 +46,19 @@ const Features = () => {
           {featuresData.map((feature, index) => (
             <div 
               key={index} 
-              className="card hover:border-silkroad-gold/40 transition-all duration-300 hover:transform hover:scale-105"
+              className="card-gradient text-center rounded-lg p-6 shadow-lg"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 p-3 rounded-full bg-silkroad-darkgray border border-silkroad-gold/20">
-                  {feature.icon}
+              <div className="relative z-10">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 bg-gradient-to-br from-lafftale-gold/20 to-lafftale-bronze/10 rounded-full group-hover:from-lafftale-gold/30 group-hover:to-lafftale-bronze/20 transition-all duration-300 group-hover:animate-icon-float group-hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]">
+                    {feature.icon}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+                <h3 className="text-xl font-bold mb-2 text-lafftale-gold group-hover:text-lafftale-bronze transition-colors duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{feature.description}</p>
               </div>
             </div>
           ))}

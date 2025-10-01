@@ -134,37 +134,45 @@ const NewsSection = () => {
         ) : (
           <>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-12'>
-              {news.map((item) => (
-                <article key={item.id} className='card overflow-hidden group'>
-                  <div className='relative h-60 overflow-hidden mb-3'>
-                    <img
-                      src={item.image?.startsWith('http') ? item.image : `${weburl}${item.image}`}
-                      alt={item.title}
-                      className='w-full h-full object-cover transition-transform duration-700 group-hover:scale-110'
-                      onError={(e) => {
-                        // Fallback image if loading fails
-                        (e.target as HTMLImageElement).src = '/image/Web/news-placeholder.png';
-                      }}
-                    />
-                    <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4'>
-                      <div className='flex items-center gap-2'>
-                        <span className='bg-silkroad-crimson px-2 py-1 rounded text-xs font-bold flex items-center gap-1'>
-                          {getCategoryIcon(item.category)} {item.category}
-                        </span>
-                        <span className='text-xs text-gray-300'>{formatDate(item.created_at)}</span>
+              {news.map((item, index) => (
+                <article 
+                  key={item.id} 
+                  className='card-gradient overflow-hidden group rounded-lg shadow-lg'
+                  style={{ animationDelay: `${index * 0.15}s` }}
+                >
+                  <div className='relative z-10'>
+                    <div className='relative h-60 overflow-hidden mb-3 rounded-t-lg'>
+                      <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10 group-hover:to-black/40 transition-all duration-500'></div>
+                      <img
+                        src={item.image?.startsWith('http') ? item.image : `${weburl}${item.image}`}
+                        alt={item.title}
+                        className='w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110'
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/image/Web/news-placeholder.png';
+                        }}
+                      />
+                      <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 z-20'>
+                        <div className='flex items-center gap-2'>
+                          <span className='bg-gradient-to-r from-lafftale-darkred to-lafftale-bronze px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-shadow duration-300'>
+                            {getCategoryIcon(item.category)} {item.category}
+                          </span>
+                          <span className='text-xs text-gray-300 group-hover:text-lafftale-gold transition-colors duration-300'>{formatDate(item.created_at)}</span>
+                        </div>
                       </div>
                     </div>
+
+                    <div className='p-4'>
+                      <h3 className='text-xl font-bold mb-2 text-lafftale-gold group-hover:text-lafftale-bronze transition-colors duration-300'>
+                        {item.title}
+                      </h3>
+
+                      <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>{item.excerpt}</p>
+
+                      <Button variant='link' asChild className='p-0 text-lafftale-gold hover:text-lafftale-bronze transition-colors duration-300'>
+                        <Link to={`/news/${item.slug}`}>Read More →</Link>
+                      </Button>
+                    </div>
                   </div>
-
-                  <h3 className='text-xl font-bold mb-2 group-hover:text-silkroad-blue transition-colors'>
-                    {item.title}
-                  </h3>
-
-                  <p className='text-gray-400 mb-4 line-clamp-2'>{item.excerpt}</p>
-
-                  <Button variant='link' asChild className='p-0 text-silkroad-gold hover:text-silkroad-blue'>
-                    <Link to={`/news/${item.slug}`}>Read More →</Link>
-                  </Button>
                 </article>
               ))}
             </div>

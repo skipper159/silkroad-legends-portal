@@ -104,6 +104,26 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "card-hover": {
+          "0%": { transform: "translateY(0) scale(1)" },
+          "100%": { transform: "translateY(-8px) scale(1.02)" },
+        },
+        "border-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.1)",
+          },
+          "50%": {
+            boxShadow: "0 0 30px rgba(212, 175, 55, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.2)",
+          },
+        },
+        "icon-float": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-5px) rotate(5deg)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,6 +131,10 @@ const config: Config = {
         glow: "glow 3s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
         "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
+        "card-hover": "card-hover 0.3s ease-out forwards",
+        "border-glow": "border-glow 3s ease-in-out infinite",
+        "icon-float": "icon-float 4s ease-in-out infinite",
+        shimmer: "shimmer 3s linear infinite",
       },
       fontFamily: {
         cinzel: ["Cinzel", "serif"],

@@ -70,6 +70,36 @@
     @apply bg-lafftale-darkgray border border-lafftale-gold/30 rounded-lg p-6 shadow-lg;
   }
   
+  .card-gradient {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(205, 127, 50, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+  
+  .card-gradient:hover::before {
+    opacity: 1;
+  }
+  
+  .card-gradient:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(212, 175, 55, 0.2);
+  }
+  
   .glow-text {
     @apply text-lafftale-bronze animate-glow;
   }
