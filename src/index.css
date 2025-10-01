@@ -98,7 +98,7 @@
         transparent 1px,
         transparent 3px
       ),
-      linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+      linear-gradient(135deg, rgba(30, 30, 30, 0.3) 0%, rgba(18, 18, 18, 0.3) 100%);
     border: 1px solid rgba(212, 175, 55, 0.3);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
