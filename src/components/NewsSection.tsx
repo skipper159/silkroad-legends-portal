@@ -25,6 +25,15 @@ const getCategoryIcon = (category: string) => {
   return <Newspaper className='h-5 w-5' />;
 };
 
+// Get the appropriate class for each category (matching News.tsx)
+const getCategoryClass = (category: string) => {
+  const lowerCategory = category?.toLowerCase();
+  if (lowerCategory === 'update') return 'bg-blue-600';
+  if (lowerCategory === 'event') return 'bg-yellow-500 text-black';
+  if (lowerCategory === 'community') return 'bg-green-600';
+  return 'bg-silkroad-crimson';
+};
+
 // Fallback news items in case API fails
 const fallbackNewsItems = [
   {
@@ -135,8 +144,8 @@ const NewsSection = () => {
           <>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-12'>
               {news.map((item, index) => (
-                <article 
-                  key={item.id} 
+                <article
+                  key={item.id}
                   className='card-gradient overflow-hidden group rounded-lg shadow-lg'
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
@@ -153,10 +162,16 @@ const NewsSection = () => {
                       />
                       <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 z-20'>
                         <div className='flex items-center gap-2'>
-                          <span className='bg-gradient-to-r from-lafftale-darkred to-lafftale-bronze px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-shadow duration-300'>
+                          <span
+                            className={`${getCategoryClass(
+                              item.category
+                            )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-shadow duration-300`}
+                          >
                             {getCategoryIcon(item.category)} {item.category}
                           </span>
-                          <span className='text-xs text-gray-300 group-hover:text-lafftale-gold transition-colors duration-300'>{formatDate(item.created_at)}</span>
+                          <span className='text-xs text-gray-300 group-hover:text-lafftale-gold transition-colors duration-300'>
+                            {formatDate(item.created_at)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -166,9 +181,15 @@ const NewsSection = () => {
                         {item.title}
                       </h3>
 
-                      <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>{item.excerpt}</p>
+                      <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>
+                        {item.excerpt}
+                      </p>
 
-                      <Button variant='link' asChild className='p-0 text-lafftale-gold hover:text-lafftale-bronze transition-colors duration-300'>
+                      <Button
+                        variant='link'
+                        asChild
+                        className='p-0 text-lafftale-gold hover:text-lafftale-bronze transition-colors duration-300'
+                      >
                         <Link to={`/news/${item.slug}`}>Read More →</Link>
                       </Button>
                     </div>
