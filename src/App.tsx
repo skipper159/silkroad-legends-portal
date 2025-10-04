@@ -22,6 +22,7 @@ import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from './routes/ProtectedRoute';
 import NewsSection from './components/NewsSection';
 import ServerRules from './components/Legal/Server Rules';
+import ConfirmAccountDeletion from './pages/ConfirmAccountDeletion';
 import Guide from './pages/Guide';
 import BeginnerGuide from './pages/BeginnerGuide';
 import ServerGuide from './pages/ServerGuide';
@@ -38,6 +39,7 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/verify-email/:token' element={<VerifyEmail />} />
+          <Route path='/confirm-account-deletion/:token' element={<ConfirmAccountDeletion />} />
           <Route path='/resend-verification' element={<ResendVerification />} />
           <Route path='/rankings' element={<Rankings />} />
           <Route path='/download' element={<Download />} />

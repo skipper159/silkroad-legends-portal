@@ -19,42 +19,53 @@ router.get('/gameaccounts/my', authenticateToken, async (req, res) => {
   try {
     await gamePoolConnect;
 
-    // Get the user's data including their linked jid
+    // Get all user's game accounts from user_gameaccounts table
     const webDb = await getWebDb();
-    const userResult = await webDb
-      .request()
-      .input('userId', sql.BigInt, req.user.id)
-      .query('SELECT email, jid FROM users WHERE id = @userId');
+    const userGameAccountsResult = await webDb.request().input('userId', sql.BigInt, req.user.id)
+      .query(`
+        SELECT uga.gameaccount_jid, uga.is_primary, uga.created_at
+        FROM user_gameaccounts uga
+        WHERE uga.user_id = @userId
+        ORDER BY uga.is_primary DESC, uga.created_at ASC
+      `);
 
-    const user = userResult.recordset[0];
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (userGameAccountsResult.recordset.length === 0) {
+      return res.status(200).json([]);
+    }
 
-    // If no game account is linked, return empty array
-    if (!user.jid || user.jid === 0) return res.status(200).json([]);
-
-    // Get Game Account Details from SILKROAD_R_ACCOUNT database
+    // Get Game Account Details from SILKROAD_R_ACCOUNT database for each account
     const accountDb = await getAccountDb();
-    const result = await accountDb.request().input('jid', sql.Int, user.jid).query(`
+    const gameAccounts = [];
+
+    for (const userGameAccount of userGameAccountsResult.recordset) {
+      const jid = userGameAccount.gameaccount_jid;
+
+      const result = await accountDb.request().input('jid', sql.Int, jid).query(`
         SELECT JID, StrUserID, VisitDate, UserIP, AccPlayTime, CountryCode, ServiceCompany, Active
         FROM TB_User
         WHERE JID = @jid
       `);
 
-    if (result.recordset.length === 0) return res.status(200).json([]);
+      if (result.recordset.length > 0) {
+        const gameAccount = {
+          id: result.recordset[0].JID,
+          username: result.recordset[0].StrUserID,
+          visitDate: result.recordset[0].VisitDate,
+          userIP: result.recordset[0].UserIP,
+          playTime: result.recordset[0].AccPlayTime,
+          countryCode: result.recordset[0].CountryCode,
+          serviceCompany: result.recordset[0].ServiceCompany,
+          active: result.recordset[0].Active,
+          accountId: result.recordset[0].StrUserID, // Use username as accountId
+          isPrimary: userGameAccount.is_primary,
+          createdAt: userGameAccount.created_at,
+        };
 
-    const gameAccount = {
-      id: result.recordset[0].JID,
-      username: result.recordset[0].StrUserID,
-      visitDate: result.recordset[0].VisitDate,
-      userIP: result.recordset[0].UserIP,
-      playTime: result.recordset[0].AccPlayTime,
-      countryCode: result.recordset[0].CountryCode,
-      serviceCompany: result.recordset[0].ServiceCompany,
-      active: result.recordset[0].Active,
-      accountId: result.recordset[0].StrUserID, // Use username as accountId
-    };
+        gameAccounts.push(gameAccount);
+      }
+    }
 
-    res.json([gameAccount]);
+    res.json(gameAccounts);
   } catch (err) {
     console.error('Error fetching game accounts:', err);
     res.status(500).json({ error: 'Error fetching game accounts' });
@@ -74,8 +85,11 @@ router.get('/characters/:gameAccountId', authenticateToken, async (req, res) => 
     const ownerCheck = await webDb
       .request()
       .input('userId', sql.BigInt, req.user.id)
-      .input('jid', sql.Int, gameAccountId)
-      .query('SELECT COUNT(*) AS count FROM users WHERE id = @userId AND jid = @jid');
+      .input('gameaccountJid', sql.Int, gameAccountId).query(`
+        SELECT COUNT(*) AS count 
+        FROM user_gameaccounts 
+        WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid
+      `);
 
     // Allow if it's an admin or the account belongs to the user
     if (ownerCheck.recordset[0].count === 0 && !req.user.isAdmin) {

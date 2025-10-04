@@ -124,13 +124,19 @@
     },
 
     "/api/referrals/my-referrals": {
-      "$ref": "./paths/referrals/user-referrals.json#/getMyReferrals"
+      "$ref": "./paths/user/referrals.json#//api/referrals/my-referrals"
+    },
+    "/api/referrals/rewards": {
+      "$ref": "./paths/user/referrals.json#//api/referrals/rewards"
     },
     "/api/referrals/redeem": {
-      "$ref": "./paths/referrals/user-referrals.json#/redeemPoints"
+      "$ref": "./paths/user/referrals.json#//api/referrals/redeem"
+    },
+    "/api/referrals/redeem-reward": {
+      "$ref": "./paths/user/referrals.json#//api/referrals/redeem-reward"
     },
     "/api/referrals/register": {
-      "$ref": "./paths/referrals/user-referrals.json#/registerReferral"
+      "$ref": "./paths/user/referrals.json#//api/referrals/register"
     },
 
     "/api/payment/payop/initiate": {

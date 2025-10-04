@@ -19,7 +19,11 @@ router.get('/', authenticateToken, verifyAdmin, async (req, res) => {
         r.redeemed,
         r.reward_silk,
         r.created_at,
-        r.updated_at`;
+        r.updated_at,
+        u1.username as referrer_username,
+        u1.email as referrer_email,
+        u2.username as referred_username,
+        u2.email as referred_email`;
 
     // Anti-Cheat Felder nur bei Bedarf laden für Performance
     if (includeAnticheat === 'true') {
@@ -32,13 +36,15 @@ router.get('/', authenticateToken, verifyAdmin, async (req, res) => {
 
     query += `
       FROM referrals r
+      LEFT JOIN users u1 ON r.jid = u1.jid
+      LEFT JOIN users u2 ON r.invited_jid = u2.jid
       WHERE 1=1
     `;
 
     const request = pool.request();
 
     if (search) {
-      query += ` AND (r.code LIKE @search OR CAST(r.jid AS NVARCHAR) LIKE @search)`;
+      query += ` AND (r.code LIKE @search OR CAST(r.jid AS NVARCHAR) LIKE @search OR u1.username LIKE @search OR u2.username LIKE @search)`;
       request.input('search', sql.NVarChar, `%${search}%`);
     }
 
@@ -103,7 +109,7 @@ router.get('/rewards', authenticateToken, verifyAdmin, async (req, res) => {
     const pool = await getWebDb();
 
     const result = await pool.request().query(`
-      SELECT id, points_required, silk_reward, item_id, description, is_active, created_at
+      SELECT id, title, description, points_required, reward_type, reward_value, silk_reward, item_id, is_active, created_at, updated_at
       FROM referral_rewards
       ORDER BY points_required ASC
     `);
@@ -125,12 +131,22 @@ router.get('/rewards', authenticateToken, verifyAdmin, async (req, res) => {
 // Create new referral reward
 router.post('/rewards', authenticateToken, verifyAdmin, async (req, res) => {
   try {
-    const { points_required, silk_reward, item_id, description, is_active = true } = req.body;
+    const {
+      title,
+      description,
+      points_required,
+      reward_type = 'silk',
+      reward_value,
+      silk_reward = 0,
+      item_id,
+      is_active = true,
+    } = req.body;
 
-    if (!points_required || !silk_reward || !description) {
+    if (!title || !description || !points_required || !reward_type || !reward_value) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: points_required, silk_reward, description',
+        error:
+          'Missing required fields: title, description, points_required, reward_type, reward_value',
       });
     }
 
@@ -138,14 +154,18 @@ router.post('/rewards', authenticateToken, verifyAdmin, async (req, res) => {
 
     await pool
       .request()
+      .input('title', sql.NVarChar, title)
+      .input('description', sql.NVarChar, description)
       .input('points_required', sql.Int, points_required)
+      .input('reward_type', sql.NVarChar, reward_type)
+      .input('reward_value', sql.NVarChar, reward_value)
       .input('silk_reward', sql.Int, silk_reward)
       .input('item_id', sql.Int, item_id || null)
-      .input('description', sql.NVarChar, description)
       .input('is_active', sql.Bit, is_active)
-      .input('created_at', sql.DateTime, new Date()).query(`
-        INSERT INTO referral_rewards (points_required, silk_reward, item_id, description, is_active, created_at)
-        VALUES (@points_required, @silk_reward, @item_id, @description, @is_active, @created_at)
+      .input('created_at', sql.DateTime, new Date())
+      .input('updated_at', sql.DateTime, new Date()).query(`
+        INSERT INTO referral_rewards (title, description, points_required, reward_type, reward_value, silk_reward, item_id, is_active, created_at, updated_at)
+        VALUES (@title, @description, @points_required, @reward_type, @reward_value, @silk_reward, @item_id, @is_active, @created_at, @updated_at)
       `);
 
     res.status(201).json({
@@ -685,8 +705,8 @@ router.get('/anticheat/suspicious', authenticateToken, verifyAdmin, async (req, 
         (SELECT COUNT(*) FROM referrals r2 WHERE r2.ip_address = r.ip_address AND r2.id != r.id) as same_ip_count,
         (SELECT COUNT(*) FROM referrals r3 WHERE r3.fingerprint = r.fingerprint AND r3.id != r.id) as same_fingerprint_count
       FROM referrals r
-      LEFT JOIN users u_referrer ON r.jid = u_referrer.id
-      LEFT JOIN users u_invited ON r.invited_jid = u_invited.id
+      LEFT JOIN users u_referrer ON r.jid = u_referrer.jid
+      LEFT JOIN users u_invited ON r.invited_jid = u_invited.jid
       WHERE (r.is_valid = 0 OR r.cheat_reason IS NOT NULL)
     `;
 

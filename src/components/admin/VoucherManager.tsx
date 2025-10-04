@@ -12,7 +12,7 @@ interface Voucher {
   id: number;
   code: string;
   type: string;
-  value: number;
+  amount: number;
   max_uses: number;
   used_count: number;
   expires_at: string | null;
@@ -24,9 +24,10 @@ interface Voucher {
 interface CreateVoucherData {
   code: string;
   type: string;
-  value: number;
+  amount: number;
   max_uses: number;
   expires_at: string | null;
+  is_active: boolean;
 }
 
 const VoucherManager: React.FC = () => {
@@ -38,9 +39,10 @@ const VoucherManager: React.FC = () => {
   const [newVoucher, setNewVoucher] = useState<CreateVoucherData>({
     code: '',
     type: 'silk',
-    value: 0,
+    amount: 0,
     max_uses: 1,
     expires_at: null,
+    is_active: true,
   });
   const { toast } = useToast();
 
@@ -81,7 +83,7 @@ const VoucherManager: React.FC = () => {
   };
 
   const handleCreateVoucher = async () => {
-    if (!newVoucher.code || !newVoucher.value) {
+    if (!newVoucher.code || !newVoucher.amount) {
       toast({
         title: 'Error',
         description: 'Please fill in all required fields',
@@ -105,9 +107,10 @@ const VoucherManager: React.FC = () => {
         setNewVoucher({
           code: '',
           type: 'silk',
-          value: 0,
+          amount: 0,
           max_uses: 1,
           expires_at: null,
+          is_active: true,
         });
         fetchVouchers();
       } else {
@@ -167,8 +170,28 @@ const VoucherManager: React.FC = () => {
     });
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
+  const getTypeString = (type: number | string): string => {
+    // Convert numeric type to string
+    if (typeof type === 'number') {
+      switch (type) {
+        case 1:
+          return 'silk';
+        case 2:
+          return 'gold';
+        case 3:
+          return 'experience';
+        case 4:
+          return 'item';
+        default:
+          return 'unknown';
+      }
+    }
+    return typeof type === 'string' ? type : 'unknown';
+  };
+
+  const getTypeColor = (type: number | string) => {
+    const typeString = getTypeString(type);
+    switch (typeString.toLowerCase()) {
       case 'silk':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
       case 'gold':
@@ -183,9 +206,10 @@ const VoucherManager: React.FC = () => {
   };
 
   const filteredVouchers = vouchers.filter((voucher) => {
+    const typeString = getTypeString(voucher.type);
     const matchesSearch =
       voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.type.toLowerCase().includes(searchTerm.toLowerCase());
+      typeString.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === 'all' ||
@@ -285,8 +309,8 @@ const VoucherManager: React.FC = () => {
                 <Input
                   id='voucher-value'
                   type='number'
-                  value={newVoucher.value}
-                  onChange={(e) => setNewVoucher({ ...newVoucher, value: parseInt(e.target.value) || 0 })}
+                  value={newVoucher.amount}
+                  onChange={(e) => setNewVoucher({ ...newVoucher, amount: parseInt(e.target.value) || 0 })}
                   placeholder='1000'
                 />
               </div>
@@ -309,9 +333,21 @@ const VoucherManager: React.FC = () => {
                   onChange={(e) => setNewVoucher({ ...newVoucher, expires_at: e.target.value || null })}
                 />
               </div>
+              <div className='flex items-center gap-2'>
+                <input
+                  id='voucher-active'
+                  type='checkbox'
+                  checked={newVoucher.is_active}
+                  onChange={(e) => setNewVoucher({ ...newVoucher, is_active: e.target.checked })}
+                  className='h-4 w-4 text-lafftale-gold focus:ring-lafftale-gold border-gray-300 rounded'
+                />
+                <Label htmlFor='voucher-active'>Active (voucher can be redeemed immediately)</Label>
+              </div>
             </div>
             <div className='flex gap-2 mt-4'>
-              <Button onClick={handleCreateVoucher} className='btn-primary'>Create Voucher</Button>
+              <Button onClick={handleCreateVoucher} className='btn-primary'>
+                Create Voucher
+              </Button>
               <Button variant='outline' onClick={() => setShowCreateForm(false)}>
                 Cancel
               </Button>
@@ -354,7 +390,7 @@ const VoucherManager: React.FC = () => {
                         </Button>
                       </div>
                       <div className='flex items-center gap-2 mt-1'>
-                        <Badge className={getTypeColor(voucher.type)}>{voucher.type}</Badge>
+                        <Badge className={getTypeColor(voucher.type)}>{getTypeString(voucher.type)}</Badge>
                         <span className='text-sm text-gray-500'>
                           {voucher.used_count}/{voucher.max_uses} used
                         </span>
@@ -368,7 +404,7 @@ const VoucherManager: React.FC = () => {
                   </div>
                   <div className='flex items-center gap-2'>
                     <div className='text-right'>
-                      <div className='font-bold text-lg'>+{voucher.value}</div>
+                      <div className='font-bold text-lg'>+{voucher.amount}</div>
                       <div className='text-sm text-gray-500'>{voucher.is_active ? 'Active' : 'Inactive'}</div>
                     </div>
                     <Button

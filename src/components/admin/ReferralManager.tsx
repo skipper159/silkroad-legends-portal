@@ -95,12 +95,17 @@ interface ReferralStatistics {
 
 interface ReferralReward {
   id: number;
+  title: string;
+  description: string;
   points_required: number;
+  reward_type: 'silk' | 'item' | 'gold';
+  reward_value: string;
   silk_reward: number;
   item_id: number | null;
-  description: string;
+  active: boolean;
   is_active: boolean;
   created_at: string;
+  updated_at?: string;
 }
 
 interface ReferralSettings {
@@ -132,6 +137,18 @@ const ReferralManager: React.FC = () => {
   const [timeframe, setTimeframe] = useState('30');
   const [editingReward, setEditingReward] = useState<ReferralReward | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newReward, setNewReward] = useState<Partial<ReferralReward>>({
+    title: '',
+    description: '',
+    points_required: 100,
+    reward_type: 'silk',
+    reward_value: '',
+    silk_reward: 0,
+    item_id: null,
+    active: true,
+    is_active: true,
+  });
   const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'rewards' | 'anticheat'>('overview');
   const { toast } = useToast();
 
@@ -367,10 +384,14 @@ const ReferralManager: React.FC = () => {
       const response = await fetchWithAuth(`${weburl}/api/admin/referrals/rewards/${editingReward.id}`, {
         method: 'PUT',
         body: JSON.stringify({
+          title: editingReward.title,
+          description: editingReward.description,
           points_required: editingReward.points_required,
+          reward_type: editingReward.reward_type,
+          reward_value: editingReward.reward_value,
           silk_reward: editingReward.silk_reward,
           item_id: editingReward.item_id,
-          description: editingReward.description,
+          active: editingReward.active,
           is_active: editingReward.is_active,
         }),
       });
@@ -394,6 +415,57 @@ const ReferralManager: React.FC = () => {
       toast({
         title: 'Error',
         description: 'Reward could not be updated',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleAddReward = async () => {
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/admin/referrals/rewards`, {
+        method: 'POST',
+        body: JSON.stringify({
+          title: newReward.title,
+          description: newReward.description,
+          points_required: newReward.points_required,
+          reward_type: newReward.reward_type,
+          reward_value: newReward.reward_value,
+          silk_reward: newReward.silk_reward || 0,
+          item_id: newReward.item_id,
+          active: newReward.active,
+          is_active: newReward.is_active,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Success!',
+          description: 'New reward was created',
+        });
+        setShowAddModal(false);
+        setNewReward({
+          title: '',
+          description: '',
+          points_required: 100,
+          reward_type: 'silk',
+          reward_value: '',
+          silk_reward: 0,
+          item_id: null,
+          active: true,
+          is_active: true,
+        });
+        fetchRewards();
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Reward could not be created',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Reward could not be created',
         variant: 'destructive',
       });
     }
@@ -1051,28 +1123,48 @@ const ReferralManager: React.FC = () => {
           {/* Manage rewards */}
           <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                <Award className='h-5 w-5' />
-                Manage rewards
-              </CardTitle>
-              <CardDescription>Configure available referral rewards</CardDescription>
+              <div className='flex justify-between items-center'>
+                <div>
+                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
+                    <Award className='h-5 w-5' />
+                    Manage rewards
+                  </CardTitle>
+                  <CardDescription>Configure available referral rewards</CardDescription>
+                </div>
+                <Button
+                  onClick={() => setShowAddModal(true)}
+                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                >
+                  <UserPlus className='h-4 w-4 mr-2' />
+                  Add Reward
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {rewards.map((reward) => (
                   <div key={reward.id} className='p-4 border rounded-lg'>
                     <div className='flex justify-between items-start mb-2'>
-                      <h4 className='font-medium'>{reward.description}</h4>
-                      <Badge variant={reward.is_active ? 'default' : 'secondary'}>
-                        {reward.is_active ? 'Active' : 'Inactive'}
+                      <h4 className='font-medium'>{reward.title || reward.description}</h4>
+                      <Badge variant={reward.active || reward.is_active ? 'default' : 'secondary'}>
+                        {reward.active || reward.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
                     <div className='space-y-2 mb-3'>
+                      {reward.description && (
+                        <div className='text-sm text-gray-600'>
+                          <span className='font-medium'>Description:</span> {reward.description}
+                        </div>
+                      )}
                       <div className='text-sm text-gray-600'>
                         <span className='font-medium'>Required points:</span> {reward.points_required}
                       </div>
                       <div className='text-sm text-gray-600'>
-                        <span className='font-medium'>Silk reward:</span> {reward.silk_reward}
+                        <span className='font-medium'>Type:</span> {reward.reward_type || 'silk'}
+                      </div>
+                      <div className='text-sm text-gray-600'>
+                        <span className='font-medium'>Reward:</span>{' '}
+                        {reward.reward_value || `${reward.silk_reward} Silk`}
                       </div>
                       {reward.item_id && (
                         <div className='text-sm text-gray-600'>
@@ -1468,6 +1560,199 @@ const ReferralManager: React.FC = () => {
               </CardContent>
             </Card>
           )}
+        </div>
+      )}
+
+      {/* Add Reward Modal */}
+      {showAddModal && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <div className='bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700'>
+            <div className='flex justify-between items-center mb-4'>
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>Add New Reward</h3>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => {
+                  setShowAddModal(false);
+                  setNewReward({
+                    title: '',
+                    description: '',
+                    points_required: 100,
+                    reward_type: 'silk',
+                    reward_value: '',
+                    silk_reward: 0,
+                    item_id: null,
+                    active: true,
+                    is_active: true,
+                  });
+                }}
+                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              >
+                ×
+              </Button>
+            </div>
+
+            <div className='space-y-4'>
+              <div>
+                <label htmlFor='add-title' className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'>
+                  Title
+                </label>
+                <Input
+                  id='add-title'
+                  value={newReward.title || ''}
+                  onChange={(e) => setNewReward({ ...newReward, title: e.target.value })}
+                  placeholder='e.g. 100 Silk Reward'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor='add-description'
+                  className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                >
+                  Description
+                </label>
+                <Input
+                  id='add-description'
+                  value={newReward.description || ''}
+                  onChange={(e) => setNewReward({ ...newReward, description: e.target.value })}
+                  placeholder='e.g. Receive 100 Silk for completing referral'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label htmlFor='add-points' className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'>
+                  Required Points
+                </label>
+                <Input
+                  id='add-points'
+                  type='number'
+                  value={newReward.points_required || 0}
+                  onChange={(e) => setNewReward({ ...newReward, points_required: parseInt(e.target.value) || 0 })}
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor='add-reward-type'
+                  className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                >
+                  Reward Type
+                </label>
+                <select
+                  id='add-reward-type'
+                  value={newReward.reward_type || 'silk'}
+                  onChange={(e) =>
+                    setNewReward({ ...newReward, reward_type: e.target.value as 'silk' | 'item' | 'gold' })
+                  }
+                  className='w-full p-2 border rounded-md bg-white dark:bg-gray-800'
+                >
+                  <option value='silk'>Silk</option>
+                  <option value='item'>Item</option>
+                  <option value='gold'>Gold</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor='add-reward-value'
+                  className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                >
+                  Reward Value
+                </label>
+                <Input
+                  id='add-reward-value'
+                  value={newReward.reward_value || ''}
+                  onChange={(e) => setNewReward({ ...newReward, reward_value: e.target.value })}
+                  placeholder='e.g. 100 for silk, Item Name for items'
+                  className='bg-white dark:bg-gray-800'
+                />
+              </div>
+
+              {newReward.reward_type === 'silk' && (
+                <div>
+                  <label
+                    htmlFor='add-silk-amount'
+                    className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                  >
+                    Silk Amount (Legacy)
+                  </label>
+                  <Input
+                    id='add-silk-amount'
+                    type='number'
+                    value={newReward.silk_reward || 0}
+                    onChange={(e) => setNewReward({ ...newReward, silk_reward: parseInt(e.target.value) || 0 })}
+                    className='bg-white dark:bg-gray-800'
+                  />
+                </div>
+              )}
+
+              {newReward.reward_type === 'item' && (
+                <div>
+                  <label
+                    htmlFor='add-item-id'
+                    className='block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300'
+                  >
+                    Item ID (Optional)
+                  </label>
+                  <Input
+                    id='add-item-id'
+                    type='number'
+                    value={newReward.item_id || ''}
+                    onChange={(e) => setNewReward({ ...newReward, item_id: parseInt(e.target.value) || null })}
+                    placeholder='Game item ID'
+                    className='bg-white dark:bg-gray-800'
+                  />
+                </div>
+              )}
+
+              <div className='flex items-center space-x-2'>
+                <input
+                  type='checkbox'
+                  id='add-active'
+                  checked={newReward.active}
+                  onChange={(e) =>
+                    setNewReward({ ...newReward, active: e.target.checked, is_active: e.target.checked })
+                  }
+                  className='rounded'
+                />
+                <label htmlFor='add-active' className='text-sm text-gray-700 dark:text-gray-300'>
+                  Active
+                </label>
+              </div>
+            </div>
+
+            <div className='flex justify-end gap-2 mt-6'>
+              <Button
+                variant='ghost'
+                onClick={() => {
+                  setShowAddModal(false);
+                  setNewReward({
+                    title: '',
+                    description: '',
+                    points_required: 100,
+                    reward_type: 'silk',
+                    reward_value: '',
+                    silk_reward: 0,
+                    item_id: null,
+                    active: true,
+                    is_active: true,
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddReward}
+                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+              >
+                Add Reward
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

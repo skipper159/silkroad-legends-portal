@@ -137,15 +137,27 @@ router.post('/create', authenticateToken, async (req, res) => {
     const newJid = insertResult.recordset[0].JID;
     console.log('Got new JID:', newJid);
 
-    // Update user's jid in the users table to link game account
-    console.log('Updating users table...');
+    // Check if this is the user's first game account
     const webDb = await getWebDb();
-    await webDb.request().input('userId', sql.BigInt, req.user.id).input('jid', sql.Int, newJid)
+    const existingAccountsResult = await webDb
+      .request()
+      .input('userId', sql.BigInt, req.user.id)
+      .query('SELECT COUNT(*) AS count FROM user_gameaccounts WHERE user_id = @userId');
+
+    const isFirstAccount = existingAccountsResult.recordset[0].count === 0;
+
+    // Insert into user_gameaccounts table instead of updating users.jid
+    await webDb
+      .request()
+      .input('userId', sql.BigInt, req.user.id)
+      .input('gameaccountJid', sql.Int, newJid)
+      .input('isPrimary', sql.Bit, isFirstAccount ? 1 : 0) // First account is automatically primary
       .query(`
-        UPDATE users SET jid = @jid WHERE id = @userId
+        INSERT INTO user_gameaccounts (user_id, gameaccount_jid, is_primary, created_at)
+        VALUES (@userId, @gameaccountJid, @isPrimary, GETDATE())
       `);
 
-    console.log('Users table updated successfully');
+    console.log('Game account linked successfully, isPrimary:', isFirstAccount);
 
     res.status(201).json({ message: 'Game account created', jid: newJid });
   } catch (err) {
@@ -165,50 +177,71 @@ router.get('/my', authenticateToken, async (req, res) => {
   try {
     await accountPoolConnect;
 
-    // Get the user's data including their linked jid
+    // Get all user's game accounts from user_gameaccounts table
     const webDb = await getWebDb();
+    const userGameAccountsResult = await webDb.request().input('userId', sql.BigInt, req.user.id)
+      .query(`
+        SELECT uga.gameaccount_jid, uga.is_primary, uga.created_at
+        FROM user_gameaccounts uga
+        WHERE uga.user_id = @userId
+        ORDER BY uga.is_primary DESC, uga.created_at ASC
+      `);
+
+    if (userGameAccountsResult.recordset.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    // Get user's email for each account
     const userResult = await webDb
       .request()
       .input('userId', sql.BigInt, req.user.id)
-      .query('SELECT email, jid FROM users WHERE id = @userId');
+      .query('SELECT email FROM users WHERE id = @userId');
 
     const user = userResult.recordset[0];
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // If no game account is linked, return empty array
-    if (!user.jid || user.jid === 0) return res.status(200).json([]);
-
-    // Get Game Account Details from SILKROAD_R_ACCOUNT database
+    // Get Game Account Details from SILKROAD_R_ACCOUNT database for each account
     const accountDb = await getAccountDb();
-    const result = await accountDb.request().input('jid', sql.Int, user.jid).query(`
+    const gameAccounts = [];
+
+    for (const userGameAccount of userGameAccountsResult.recordset) {
+      const jid = userGameAccount.gameaccount_jid;
+
+      const result = await accountDb.request().input('jid', sql.Int, jid).query(`
         SELECT JID, PortalJID, StrUserID, ServiceCompany, Active, UserIP, CountryCode, VisitDate, RegDate, AccPlayTime
         FROM TB_User
         WHERE JID = @jid
       `);
 
-    if (result.recordset.length === 0) return res.status(200).json([]);
+      if (result.recordset.length > 0) {
+        // Get Silk information for the game account from the same database
+        const silkResult = await accountDb.request().input('jid', sql.Int, jid).query(`
+          SELECT JID, silk_own, silk_gift, silk_point 
+          FROM SK_SILK 
+          WHERE JID = @jid
+        `);
 
-    // Get Silk information for the game account from the same database
-    const silkResult = await accountDb.request().input('jid', sql.Int, user.jid).query(`
-        SELECT JID, silk_own, silk_gift, silk_point 
-        FROM SK_SILK 
-        WHERE JID = @jid
-      `);
+        // Combine the data
+        const account = result.recordset[0];
+        const silkData = silkResult.recordset[0] || { silk_own: 0, silk_gift: 0, silk_point: 0 };
 
-    // Combine the data
-    const account = result.recordset[0];
-    const silkData = silkResult.recordset[0] || { silk_own: 0, silk_gift: 0, silk_point: 0 };
+        const gameAccount = {
+          ...account,
+          email: user.email,
+          silk_own: silkData.silk_own || 0,
+          silk_gift: silkData.silk_gift || 0,
+          silk_point: silkData.silk_point || 0,
+          total_silk:
+            (silkData.silk_own || 0) + (silkData.silk_gift || 0) + (silkData.silk_point || 0),
+          isPrimary: userGameAccount.is_primary,
+          createdAt: userGameAccount.created_at,
+        };
 
-    const gameAccount = {
-      ...account,
-      email: user.email,
-      silk_own: silkData.silk_own || 0,
-      silk_gift: silkData.silk_gift || 0,
-      silk_point: silkData.silk_point || 0,
-      total_silk: (silkData.silk_own || 0) + (silkData.silk_gift || 0) + (silkData.silk_point || 0),
-    };
+        gameAccounts.push(gameAccount);
+      }
+    }
 
-    res.json([gameAccount]); // Return as array for compatibility
+    res.json(gameAccounts);
   } catch (err) {
     console.error('Error fetching game accounts:', err);
     res.status(500).json({ error: 'Failed to load game accounts' });
@@ -227,13 +260,16 @@ router.put('/:id/password', authenticateToken, async (req, res) => {
 
     // First verify that this game account belongs to the authenticated user
     const webDb = await getWebDb();
-    const userResult = await webDb
+    const ownerCheckResult = await webDb
       .request()
       .input('userId', sql.BigInt, req.user.id)
-      .query('SELECT jid FROM users WHERE id = @userId');
+      .input('gameaccountJid', sql.Int, id).query(`
+        SELECT COUNT(*) AS count 
+        FROM user_gameaccounts 
+        WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid
+      `);
 
-    const user = userResult.recordset[0];
-    if (!user || user.jid != id) {
+    if (ownerCheckResult.recordset[0].count === 0) {
       return res.status(403).json({ error: 'You can only modify your own game account' });
     }
 
@@ -265,6 +301,197 @@ router.put('/:id/password', authenticateToken, async (req, res) => {
   }
 });
 
+// Request Game Account Deletion (sends verification email)
+router.post('/:id/request-deletion', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await gamePoolConnect;
+    await charPoolConnect;
+
+    // Verify that this game account belongs to the authenticated user
+    const webDb = await getWebDb();
+    const ownerCheckResult = await webDb
+      .request()
+      .input('userId', sql.BigInt, req.user.id)
+      .input('gameaccountJid', sql.Int, id).query(`
+        SELECT COUNT(*) AS count 
+        FROM user_gameaccounts 
+        WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid
+      `);
+
+    if (ownerCheckResult.recordset[0].count === 0) {
+      return res.status(403).json({ error: 'You can only delete your own game account' });
+    }
+
+    // Check if game account exists
+    const accountDb = await getAccountDb();
+    const accountCheck = await accountDb
+      .request()
+      .input('jid', sql.Int, id)
+      .query('SELECT JID, StrUserID FROM TB_User WHERE JID = @jid');
+
+    if (accountCheck.recordset.length === 0) {
+      return res.status(404).json({ error: 'Game account not found' });
+    }
+
+    const gameAccount = accountCheck.recordset[0];
+
+    // Get user's email
+    const userResult = await webDb
+      .request()
+      .input('userId', sql.BigInt, req.user.id)
+      .query('SELECT email FROM users WHERE id = @userId');
+
+    if (userResult.recordset.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userEmail = userResult.recordset[0].email;
+
+    // Generate deletion token
+    const emailUtils = require('../utils/email');
+    const deletionToken = emailUtils.generateToken();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+    // Store deletion token in database
+    await webDb
+      .request()
+      .input('userId', sql.BigInt, req.user.id)
+      .input('gameaccountJid', sql.Int, id)
+      .input('token', sql.NVarChar(255), deletionToken)
+      .input('email', sql.NVarChar(255), userEmail)
+      .input('gameaccountName', sql.NVarChar(50), gameAccount.StrUserID)
+      .input('expiresAt', sql.DateTime2, expiresAt).query(`
+        INSERT INTO account_deletion_tokens (user_id, gameaccount_jid, token, email, gameaccount_name, expires_at)
+        VALUES (@userId, @gameaccountJid, @token, @email, @gameaccountName, @expiresAt)
+      `);
+
+    // Send deletion confirmation email
+    try {
+      await emailUtils.sendAccountDeletionEmail(userEmail, deletionToken, gameAccount.StrUserID);
+
+      res.json({
+        message: 'Deletion confirmation email sent',
+        email: userEmail,
+        gameAccount: gameAccount.StrUserID,
+        expiresIn: '1 hour',
+      });
+    } catch (emailError) {
+      console.error('Error sending deletion email:', emailError);
+
+      // Clean up the token since email failed
+      await webDb
+        .request()
+        .input('token', sql.NVarChar(255), deletionToken)
+        .query('DELETE FROM account_deletion_tokens WHERE token = @token');
+
+      res.status(500).json({
+        error: 'Failed to send confirmation email',
+        details: 'Please try again later or contact support',
+      });
+    }
+  } catch (err) {
+    console.error('Error requesting game account deletion:', err);
+    res.status(500).json({
+      error: 'Failed to process deletion request',
+      details: err.message,
+    });
+  }
+});
+
+// Confirm Game Account Deletion via email token
+router.delete('/confirm-deletion/:token', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    await gamePoolConnect;
+    await charPoolConnect;
+
+    const webDb = await getWebDb();
+
+    // Verify token and get deletion details
+    const tokenResult = await webDb.request().input('token', sql.NVarChar(255), token).query(`
+        SELECT user_id, gameaccount_jid, email, gameaccount_name, expires_at, used_at
+        FROM account_deletion_tokens 
+        WHERE token = @token
+      `);
+
+    if (tokenResult.recordset.length === 0) {
+      return res.status(404).json({ error: 'Invalid or expired deletion token' });
+    }
+
+    const tokenData = tokenResult.recordset[0];
+
+    // Check if token is expired
+    if (new Date() > new Date(tokenData.expires_at)) {
+      return res.status(400).json({ error: 'Deletion token has expired' });
+    }
+
+    // Check if token has already been used
+    if (tokenData.used_at) {
+      return res.status(400).json({ error: 'Deletion token has already been used' });
+    }
+
+    const gameaccountJid = tokenData.gameaccount_jid;
+    const gameaccountName = tokenData.gameaccount_name;
+
+    // Begin transaction for safe deletion
+    const accountDb = await getAccountDb();
+    const transaction = new sql.Transaction(accountDb);
+
+    try {
+      await transaction.begin();
+
+      // Mark token as used
+      await webDb
+        .request()
+        .input('token', sql.NVarChar(255), token)
+        .query('UPDATE account_deletion_tokens SET used_at = GETDATE() WHERE token = @token');
+
+      // Remove from user_gameaccounts table
+      await webDb
+        .request()
+        .input('gameaccountJid', sql.Int, gameaccountJid)
+        .query('DELETE FROM user_gameaccounts WHERE gameaccount_jid = @gameaccountJid');
+
+      // Delete from character database (all characters for this account)
+      await charPool
+        .request()
+        .input('jid', sql.Int, gameaccountJid)
+        .query('DELETE FROM dbo._User WHERE UserJID = @jid');
+
+      // Delete silk records
+      await transaction
+        .request()
+        .input('jid', sql.Int, gameaccountJid)
+        .query('DELETE FROM SK_SILK WHERE JID = @jid');
+
+      // Delete game account
+      await transaction
+        .request()
+        .input('jid', sql.Int, gameaccountJid)
+        .query('DELETE FROM TB_User WHERE JID = @jid');
+
+      await transaction.commit();
+
+      res.json({
+        message: 'Game account deleted successfully',
+        deletedAccount: gameaccountName,
+      });
+    } catch (transactionError) {
+      await transaction.rollback();
+      throw transactionError;
+    }
+  } catch (err) {
+    console.error('Error confirming game account deletion:', err);
+    res.status(500).json({
+      error: 'Failed to delete game account',
+      details: err.message,
+    });
+  }
+});
+
 // Delete Game Account
 router.delete('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
@@ -275,13 +502,16 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
     // Verify that this game account belongs to the authenticated user
     const webDb = await getWebDb();
-    const userResult = await webDb
+    const ownerCheckResult = await webDb
       .request()
       .input('userId', sql.BigInt, req.user.id)
-      .query('SELECT jid FROM users WHERE id = @userId');
+      .input('gameaccountJid', sql.Int, id).query(`
+        SELECT COUNT(*) AS count 
+        FROM user_gameaccounts 
+        WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid
+      `);
 
-    const user = userResult.recordset[0];
-    if (!user || user.jid != id) {
+    if (ownerCheckResult.recordset[0].count === 0) {
       return res.status(403).json({ error: 'You can only delete your own game account' });
     }
 
@@ -304,12 +534,14 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     try {
       await transaction.begin();
 
-      // Remove jid link from user account first
-      const webDb2 = await getWebDb();
-      await webDb2
+      // Remove from user_gameaccounts table
+      await webDb
         .request()
         .input('userId', sql.BigInt, req.user.id)
-        .query('UPDATE users SET jid = NULL WHERE id = @userId');
+        .input('gameaccountJid', sql.Int, id)
+        .query(
+          'DELETE FROM user_gameaccounts WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid'
+        );
 
       // Delete from character database (all characters for this account)
       await charPool
@@ -358,13 +590,16 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Verify that this game account belongs to the authenticated user
     const webDb = await getWebDb();
-    const userResult = await webDb
+    const ownerCheckResult = await webDb
       .request()
       .input('userId', sql.BigInt, req.user.id)
-      .query('SELECT jid FROM users WHERE id = @userId');
+      .input('gameaccountJid', sql.Int, id).query(`
+        SELECT COUNT(*) AS count 
+        FROM user_gameaccounts 
+        WHERE user_id = @userId AND gameaccount_jid = @gameaccountJid
+      `);
 
-    const user = userResult.recordset[0];
-    if (!user || user.jid != id) {
+    if (ownerCheckResult.recordset[0].count === 0) {
       return res.status(403).json({ error: 'You can only access your own game account' });
     }
 

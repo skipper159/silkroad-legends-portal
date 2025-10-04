@@ -363,11 +363,214 @@ function createPasswordResetEmailTemplate(resetUrl, logoSrc, headerSrc, footerSr
   `;
 }
 
+// Send email for account deletion confirmation
+const sendAccountDeletionEmail = async (email, token, gameAccountName) => {
+  // Create deletion confirmation URL
+  const confirmUrl = `${config.frontend.url}/confirm-account-deletion/${token}`;
+
+  // Prepare images
+  let logoSrc = 'https://lafftale.online/image/Web/lafftale_logo_300x300.png';
+  let headerSrc = 'https://lafftale.online/image/Web/header2.png';
+  let footerSrc = 'https://lafftale.online/image/Web/header3.png';
+  let backgroundSrc = 'https://lafftale.online/image/Web/Background.png';
+  let attachments = [];
+
+  if (!config.email.templates.useAbsoluteUrls) {
+    // Include logo
+    const logoPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.logo
+    );
+    logoSrc = 'cid:logo';
+    attachments.push({
+      filename: config.email.imagePaths.logo,
+      path: logoPath,
+      cid: 'logo',
+    });
+
+    // Include header
+    const headerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.header
+    );
+    headerSrc = 'cid:header';
+    attachments.push({
+      filename: config.email.imagePaths.header,
+      path: headerPath,
+      cid: 'header',
+    });
+
+    // Include footer
+    const footerPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.footer
+    );
+    footerSrc = 'cid:footer';
+    attachments.push({
+      filename: config.email.imagePaths.footer,
+      path: footerPath,
+      cid: 'footer',
+    });
+
+    // Include background
+    const backgroundPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'public',
+      'image',
+      'Web',
+      config.email.imagePaths.background
+    );
+    backgroundSrc = 'cid:background';
+    attachments.push({
+      filename: config.email.imagePaths.background,
+      path: backgroundPath,
+      cid: 'background',
+    });
+  }
+
+  const mailOptions = {
+    from: config.email.from,
+    to: email,
+    subject: 'Lafftale Online - Game Account Deletion Confirmation',
+    html: createAccountDeletionEmailTemplate(
+      confirmUrl,
+      gameAccountName,
+      logoSrc,
+      headerSrc,
+      footerSrc,
+      backgroundSrc
+    ),
+    attachments,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
+// Template for account deletion confirmation email
+function createAccountDeletionEmailTemplate(
+  confirmUrl,
+  gameAccountName,
+  logoSrc,
+  headerSrc,
+  footerSrc,
+  backgroundSrc
+) {
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Game Account Deletion Confirmation</title>
+      <style>
+        body { margin: 0; padding: 0; background-color: #0f172a; font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #1e293b; }
+        .header { background-image: url('${headerSrc}'); background-size: cover; background-position: center; padding: 40px 20px; text-align: center; }
+        .logo { max-width: 150px; height: auto; }
+        .content { padding: 40px 30px; background-color: #1e293b; color: #e2e8f0; }
+        .warning-box { background-color: #dc2626; border: 2px solid #ef4444; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .warning-title { color: #fef2f2; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .warning-text { color: #fef2f2; line-height: 1.6; }
+        .account-info { background-color: #374151; border-radius: 8px; padding: 15px; margin: 20px 0; }
+        .confirm-btn { display: inline-block; background-color: #dc2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+        .confirm-btn:hover { background-color: #b91c1c; }
+        .footer { padding: 20px 30px; background-color: #1e293b; background-image: url('${footerSrc}'); background-size: cover; background-position: center; text-align: center; color: #9ca3af; }
+        .expiry-info { background-color: #1f2937; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; }
+      </style>
+    </head>
+    <body style="background-image: url('${backgroundSrc}'); background-size: cover; background-position: center; background-attachment: fixed;">
+      <center>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: rgba(15, 23, 42, 0.9);">
+          <tr>
+            <td>
+              <table class="container" cellpadding="0" cellspacing="0" border="0">
+                <!-- Header -->
+                <tr>
+                  <td class="header">
+                    <img src="${logoSrc}" alt="Lafftale Online" class="logo">
+                    <h1 style="color: #fbbf24; margin: 20px 0 0 0;">Game Account Deletion</h1>
+                  </td>
+                </tr>
+                <!-- Content -->
+                <tr>
+                  <td class="content">
+                    <div class="warning-box">
+                      <div class="warning-title">⚠️ DANGER - Account Deletion Request</div>
+                      <div class="warning-text">
+                        You have requested to permanently delete your game account. This action is IRREVERSIBLE and will result in the complete loss of all characters, items, and progress.
+                      </div>
+                    </div>
+
+                    <div class="account-info">
+                      <strong>Game Account to be deleted:</strong><br>
+                      <span style="color: #fbbf24; font-size: 18px;">${gameAccountName}</span>
+                    </div>
+
+                    <p style="color: #e2e8f0; line-height: 1.6;">
+                      If you are certain you want to proceed with deleting this game account, click the confirmation button below:
+                    </p>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${confirmUrl}" class="confirm-btn">CONFIRM ACCOUNT DELETION</a>
+                    </div>
+
+                    <div class="expiry-info">
+                      <strong>⏰ Important:</strong> This confirmation link will expire in 1 hour for security reasons.
+                    </div>
+
+                    <p style="color: #9ca3af; line-height: 1.6;">
+                      <strong>What will be deleted:</strong><br>
+                      • All characters and their equipment<br>
+                      • All in-game currency and items<br>
+                      • Character progression and achievements<br>
+                      • Guild membership and relationships<br>
+                      • All game-related data
+                    </p>
+
+                    <p style="color: #9ca3af; line-height: 1.6;">
+                      If you did not request this deletion, please ignore this email and contact our support team immediately.
+                    </p>
+                  </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                  <td class="footer">
+                    <p>&copy; ${new Date().getFullYear()} Lafftale Online. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </center>
+    </body>
+    </html>
+  `;
+}
+
 // Exports
 const emailUtils = {
   sendPasswordResetEmail,
   generateToken,
   sendVerificationEmail,
+  sendAccountDeletionEmail,
 };
 
 module.exports = emailUtils;

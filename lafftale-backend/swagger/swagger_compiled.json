@@ -2352,6 +2352,74 @@
           "isValid"
         ]
       },
+      "ReferralReward": {
+        "type": "object",
+        "description": "Available referral reward that can be redeemed with points",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique reward ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "Display name of the reward"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the reward"
+          },
+          "points_required": {
+            "type": "integer",
+            "description": "Points required to redeem this reward"
+          },
+          "reward_type": {
+            "type": "string",
+            "enum": [
+              "silk",
+              "item",
+              "gold"
+            ],
+            "description": "Type of reward"
+          },
+          "reward_value": {
+            "type": "string",
+            "description": "Specific value or name of the reward"
+          },
+          "silk_reward": {
+            "type": "integer",
+            "description": "Amount of silk reward (for backward compatibility)"
+          },
+          "item_id": {
+            "type": "integer",
+            "description": "Item ID for item rewards (optional)"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether reward is currently available"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Alternative active flag (for backward compatibility)"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when reward was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when reward was last updated"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "points_required",
+          "reward_type",
+          "active"
+        ]
+      },
       "SilkBalance": {
         "type": "object",
         "description": "User's silk balance information",
@@ -11495,6 +11563,147 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/referrals/rewards": {
+      "get": {
+        "tags": [
+          "User - Referrals"
+        ],
+        "summary": "Get available referral rewards",
+        "description": "Retrieve all available rewards that can be redeemed with referral points",
+        "responses": {
+          "200": {
+            "description": "Available rewards retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ReferralReward"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/referrals/redeem-reward": {
+      "post": {
+        "tags": [
+          "User - Referrals"
+        ],
+        "summary": "Redeem specific reward",
+        "description": "Redeem a specific reward using referral points",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reward_id": {
+                    "type": "integer",
+                    "description": "ID of the reward to redeem"
+                  },
+                  "points_required": {
+                    "type": "integer",
+                    "description": "Points required for this reward"
+                  }
+                },
+                "required": [
+                  "reward_id",
+                  "points_required"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reward redeemed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "reward_title": {
+                              "type": "string"
+                            },
+                            "points_spent": {
+                              "type": "integer"
+                            },
+                            "reward_type": {
+                              "type": "string"
+                            },
+                            "reward_value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Insufficient points or invalid reward",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Reward not found or inactive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }

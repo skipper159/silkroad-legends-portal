@@ -13,7 +13,8 @@ router.get('/', authenticateToken, verifyAdmin, async (req, res) => {
     let query = `
       SELECT v.id, v.code, v.type, v.amount, v.max_uses, v.used_count, 
              v.valid_date, v.expires_at, v.status, v.description, v.created_at, v.updated_at,
-             u.username as created_by_username
+             u.username as created_by_username,
+             CASE WHEN v.status = 'Active' THEN 1 ELSE 0 END as is_active
       FROM vouchers v
       LEFT JOIN users u ON v.created_by = u.id
       WHERE 1=1
@@ -52,10 +53,42 @@ router.get('/', authenticateToken, verifyAdmin, async (req, res) => {
 // Create new voucher
 router.post('/', authenticateToken, verifyAdmin, async (req, res) => {
   try {
-    const { code, type, amount, max_uses, valid_date, expires_at, description } = req.body;
+    const { code, type, amount, value, max_uses, valid_date, expires_at, description, is_active } =
+      req.body;
 
-    if (!type || !amount) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    // Accept both 'amount' and 'value' for backwards compatibility
+    const voucherAmount = amount || value;
+
+    // Set status based on is_active flag (default: Active)
+    const status = is_active !== false ? 'Active' : 'Disabled';
+
+    // Convert string type to integer
+    const getTypeNumber = (typeString) => {
+      switch (typeString?.toLowerCase()) {
+        case 'silk':
+        case '1':
+          return 1;
+        case 'gold':
+        case '2':
+          return 2;
+        case 'experience':
+        case '3':
+          return 3;
+        case 'item':
+        case '4':
+          return 4;
+        default:
+          return null;
+      }
+    };
+
+    const typeNumber = getTypeNumber(type);
+
+    if (!typeNumber || !voucherAmount) {
+      return res.status(400).json({
+        error: 'Missing required fields: type and amount/value',
+        received: { type, typeNumber, voucherAmount },
+      });
     }
 
     const pool = await getWebDb();
@@ -76,16 +109,17 @@ router.post('/', authenticateToken, verifyAdmin, async (req, res) => {
     const result = await pool
       .request()
       .input('code', sql.NVarChar, voucherCode)
-      .input('type', sql.Int, parseInt(type))
-      .input('amount', sql.Int, amount)
+      .input('type', sql.Int, typeNumber)
+      .input('amount', sql.Int, voucherAmount)
       .input('max_uses', sql.Int, max_uses || 1)
       .input('valid_date', sql.DateTime, valid_date || null)
       .input('expires_at', sql.DateTime, expires_at || null)
       .input('description', sql.NVarChar, description || '')
+      .input('status', sql.NVarChar, status)
       .input('created_by', sql.BigInt, req.user.id).query(`
         INSERT INTO vouchers (code, type, amount, max_uses, used_count, valid_date, expires_at, description, status, created_by, created_at, updated_at)
         OUTPUT INSERTED.id
-        VALUES (@code, @type, @amount, @max_uses, 0, @valid_date, @expires_at, @description, 'Active', @created_by, GETDATE(), GETDATE())
+        VALUES (@code, @type, @amount, @max_uses, 0, @valid_date, @expires_at, @description, @status, @created_by, GETDATE(), GETDATE())
       `);
 
     res.json({
@@ -103,9 +137,13 @@ router.post('/', authenticateToken, verifyAdmin, async (req, res) => {
 router.put('/:id', authenticateToken, verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { code, type, amount, max_uses, valid_date, expires_at, description, status } = req.body;
+    const { code, type, amount, max_uses, valid_date, expires_at, description, status, is_active } =
+      req.body;
 
     const pool = await getWebDb();
+
+    // Determine status: use status if provided, otherwise convert is_active to status
+    const voucherStatus = status || (is_active !== false ? 'Active' : 'Disabled');
 
     // Check if code already exists (excluding current voucher)
     if (code) {
@@ -130,7 +168,7 @@ router.put('/:id', authenticateToken, verifyAdmin, async (req, res) => {
       .input('valid_date', sql.DateTime, valid_date || null)
       .input('expires_at', sql.DateTime, expires_at || null)
       .input('description', sql.NVarChar, description || '')
-      .input('status', sql.NVarChar, status || 'Active').query(`
+      .input('status', sql.NVarChar, voucherStatus).query(`
         UPDATE vouchers 
         SET code = @code, type = @type, amount = @amount, max_uses = @max_uses,
             valid_date = @valid_date, expires_at = @expires_at, description = @description, status = @status,

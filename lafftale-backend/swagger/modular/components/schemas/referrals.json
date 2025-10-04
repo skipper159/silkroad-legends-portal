@@ -213,5 +213,63 @@
       }
     },
     "required": ["isValid"]
+  },
+  "ReferralReward": {
+    "type": "object",
+    "description": "Available referral reward that can be redeemed with points",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique reward ID"
+      },
+      "title": {
+        "type": "string",
+        "description": "Display name of the reward"
+      },
+      "description": {
+        "type": "string",
+        "description": "Detailed description of the reward"
+      },
+      "points_required": {
+        "type": "integer",
+        "description": "Points required to redeem this reward"
+      },
+      "reward_type": {
+        "type": "string",
+        "enum": ["silk", "item", "gold"],
+        "description": "Type of reward"
+      },
+      "reward_value": {
+        "type": "string",
+        "description": "Specific value or name of the reward"
+      },
+      "silk_reward": {
+        "type": "integer",
+        "description": "Amount of silk reward (for backward compatibility)"
+      },
+      "item_id": {
+        "type": "integer",
+        "description": "Item ID for item rewards (optional)"
+      },
+      "active": {
+        "type": "boolean",
+        "description": "Whether reward is currently available"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Alternative active flag (for backward compatibility)"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp when reward was created"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp when reward was last updated"
+      }
+    },
+    "required": ["id", "title", "points_required", "reward_type", "active"]
   }
 }

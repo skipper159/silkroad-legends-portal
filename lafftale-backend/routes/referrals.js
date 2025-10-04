@@ -232,6 +232,186 @@ router.post('/redeem', verifyToken, async (req, res) => {
   }
 });
 
+// Redeem specific reward
+router.post('/redeem-reward', verifyToken, async (req, res) => {
+  try {
+    const { reward_id, points_required } = req.body;
+    const userJid = req.user.jid;
+
+    if (!reward_id || !points_required) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing reward_id or points_required',
+      });
+    }
+
+    const pool = await getWebDb();
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    try {
+      // Verify reward exists and is active
+      const rewardResult = await transaction
+        .request()
+        .input('reward_id', sql.Int, reward_id)
+        .query('SELECT * FROM referral_rewards WHERE id = @reward_id AND is_active = 1');
+
+      if (rewardResult.recordset.length === 0) {
+        await transaction.rollback();
+        return res.status(404).json({
+          success: false,
+          message: 'Reward not found or inactive',
+        });
+      }
+
+      const reward = rewardResult.recordset[0];
+
+      // Verify points requirement matches
+      if (reward.points_required !== points_required) {
+        await transaction.rollback();
+        return res.status(400).json({
+          success: false,
+          message: 'Points requirement mismatch',
+        });
+      }
+
+      // Check user's available points
+      const userPointsResult = await transaction.request().input('jid', sql.Int, userJid).query(`
+          SELECT SUM(CASE WHEN redeemed = 0 THEN points ELSE 0 END) as available_points
+          FROM referrals 
+          WHERE jid = @jid AND invited_jid IS NOT NULL
+        `);
+
+      const availablePoints = userPointsResult.recordset[0]?.available_points || 0;
+
+      if (availablePoints < points_required) {
+        await transaction.rollback();
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient points. You have ${availablePoints}, need ${points_required}`,
+        });
+      }
+
+      // Mark points as redeemed (update oldest unredeemed referrals first)
+      const unredeemed = await transaction.request().input('jid', sql.Int, userJid).query(`
+          SELECT id, points FROM referrals 
+          WHERE jid = @jid AND redeemed = 0 AND invited_jid IS NOT NULL
+          ORDER BY created_at ASC
+        `);
+
+      let remainingToRedeem = points_required;
+
+      for (const referral of unredeemed.recordset) {
+        if (remainingToRedeem <= 0) break;
+
+        if (referral.points <= remainingToRedeem) {
+          // Redeem entire referral
+          await transaction
+            .request()
+            .input('id', sql.Int, referral.id)
+            .query('UPDATE referrals SET redeemed = 1, redeemed_at = GETDATE() WHERE id = @id');
+
+          remainingToRedeem -= referral.points;
+        } else {
+          // Partial redemption - split the referral
+          const redeemedAmount = remainingToRedeem;
+          const remainingAmount = referral.points - remainingToRedeem;
+
+          // Update original referral with remaining points
+          await transaction
+            .request()
+            .input('id', sql.Int, referral.id)
+            .input('points', sql.Int, remainingAmount)
+            .query('UPDATE referrals SET points = @points WHERE id = @id');
+
+          // Create new redeemed entry
+          await transaction
+            .request()
+            .input('jid', sql.Int, userJid)
+            .input('points', sql.Int, redeemedAmount).query(`
+              INSERT INTO referrals (jid, invited_jid, points, redeemed, redeemed_at, created_at, updated_at)
+              VALUES (@jid, -1, @points, 1, GETDATE(), GETDATE(), GETDATE())
+            `);
+
+          remainingToRedeem = 0;
+        }
+      }
+
+      // Process reward based on type
+      let rewardMessage = '';
+
+      if (reward.reward_type === 'silk') {
+        const silkAmount = parseInt(reward.reward_value) || 0;
+
+        if (silkAmount > 0) {
+          const { getGameDb } = require('../db');
+          const gamePool = await getGameDb();
+
+          await gamePool
+            .request()
+            .input('jid', sql.Int, userJid)
+            .input('amount', sql.Int, silkAmount).query(`
+              UPDATE SK_Silk 
+              SET silk_own = silk_own + @amount 
+              WHERE JID = @jid
+            `);
+
+          rewardMessage = `Received ${silkAmount} silk`;
+        }
+      } else if (reward.reward_type === 'item') {
+        // For items, you would implement item giving logic here
+        // This depends on your game's item system
+        rewardMessage = `Received item: ${reward.reward_value}`;
+      } else if (reward.reward_type === 'gold') {
+        const goldAmount = parseInt(reward.reward_value) || 0;
+
+        if (goldAmount > 0) {
+          const { getCharDb } = require('../db');
+          const charPool = await getCharDb();
+
+          // This is a simplified example - you'd need to implement proper gold giving
+          // based on your game's character/gold system
+          rewardMessage = `Received ${goldAmount} gold`;
+        }
+      }
+
+      // Log the redemption
+      await transaction
+        .request()
+        .input('jid', sql.Int, userJid)
+        .input('reward_id', sql.Int, reward_id)
+        .input('points_spent', sql.Int, points_required)
+        .input('reward_type', sql.NVarChar, reward.reward_type)
+        .input('reward_value', sql.NVarChar, reward.reward_value).query(`
+          INSERT INTO referral_redemption_log (jid, reward_id, points_spent, reward_type, reward_value, redeemed_at)
+          VALUES (@jid, @reward_id, @points_spent, @reward_type, @reward_value, GETDATE())
+        `);
+
+      await transaction.commit();
+
+      res.json({
+        success: true,
+        message: `Successfully redeemed "${reward.title}"! ${rewardMessage}`,
+        data: {
+          reward_title: reward.title,
+          points_spent: points_required,
+          reward_type: reward.reward_type,
+          reward_value: reward.reward_value,
+        },
+      });
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error redeeming specific reward:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to redeem reward. Please try again.',
+    });
+  }
+});
+
 router.post('/register', async (req, res) => {
   try {
     const { referrer_code, referred_jid } = req.body;
@@ -416,8 +596,31 @@ router.get('/my-stats', verifyToken, async (req, res) => {
   }
 });
 
-// GET /rewards - Get all referral rewards for the user
-router.get('/rewards', verifyToken, async (req, res) => {
+// GET /rewards - Get all available referral rewards
+router.get('/rewards', async (req, res) => {
+  try {
+    const pool = await getWebDb();
+
+    // Get all active referral rewards
+    const result = await pool.request().query(`
+      SELECT id, title, description, points_required, reward_type, reward_value, is_active
+      FROM referral_rewards
+      WHERE is_active = 1
+      ORDER BY points_required ASC
+    `);
+
+    res.json({
+      success: true,
+      data: result.recordset || [],
+    });
+  } catch (error) {
+    console.error('Error fetching available rewards:', error);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+// GET /my-rewards - Get all referrals made by the user
+router.get('/my-rewards', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const userJid = req.user.jid;

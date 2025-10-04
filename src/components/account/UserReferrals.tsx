@@ -128,6 +128,58 @@ const UserReferrals: React.FC = () => {
     }
   };
 
+  const handleRedeemReward = async (rewardId: number, pointsRequired: number) => {
+    console.log('Redeem reward clicked:', { rewardId, pointsRequired });
+
+    if (!stats || stats.available_points < pointsRequired) {
+      toast({
+        title: 'Insufficient Points',
+        description: `You need ${pointsRequired} points for this reward. You have ${
+          stats?.available_points || 0
+        } points.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setRedeemLoading(true);
+    try {
+      const response = await fetchWithAuth(`${weburl}/api/referrals/redeem-reward`, {
+        method: 'POST',
+        body: JSON.stringify({
+          reward_id: rewardId,
+          points_required: pointsRequired,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: 'Reward Redeemed!',
+          description: data.message || `Successfully redeemed reward for ${pointsRequired} points!`,
+        });
+        fetchReferralData(); // Reload data to update points
+        fetchRewards(); // Reload rewards in case they changed
+      } else {
+        toast({
+          title: 'Redemption Failed',
+          description: data.message || 'Could not redeem reward. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Redeem reward error:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not redeem reward. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setRedeemLoading(false);
+    }
+  };
+
   const handleRedeemPoints = async () => {
     console.log('Redeem button clicked');
     console.log('Current stats:', stats);
@@ -265,9 +317,7 @@ const UserReferrals: React.FC = () => {
               <Share2 className='h-4 w-4 mr-2' />
               Share Referral Link
             </Button>
-            <p className='text-xs text-gray-500 text-center'>
-              Friends must enter this code during registration
-            </p>
+            <p className='text-xs text-gray-500 text-center'>Friends must enter this code during registration</p>
           </div>
         </CardContent>
       </Card>
@@ -399,9 +449,7 @@ const UserReferrals: React.FC = () => {
               <Award className='h-5 w-5' />
               Available Rewards
             </CardTitle>
-            <CardDescription className='text-gray-400'>
-              Exchange your referral points for rewards
-            </CardDescription>
+            <CardDescription className='text-gray-400'>Exchange your referral points for rewards</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -411,15 +459,19 @@ const UserReferrals: React.FC = () => {
                     <h4 className='font-medium text-gray-100'>{reward.title}</h4>
                     <Badge className={getRewardTypeColor(reward.reward_type)}>{reward.reward_type}</Badge>
                   </div>
-                  <p className='text-sm text-gray-400 mb-3'>{reward.description}</p>
+                  <p className='text-sm text-gray-400 mb-2'>{reward.description}</p>
+                  {reward.reward_value && (
+                    <p className='text-sm text-lafftale-gold mb-3 font-medium'>Reward: {reward.reward_value}</p>
+                  )}
                   <div className='flex justify-between items-center'>
                     <span className='text-lafftale-gold font-bold'>{reward.points_required} Points</span>
                     <Button
                       size='sm'
-                      disabled={!stats || stats.available_points < reward.points_required}
-                      className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                      disabled={!stats || stats.available_points < reward.points_required || redeemLoading}
+                      onClick={() => handleRedeemReward(reward.id, reward.points_required)}
+                      className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90 disabled:opacity-50'
                     >
-                      Redeem
+                      {redeemLoading ? 'Redeeming...' : 'Redeem'}
                     </Button>
                   </div>
                 </div>
