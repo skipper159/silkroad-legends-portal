@@ -219,34 +219,32 @@ router.get('/history', verifyToken, async (req, res) => {
     const pool = await getWebDb();
     const SilkManagerEnhanced = require('../models/silkManagerEnhanced');
 
-    console.log(`🔍 Voucher History Debug - User ID: ${userId}, User JID: ${userJid}, Filter by Game Account: ${gameAccountJid}`);
+    console.log(
+      `🔍 Voucher History Debug - User ID: ${userId}, User JID: ${userJid}, Filter by Game Account: ${gameAccountJid}`
+    );
 
     // If gameAccountJid is specified, verify the user owns this game account
     if (gameAccountJid) {
       const ownershipCheck = await pool
         .request()
         .input('userId', sql.BigInt, userId)
-        .input('gameAccountJid', sql.Int, gameAccountJid)
-        .query(`
+        .input('gameAccountJid', sql.Int, gameAccountJid).query(`
           SELECT COUNT(*) AS count 
           FROM user_gameaccounts 
           WHERE user_id = @userId AND gameaccount_jid = @gameAccountJid
         `);
 
       if (ownershipCheck.recordset[0].count === 0) {
-        return res.status(403).json({ 
-          success: false, 
-          message: 'You can only view voucher history for your own game accounts' 
+        return res.status(403).json({
+          success: false,
+          message: 'You can only view voucher history for your own game accounts',
         });
       }
 
       // Get voucher history for specific game account
       console.log(`🔍 Querying voucher_logs for specific Game Account JID: ${gameAccountJid}`);
-      
-      const result = await pool
-        .request()
-        .input('gameJid', sql.Int, gameAccountJid)
-        .query(`
+
+      const result = await pool.request().input('gameJid', sql.Int, gameAccountJid).query(`
           SELECT vl.id, v.code as voucher_code, v.type, v.amount, v.amount as value,
                  'Redeemed' as status, vl.redeemed_at, vl.created_at,
                  v.max_uses, v.used_count, vl.jid as game_account_jid,
@@ -258,7 +256,9 @@ router.get('/history', verifyToken, async (req, res) => {
           ORDER BY vl.redeemed_at DESC
         `);
 
-      console.log(`🔍 Query returned ${result.recordset.length} voucher history records for game account ${gameAccountJid}`);
+      console.log(
+        `🔍 Query returned ${result.recordset.length} voucher history records for game account ${gameAccountJid}`
+      );
 
       return res.json({
         success: true,
@@ -298,9 +298,7 @@ router.get('/history', verifyToken, async (req, res) => {
     // If still no JID, get all vouchers for user's game accounts
     if (!effectiveJid && !originalGameJid) {
       // Get all vouchers for all user's game accounts
-      const userGameAccountsResult = await pool
-        .request()
-        .input('userId', sql.BigInt, userId)
+      const userGameAccountsResult = await pool.request().input('userId', sql.BigInt, userId)
         .query(`
           SELECT gameaccount_jid 
           FROM user_gameaccounts 
@@ -314,8 +312,10 @@ router.get('/history', verifyToken, async (req, res) => {
         });
       }
 
-      const gameAccountJids = userGameAccountsResult.recordset.map(row => row.gameaccount_jid);
-      console.log(`🔍 Querying voucher_logs for all user's game accounts: ${gameAccountJids.join(', ')}`);
+      const gameAccountJids = userGameAccountsResult.recordset.map((row) => row.gameaccount_jid);
+      console.log(
+        `🔍 Querying voucher_logs for all user's game accounts: ${gameAccountJids.join(', ')}`
+      );
 
       // Build dynamic query for multiple JIDs
       const jidConditions = gameAccountJids.map((_, index) => `vl.jid = @jid${index}`).join(' OR ');
@@ -338,7 +338,9 @@ router.get('/history', verifyToken, async (req, res) => {
 
       const result = await request.query(query);
 
-      console.log(`🔍 Query returned ${result.recordset.length} voucher history records for all user's accounts`);
+      console.log(
+        `🔍 Query returned ${result.recordset.length} voucher history records for all user's accounts`
+      );
 
       return res.json({
         success: true,

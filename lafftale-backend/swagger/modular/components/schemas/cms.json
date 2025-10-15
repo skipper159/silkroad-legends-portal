@@ -173,50 +173,6 @@
     },
     "required": ["id", "name", "file_url", "category"]
   },
-  "GuildInfo": {
-    "type": "object",
-    "description": "Guild information",
-    "properties": {
-      "ID": {
-        "type": "integer",
-        "description": "Guild ID"
-      },
-      "Name": {
-        "type": "string",
-        "description": "Guild name"
-      },
-      "Lvl": {
-        "type": "integer",
-        "description": "Guild level"
-      },
-      "MasterID": {
-        "type": "integer",
-        "description": "Guild master character ID"
-      },
-      "Alliance": {
-        "type": "integer",
-        "description": "Alliance ID"
-      },
-      "Notice": {
-        "type": "string",
-        "description": "Guild notice/description"
-      },
-      "FoundationDate": {
-        "type": "string",
-        "format": "date-time",
-        "description": "Guild foundation date"
-      },
-      "memberCount": {
-        "type": "integer",
-        "description": "Number of guild members"
-      },
-      "masterName": {
-        "type": "string",
-        "description": "Guild master character name (joined data)"
-      }
-    },
-    "required": ["ID", "Name", "Lvl", "MasterID"]
-  },
   "CmsSettings": {
     "type": "object",
     "description": "CMS configuration settings",

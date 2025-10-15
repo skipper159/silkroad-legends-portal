@@ -9,9 +9,9 @@ const METRIC_KEYS = {
  * @param {number} count
  * @param {number} ttlSeconds
  */
-function setPlayersOnline(count, ttlSeconds = 120) {
+async function setPlayersOnline(count, ttlSeconds = 120) {
   try {
-    cache.set(METRIC_KEYS.PLAYERS_ONLINE, Number(count), ttlSeconds);
+    await cache.set(METRIC_KEYS.PLAYERS_ONLINE, Number(count), ttlSeconds);
     return true;
   } catch (error) {
     console.error('Failed to set players online metric', error);
@@ -22,9 +22,14 @@ function setPlayersOnline(count, ttlSeconds = 120) {
 /**
  * Get players online count from cache
  */
-function getPlayersOnline() {
-  const v = cache.get(METRIC_KEYS.PLAYERS_ONLINE);
-  return typeof v === 'number' ? v : null;
+async function getPlayersOnline() {
+  try {
+    const v = await cache.get(METRIC_KEYS.PLAYERS_ONLINE);
+    return typeof v === 'number' ? v : null;
+  } catch (error) {
+    console.error('Failed to get players online metric', error);
+    return null;
+  }
 }
 
 module.exports = { setPlayersOnline, getPlayersOnline, METRIC_KEYS };

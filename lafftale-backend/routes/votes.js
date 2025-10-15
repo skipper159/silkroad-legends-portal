@@ -128,6 +128,100 @@ router.post('/postback', async (req, res) => {
   }
 });
 
+// Gtop100 specific postback endpoint - supporting both GET and POST
+const handleGtop100Postback = async (req, res) => {
+  try {
+    const ip = req.ip || req.connection.remoteAddress;
+    console.log('Gtop100 postback received:', { body: req.body, ip, query: req.query });
+
+    // Gtop100 IP whitelist
+    const allowedIPs = ['198.148.82.98', '198.148.82.99'];
+    if (!allowedIPs.includes(ip)) {
+      console.log('Unauthorized IP:', ip);
+      return res.status(401).send('Unauthorized IP');
+    }
+
+    // Gtop100 sends data as query parameters
+    const { pingUsername, voted } = req.query;
+
+    if (!pingUsername) {
+      console.log('Missing pingUsername');
+      return res.status(400).send('Missing user ID');
+    }
+
+    if (!voted || voted !== '1') {
+      console.log('Invalid vote status:', voted);
+      return res.status(400).send('Invalid vote status');
+    }
+
+    const pool = await getWebDb();
+
+    // Find gtop100 vote site
+    const siteResult = await pool.request().query(`
+      SELECT id, title, reward, timeout 
+      FROM votes 
+      WHERE site = 'gtop100' AND active = 1
+    `);
+
+    if (siteResult.recordset.length === 0) {
+      console.log('Gtop100 vote site not found');
+      return res.status(404).send('Vote site not found');
+    }
+
+    const voteSite = siteResult.recordset[0];
+
+    // Check cooldown
+    try {
+      const cooldownCheck = await pool
+        .request()
+        .input('jid', sql.Int, parseInt(pingUsername))
+        .input('hours', sql.Int, voteSite.timeout).query(`
+          SELECT COUNT(*) as count 
+          FROM vote_logs 
+          WHERE jid = @jid 
+            AND vote_id = ${voteSite.id}
+            AND voted_at > DATEADD(hour, -@hours, GETDATE())
+        `);
+
+      if (cooldownCheck.recordset[0].count > 0) {
+        console.log('User still in cooldown');
+        return res.status(200).send('User must wait before voting again');
+      }
+    } catch (cooldownError) {
+      console.warn('Cooldown check failed:', cooldownError.message);
+    }
+
+    // Log the vote
+    try {
+      await pool
+        .request()
+        .input('vote_id', sql.Int, voteSite.id)
+        .input('jid', sql.Int, parseInt(pingUsername))
+        .input('ip_address', sql.VarChar, ip)
+        .input('voted_at', sql.DateTime, new Date()).query(`
+          INSERT INTO vote_logs (vote_id, jid, ip_address, voted_at)
+          VALUES (@vote_id, @jid, @ip_address, @voted_at)
+        `);
+    } catch (logError) {
+      console.warn('Vote logging failed:', logError.message);
+    }
+
+    // Award silk reward (implement silk reward logic here)
+    console.log(
+      `Rewarding user ${pingUsername} with ${voteSite.reward} silk for voting on ${voteSite.title}`
+    );
+
+    res.status(200).send('Vote registered successfully');
+  } catch (error) {
+    console.error('Error processing Gtop100 postback:', error);
+    res.status(500).send('Internal server error');
+  }
+};
+
+// Register both GET and POST routes for Gtop100 postback
+router.get('/postback/gtop100', handleGtop100Postback);
+router.post('/postback/gtop100', handleGtop100Postback);
+
 router.get('/history/:user_id', verifyToken, async (req, res) => {
   try {
     const { user_id } = req.params;

@@ -620,42 +620,6 @@
           "category"
         ]
       },
-      "GuildInfo": {
-        "type": "object",
-        "properties": {
-          "ID": {
-            "type": "integer",
-            "example": 1
-          },
-          "Name": {
-            "type": "string",
-            "example": "TestGuild"
-          },
-          "Lvl": {
-            "type": "integer",
-            "example": 5
-          },
-          "MemberCount": {
-            "type": "integer",
-            "example": 25
-          },
-          "Alliance": {
-            "type": "string",
-            "nullable": true,
-            "example": "TestAlliance"
-          },
-          "Notice": {
-            "type": "string",
-            "nullable": true,
-            "example": "Welcome to our guild!"
-          },
-          "CreatedDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        }
-      },
       "CmsSettings": {
         "type": "object",
         "description": "CMS configuration settings",
@@ -757,23 +721,21 @@
         "properties": {
           "success": {
             "type": "boolean",
-            "description": "Always false for error responses",
-            "example": false
-          },
-          "message": {
-            "type": "string",
-            "description": "Human-readable error message",
-            "example": "News post not found"
+            "example": false,
+            "description": "Indicates failed operation"
           },
           "error": {
             "type": "string",
-            "description": "Technical error details (only in development)",
-            "example": "Cannot read properties of null"
+            "description": "Error message"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
           }
         },
         "required": [
           "success",
-          "message"
+          "error"
         ]
       },
       "RankingEntry": {
@@ -885,6 +847,42 @@
             "items": {
               "$ref": "#/components/schemas/GuildMember"
             }
+          }
+        }
+      },
+      "GuildInfo": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "Name": {
+            "type": "string",
+            "example": "TestGuild"
+          },
+          "Lvl": {
+            "type": "integer",
+            "example": 5
+          },
+          "MemberCount": {
+            "type": "integer",
+            "example": 25
+          },
+          "Alliance": {
+            "type": "string",
+            "nullable": true,
+            "example": "TestAlliance"
+          },
+          "Notice": {
+            "type": "string",
+            "nullable": true,
+            "example": "Welcome to our guild!"
+          },
+          "CreatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
       },
@@ -10054,11 +10052,11 @@
     },
     "/api/job-statistics": {
       "get": {
+        "summary": "Get comprehensive job statistics",
+        "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
         "tags": [
           "Rankings"
         ],
-        "summary": "Get comprehensive job statistics",
-        "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
         "parameters": [
           {
             "name": "jobType",
@@ -10083,29 +10081,57 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "example": true
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/JobStatistics"
+                    "statistics": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/JobStatistics"
+                      }
+                    },
+                    "totalJobs": {
+                      "type": "integer",
+                      "description": "Total number of job types"
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "totalPlayers": {
+                          "type": "integer",
+                          "description": "Total players across all jobs"
+                        },
+                        "mostPopularJob": {
+                          "type": "integer",
+                          "description": "Most popular job type"
+                        },
+                        "averageLevel": {
+                          "type": "number",
+                          "description": "Overall average job level"
+                        }
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
+          "404": {
+            "description": "No job statistics found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/api/job-leaderboard-comparison": {
       "get": {
+        "summary": "Get cross-job leaderboard comparison",
+        "description": "Compares top players across different job types with unified ranking system",
         "tags": [
           "Rankings"
         ],
-        "summary": "Get cross-job leaderboard comparison",
-        "description": "Compares top players across different job types with unified ranking system",
         "parameters": [
           {
             "name": "limit",
@@ -10116,7 +10142,15 @@
               "minimum": 1,
               "maximum": 100
             },
-            "description": "Number of top players per job type"
+            "description": "Number of top players per job to compare"
+          },
+          {
+            "name": "includeJobs",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated job types to include (e.g., '1,2,3')"
           }
         ],
         "responses": {
@@ -10128,12 +10162,39 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "example": true
                     },
-                    "data": {
+                    "comparison": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/JobLeaderboardComparison"
+                        "$ref": "#/components/schemas/JobLeaderboardEntry"
+                      }
+                    },
+                    "jobBreakdown": {
+                      "type": "object",
+                      "properties": {
+                        "1": {
+                          "type": "array",
+                          "description": "Trader leaderboard",
+                          "items": {
+                            "$ref": "#/components/schemas/JobLeaderboardEntry"
+                          }
+                        },
+                        "2": {
+                          "type": "array",
+                          "description": "Thief leaderboard",
+                          "items": {
+                            "$ref": "#/components/schemas/JobLeaderboardEntry"
+                          }
+                        },
+                        "3": {
+                          "type": "array",
+                          "description": "Hunter leaderboard",
+                          "items": {
+                            "$ref": "#/components/schemas/JobLeaderboardEntry"
+                          }
+                        }
                       }
                     }
                   }
@@ -10141,19 +10202,19 @@
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/api/job-progression": {
       "get": {
+        "summary": "Get job progression analytics",
+        "description": "Analyzes job progression patterns and experience distribution across levels",
         "tags": [
           "Rankings"
         ],
-        "summary": "Get job progression analytics",
-        "description": "Analyzes job progression patterns and experience distribution across levels",
         "parameters": [
           {
             "name": "jobType",
@@ -10170,19 +10231,24 @@
             "description": "Job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
           },
           {
-            "name": "timeframe",
+            "name": "minLevel",
             "in": "query",
             "schema": {
-              "type": "string",
-              "enum": [
-                "week",
-                "month",
-                "quarter",
-                "year"
-              ],
-              "default": "month"
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
             },
-            "description": "Analysis timeframe"
+            "description": "Minimum job level to include"
+          },
+          {
+            "name": "maxLevel",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 50
+            },
+            "description": "Maximum job level to include"
           }
         ],
         "responses": {
@@ -10194,10 +10260,42 @@
                   "type": "object",
                   "properties": {
                     "success": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "example": true
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/JobProgressionAnalytics"
+                    "jobType": {
+                      "type": "integer",
+                      "description": "Analyzed job type"
+                    },
+                    "progression": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/JobProgressionData"
+                      }
+                    },
+                    "analytics": {
+                      "type": "object",
+                      "properties": {
+                        "totalLevelsAnalyzed": {
+                          "type": "integer"
+                        },
+                        "totalPlayersAnalyzed": {
+                          "type": "integer"
+                        },
+                        "averageProgression": {
+                          "type": "number",
+                          "description": "Average experience gain per level"
+                        },
+                        "progressionTrend": {
+                          "type": "string",
+                          "enum": [
+                            "increasing",
+                            "decreasing",
+                            "stable"
+                          ],
+                          "description": "Overall progression trend"
+                        }
+                      }
                     }
                   }
                 }
@@ -10205,62 +10303,18 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Invalid job type or level range"
           },
           "404": {
             "description": "No progression data found"
           },
-          "/api/rankings/fortress-current": {
-            "get": {
-              "tags": [
-                "Rankings"
-              ],
-              "summary": "Get current fortress owner",
-              "description": "Returns a small summary object with the current fortress owner guild and time held. This endpoint may use fortress guild rankings as approximation.",
-              "responses": {
-                "200": {
-                  "description": "Fortress owner retrieved",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "success": {
-                            "type": "boolean"
-                          },
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "guild": {
-                                "type": "string"
-                              },
-                              "fortress": {
-                                "type": "string"
-                              },
-                              "timeHeld": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "timestamp": {
-                            "type": "string",
-                            "format": "date-time"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "500": {
-                  "$ref": "#/components/responses/InternalServerError"
-                }
-              }
-            }
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
-    "/api/ranking/{type}": {
+    "/api/rankings/{type}": {
       "get": {
         "tags": [
           "Rankings"
@@ -10552,7 +10606,323 @@
         }
       }
     },
-    "/api/votes": {
+    "/api/rankings/fortress-current": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get current fortress owner",
+        "description": "Returns a small summary object with the current fortress owner guild and time held. This endpoint may use fortress guild rankings as approximation.",
+        "responses": {
+          "200": {
+            "description": "Fortress owner retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "guild": {
+                          "type": "string"
+                        },
+                        "fortress": {
+                          "type": "string"
+                        },
+                        "timeHeld": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/job-statistics": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get comprehensive job statistics",
+        "description": "Comprehensive job statistics across all job types with analytics",
+        "parameters": [
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Include inactive jobs in statistics"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalJobs": {
+                          "type": "integer"
+                        },
+                        "jobDistribution": {
+                          "type": "object",
+                          "properties": {
+                            "hunter": {
+                              "type": "integer"
+                            },
+                            "thief": {
+                              "type": "integer"
+                            },
+                            "trader": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "averageLevel": {
+                          "type": "number"
+                        },
+                        "kdRatios": {
+                          "type": "object",
+                          "properties": {
+                            "overall": {
+                              "type": "number"
+                            },
+                            "hunter": {
+                              "type": "number"
+                            },
+                            "thief": {
+                              "type": "number"
+                            },
+                            "trader": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/job-leaderboard-comparison": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get job leaderboard comparison",
+        "description": "Compares top players across different job types with unified ranking system",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of top players per job to compare"
+          },
+          {
+            "name": "includeJobs",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated job types to include (e.g., '1,2,3')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job leaderboard comparison retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "hunters": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobRanking"
+                          }
+                        },
+                        "thieves": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobRanking"
+                          }
+                        },
+                        "traders": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JobRanking"
+                          }
+                        }
+                      }
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "topPerformer": {
+                          "type": "string"
+                        },
+                        "mostActiveJob": {
+                          "type": "string"
+                        },
+                        "averageKD": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/job-progression": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Get job progression analytics",
+        "description": "Advanced job progression analytics with trend analysis and performance metrics",
+        "parameters": [
+          {
+            "name": "timeframe",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "default": "weekly"
+            },
+            "description": "Timeframe for progression analysis"
+          },
+          {
+            "name": "jobType",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Specific job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job progression analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "trends": {
+                          "type": "object",
+                          "properties": {
+                            "levelProgression": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "experienceGains": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "activityLevels": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        },
+                        "analytics": {
+                          "type": "object",
+                          "properties": {
+                            "growthRate": {
+                              "type": "number"
+                            },
+                            "retentionRate": {
+                              "type": "number"
+                            },
+                            "averageSessionTime": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/vote/sites": {
       "get": {
         "tags": [
           "Public - Voting"
@@ -10565,49 +10935,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SuccessResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "url": {
-                                "type": "string"
-                              },
-                              "reward": {
-                                "type": "integer"
-                              },
-                              "cooldown": {
-                                "type": "integer",
-                                "description": "Cooldown in hours"
-                              },
-                              "description": {
-                                "type": "string"
-                              },
-                              "isActive": {
-                                "type": "boolean"
-                              },
-                              "logoUrl": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "logo_url": {
+                        "type": "string"
+                      },
+                      "reward_silk": {
+                        "type": "integer"
+                      },
+                      "cooldown_hours": {
+                        "type": "integer"
+                      },
+                      "is_active": {
+                        "type": "boolean"
                       }
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -10615,16 +10969,27 @@
         }
       }
     },
-    "/api/votes/user-status": {
+    "/api/vote/status/{user_id}": {
       "get": {
         "tags": [
           "Public - Voting"
         ],
         "summary": "Get user voting status",
-        "description": "Retrieve voting status for current user",
+        "description": "Retrieve voting status for specific user",
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
           }
         ],
         "responses": {
@@ -10633,47 +10998,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SuccessResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "siteId": {
-                                "type": "integer"
-                              },
-                              "siteName": {
-                                "type": "string"
-                              },
-                              "canVote": {
-                                "type": "boolean"
-                              },
-                              "lastVoteAt": {
-                                "type": "string",
-                                "format": "date-time"
-                              },
-                              "nextVoteAt": {
-                                "type": "string",
-                                "format": "date-time"
-                              },
-                              "totalVotes": {
-                                "type": "integer"
-                              },
-                              "totalRewards": {
-                                "type": "integer"
-                              }
-                            }
+                  "type": "object",
+                  "properties": {
+                    "sites": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "site_id": {
+                            "type": "integer"
+                          },
+                          "site_name": {
+                            "type": "string"
+                          },
+                          "can_vote": {
+                            "type": "boolean"
+                          },
+                          "next_vote_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "total_votes": {
+                            "type": "integer"
                           }
                         }
                       }
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -10684,45 +11035,41 @@
         }
       }
     },
-    "/api/votes/{id}/vote": {
+    "/api/vote/postback": {
       "post": {
         "tags": [
           "Public - Voting"
         ],
-        "summary": "Process vote",
-        "description": "Process a vote for a specific voting site",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            },
-            "description": "Voting site ID"
-          }
-        ],
+        "summary": "Generic vote postback",
+        "description": "Generic postback endpoint for voting sites",
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "verification": {
+                  "site": {
                     "type": "string",
-                    "description": "Vote verification token (if required)"
+                    "description": "Site identifier"
                   },
-                  "callback": {
+                  "user_id": {
+                    "type": "integer",
+                    "description": "User ID"
+                  },
+                  "ip": {
                     "type": "string",
-                    "description": "Callback URL for verification"
+                    "description": "User IP address"
+                  },
+                  "verification_token": {
+                    "type": "string",
+                    "description": "Verification token"
                   }
-                }
+                },
+                "required": [
+                  "site",
+                  "user_id"
+                ]
               }
             }
           }
@@ -10733,78 +11080,279 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/SuccessResponse"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
                     },
-                    {
+                    "reward": {
                       "type": "object",
                       "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "reward": {
-                              "type": "integer"
-                            },
-                            "nextVoteAt": {
-                              "type": "string",
-                              "format": "date-time"
-                            },
-                            "totalVotes": {
-                              "type": "integer"
-                            },
-                            "redirectUrl": {
-                              "type": "string"
-                            }
-                          }
+                        "type": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "integer"
+                        },
+                        "site_name": {
+                          "type": "string"
                         }
                       }
                     }
-                  ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/vote/postback/gtop100": {
+      "get": {
+        "tags": [
+          "Voting Postbacks"
+        ],
+        "summary": "Gtop100 vote postback (GET)",
+        "description": "Specific postback endpoint for Gtop100 voting site. Called by Gtop100 when a user votes via GET request.",
+        "parameters": [
+          {
+            "name": "pingUsername",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User JID (passed as query parameter by Gtop100)"
+          },
+          {
+            "name": "voted",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1"
+              ]
+            },
+            "description": "Vote confirmation (must be '1')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote processed successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Vote registered successfully"
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "description": "Vote cooldown active",
+            "description": "Bad request - missing parameters or invalid vote status",
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ErrorResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "nextVoteAt": {
-                              "type": "string",
-                              "format": "date-time"
-                            },
-                            "cooldownRemaining": {
-                              "type": "integer",
-                              "description": "Seconds remaining"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
+                  "type": "string",
+                  "example": "Missing user ID"
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - IP not whitelisted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Unauthorized IP"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vote site not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Vote site not found"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "x-internal": true,
+        "x-postback-info": {
+          "allowedIPs": [
+            "198.148.82.98",
+            "198.148.82.99"
+          ],
+          "method": "GET",
+          "parameters": "Query parameters",
+          "description": "This endpoint is called by Gtop100 when a user votes. IP validation ensures only Gtop100 can call this endpoint."
+        }
+      },
+      "post": {
+        "tags": [
+          "Voting Postbacks"
+        ],
+        "summary": "Gtop100 vote postback (POST)",
+        "description": "Specific postback endpoint for Gtop100 voting site. Called by Gtop100 when a user votes via POST request.",
+        "parameters": [
+          {
+            "name": "pingUsername",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User JID (passed as query parameter by Gtop100)"
+          },
+          {
+            "name": "voted",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1"
+              ]
+            },
+            "description": "Vote confirmation (must be '1')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote processed successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Vote registered successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing parameters or invalid vote status",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Missing user ID"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - IP not whitelisted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Unauthorized IP"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vote site not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Vote site not found"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "x-internal": true,
+        "x-postback-info": {
+          "allowedIPs": [
+            "198.148.82.98",
+            "198.148.82.99"
+          ],
+          "method": "POST",
+          "parameters": "Query parameters",
+          "description": "This endpoint is called by Gtop100 when a user votes. IP validation ensures only Gtop100 can call this endpoint."
+        }
+      }
+    },
+    "/api/vote/history/{user_id}": {
+      "get": {
+        "tags": [
+          "Public - Voting"
+        ],
+        "summary": "Get user vote history",
+        "description": "Retrieve vote history for specific user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote history retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "site_name": {
+                        "type": "string"
+                      },
+                      "reward_silk": {
+                        "type": "integer"
+                      },
+                      "ip_address": {
+                        "type": "string"
+                      },
+                      "voted_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }

@@ -247,9 +247,11 @@ class SilkManagerEnhanced {
    * @param {number} jid - Game JID oder Portal JID
    * @param {number} amount - Silk Menge
    * @param {string} reason - Admin Grund
+   * @param {number} managerJID - Manager JID (Admin der die Silk vergibt), optional (default: 1)
+   * @param {number} silkType - Silk Type (1=Normal Gift Silk, 4=Premium Gift Silk), optional (default: 4)
    * @returns {Promise<Object>} Ergebnis
    */
-  async giveAdminSilk(jid, amount, reason = 'Admin Silk') {
+  async giveAdminSilk(jid, amount, reason = 'Admin Silk', managerJID = 1, silkType = 4) {
     await this.ensureConnection();
 
     try {
@@ -258,20 +260,38 @@ class SilkManagerEnhanced {
 
       const result = await pool
         .request()
+        .input('ManagerJID', sql.Int, managerJID)
         .input('JID', sql.Int, portalJID)
-        .input('Silk', sql.Int, amount)
-        .input('SilkType', sql.TinyInt, 2) // 2 = Premium Silk
-        .input('Reason', sql.VarChar, reason)
-        .execute('[GB_JoymaxPortal].[dbo].[M_SetExtraSilk]');
+        .input('Amount', sql.Int, amount)
+        .input('SilkType', sql.TinyInt, silkType)
+        .input('ManagerIP', sql.Binary, Buffer.from([127, 0, 0, 1])) // Localhost IP
+        .input('GRCode', sql.SmallInt, 1) // Default Gift Reason Code
+        .input('MessageForLog', sql.VarChar, reason).query(`
+          DECLARE @ReturnValue int;
+          EXECUTE @ReturnValue = [GB_JoymaxPortal].[dbo].[M_SetExtraSilk] 
+            @ManagerJID, @JID, @Amount, @SilkType, @ManagerIP, @GRCode, @MessageForLog;
+          SELECT @ReturnValue AS ErrorCode;
+        `);
 
-      console.log(`🎁 Admin Silk vergeben: ${amount} Silk für Portal JID ${portalJID}`);
+      const errorCode = result.recordset[0].ErrorCode;
 
-      return {
-        success: true,
-        portalJID: portalJID,
-        amount: amount,
-        reason: reason,
-      };
+      if (errorCode === 0) {
+        console.log(`✅ Admin Silk vergeben: ${amount} Silk für Portal JID ${portalJID}`);
+        return {
+          success: true,
+          portalJID: portalJID,
+          amount: amount,
+          reason: reason,
+          errorCode: 0,
+        };
+      } else {
+        console.error(`❌ Admin Silk fehlgeschlagen: ErrorCode ${errorCode}`);
+        return {
+          success: false,
+          error: `Stored Procedure Error Code: ${errorCode}`,
+          errorCode: errorCode,
+        };
+      }
     } catch (error) {
       console.error('❌ giveAdminSilk Fehler:', error.message);
       return {
@@ -298,14 +318,32 @@ class SilkManagerEnhanced {
       // Berechne Silk basierend auf USD (1 USD = 100 Silk)
       const silkAmount = Math.floor(amount * 100);
 
-      // Gebe Silk
+      // Gebe Silk via M_SetExtraSilk mit korrekten Parametern
       const silkResult = await pool
         .request()
+        .input('ManagerJID', sql.Int, 1) // System Manager JID
         .input('JID', sql.Int, portalJID)
-        .input('Silk', sql.Int, silkAmount)
-        .input('SilkType', sql.TinyInt, 2) // 2 = Premium Silk
-        .input('Reason', sql.VarChar, `PayPal Donation - ${transactionId}`)
-        .execute('[GB_JoymaxPortal].[dbo].[M_SetExtraSilk]');
+        .input('Amount', sql.Int, silkAmount)
+        .input('SilkType', sql.TinyInt, 4) // 4 = Premium Gift Silk
+        .input('ManagerIP', sql.Binary, Buffer.from([127, 0, 0, 1])) // Localhost IP
+        .input('GRCode', sql.SmallInt, 1) // Default Gift Reason Code
+        .input('MessageForLog', sql.VarChar, `PayPal Donation - ${transactionId}`).query(`
+          DECLARE @ReturnValue int;
+          EXECUTE @ReturnValue = [GB_JoymaxPortal].[dbo].[M_SetExtraSilk] 
+            @ManagerJID, @JID, @Amount, @SilkType, @ManagerIP, @GRCode, @MessageForLog;
+          SELECT @ReturnValue AS ErrorCode;
+        `);
+
+      const errorCode = silkResult.recordset[0].ErrorCode;
+
+      if (errorCode !== 0) {
+        console.error(`❌ PayPal Donation Silk-Vergabe fehlgeschlagen: ErrorCode ${errorCode}`);
+        return {
+          success: false,
+          error: `Silk-Vergabe fehlgeschlagen mit ErrorCode: ${errorCode}`,
+          errorCode: errorCode,
+        };
+      }
 
       // Log Donation in SRO_CMS
       await pool
@@ -331,6 +369,7 @@ class SilkManagerEnhanced {
         usdAmount: amount,
         silkAmount: silkAmount,
         transactionId: transactionId,
+        errorCode: 0,
       };
     } catch (error) {
       console.error('❌ processPayPalDonation Fehler:', error.message);

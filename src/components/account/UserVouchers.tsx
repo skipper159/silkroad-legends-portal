@@ -63,7 +63,7 @@ const UserVouchers: React.FC = () => {
       if (historyFilterJid) {
         url += `?gameAccountJid=${historyFilterJid}`;
       }
-      
+
       const response = await fetchWithAuth(url);
 
       if (response.ok) {
@@ -278,7 +278,7 @@ const UserVouchers: React.FC = () => {
                     setHistoryFilterAccount(null);
                   } else {
                     const jid = parseInt(value);
-                    const account = availableAccounts.find(acc => acc.id === jid);
+                    const account = availableAccounts.find((acc) => acc.id === jid);
                     setHistoryFilterJid(jid);
                     setHistoryFilterAccount(account);
                   }
@@ -298,7 +298,7 @@ const UserVouchers: React.FC = () => {
               </Select>
             </div>
           </div>
-          
+
           {loading ? (
             <div className='text-center py-8'>
               <div className='text-gray-400'>Loading voucher history...</div>
@@ -307,10 +307,9 @@ const UserVouchers: React.FC = () => {
             <div className='text-center py-8'>
               <Gift className='h-12 w-12 text-gray-500 mx-auto mb-4' />
               <p className='text-gray-400'>
-                {historyFilterJid 
-                  ? `No vouchers found for ${historyFilterAccount?.StrUserID || 'selected account'}` 
-                  : "You haven't redeemed any vouchers yet"
-                }
+                {historyFilterJid
+                  ? `No vouchers found for ${historyFilterAccount?.StrUserID || 'selected account'}`
+                  : "You haven't redeemed any vouchers yet"}
               </p>
               <p className='text-gray-500 text-sm'>Your redeemed vouchers will be displayed here</p>
             </div>

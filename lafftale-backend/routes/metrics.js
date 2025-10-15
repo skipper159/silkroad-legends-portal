@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cache = require('../utils/cache');
+const MetricsService = require('../services/metricsService');
 
 /**
  * GET /api/metrics/players-online
@@ -9,11 +9,11 @@ const cache = require('../utils/cache');
  */
 router.get('/players-online', async (req, res) => {
   try {
-    // Try to read a cached value (integration with game-server metrics or cache service expected)
-    const cached = cache.get('players_online_count');
-    const count = typeof cached === 'number' ? cached : 0; // placeholder fallback
+    // Get cached value using the MetricsService
+    const count = await MetricsService.getPlayersOnline();
+    const playerCount = typeof count === 'number' ? count : 0; // fallback to 0
 
-    res.json({ success: true, data: { count }, timestamp: new Date().toISOString() });
+    res.json({ success: true, data: { count: playerCount }, timestamp: new Date().toISOString() });
   } catch (error) {
     console.error('Error fetching players-online metric:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch players online' });

@@ -1,6 +1,7 @@
 // ranking/index.js
 const express = require('express');
 const router = express.Router();
+const cache = require('../../utils/cache');
 
 // Import all ranking modules
 const {
@@ -37,6 +38,52 @@ const itemRouter = require('./itemRankings');
 // Import enhanced features
 const enhancedRankings = require('./enhancedRankings');
 const rankingConfig = require('../../config/ranking');
+
+// =============================================================================
+// CACHE MANAGEMENT ENDPOINTS (for debugging)
+// =============================================================================
+
+// GET /api/rankings/cache/clear - Clear all ranking caches
+router.get('/cache/clear', async (req, res) => {
+  try {
+    console.log('🗑️ Manual cache clear requested');
+    const result = await cache.clearRankingCaches();
+
+    res.json({
+      success: true,
+      message: 'Ranking caches cleared successfully',
+      ...result,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Error clearing ranking caches:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to clear ranking caches',
+      error: error.message,
+    });
+  }
+});
+
+// GET /api/rankings/cache/stats - Get cache statistics
+router.get('/cache/stats', async (req, res) => {
+  try {
+    const stats = await cache.getStats();
+
+    res.json({
+      success: true,
+      data: stats,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Error getting cache stats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get cache statistics',
+      error: error.message,
+    });
+  }
+});
 
 // =============================================================================
 // ENHANCED API V2 ENDPOINTS (SRO-CMS INSPIRED) 🔥
@@ -481,15 +528,17 @@ router.get('/:type', async (req, res) => {
 
     switch (type) {
       case 'top-player':
-        // Use optimized function for search queries, regular function for browsing
+        // Use simplified ranking for initial load to avoid timeouts
+        const useSimplified = req.query.simplified === 'true' || req.query.fast === 'true';
+
         if (search && search.trim()) {
           rankings = await getPlayerRankingOptimized(limit, offset, {
             charName: search.trim(),
-            includeItemPoints: true,
+            includeItemPoints: !useSimplified,
           });
         } else {
           rankings = await getPlayerRanking(limit, offset, {
-            includeItemPoints: true,
+            includeItemPoints: !useSimplified,
           });
         }
         break;

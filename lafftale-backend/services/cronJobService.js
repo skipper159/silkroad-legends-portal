@@ -1,6 +1,7 @@
-const { pool, poolConnect, sql } = require('../db');
+const { pool, poolConnect, accountPool, accountPoolConnect, sql } = require('../db');
 const cron = require('node-cron');
 const SilkStatsService = require('./silkStatsService');
+const MetricsService = require('./metricsService');
 
 class CronJobService {
   constructor() {
@@ -152,16 +153,43 @@ class CronJobService {
           {
             // Collect players-online metric periodically. Default schedule example: every minute
             const MetricsService = require('./metricsService');
+            const { getAccountDb } = require('../db');
+
             task = cron.schedule(
               cronExpression,
               async () => {
                 try {
-                  // TODO: replace with actual integration (DB query or game-server API)
-                  // For now we set a placeholder value (0) so the metric endpoint returns something
-                  const placeholderValue = 0;
-                  MetricsService.setPlayersOnline(placeholderValue, 120);
+                  // Query _ShardCurrentUser table from Account database for real-time player count
+                  const accountDb = await getAccountDb();
+                  const result = await accountDb.request().query(`
+                    SELECT 
+                        SUM(nUserCount) as TotalOnlinePlayers,
+                        MAX(dLogDate) as LastUpdate,
+                        DATEDIFF(minute, MAX(dLogDate), GETDATE()) as MinutesAgo
+                    FROM _ShardCurrentUser 
+                    WHERE dLogDate = (SELECT MAX(dLogDate) FROM _ShardCurrentUser)
+                  `);
+
+                  const playerData = result.recordset[0];
+                  const onlineCount = playerData?.TotalOnlinePlayers || 0;
+                  const minutesAgo = playerData?.MinutesAgo || 0;
+
+                  console.log(
+                    `Players online collector: ${onlineCount} players found (data from ${minutesAgo}min ago)`
+                  );
+
+                  // Log warning if data is too old (more than 10 minutes)
+                  if (minutesAgo > 10) {
+                    console.warn(
+                      `Players online collector: Warning - Data is ${minutesAgo} minutes old`
+                    );
+                  }
+
+                  await MetricsService.setPlayersOnline(onlineCount, 120);
                 } catch (err) {
                   console.error('players_online_collector job failed:', err);
+                  // Set fallback value to prevent UI from showing stale data
+                  await MetricsService.setPlayersOnline(0, 120);
                 }
               },
               {

@@ -1,5 +1,5 @@
 {
-  "/api/ranking/{type}": {
+  "/api/rankings/{type}": {
     "get": {
       "tags": ["Rankings"],
       "summary": "Get player rankings",
@@ -237,20 +237,49 @@
       }
     }
   },
-  "/api/job-statistics": {
+  "/api/rankings/fortress-current": {
+    "get": {
+      "tags": ["Rankings"],
+      "summary": "Get current fortress owner",
+      "description": "Returns a small summary object with the current fortress owner guild and time held. This endpoint may use fortress guild rankings as approximation.",
+      "responses": {
+        "200": {
+          "description": "Fortress owner retrieved",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "guild": { "type": "string" },
+                      "fortress": { "type": "string" },
+                      "timeHeld": { "type": "string" }
+                    }
+                  },
+                  "timestamp": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "500": { "$ref": "#/components/responses/InternalServerError" }
+      }
+    }
+  },
+  "/api/rankings/job-statistics": {
     "get": {
       "tags": ["Rankings"],
       "summary": "Get comprehensive job statistics",
-      "description": "Retrieves detailed statistics for all job types including player counts, experience distribution, and level analysis",
+      "description": "Comprehensive job statistics across all job types with analytics",
       "parameters": [
         {
-          "name": "jobType",
+          "name": "includeInactive",
           "in": "query",
-          "schema": {
-            "type": "integer",
-            "enum": [1, 2, 3]
-          },
-          "description": "Optional: Filter by specific job type (1=Trader, 2=Thief, 3=Hunter)"
+          "schema": { "type": "boolean", "default": false },
+          "description": "Include inactive jobs in statistics"
         }
       ],
       "responses": {
@@ -262,20 +291,43 @@
                 "type": "object",
                 "properties": {
                   "success": { "type": "boolean" },
-                  "data": { "$ref": "#/components/schemas/JobStatistics" }
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "totalJobs": { "type": "integer" },
+                      "jobDistribution": {
+                        "type": "object",
+                        "properties": {
+                          "hunter": { "type": "integer" },
+                          "thief": { "type": "integer" },
+                          "trader": { "type": "integer" }
+                        }
+                      },
+                      "averageLevel": { "type": "number" },
+                      "kdRatios": {
+                        "type": "object",
+                        "properties": {
+                          "overall": { "type": "number" },
+                          "hunter": { "type": "number" },
+                          "thief": { "type": "number" },
+                          "trader": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "400": { "$ref": "#/components/responses/BadRequest" }
+        "500": { "$ref": "#/components/responses/InternalServerError" }
       }
     }
   },
-  "/api/job-leaderboard-comparison": {
+  "/api/rankings/job-leaderboard-comparison": {
     "get": {
       "tags": ["Rankings"],
-      "summary": "Get cross-job leaderboard comparison",
+      "summary": "Get job leaderboard comparison",
       "description": "Compares top players across different job types with unified ranking system",
       "parameters": [
         {
@@ -287,7 +339,13 @@
             "minimum": 1,
             "maximum": 100
           },
-          "description": "Number of top players per job type"
+          "description": "Number of top players per job to compare"
+        },
+        {
+          "name": "includeJobs",
+          "in": "query",
+          "schema": { "type": "string" },
+          "description": "Comma-separated job types to include (e.g., '1,2,3')"
         }
       ],
       "responses": {
@@ -300,9 +358,28 @@
                 "properties": {
                   "success": { "type": "boolean" },
                   "data": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/JobLeaderboardComparison"
+                    "type": "object",
+                    "properties": {
+                      "hunters": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/JobRanking" }
+                      },
+                      "thieves": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/JobRanking" }
+                      },
+                      "traders": {
+                        "type": "array",
+                        "items": { "$ref": "#/components/schemas/JobRanking" }
+                      }
+                    }
+                  },
+                  "summary": {
+                    "type": "object",
+                    "properties": {
+                      "topPerformer": { "type": "string" },
+                      "mostActiveJob": { "type": "string" },
+                      "averageKD": { "type": "number" }
                     }
                   }
                 }
@@ -310,35 +387,31 @@
             }
           }
         },
-        "400": { "$ref": "#/components/responses/BadRequest" }
+        "500": { "$ref": "#/components/responses/InternalServerError" }
       }
     }
   },
-  "/api/job-progression": {
+  "/api/rankings/job-progression": {
     "get": {
       "tags": ["Rankings"],
       "summary": "Get job progression analytics",
-      "description": "Analyzes job progression patterns and experience distribution across levels",
+      "description": "Advanced job progression analytics with trend analysis and performance metrics",
       "parameters": [
-        {
-          "name": "jobType",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "enum": [1, 2, 3]
-          },
-          "description": "Job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
-        },
         {
           "name": "timeframe",
           "in": "query",
           "schema": {
             "type": "string",
-            "enum": ["week", "month", "quarter", "year"],
-            "default": "month"
+            "enum": ["daily", "weekly", "monthly"],
+            "default": "weekly"
           },
-          "description": "Analysis timeframe"
+          "description": "Timeframe for progression analysis"
+        },
+        {
+          "name": "jobType",
+          "in": "query",
+          "schema": { "type": "integer", "enum": [1, 2, 3] },
+          "description": "Specific job type to analyze (1=Trader, 2=Thief, 3=Hunter)"
         }
       ],
       "responses": {
@@ -351,49 +424,41 @@
                 "properties": {
                   "success": { "type": "boolean" },
                   "data": {
-                    "$ref": "#/components/schemas/JobProgressionAnalytics"
+                    "type": "object",
+                    "properties": {
+                      "trends": {
+                        "type": "object",
+                        "properties": {
+                          "levelProgression": {
+                            "type": "array",
+                            "items": { "type": "number" }
+                          },
+                          "experienceGains": {
+                            "type": "array",
+                            "items": { "type": "number" }
+                          },
+                          "activityLevels": {
+                            "type": "array",
+                            "items": { "type": "number" }
+                          }
+                        }
+                      },
+                      "analytics": {
+                        "type": "object",
+                        "properties": {
+                          "growthRate": { "type": "number" },
+                          "retentionRate": { "type": "number" },
+                          "averageSessionTime": { "type": "number" }
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           }
         },
-        "/api/rankings/fortress-current": {
-          "get": {
-            "tags": ["Rankings"],
-            "summary": "Get current fortress owner",
-            "description": "Returns a small summary object with the current fortress owner guild and time held. This endpoint may use fortress guild rankings as approximation.",
-            "responses": {
-              "200": {
-                "description": "Fortress owner retrieved",
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "success": { "type": "boolean" },
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "guild": { "type": "string" },
-                            "fortress": { "type": "string" },
-                            "timeHeld": { "type": "string" }
-                          }
-                        },
-                        "timestamp": { "type": "string", "format": "date-time" }
-                      }
-                    }
-                  }
-                }
-              },
-              "500": { "$ref": "#/components/responses/InternalServerError" }
-            }
-          }
-        },
-        "400": { "$ref": "#/components/responses/BadRequest" },
-        "404": {
-          "description": "No progression data found"
-        }
+        "500": { "$ref": "#/components/responses/InternalServerError" }
       }
     }
   }

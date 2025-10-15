@@ -122,7 +122,7 @@ interface ReferralSettings {
   max_referrals_per_ip_lifetime?: { value: string; description: string };
   block_duplicate_ip_completely?: { value: string; description: string };
 
-  // Layer 2: Browser Fingerprint Lifetime Blocking
+  // Layer 2: Browser Fingerprint Lifetime Blocking  
   max_referrals_per_fingerprint_lifetime?: { value: string; description: string };
   block_duplicate_fingerprint_referrals?: { value: string; description: string };
 
@@ -162,9 +162,17 @@ interface ReferralSettings {
 }
 
 const ReferralManager: React.FC = () => {
-  // Dark select classes mit lafftale Design-Farben
-  const darkSelectClass =
-    'w-full p-2 border rounded-md bg-lafftale-dark text-gray-400 border-lafftale-gold/30 focus:border-lafftale-gold focus:ring-1 focus:ring-lafftale-gold/50 outline-none [&>option]:bg-lafftale-dark [&>option]:text-gray-400';
+  // Dark select styles für bessere Browser-Kompatibilität
+  const darkSelectStyle = {
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+    border: '1px solid #374151',
+  };
+
+  const darkOptionStyle = {
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+  };
 
   const [referrals, setReferrals] = useState<AdminReferral[]>([]);
   const [statistics, setStatistics] = useState<ReferralStatistics | null>(null);
@@ -911,7 +919,7 @@ const ReferralManager: React.FC = () => {
                     </label>
                     <select
                       id='referral_enabled'
-                      className={darkSelectClass}
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
                       value={settings.referral_enabled.value}
                       onChange={(e) => {
                         const newSettings = { ...settings };
@@ -934,947 +942,228 @@ const ReferralManager: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* 8-Layer Anti-Cheat System - Chronologisch organisiert */}
-          {settings && (
-            <>
-              {/* Layer 1: IP Address Lifetime Blocking */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    🛡️ Layer 1: IP Address Lifetime Blocking
-                  </CardTitle>
-                  <CardDescription>Prevent multiple registrations from the same IP address</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Anti-Cheat System Master Toggle */}
-                    <div className='space-y-2'>
-                      <label htmlFor='anticheat_enabled' className='text-sm font-medium'>
-                        Anti-Cheat System
-                      </label>
-                      <select
-                        id='anticheat_enabled'
-                        className={darkSelectClass}
-                        value={settings.anticheat_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.anticheat_enabled) {
-                            newSettings.anticheat_enabled = {
-                              value: e.target.value,
-                              description: 'Enable anti-cheat protection',
-                            };
-                          } else {
-                            newSettings.anticheat_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            anticheat_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.anticheat_enabled?.description || 'Master toggle for all anti-cheat features'}
-                      </p>
-                    </div>
-
-                    {/* IP Lifetime Limit */}
-                    <div className='space-y-2'>
-                      <label htmlFor='max_referrals_per_ip_lifetime' className='text-sm font-medium'>
-                        Max referrals per IP (lifetime)
-                      </label>
-                      <Input
-                        id='max_referrals_per_ip_lifetime'
-                        type='number'
-                        min='1'
-                        max='5'
-                        value={settings.max_referrals_per_ip_lifetime?.value || '1'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.max_referrals_per_ip_lifetime) {
-                            newSettings.max_referrals_per_ip_lifetime = {
-                              value: e.target.value,
-                              description: 'Maximum referrals per IP address for lifetime',
-                            };
-                          } else {
-                            newSettings.max_referrals_per_ip_lifetime.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            max_referrals_per_ip_lifetime: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.max_referrals_per_ip_lifetime?.description || 'Lifetime limit per IP address'}
-                      </p>
-                    </div>
-
-                    {/* Complete IP Blocking */}
-                    <div className='space-y-2'>
-                      <label htmlFor='block_duplicate_ip_completely' className='text-sm font-medium'>
-                        Block duplicate IPs completely
-                      </label>
-                      <select
-                        id='block_duplicate_ip_completely'
-                        className={darkSelectClass}
-                        value={settings.block_duplicate_ip_completely?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.block_duplicate_ip_completely) {
-                            newSettings.block_duplicate_ip_completely = {
-                              value: e.target.value,
-                              description: 'Completely block any duplicate IP usage',
-                            };
-                          } else {
-                            newSettings.block_duplicate_ip_completely.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            block_duplicate_ip_completely: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.block_duplicate_ip_completely?.description ||
-                          'Prevents any IP from being used more than once'}
-                      </p>
-                    </div>
+          {/* Anti-Cheat Settings */}
+          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
+                <BarChart3 className='h-5 w-5' />
+                Anti-Cheat Settings
+              </CardTitle>
+              <CardDescription>Configure anti-cheat measures</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {settings ? (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  {/* Anti-cheat enabled */}
+                  <div className='space-y-2'>
+                    <label htmlFor='anticheat_enabled' className='text-sm font-medium'>
+                      Anti-Cheat System
+                    </label>
+                    <select
+                      id='anticheat_enabled'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.anticheat_enabled?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.anticheat_enabled) {
+                          newSettings.anticheat_enabled = {
+                            value: e.target.value,
+                            description: 'Enable anti-cheat protection',
+                          };
+                        } else {
+                          newSettings.anticheat_enabled.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          anticheat_enabled: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.anticheat_enabled?.description || 'Enables automatic anti-cheat detection'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Layer 2: Browser Fingerprint Lifetime Blocking */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    🔍 Layer 2: Browser Fingerprint Lifetime Blocking
-                  </CardTitle>
-                  <CardDescription>Prevent multiple registrations from the same browser</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Fingerprint Lifetime Limit */}
-                    <div className='space-y-2'>
-                      <label htmlFor='max_referrals_per_fingerprint_lifetime' className='text-sm font-medium'>
-                        Max referrals per fingerprint (lifetime)
-                      </label>
-                      <Input
-                        id='max_referrals_per_fingerprint_lifetime'
-                        type='number'
-                        min='1'
-                        max='5'
-                        value={settings.max_referrals_per_fingerprint_lifetime?.value || '1'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.max_referrals_per_fingerprint_lifetime) {
-                            newSettings.max_referrals_per_fingerprint_lifetime = {
-                              value: e.target.value,
-                              description: 'Maximum referrals per browser fingerprint for lifetime',
-                            };
-                          } else {
-                            newSettings.max_referrals_per_fingerprint_lifetime.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            max_referrals_per_fingerprint_lifetime: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.max_referrals_per_fingerprint_lifetime?.description ||
-                          'Lifetime limit per browser fingerprint'}
-                      </p>
-                    </div>
-
-                    {/* Block Duplicate Fingerprints */}
-                    <div className='space-y-2'>
-                      <label htmlFor='block_duplicate_fingerprint_referrals' className='text-sm font-medium'>
-                        Block duplicate fingerprints
-                      </label>
-                      <select
-                        id='block_duplicate_fingerprint_referrals'
-                        className={darkSelectClass}
-                        value={settings.block_duplicate_fingerprint_referrals?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.block_duplicate_fingerprint_referrals) {
-                            newSettings.block_duplicate_fingerprint_referrals = {
-                              value: e.target.value,
-                              description: 'Block referrals from duplicate browser fingerprints',
-                            };
-                          } else {
-                            newSettings.block_duplicate_fingerprint_referrals.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            block_duplicate_fingerprint_referrals: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.block_duplicate_fingerprint_referrals?.description ||
-                          'Prevents duplicate browser usage'}
-                      </p>
-                    </div>
+                  {/* Max Referrals pro IP */}
+                  <div className='space-y-2'>
+                    <label htmlFor='max_referrals_per_ip_per_day' className='text-sm font-medium'>
+                      Max referrals per IP/day
+                    </label>
+                    <Input
+                      id='max_referrals_per_ip_per_day'
+                      type='number'
+                      min='1'
+                      max='20'
+                      value={settings.max_referrals_per_ip_per_day?.value || '5'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.max_referrals_per_ip_per_day) {
+                          newSettings.max_referrals_per_ip_per_day = {
+                            value: e.target.value,
+                            description: 'Maximum referrals per IP per day',
+                          };
+                        } else {
+                          newSettings.max_referrals_per_ip_per_day.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          max_referrals_per_ip_per_day: settings.max_referrals_per_ip_per_day?.value || '5',
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>
+                      {settings.max_referrals_per_ip_per_day?.description || 'Maximum referrals per IP address per day'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Layer 5: Pattern Detection */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    ⚡ Layer 5: Pattern Detection
-                  </CardTitle>
-                  <CardDescription>Bot detection and rapid-fire protection</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Pattern Detection Enabled */}
-                    <div className='space-y-2'>
-                      <label htmlFor='pattern_detection_enabled' className='text-sm font-medium'>
-                        Pattern Detection
-                      </label>
-                      <select
-                        id='pattern_detection_enabled'
-                        className={darkSelectClass}
-                        value={settings.pattern_detection_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.pattern_detection_enabled) {
-                            newSettings.pattern_detection_enabled = {
-                              value: e.target.value,
-                              description: 'Enable rapid-fire and time-based pattern detection',
-                            };
-                          } else {
-                            newSettings.pattern_detection_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            pattern_detection_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.pattern_detection_enabled?.description || 'Detects suspicious registration patterns'}
-                      </p>
-                    </div>
-
-                    {/* Max Registrations per Hour */}
-                    <div className='space-y-2'>
-                      <label htmlFor='max_registrations_per_hour' className='text-sm font-medium'>
-                        Max registrations per hour
-                      </label>
-                      <Input
-                        id='max_registrations_per_hour'
-                        type='number'
-                        min='1'
-                        max='10'
-                        value={settings.max_registrations_per_hour?.value || '3'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.max_registrations_per_hour) {
-                            newSettings.max_registrations_per_hour = {
-                              value: e.target.value,
-                              description: 'Maximum registrations allowed per hour from any source',
-                            };
-                          } else {
-                            newSettings.max_registrations_per_hour.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            max_registrations_per_hour: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.max_registrations_per_hour?.description || 'Hourly registration limit'}
-                      </p>
-                    </div>
-
-                    {/* Min Form Fill Time */}
-                    <div className='space-y-2'>
-                      <label htmlFor='min_form_fill_time_seconds' className='text-sm font-medium'>
-                        Min form fill time (seconds)
-                      </label>
-                      <Input
-                        id='min_form_fill_time_seconds'
-                        type='number'
-                        min='1'
-                        max='30'
-                        value={settings.min_form_fill_time_seconds?.value || '3'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.min_form_fill_time_seconds) {
-                            newSettings.min_form_fill_time_seconds = {
-                              value: e.target.value,
-                              description: 'Minimum time required to fill registration form (bot detection)',
-                            };
-                          } else {
-                            newSettings.min_form_fill_time_seconds.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            min_form_fill_time_seconds: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.min_form_fill_time_seconds?.description || 'Prevents form automation'}
-                      </p>
-                    </div>
-
-                    {/* Rapid Fire Window */}
-                    <div className='space-y-2'>
-                      <label htmlFor='rapid_fire_window_minutes' className='text-sm font-medium'>
-                        Rapid fire window (minutes)
-                      </label>
-                      <Input
-                        id='rapid_fire_window_minutes'
-                        type='number'
-                        min='1'
-                        max='60'
-                        value={settings.rapid_fire_window_minutes?.value || '5'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.rapid_fire_window_minutes) {
-                            newSettings.rapid_fire_window_minutes = {
-                              value: e.target.value,
-                              description: 'Time window for rapid-fire detection',
-                            };
-                          } else {
-                            newSettings.rapid_fire_window_minutes.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            rapid_fire_window_minutes: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.rapid_fire_window_minutes?.description || 'Detection time window'}
-                      </p>
-                    </div>
+                  {/* Max Referrals pro Fingerprint */}
+                  <div className='space-y-2'>
+                    <label htmlFor='max_referrals_per_fingerprint_per_day' className='text-sm font-medium'>
+                      Max referrals per fingerprint/day
+                    </label>
+                    <Input
+                      id='max_referrals_per_fingerprint_per_day'
+                      type='number'
+                      min='1'
+                      max='10'
+                      value={settings.max_referrals_per_fingerprint_per_day?.value || '3'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.max_referrals_per_fingerprint_per_day) {
+                          newSettings.max_referrals_per_fingerprint_per_day = {
+                            value: e.target.value,
+                            description: 'Maximum referrals per browser fingerprint per day',
+                          };
+                        } else {
+                          newSettings.max_referrals_per_fingerprint_per_day.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                      }}
+                      onBlur={() => {
+                        updateSettings({
+                          max_referrals_per_fingerprint_per_day:
+                            settings.max_referrals_per_fingerprint_per_day?.value || '3',
+                        });
+                      }}
+                    />
+                    <p className='text-xs text-gray-500'>
+                      {settings.max_referrals_per_fingerprint_per_day?.description ||
+                        'Maximum referrals per browser fingerprint per day'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Layer 6: Honeypot Traps */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    🍯 Layer 6: Honeypot Traps
-                  </CardTitle>
-                  <CardDescription>Hidden form fields to catch bots</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Honeypot Enabled */}
-                    <div className='space-y-2'>
-                      <label htmlFor='honeypot_traps_enabled' className='text-sm font-medium'>
-                        Honeypot Traps
-                      </label>
-                      <select
-                        id='honeypot_traps_enabled'
-                        className={darkSelectClass}
-                        value={settings.honeypot_traps_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.honeypot_traps_enabled) {
-                            newSettings.honeypot_traps_enabled = {
-                              value: e.target.value,
-                              description: 'Enable honeypot form fields for bot detection',
-                            };
-                          } else {
-                            newSettings.honeypot_traps_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            honeypot_traps_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.honeypot_traps_enabled?.description || 'Hidden fields to catch automated bots'}
-                      </p>
-                    </div>
-
-                    {/* Honeypot Field Names */}
-                    <div className='space-y-2'>
-                      <label htmlFor='honeypot_field_names' className='text-sm font-medium'>
-                        Honeypot field names
-                      </label>
-                      <Input
-                        id='honeypot_field_names'
-                        type='text'
-                        value={settings.honeypot_field_names?.value || 'phone,address,website,company'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.honeypot_field_names) {
-                            newSettings.honeypot_field_names = {
-                              value: e.target.value,
-                              description: 'Comma-separated honeypot field names',
-                            };
-                          } else {
-                            newSettings.honeypot_field_names.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            honeypot_field_names: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.honeypot_field_names?.description || 'Field names used for bot detection'}
-                      </p>
-                    </div>
-
-                    {/* Auto Block */}
-                    <div className='space-y-2'>
-                      <label htmlFor='honeypot_auto_block' className='text-sm font-medium'>
-                        Auto-block honeypot triggers
-                      </label>
-                      <select
-                        id='honeypot_auto_block'
-                        className={darkSelectClass}
-                        value={settings.honeypot_auto_block?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.honeypot_auto_block) {
-                            newSettings.honeypot_auto_block = {
-                              value: e.target.value,
-                              description: 'Automatically block if honeypot field is filled',
-                            };
-                          } else {
-                            newSettings.honeypot_auto_block.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            honeypot_auto_block: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.honeypot_auto_block?.description || 'Automatic blocking on honeypot trigger'}
-                      </p>
-                    </div>
+                  {/* Blockiere gleiche IP */}
+                  <div className='space-y-2'>
+                    <label htmlFor='block_duplicate_ip_referrals' className='text-sm font-medium'>
+                      Block duplicate IP
+                    </label>
+                    <select
+                      id='block_duplicate_ip_referrals'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.block_duplicate_ip_referrals?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.block_duplicate_ip_referrals) {
+                          newSettings.block_duplicate_ip_referrals = {
+                            value: e.target.value,
+                            description: 'Block referrals from same IP as referrer',
+                          };
+                        } else {
+                          newSettings.block_duplicate_ip_referrals.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          block_duplicate_ip_referrals: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.block_duplicate_ip_referrals?.description ||
+                        'Blocks referrals from the same IP as the referrer'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Layer 7: Behavioral Analysis */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    🧠 Layer 7: Behavioral Analysis
-                  </CardTitle>
-                  <CardDescription>Mouse and scroll pattern analysis</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Behavioral Analysis Enabled */}
-                    <div className='space-y-2'>
-                      <label htmlFor='behavioral_analysis_enabled' className='text-sm font-medium'>
-                        Behavioral Analysis
-                      </label>
-                      <select
-                        id='behavioral_analysis_enabled'
-                        className={darkSelectClass}
-                        value={settings.behavioral_analysis_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.behavioral_analysis_enabled) {
-                            newSettings.behavioral_analysis_enabled = {
-                              value: e.target.value,
-                              description: 'Enable mouse/scroll behavioral fingerprinting',
-                            };
-                          } else {
-                            newSettings.behavioral_analysis_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            behavioral_analysis_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.behavioral_analysis_enabled?.description || 'Analyzes user behavior patterns'}
-                      </p>
-                    </div>
-
-                    {/* Similarity Threshold */}
-                    <div className='space-y-2'>
-                      <label htmlFor='behavioral_similarity_threshold' className='text-sm font-medium'>
-                        Similarity threshold
-                      </label>
-                      <Input
-                        id='behavioral_similarity_threshold'
-                        type='number'
-                        min='0.1'
-                        max='1.0'
-                        step='0.05'
-                        value={settings.behavioral_similarity_threshold?.value || '0.85'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.behavioral_similarity_threshold) {
-                            newSettings.behavioral_similarity_threshold = {
-                              value: e.target.value,
-                              description: 'Threshold for behavioral pattern similarity (0.0-1.0)',
-                            };
-                          } else {
-                            newSettings.behavioral_similarity_threshold.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            behavioral_similarity_threshold: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.behavioral_similarity_threshold?.description || 'Pattern matching sensitivity'}
-                      </p>
-                    </div>
-
-                    {/* Mouse Movement Required */}
-                    <div className='space-y-2'>
-                      <label htmlFor='mouse_movement_required' className='text-sm font-medium'>
-                        Require mouse movement
-                      </label>
-                      <select
-                        id='mouse_movement_required'
-                        className={darkSelectClass}
-                        value={settings.mouse_movement_required?.value || 'false'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.mouse_movement_required) {
-                            newSettings.mouse_movement_required = {
-                              value: e.target.value,
-                              description: 'Require mouse movement data for registration',
-                            };
-                          } else {
-                            newSettings.mouse_movement_required.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            mouse_movement_required: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Required</option>
-                        <option value='false'>Optional</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.mouse_movement_required?.description || 'Force mouse interaction tracking'}
-                      </p>
-                    </div>
-
-                    {/* Min Events */}
-                    <div className='space-y-2'>
-                      <label htmlFor='behavioral_min_events' className='text-sm font-medium'>
-                        Minimum events required
-                      </label>
-                      <Input
-                        id='behavioral_min_events'
-                        type='number'
-                        min='1'
-                        max='50'
-                        value={settings.behavioral_min_events?.value || '5'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.behavioral_min_events) {
-                            newSettings.behavioral_min_events = {
-                              value: e.target.value,
-                              description: 'Minimum mouse/scroll events required',
-                            };
-                          } else {
-                            newSettings.behavioral_min_events.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            behavioral_min_events: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.behavioral_min_events?.description || 'Required interaction events'}
-                      </p>
-                    </div>
+                  {/* Blockiere gleichen Browser */}
+                  <div className='space-y-2'>
+                    <label htmlFor='block_duplicate_fingerprint_referrals' className='text-sm font-medium'>
+                      Block duplicate browser
+                    </label>
+                    <select
+                      id='block_duplicate_fingerprint_referrals'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.block_duplicate_fingerprint_referrals?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.block_duplicate_fingerprint_referrals) {
+                          newSettings.block_duplicate_fingerprint_referrals = {
+                            value: e.target.value,
+                            description: 'Block referrals from same fingerprint as referrer',
+                          };
+                        } else {
+                          newSettings.block_duplicate_fingerprint_referrals.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          block_duplicate_fingerprint_referrals: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.block_duplicate_fingerprint_referrals?.description ||
+                        'Blocks referrals from the same browser fingerprint as the referrer'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
 
-              {/* Layer 8: Network Analysis */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>
-                    🌐 Layer 8: Network Analysis
-                  </CardTitle>
-                  <CardDescription>VPN, Proxy and hosting detection</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Network Analysis Enabled */}
-                    <div className='space-y-2'>
-                      <label htmlFor='network_analysis_enabled' className='text-sm font-medium'>
-                        Network Analysis
-                      </label>
-                      <select
-                        id='network_analysis_enabled'
-                        className={darkSelectClass}
-                        value={settings.network_analysis_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.network_analysis_enabled) {
-                            newSettings.network_analysis_enabled = {
-                              value: e.target.value,
-                              description: 'Enable VPN/Proxy/Hosting detection',
-                            };
-                          } else {
-                            newSettings.network_analysis_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            network_analysis_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.network_analysis_enabled?.description || 'Detects suspicious network usage'}
-                      </p>
-                    </div>
-
-                    {/* Block VPN */}
-                    <div className='space-y-2'>
-                      <label htmlFor='block_vpn_registrations' className='text-sm font-medium'>
-                        Block VPN registrations
-                      </label>
-                      <select
-                        id='block_vpn_registrations'
-                        className={darkSelectClass}
-                        value={settings.block_vpn_registrations?.value || 'false'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.block_vpn_registrations) {
-                            newSettings.block_vpn_registrations = {
-                              value: e.target.value,
-                              description: 'Automatically block known VPN IPs',
-                            };
-                          } else {
-                            newSettings.block_vpn_registrations.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            block_vpn_registrations: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Block</option>
-                        <option value='false'>Log only</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.block_vpn_registrations?.description || 'VPN blocking policy'}
-                      </p>
-                    </div>
-
-                    {/* Block Hosting */}
-                    <div className='space-y-2'>
-                      <label htmlFor='block_hosting_ips' className='text-sm font-medium'>
-                        Block hosting IPs
-                      </label>
-                      <select
-                        id='block_hosting_ips'
-                        className={darkSelectClass}
-                        value={settings.block_hosting_ips?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.block_hosting_ips) {
-                            newSettings.block_hosting_ips = {
-                              value: e.target.value,
-                              description: 'Block data center/hosting provider IPs',
-                            };
-                          } else {
-                            newSettings.block_hosting_ips.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            block_hosting_ips: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Block</option>
-                        <option value='false'>Allow</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.block_hosting_ips?.description || 'Data center blocking policy'}
-                      </p>
-                    </div>
-
-                    {/* VPN Confidence Threshold */}
-                    <div className='space-y-2'>
-                      <label htmlFor='vpn_confidence_threshold' className='text-sm font-medium'>
-                        VPN confidence threshold
-                      </label>
-                      <Input
-                        id='vpn_confidence_threshold'
-                        type='number'
-                        min='0.1'
-                        max='1.0'
-                        step='0.1'
-                        value={settings.vpn_confidence_threshold?.value || '0.8'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.vpn_confidence_threshold) {
-                            newSettings.vpn_confidence_threshold = {
-                              value: e.target.value,
-                              description: 'Confidence threshold for VPN detection',
-                            };
-                          } else {
-                            newSettings.vpn_confidence_threshold.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            vpn_confidence_threshold: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.vpn_confidence_threshold?.description || 'VPN detection sensitivity'}
-                      </p>
-                    </div>
+                  {/* Manual review required */}
+                  <div className='space-y-2'>
+                    <label htmlFor='suspicious_referral_review_required' className='text-sm font-medium'>
+                      Manual review of suspicious referrals
+                    </label>
+                    <select
+                      id='suspicious_referral_review_required'
+                      className='w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                      value={settings.suspicious_referral_review_required?.value || 'true'}
+                      onChange={(e) => {
+                        const newSettings = { ...settings };
+                        if (!newSettings.suspicious_referral_review_required) {
+                          newSettings.suspicious_referral_review_required = {
+                            value: e.target.value,
+                            description: 'Require manual admin review for suspicious referrals',
+                          };
+                        } else {
+                          newSettings.suspicious_referral_review_required.value = e.target.value;
+                        }
+                        setSettings(newSettings);
+                        updateSettings({
+                          suspicious_referral_review_required: e.target.value,
+                        });
+                      }}
+                    >
+                      <option value='true'>Enabled</option>
+                      <option value='false'>Disabled</option>
+                    </select>
+                    <p className='text-xs text-gray-500'>
+                      {settings.suspicious_referral_review_required?.description ||
+                        'Suspicious referrals require manual admin approval'}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Delayed Rewards Settings */}
-              <Card className='bg-lafftale-dark/30 border-lafftale-gold/20'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-lafftale-gold'>⏰ Delayed Reward System</CardTitle>
-                  <CardDescription>PENDING → ACTIVE → REJECTED workflow configuration</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    {/* Delayed Rewards Enabled */}
-                    <div className='space-y-2'>
-                      <label htmlFor='delayed_rewards_enabled' className='text-sm font-medium'>
-                        Delayed Rewards System
-                      </label>
-                      <select
-                        id='delayed_rewards_enabled'
-                        className={darkSelectClass}
-                        value={settings.delayed_rewards_enabled?.value || 'true'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.delayed_rewards_enabled) {
-                            newSettings.delayed_rewards_enabled = {
-                              value: e.target.value,
-                              description: 'Enable delayed reward system (PENDING → ACTIVE workflow)',
-                            };
-                          } else {
-                            newSettings.delayed_rewards_enabled.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            delayed_rewards_enabled: e.target.value,
-                          });
-                        }}
-                      >
-                        <option value='true'>Enabled</option>
-                        <option value='false'>Disabled</option>
-                      </select>
-                      <p className='text-xs text-gray-500'>
-                        {settings.delayed_rewards_enabled?.description ||
-                          'Enables the delayed reward validation system'}
-                      </p>
-                    </div>
-
-                    {/* Min Account Age */}
-                    <div className='space-y-2'>
-                      <label htmlFor='min_account_age_days' className='text-sm font-medium'>
-                        Min account age (days)
-                      </label>
-                      <Input
-                        id='min_account_age_days'
-                        type='number'
-                        min='1'
-                        max='90'
-                        value={settings.min_account_age_days?.value || '14'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.min_account_age_days) {
-                            newSettings.min_account_age_days = {
-                              value: e.target.value,
-                              description: 'Minimum account age in days before reward activation',
-                            };
-                          } else {
-                            newSettings.min_account_age_days.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            min_account_age_days: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.min_account_age_days?.description || 'Required account maturity period'}
-                      </p>
-                    </div>
-
-                    {/* Min Playtime Hours */}
-                    <div className='space-y-2'>
-                      <label htmlFor='min_playtime_hours' className='text-sm font-medium'>
-                        Min playtime (hours)
-                      </label>
-                      <Input
-                        id='min_playtime_hours'
-                        type='number'
-                        min='1'
-                        max='168'
-                        value={settings.min_playtime_hours?.value || '24'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.min_playtime_hours) {
-                            newSettings.min_playtime_hours = {
-                              value: e.target.value,
-                              description: 'Minimum total playtime hours required',
-                            };
-                          } else {
-                            newSettings.min_playtime_hours.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            min_playtime_hours: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.min_playtime_hours?.description || 'Required game engagement time'}
-                      </p>
-                    </div>
-
-                    {/* Min Character Level */}
-                    <div className='space-y-2'>
-                      <label htmlFor='min_character_level' className='text-sm font-medium'>
-                        Min character level
-                      </label>
-                      <Input
-                        id='min_character_level'
-                        type='number'
-                        min='1'
-                        max='120'
-                        value={settings.min_character_level?.value || '20'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.min_character_level) {
-                            newSettings.min_character_level = {
-                              value: e.target.value,
-                              description: 'Minimum character level required',
-                            };
-                          } else {
-                            newSettings.min_character_level.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            min_character_level: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.min_character_level?.description || 'Character progression requirement'}
-                      </p>
-                    </div>
-
-                    {/* Min Login Days */}
-                    <div className='space-y-2'>
-                      <label htmlFor='min_login_days' className='text-sm font-medium'>
-                        Min login days
-                      </label>
-                      <Input
-                        id='min_login_days'
-                        type='number'
-                        min='1'
-                        max='30'
-                        value={settings.min_login_days?.value || '7'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.min_login_days) {
-                            newSettings.min_login_days = {
-                              value: e.target.value,
-                              description: 'Minimum distinct login days required',
-                            };
-                          } else {
-                            newSettings.min_login_days.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            min_login_days: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.min_login_days?.description || 'Regular activity requirement'}
-                      </p>
-                    </div>
-
-                    {/* Cronjob Interval */}
-                    <div className='space-y-2'>
-                      <label htmlFor='cronjob_interval_hours' className='text-sm font-medium'>
-                        Validation interval (hours)
-                      </label>
-                      <Input
-                        id='cronjob_interval_hours'
-                        type='number'
-                        min='1'
-                        max='24'
-                        value={settings.cronjob_interval_hours?.value || '6'}
-                        onChange={(e) => {
-                          const newSettings = { ...settings };
-                          if (!newSettings.cronjob_interval_hours) {
-                            newSettings.cronjob_interval_hours = {
-                              value: e.target.value,
-                              description: 'How often to check pending rewards (hours)',
-                            };
-                          } else {
-                            newSettings.cronjob_interval_hours.value = e.target.value;
-                          }
-                          setSettings(newSettings);
-                          updateSettings({
-                            cronjob_interval_hours: e.target.value,
-                          });
-                        }}
-                      />
-                      <p className='text-xs text-gray-500'>
-                        {settings.cronjob_interval_hours?.description || 'Automated validation frequency'}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          )}
+                </div>
+              ) : (
+                <div className='text-center py-4 text-gray-500'>Loading anti-cheat settings...</div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -2408,7 +1697,7 @@ const ReferralManager: React.FC = () => {
                   onChange={(e) =>
                     setNewReward({ ...newReward, reward_type: e.target.value as 'silk' | 'item' | 'gold' })
                   }
-                  className={darkSelectClass}
+                  className='w-full p-2 border rounded-md bg-white dark:bg-gray-800'
                 >
                   <option value='silk'>Silk</option>
                   <option value='item'>Item</option>

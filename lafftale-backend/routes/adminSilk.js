@@ -4,6 +4,10 @@ const { pool, poolConnect, sql } = require('../db');
 const SilkManagerEnhanced = require('../models/silkManagerEnhanced');
 const SilkStatsService = require('../services/silkStatsService');
 const SilkCacheService = require('../services/silkCacheService');
+const adminAuth = require('../middleware/adminAuth');
+
+// Apply admin authentication middleware to all routes in this router
+router.use(adminAuth);
 
 /**
  * GET /api/admin/silk/accounts

@@ -117,13 +117,15 @@ BEGIN
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
         VALUES ('anticheat_enabled', 'true', 'Enable anti-cheat protection for referrals', GETDATE(), GETDATE())
     
-    IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'max_referrals_per_ip_per_day')
+    -- GEÄNDERT: Von "per_day" zu "lifetime" für strikte IP-Kontrolle
+    IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'max_referrals_per_ip_lifetime')
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
-        VALUES ('max_referrals_per_ip_per_day', '5', 'Maximum referrals allowed per IP address per day', GETDATE(), GETDATE())
+        VALUES ('max_referrals_per_ip_lifetime', '1', 'Maximum referrals allowed per IP address (lifetime/total). Set to 1 to allow only one referral per IP ever.', GETDATE(), GETDATE())
     
-    IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'max_referrals_per_fingerprint_per_day')
+    -- GEÄNDERT: Von "per_day" zu "lifetime" für strikte Fingerprint-Kontrolle
+    IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'max_referrals_per_fingerprint_lifetime')
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
-        VALUES ('max_referrals_per_fingerprint_per_day', '3', 'Maximum referrals allowed per browser fingerprint per day', GETDATE(), GETDATE())
+        VALUES ('max_referrals_per_fingerprint_lifetime', '1', 'Maximum referrals allowed per browser fingerprint (lifetime/total). Set to 1 to allow only one referral per device ever.', GETDATE(), GETDATE())
     
     IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'block_duplicate_ip_referrals')
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
@@ -133,11 +135,16 @@ BEGIN
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
         VALUES ('block_duplicate_fingerprint_referrals', 'true', 'Block referrals from same fingerprint as referrer', GETDATE(), GETDATE())
     
+    -- NEU: Strikte Lifetime-Blockierung
+    IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'block_duplicate_ip_completely')
+        INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
+        VALUES ('block_duplicate_ip_completely', 'true', 'Block any referral attempt from an IP that has already been used for any referral (lifetime blocking)', GETDATE(), GETDATE())
+    
     IF NOT EXISTS (SELECT * FROM referral_settings WHERE setting_key = 'suspicious_referral_review_required')
         INSERT INTO referral_settings (setting_key, setting_value, description, created_at, updated_at) 
         VALUES ('suspicious_referral_review_required', 'true', 'Require manual admin review for suspicious referrals', GETDATE(), GETDATE())
     
-    PRINT 'Anti-Cheat Einstellungen hinzugefügt'
+    PRINT 'Anti-Cheat Einstellungen hinzugefügt (mit LIFETIME statt per-day Limits)'
 END
 ELSE
 BEGIN

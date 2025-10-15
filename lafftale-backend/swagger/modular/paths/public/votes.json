@@ -1,5 +1,5 @@
 {
-  "/api/votes": {
+  "/api/vote/sites": {
     "get": {
       "tags": ["Public - Voting"],
       "summary": "Get voting sites",
@@ -10,33 +10,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  { "$ref": "#/components/schemas/SuccessResponse" },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": { "type": "integer" },
-                            "name": { "type": "string" },
-                            "url": { "type": "string" },
-                            "reward": { "type": "integer" },
-                            "cooldown": {
-                              "type": "integer",
-                              "description": "Cooldown in hours"
-                            },
-                            "description": { "type": "string" },
-                            "isActive": { "type": "boolean" },
-                            "logoUrl": { "type": "string" }
-                          }
-                        }
-                      }
-                    }
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "url": { "type": "string" },
+                    "logo_url": { "type": "string" },
+                    "reward_silk": { "type": "integer" },
+                    "cooldown_hours": { "type": "integer" },
+                    "is_active": { "type": "boolean" }
                   }
-                ]
+                }
               }
             }
           }
@@ -44,47 +30,46 @@
       }
     }
   },
-  "/api/votes/user-status": {
+  "/api/vote/status/{user_id}": {
     "get": {
       "tags": ["Public - Voting"],
       "summary": "Get user voting status",
-      "description": "Retrieve voting status for current user",
+      "description": "Retrieve voting status for specific user",
       "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "User ID"
+        }
+      ],
       "responses": {
         "200": {
           "description": "Voting status retrieved successfully",
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  { "$ref": "#/components/schemas/SuccessResponse" },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "siteId": { "type": "integer" },
-                            "siteName": { "type": "string" },
-                            "canVote": { "type": "boolean" },
-                            "lastVoteAt": {
-                              "type": "string",
-                              "format": "date-time"
-                            },
-                            "nextVoteAt": {
-                              "type": "string",
-                              "format": "date-time"
-                            },
-                            "totalVotes": { "type": "integer" },
-                            "totalRewards": { "type": "integer" }
-                          }
-                        }
+                "type": "object",
+                "properties": {
+                  "sites": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "site_id": { "type": "integer" },
+                        "site_name": { "type": "string" },
+                        "can_vote": { "type": "boolean" },
+                        "next_vote_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "total_votes": { "type": "integer" }
                       }
                     }
                   }
-                ]
+                }
               }
             }
           }
@@ -93,37 +78,27 @@
       }
     }
   },
-  "/api/votes/{id}/vote": {
+  "/api/vote/postback": {
     "post": {
       "tags": ["Public - Voting"],
-      "summary": "Process vote",
-      "description": "Process a vote for a specific voting site",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": { "type": "integer" },
-          "description": "Voting site ID"
-        }
-      ],
+      "summary": "Generic vote postback",
+      "description": "Generic postback endpoint for voting sites",
       "requestBody": {
-        "required": false,
+        "required": true,
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
               "properties": {
-                "verification": {
+                "site": { "type": "string", "description": "Site identifier" },
+                "user_id": { "type": "integer", "description": "User ID" },
+                "ip": { "type": "string", "description": "User IP address" },
+                "verification_token": {
                   "type": "string",
-                  "description": "Vote verification token (if required)"
-                },
-                "callback": {
-                  "type": "string",
-                  "description": "Callback URL for verification"
+                  "description": "Verification token"
                 }
-              }
+              },
+              "required": ["site", "user_id"]
             }
           }
         }
@@ -134,63 +109,222 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  { "$ref": "#/components/schemas/SuccessResponse" },
-                  {
+                "type": "object",
+                "properties": {
+                  "success": { "type": "boolean" },
+                  "reward": {
                     "type": "object",
                     "properties": {
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "reward": { "type": "integer" },
-                          "nextVoteAt": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "totalVotes": { "type": "integer" },
-                          "redirectUrl": { "type": "string" }
-                        }
-                      }
+                      "type": { "type": "string" },
+                      "amount": { "type": "integer" },
+                      "site_name": { "type": "string" }
                     }
                   }
-                ]
+                }
               }
             }
           }
         },
-        "400": { "$ref": "#/components/responses/BadRequest" },
-        "401": { "$ref": "#/components/responses/Unauthorized" },
-        "404": { "$ref": "#/components/responses/NotFound" },
-        "429": {
-          "description": "Vote cooldown active",
+        "404": { "$ref": "#/components/responses/NotFound" }
+      }
+    }
+  },
+  "/api/vote/postback/gtop100": {
+    "get": {
+      "tags": ["Voting Postbacks"],
+      "summary": "Gtop100 vote postback (GET)",
+      "description": "Specific postback endpoint for Gtop100 voting site. Called by Gtop100 when a user votes via GET request.",
+      "parameters": [
+        {
+          "name": "pingUsername",
+          "in": "query",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "User JID (passed as query parameter by Gtop100)"
+        },
+        {
+          "name": "voted",
+          "in": "query",
+          "required": true,
+          "schema": { "type": "string", "enum": ["1"] },
+          "description": "Vote confirmation (must be '1')"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vote processed successfully",
           "content": {
-            "application/json": {
+            "text/plain": {
               "schema": {
-                "allOf": [
-                  { "$ref": "#/components/schemas/ErrorResponse" },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "nextVoteAt": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "cooldownRemaining": {
-                            "type": "integer",
-                            "description": "Seconds remaining"
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
+                "type": "string",
+                "example": "Vote registered successfully"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - missing parameters or invalid vote status",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Missing user ID"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - IP not whitelisted",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Unauthorized IP"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Vote site not found",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Vote site not found"
               }
             }
           }
         }
+      },
+      "security": [],
+      "x-internal": true,
+      "x-postback-info": {
+        "allowedIPs": ["198.148.82.98", "198.148.82.99"],
+        "method": "GET",
+        "parameters": "Query parameters",
+        "description": "This endpoint is called by Gtop100 when a user votes. IP validation ensures only Gtop100 can call this endpoint."
+      }
+    },
+    "post": {
+      "tags": ["Voting Postbacks"],
+      "summary": "Gtop100 vote postback (POST)",
+      "description": "Specific postback endpoint for Gtop100 voting site. Called by Gtop100 when a user votes via POST request.",
+      "parameters": [
+        {
+          "name": "pingUsername",
+          "in": "query",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "User JID (passed as query parameter by Gtop100)"
+        },
+        {
+          "name": "voted",
+          "in": "query",
+          "required": true,
+          "schema": { "type": "string", "enum": ["1"] },
+          "description": "Vote confirmation (must be '1')"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vote processed successfully",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Vote registered successfully"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - missing parameters or invalid vote status",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Missing user ID"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - IP not whitelisted",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Unauthorized IP"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Vote site not found",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string",
+                "example": "Vote site not found"
+              }
+            }
+          }
+        }
+      },
+      "security": [],
+      "x-internal": true,
+      "x-postback-info": {
+        "allowedIPs": ["198.148.82.98", "198.148.82.99"],
+        "method": "POST",
+        "parameters": "Query parameters",
+        "description": "This endpoint is called by Gtop100 when a user votes. IP validation ensures only Gtop100 can call this endpoint."
+      }
+    }
+  },
+  "/api/vote/history/{user_id}": {
+    "get": {
+      "tags": ["Public - Voting"],
+      "summary": "Get user vote history",
+      "description": "Retrieve vote history for specific user",
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "User ID"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": { "type": "integer", "default": 20 },
+          "description": "Number of records to return"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Vote history retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "site_name": { "type": "string" },
+                    "reward_silk": { "type": "integer" },
+                    "ip_address": { "type": "string" },
+                    "voted_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": { "$ref": "#/components/responses/Unauthorized" }
       }
     }
   }

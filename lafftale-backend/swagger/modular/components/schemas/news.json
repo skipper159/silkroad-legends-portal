@@ -212,27 +212,5 @@
       }
     },
     "required": ["page", "limit", "total", "pages"]
-  },
-  "ErrorResponse": {
-    "type": "object",
-    "description": "Standard error response format",
-    "properties": {
-      "success": {
-        "type": "boolean",
-        "description": "Always false for error responses",
-        "example": false
-      },
-      "message": {
-        "type": "string",
-        "description": "Human-readable error message",
-        "example": "News post not found"
-      },
-      "error": {
-        "type": "string",
-        "description": "Technical error details (only in development)",
-        "example": "Cannot read properties of null"
-      }
-    },
-    "required": ["success", "message"]
   }
 }

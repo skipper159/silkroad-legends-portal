@@ -104,11 +104,24 @@ app.use('/api/admin/referrals', require('./routes/admin_referrals'));
 app.use('/api/admin/silk', require('./routes/adminSilk'));
 app.use('/api/admin/cron', require('./routes/adminCron'));
 app.use('/api/user-roles', require('./routes/user-roles'));
+
+// TEMPORARY: Migration endpoints (remove after migration complete)
+const migrationController = require('./controllers/migrationController');
+app.post('/api/migration/run', migrationController.runCompleteMigration);
+app.get('/api/migration/verify', migrationController.verifyMigration);
+app.get('/api/migration/info', migrationController.getMigrationInfo);
+
 //app.use("/api/Payment", require("./routes/Payment/payment"));
 
 // Initialisiere Cron Jobs
 const CronJobService = require('./services/cronJobService');
 CronJobService.initializeJobs().catch(console.error);
+
+// Initialize Delayed Reward System
+const referralCronJobs = require('./services/referralCronJobs');
+referralCronJobs.startDelayedRewardProcessing().catch((error) => {
+  console.error('Failed to start delayed reward processing:', error);
+});
 
 // Ensure players_online_collector job is registered with a sensible default (every minute)
 // This will create/update the job setting and start the scheduled task according to the service logic

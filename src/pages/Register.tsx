@@ -96,18 +96,29 @@ const Register = () => {
         body: JSON.stringify(requestBody),
       });
 
-      const data = await response.text();
-
       if (response.ok) {
+        const data = await response.text(); // Success response is usually text
         toast({
           title: 'Registration Successful',
           description: 'Welcome to Silkroad Legends! Redirecting to login in 5 seconds.',
         });
         setRedirectCountdown(5);
       } else {
+        // Error responses are JSON with structured error messages
+        let errorMessage = 'Something went wrong during registration.';
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // Fallback to text if JSON parsing fails
+          errorMessage = (await response.text()) || errorMessage;
+        }
+
         toast({
           title: 'Registration failed',
-          description: data || 'Something went wrong during registration.',
+          description: errorMessage,
           variant: 'destructive',
         });
       }
@@ -133,10 +144,40 @@ const Register = () => {
                 <h1 className='text-3xl font-bold'>Register</h1>
                 <p className='text-gray-400 mt-2'>Create your Silkroad Legends account</p>
                 {referralCode && (
-                  <div className='mt-4 p-3 bg-lafftale-gold/10 border border-lafftale-gold/30 rounded-lg'>
-                    <p className='text-sm text-lafftale-gold'>
-                      🎉 You've been invited! Referral code: <span className='font-mono font-bold'>{referralCode}</span>
-                    </p>
+                  <div className='mt-4 space-y-3'>
+                    <div className='p-3 bg-lafftale-gold/10 border border-lafftale-gold/30 rounded-lg'>
+                      <p className='text-sm text-lafftale-gold'>
+                        🎉 You've been invited! Referral code:{' '}
+                        <span className='font-mono font-bold'>{referralCode}</span>
+                      </p>
+                    </div>
+
+                    {/* Referral Requirements */}
+                    <div className='p-4 bg-gray-800/50 border border-gray-600/30 rounded-lg text-left'>
+                      <h3 className='text-sm font-semibold text-lafftale-gold mb-2'>📋 Referral Requirements</h3>
+                      <ul className='text-xs text-gray-300 space-y-1'>
+                        <li>
+                          • <strong>One Account per Person:</strong> Only one referral account per IP address and
+                          browser
+                        </li>
+                        <li>
+                          • <strong>Real Players:</strong> Account must reach at least Level 20
+                        </li>
+                        <li>
+                          • <strong>Playtime:</strong> Minimum 5 hours of active gameplay required
+                        </li>
+                        <li>
+                          • <strong>Reward:</strong> Points are awarded after 24h and meeting the requirements
+                        </li>
+                        <li>
+                          • <strong>Fair Play:</strong> Multiple accounts or cheating attempts are automatically
+                          detected
+                        </li>
+                      </ul>
+                      <p className='text-xs text-blue-400 mt-2'>
+                        ℹ️ Our Anti-Cheat system protects against abuse and ensures fair rewards.
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -146,12 +187,12 @@ const Register = () => {
                     {fingerprintLoading ? (
                       <>
                         <div className='w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin'></div>
-                        <span className='text-sm text-blue-400'>Anti-Cheat initialisiert...</span>
+                        <span className='text-sm text-blue-400'>Anti-Cheat initializing...</span>
                       </>
                     ) : fingerprint ? (
                       <>
                         <div className='w-4 h-4 bg-green-500 rounded-full'></div>
-                        <span className='text-sm text-green-400'>Anti-Cheat aktiv</span>
+                        <span className='text-sm text-green-400'>Anti-Cheat active</span>
                         <span className='text-xs text-gray-500 font-mono'>ID: {fingerprint.substring(0, 8)}...</span>
                       </>
                     ) : (
