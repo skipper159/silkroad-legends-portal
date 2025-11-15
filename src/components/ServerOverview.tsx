@@ -1,16 +1,29 @@
-import { Crown, Users, Castle, Trophy } from 'lucide-react';
+import { Crown, Users, Castle, Trophy, Skull, Swords } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { getPublicUrl } from '@/utils/assetUtils';
+import { fetchWithAuth, weburl } from '@/lib/api';
+import { getMonsterName, formatKillDate } from '@/utils/monsterNames';
+
+interface UniqueKill {
+  mobId: number;
+  charId: number;
+  characterName: string;
+  eventDate: string;
+  monsterCodeName: string;
+  monsterName: string;
+}
 
 const ServerOverview = () => {
   const [topPlayer, setTopPlayer] = useState<any | null>(null);
   const [topGuild, setTopGuild] = useState<any | null>(null);
   const [playersOnline, setPlayersOnline] = useState<number | null>(null); // TODO: backend endpoint
   const [fortressOwner, setFortressOwner] = useState<any | null>(null); // TODO: backend endpoint
+  const [recentKills, setRecentKills] = useState<UniqueKill[]>([]);
   const [loading, setLoading] = useState(true);
+  const [killsLoading, setKillsLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -63,24 +76,50 @@ const ServerOverview = () => {
       }
     };
 
+    const loadRecentKills = async () => {
+      setKillsLoading(true);
+      try {
+        const response = await fetch(`${weburl}/api/unique-kills/recent`);
+        if (response.ok) {
+          const data = await response.json();
+          if (mounted && data.success) {
+            setRecentKills(data.data);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load recent unique kills', err);
+      } finally {
+        if (mounted) setKillsLoading(false);
+      }
+    };
+
     load();
+    loadRecentKills();
+
+    // Auto-refresh recent kills every 30 seconds
+    const interval = setInterval(loadRecentKills, 30000);
 
     return () => {
       mounted = false;
+      clearInterval(interval);
     };
   }, []);
 
   return (
-    <section className='py-16 bg-lafftale-dark/90'>
+    <section className='py-16 bg-black/20'>
       <div className='container mx-auto px-4'>
-        <h2 className='decorated-heading text-3xl md:text-4xl text-center mb-12'>Server Overview</h2>
+        <div className='flex justify-center mb-12'>
+          <h2 className='decorated-heading text-3xl md:text-4xl'>Server Overview</h2>
+        </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {/* Top Player Card */}
-          <div 
+          <div
             className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
-              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl('image/Web/top-player-bg.jpg')}')`,
+              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
+                'image/Web/top-player-bg.jpg'
+              )}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -91,10 +130,11 @@ const ServerOverview = () => {
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <Trophy size={16} className='text-lafftale-gold mr-2 group-hover:scale-110 transition-transform duration-300' />
                   <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Top Player</h4>
                 </div>
-                <p className='font-bold text-white drop-shadow-lg text-lg'>{topPlayer?.name ?? (loading ? 'Loading...' : '—')}</p>
+                <p className='font-bold text-white drop-shadow-lg text-lg'>
+                  {topPlayer?.name ?? (loading ? 'Loading...' : '—')}
+                </p>
                 <div className='text-sm text-lafftale-beige/90 drop-shadow-md'>
                   <span>{topPlayer?.guild ?? '—'}</span>
                 </div>
@@ -106,10 +146,12 @@ const ServerOverview = () => {
           </div>
 
           {/* Top Guild Card */}
-          <div 
+          <div
             className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
-              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl('image/Web/top-guild-bg.jpg')}')`,
+              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
+                'image/Web/top-guild-bg.jpg'
+              )}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -120,10 +162,11 @@ const ServerOverview = () => {
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <Crown size={16} className='text-lafftale-gold mr-2 group-hover:scale-110 transition-transform duration-300' />
                   <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Top Guild</h4>
                 </div>
-                <p className='font-bold text-white drop-shadow-lg text-lg'>{topGuild?.name ?? (loading ? 'Loading...' : '—')}</p>
+                <p className='font-bold text-white drop-shadow-lg text-lg'>
+                  {topGuild?.name ?? (loading ? 'Loading...' : '—')}
+                </p>
                 <div className='text-sm text-lafftale-beige/90 drop-shadow-md'>
                   {topGuild?.activityPoints ? `${topGuild.activityPoints} Activity Points` : ''}
                 </div>
@@ -132,10 +175,12 @@ const ServerOverview = () => {
           </div>
 
           {/* Fortress Owner Card */}
-          <div 
+          <div
             className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
-              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl('image/Web/fortress-owner-bg.jpg')}')`,
+              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
+                'image/Web/fortress-owner-bg.jpg'
+              )}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -146,7 +191,6 @@ const ServerOverview = () => {
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <Castle size={16} className='text-lafftale-gold mr-2 group-hover:scale-110 transition-transform duration-300' />
                   <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Fortress Owner</h4>
                 </div>
                 <p className='font-bold text-white drop-shadow-lg text-lg'>
@@ -160,10 +204,12 @@ const ServerOverview = () => {
           </div>
 
           {/* Players Online Card */}
-          <div 
+          <div
             className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
-              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl('image/Web/players-online-bg.jpg')}')`,
+              backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
+                'image/Web/players-online-bg.jpg'
+              )}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -175,7 +221,6 @@ const ServerOverview = () => {
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <Users size={16} className='text-lafftale-gold mr-2 group-hover:scale-110 transition-transform duration-300' />
                   <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Players Online</h4>
                 </div>
                 <p className='font-bold text-white text-2xl drop-shadow-lg animate-pulse'>
@@ -187,6 +232,64 @@ const ServerOverview = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Recent Unique Kills Live Ticker */}
+        <div className='mt-12'>
+          <div className='flex justify-center mb-6'>
+            <h3 className='text-2xl md:text-3xl font-bold text-lafftale-gold'>🔥 Recent Unique Kills</h3>
+          </div>
+
+          {killsLoading ? (
+            <div className='flex justify-center py-8'>
+              <div className='w-8 h-8 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+            </div>
+          ) : recentKills.length > 0 ? (
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+              {recentKills.map((kill, index) => (
+                <div
+                  key={`${kill.mobId}-${kill.charId}-${kill.eventDate}-${index}`}
+                  className='p-4 bg-lafftale-dark/60 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/50 transition-all duration-300 hover:scale-[1.02]'
+                >
+                  <div className='flex items-center justify-between gap-3'>
+                    <div className='flex items-center gap-3 flex-1 min-w-0'>
+                      <div className='w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center flex-shrink-0 shadow-lg'>
+                        <Skull size={20} className='text-white' />
+                      </div>
+                      <div className='flex-1 min-w-0'>
+                        <div className='flex items-center gap-2 mb-1'>
+                          <Link
+                            to={`/character/${encodeURIComponent(kill.characterName)}`}
+                            className='text-sm font-bold text-lafftale-gold hover:text-lafftale-bronze transition-colors truncate'
+                          >
+                            {kill.characterName}
+                          </Link>
+                          <span className='text-xs text-gray-400'>killed</span>
+                        </div>
+                        <div className='text-base font-semibold text-white truncate'>
+                          {getMonsterName(kill.monsterCodeName)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className='text-right flex-shrink-0'>
+                      <div className='text-xs text-gray-400'>{formatKillDate(kill.eventDate)}</div>
+                      <div className='text-xs text-gray-500 mt-1'>
+                        {new Date(kill.eventDate).toLocaleDateString('de-DE', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: '2-digit',
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='text-center text-gray-400 py-8 bg-lafftale-dark/30 rounded-lg border border-lafftale-gold/10'>
+              <p className='text-sm'>No recent unique kills</p>
+            </div>
+          )}
         </div>
 
         <div className='mt-8 text-center'>

@@ -9,7 +9,7 @@ import DownloadsManager from '@/components/admin/DownloadsManager';
 import VoucherManager from '@/components/admin/VoucherManager';
 import VotesManager from '@/components/admin/VotesManager';
 import ReferralManager from '@/components/admin/ReferralManager';
-import PagesManager from '@/components/admin/PagesManager';
+import FooterLinksManager from '@/components/admin/FooterLinksManager';
 import UserRolesManager from '@/components/admin/UserRolesManager';
 import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
 import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
@@ -141,8 +141,8 @@ const AdminDashboard = () => {
                   className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
                 >
                   <FileText size={16} />
-                  <span className='hidden sm:inline'>Pages</span>
-                  <span className='sm:hidden'>Pg</span>
+                  <span className='hidden sm:inline'>Footer Links</span>
+                  <span className='sm:hidden'>Links</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value='settings'
@@ -193,7 +193,7 @@ const AdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value='pages' className='mt-0'>
-                <PagesManager />
+                <FooterLinksManager />
               </TabsContent>
 
               <TabsContent value='settings' className='mt-0'>

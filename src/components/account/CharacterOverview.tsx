@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -20,9 +21,6 @@ interface Character {
   level: number;
   maxLevel: number;
   job: string;
-  currentJobClass?: number; // 0 = Trader, 1 = Hunter, 2 = Thief
-  currentJobLevel?: number;
-  currentPromotionPhase?: number;
   statPoints: number;
   skillPoints: number;
   gold: number;
@@ -38,6 +36,7 @@ interface Character {
   hunterLevel: number;
   thiefLevel: number;
   GuildID: number | null;
+  GuildName?: string | null;
   CharIcon: number;
   race: string;
   equipment: Record<string, any>;
@@ -59,8 +58,6 @@ const CharacterOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { token } = useAuth();
-
-  // Item Points Hook
   const { itemPoints, isLoading: itemPointsLoading } = useCharacterItemPoints(selectedCharacter?.id || null);
 
   useEffect(() => {
@@ -145,7 +142,7 @@ const CharacterOverview = () => {
         inventory: transformedInventory,
       });
     } catch (error) {
-      // Error loading character data - set defaults
+      console.error('Error loading character data:', error);
       setSelectedCharacter({ ...character, equipment: {}, inventory: [] });
     }
   };
@@ -156,20 +153,6 @@ const CharacterOverview = () => {
     if (gold >= 10_000_000) return 'text-orange-500';
     if (gold >= 100_000) return 'text-yellow-300';
     return 'text-white';
-  };
-
-  // Helper function to get job name from job class
-  const getJobNameFromClass = (jobClass: number): string => {
-    switch (jobClass) {
-      case 0:
-        return 'Trader';
-      case 1:
-        return 'Hunter';
-      case 2:
-        return 'Thief';
-      default:
-        return 'Trader';
-    }
   };
 
   // Character Race and Image helpers
@@ -259,82 +242,43 @@ const CharacterOverview = () => {
                               </div>
 
                               {/* Level */}
-                              <div className='text-sm text-lafftale-bronze mb-1'>Level {character.level}</div>
+                              <div className='text-sm text-lafftale-bronze'>Level {character.level}</div>
 
                               {/* Job Levels */}
                               <div className='flex gap-2 mt-2'>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <div className='flex items-center gap-1'>
-                                      <img src={getJobIcon('trader')} alt='Trader' className='w-4 h-4' />
-                                      <span
-                                        className={`text-xs ${
-                                          character.currentJobClass === 0
-                                            ? 'font-bold text-orange-400'
-                                            : 'text-blue-400'
-                                        }`}
-                                      >
-                                        {character.currentJobClass === 0
-                                          ? character.currentJobLevel || 1
-                                          : character.traderLevel || 0}
-                                      </span>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    Trader Level:{' '}
-                                    {character.currentJobClass === 0
-                                      ? character.currentJobLevel || 1
-                                      : character.traderLevel || 0}
-                                  </TooltipContent>
-                                </Tooltip>
-
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <div className='flex items-center gap-1'>
-                                      <img src={getJobIcon('hunter')} alt='Hunter' className='w-4 h-4' />
-                                      <span
-                                        className={`text-xs ${
-                                          character.currentJobClass === 1
-                                            ? 'font-bold text-orange-400'
-                                            : 'text-green-400'
-                                        }`}
-                                      >
-                                        {character.currentJobClass === 1
-                                          ? character.currentJobLevel || 1
-                                          : character.hunterLevel || 0}
-                                      </span>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    Hunter Level:{' '}
-                                    {character.currentJobClass === 1
-                                      ? character.currentJobLevel || 1
-                                      : character.hunterLevel || 0}
-                                  </TooltipContent>
-                                </Tooltip>
-
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <div className='flex items-center gap-1'>
-                                      <img src={getJobIcon('thief')} alt='Thief' className='w-4 h-4' />
-                                      <span
-                                        className={`text-xs ${
-                                          character.currentJobClass === 2 ? 'font-bold text-orange-400' : 'text-red-400'
-                                        }`}
-                                      >
-                                        {character.currentJobClass === 2
-                                          ? character.currentJobLevel || 1
-                                          : character.thiefLevel || 0}
-                                      </span>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    Thief Level:{' '}
-                                    {character.currentJobClass === 2
-                                      ? character.currentJobLevel || 1
-                                      : character.thiefLevel || 0}
-                                  </TooltipContent>
-                                </Tooltip>
+                                {character.traderLevel > 0 && (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <div className='flex items-center gap-1'>
+                                        <img src={getJobIcon('trader')} alt='Trader' className='w-4 h-4' />
+                                        <span className='text-xs text-blue-400'>{character.traderLevel}</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Trader Level: {character.traderLevel}</TooltipContent>
+                                  </Tooltip>
+                                )}
+                                {character.hunterLevel > 0 && (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <div className='flex items-center gap-1'>
+                                        <img src={getJobIcon('hunter')} alt='Hunter' className='w-4 h-4' />
+                                        <span className='text-xs text-green-400'>{character.hunterLevel}</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Hunter Level: {character.hunterLevel}</TooltipContent>
+                                  </Tooltip>
+                                )}
+                                {character.thiefLevel > 0 && (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <div className='flex items-center gap-1'>
+                                        <img src={getJobIcon('thief')} alt='Thief' className='w-4 h-4' />
+                                        <span className='text-xs text-red-400'>{character.thiefLevel}</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Thief Level: {character.thiefLevel}</TooltipContent>
+                                  </Tooltip>
+                                )}
                               </div>
                             </div>
                           </CardContent>
@@ -370,7 +314,7 @@ const CharacterOverview = () => {
                   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Basic Character Info */}
                     <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                      <h4 className='text-lafftale-bronze font-bold mb-3'>Character Info</h4>
+                      <h4 className='text-lafftale-bronze font-bold mb-3'>Character Data</h4>
                       <div className='space-y-2'>
                         <div className='flex justify-between'>
                           <span className='text-gray-300'>Level:</span>
@@ -394,14 +338,23 @@ const CharacterOverview = () => {
                         </div>
                         <div className='flex justify-between'>
                           <span className='text-gray-300'>Guild:</span>
-                          <span className='text-lafftale-gold'>{selectedCharacter.GuildID || 'None'}</span>
+                          {selectedCharacter.GuildName ? (
+                            <Link
+                              to={`/guild/${encodeURIComponent(selectedCharacter.GuildName)}`}
+                              className='text-lafftale-gold hover:text-lafftale-bronze transition-colors underline'
+                            >
+                              {selectedCharacter.GuildName}
+                            </Link>
+                          ) : (
+                            <span className='text-lafftale-gold'>None</span>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     {/* Character Attributes */}
                     <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                      <h4 className='text-lafftale-bronze font-bold mb-3'>Character Attributes</h4>
+                      <h4 className='text-lafftale-bronze font-bold mb-3'>Attributes</h4>
                       <div className='space-y-2'>
                         <div className='flex justify-between'>
                           <span className='text-gray-300'>STR:</span>
@@ -473,7 +426,7 @@ const CharacterOverview = () => {
                     <div className='flex flex-col items-center'>
                       <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Equipment</h3>
 
-                      {/* Item Points Section - direkt unter Equipment Überschrift */}
+                      {/* Item Points Section */}
                       <div className='mb-4'>
                         <div className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 min-w-[200px]'>
                           <div className='text-center'>
@@ -507,10 +460,10 @@ const CharacterOverview = () => {
                     </div>
                   </div>
 
-                  {/* Third Row: Position Info */}
+                  {/* Third Row: Position */}
                   <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
                     <h4 className='text-lafftale-bronze font-bold mb-3'>Position</h4>
-                    <div className='space-y-2'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div className='flex justify-between'>
                         <span className='text-gray-300'>Region:</span>
                         <span className='text-white'>{selectedCharacter.region}</span>

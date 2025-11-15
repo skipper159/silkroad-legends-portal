@@ -68,4 +68,66 @@ router.get('/public/:characterName', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * GET /api/character/public/:characterName/unique-kills
+ * Get unique monster kills for a public character
+ * Requires authentication to view
+ */
+router.get('/public/:characterName/unique-kills', authenticateToken, async (req, res) => {
+  try {
+    const { characterName } = req.params;
+
+    if (!characterName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Character name is required',
+      });
+    }
+
+    const pool = await getCharDb();
+
+    // First, get the CharID from the character name
+    const { query: charQuery, parameters: charParams } =
+      QueryBuilder.buildPublicCharacterQuery(characterName);
+    const charQueryFinal = QueryBuilder.applyParameters(charQuery, charParams);
+    const charResult = await pool.request().query(charQueryFinal);
+
+    if (!charResult || !charResult.recordset || charResult.recordset.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Character not found',
+      });
+    }
+
+    const charID = charResult.recordset[0].CharID;
+
+    // Now get the unique kills
+    const { query, parameters } = QueryBuilder.buildUniqueKillsQuery(charID);
+    const finalQuery = QueryBuilder.applyParameters(query, parameters);
+
+    const result = await pool.request().query(finalQuery);
+
+    const uniqueKills = result.recordset || [];
+
+    // Format the unique kills data
+    const formattedKills = uniqueKills.map((kill) => ({
+      mobId: kill.MobID,
+      eventDate: kill.EventDate,
+      monsterCodeName: kill.MonsterCodeName,
+      monsterName: kill.MonsterName,
+    }));
+
+    res.json({
+      success: true,
+      data: formattedKills,
+    });
+  } catch (error) {
+    console.error('Error fetching unique kills:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch unique kills',
+    });
+  }
+});
+
 module.exports = router;

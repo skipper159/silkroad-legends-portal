@@ -10922,6 +10922,154 @@
         }
       }
     },
+    "/api/rankings/cache/clear": {
+      "get": {
+        "tags": [
+          "Rankings",
+          "Cache"
+        ],
+        "summary": "Clear ranking caches",
+        "description": "Clear all ranking-related cache entries to force fresh database queries",
+        "responses": {
+          "200": {
+            "description": "Cache cleared successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ranking caches cleared successfully"
+                    },
+                    "clearedCount": {
+                      "type": "integer",
+                      "example": 15
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/cache/clear-all": {
+      "get": {
+        "tags": [
+          "Rankings",
+          "Cache"
+        ],
+        "summary": "Clear all caches (Nuclear Option)",
+        "description": "⚠️ Clear ALL cache entries from the system. Use with caution!",
+        "responses": {
+          "200": {
+            "description": "All caches cleared successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "ALL caches cleared successfully (nuclear option)"
+                    },
+                    "clearedCount": {
+                      "type": "integer",
+                      "example": 50
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rankings/cache/stats": {
+      "get": {
+        "tags": [
+          "Rankings",
+          "Cache"
+        ],
+        "summary": "Get cache statistics",
+        "description": "Retrieve current cache statistics and information",
+        "responses": {
+          "200": {
+            "description": "Cache statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "memory"
+                        },
+                        "keyCount": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "sampleKeys": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "lafftale:player_ranking:123",
+                            "lafftale:unique_ranking:456"
+                          ]
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/api/vote/sites": {
       "get": {
         "tags": [

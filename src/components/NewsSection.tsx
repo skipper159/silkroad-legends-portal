@@ -134,7 +134,9 @@ const NewsSection = () => {
   return (
     <section className='py-20'>
       <div className='container mx-auto px-4'>
-        <h2 className='decorated-heading text-3xl md:text-4xl text-center'>News & Events</h2>
+        <div className='flex justify-center'>
+          <h2 className='decorated-heading text-3xl md:text-4xl'>News & Events</h2>
+        </div>
 
         {loading ? (
           <div className='flex justify-center items-center py-20'>

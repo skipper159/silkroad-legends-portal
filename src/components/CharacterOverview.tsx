@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchWithAuth, weburl } from '@/lib/api';
@@ -11,6 +11,7 @@ import { getSlotNameFromId } from '@/lib/slotmapping';
 import { getRaceInfo, getCharacterImage, getJobIcon, RaceInfo } from '@/utils/characterUtils';
 import { CharacterInventory } from './account/CharacterInventory';
 import { transformInventoryData } from '@/utils/itemUtils';
+import { getMonsterName, formatKillDate } from '@/utils/monsterNames';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -40,10 +41,18 @@ interface Character {
   hunterLevel: number;
   thiefLevel: number;
   GuildID: number | null;
+  GuildName?: string | null;
   CharIcon: number;
   race: string;
   equipment: Record<string, any>;
   inventory?: any[];
+}
+
+interface UniqueKill {
+  mobId: number;
+  eventDate: string;
+  monsterCodeName: string;
+  monsterName: string;
 }
 
 const CharacterOverview: React.FC = () => {
@@ -51,7 +60,9 @@ const CharacterOverview: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [uniqueKills, setUniqueKills] = useState<UniqueKill[]>([]);
   const [loading, setLoading] = useState(true);
+  const [uniqueKillsLoading, setUniqueKillsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Item Points Hook - Same as account version
@@ -105,6 +116,7 @@ const CharacterOverview: React.FC = () => {
             hunterLevel: 1,
             thiefLevel: 1,
             GuildID: characterData.GuildName && characterData.GuildName !== '-' ? 1 : null,
+            GuildName: characterData.GuildName && characterData.GuildName !== '-' ? characterData.GuildName : null,
             CharIcon: characterData.Race,
             race: characterData.Race === 1 ? 'Chinese' : 'European',
             equipment: {},
@@ -163,9 +175,33 @@ const CharacterOverview: React.FC = () => {
         equipment: mappedEquipment,
         inventory: transformedInventory,
       });
+
+      // Load unique kills
+      loadUniqueKills(character.name);
     } catch (error) {
       // Error loading character data - set defaults
       setSelectedCharacter({ ...character, equipment: {}, inventory: [] });
+    }
+  };
+
+  const loadUniqueKills = async (charName: string) => {
+    try {
+      setUniqueKillsLoading(true);
+      const response = await fetchWithAuth(
+        `${weburl}/api/character/public/${encodeURIComponent(charName)}/unique-kills`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setUniqueKills(data.data);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading unique kills:', error);
+      setUniqueKills([]);
+    } finally {
+      setUniqueKillsLoading(false);
     }
   };
 
@@ -283,7 +319,16 @@ const CharacterOverview: React.FC = () => {
                           </div>
                           <div className='flex justify-between'>
                             <span className='text-gray-300'>Guild:</span>
-                            <span className='text-lafftale-gold'>{selectedCharacter.GuildID ? 'Yes' : 'None'}</span>
+                            {selectedCharacter.GuildName ? (
+                              <Link
+                                to={`/guild/${encodeURIComponent(selectedCharacter.GuildName)}`}
+                                className='text-lafftale-gold hover:text-lafftale-bronze transition-colors underline'
+                              >
+                                {selectedCharacter.GuildName}
+                              </Link>
+                            ) : (
+                              <span className='text-lafftale-gold'>None</span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -422,6 +467,127 @@ const CharacterOverview: React.FC = () => {
                           )}
                         </div>
                       </div>
+                    </div>
+
+                    {/* Unique Kills Section - Full Width, 3 Columns */}
+                    <div className='mb-6'>
+                      <h3 className='text-xl font-bold text-lafftale-gold mb-4 text-center'>Unique Kills</h3>
+                      {uniqueKillsLoading ? (
+                        <div className='flex justify-center py-8'>
+                          <div className='w-8 h-8 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                        </div>
+                      ) : uniqueKills.length > 0 ? (
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                          {/* Column 1: Kills 1-5 (Newest) */}
+                          <div className='space-y-2'>
+                            {uniqueKills.slice(0, 5).map((kill, index) => (
+                              <div
+                                key={`${kill.mobId}-${kill.eventDate}-${index}`}
+                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                              >
+                                <div className='flex justify-between items-start gap-2'>
+                                  <div className='flex-1 min-w-0'>
+                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                      {getMonsterName(kill.monsterCodeName)}
+                                    </div>
+                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                  </div>
+                                  <div className='text-xs text-gray-500 whitespace-nowrap'>
+                                    {new Date(kill.eventDate).toLocaleDateString('de-DE', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: '2-digit',
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {/* Fill empty slots if less than 5 */}
+                            {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(0, 5).length) }).map((_, i) => (
+                              <div
+                                key={`empty-col1-${i}`}
+                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                              >
+                                <div className='text-xs text-gray-600 text-center'>-</div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Column 2: Kills 6-10 */}
+                          <div className='space-y-2'>
+                            {uniqueKills.slice(5, 10).map((kill, index) => (
+                              <div
+                                key={`${kill.mobId}-${kill.eventDate}-${index + 5}`}
+                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                              >
+                                <div className='flex justify-between items-start gap-2'>
+                                  <div className='flex-1 min-w-0'>
+                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                      {getMonsterName(kill.monsterCodeName)}
+                                    </div>
+                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                  </div>
+                                  <div className='text-xs text-gray-500 whitespace-nowrap'>
+                                    {new Date(kill.eventDate).toLocaleDateString('de-DE', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: '2-digit',
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {/* Fill empty slots if less than 5 */}
+                            {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(5, 10).length) }).map((_, i) => (
+                              <div
+                                key={`empty-col2-${i}`}
+                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                              >
+                                <div className='text-xs text-gray-600 text-center'>-</div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Column 3: Kills 11-15 (Oldest) */}
+                          <div className='space-y-2'>
+                            {uniqueKills.slice(10, 15).map((kill, index) => (
+                              <div
+                                key={`${kill.mobId}-${kill.eventDate}-${index + 10}`}
+                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                              >
+                                <div className='flex justify-between items-start gap-2'>
+                                  <div className='flex-1 min-w-0'>
+                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                      {getMonsterName(kill.monsterCodeName)}
+                                    </div>
+                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                  </div>
+                                  <div className='text-xs text-gray-500 whitespace-nowrap'>
+                                    {new Date(kill.eventDate).toLocaleDateString('de-DE', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: '2-digit',
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {/* Fill empty slots if less than 5 */}
+                            {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(10, 15).length) }).map((_, i) => (
+                              <div
+                                key={`empty-col3-${i}`}
+                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                              >
+                                <div className='text-xs text-gray-600 text-center'>-</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className='text-center text-gray-400 py-8 bg-lafftale-dark/30 rounded-lg border border-lafftale-gold/10'>
+                          <p className='text-sm'>No unique kills recorded</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Additional Info */}

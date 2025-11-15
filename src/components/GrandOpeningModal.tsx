@@ -1,0 +1,129 @@
+import { useEffect, useState } from 'react';
+import { X, Calendar, PartyPopper } from 'lucide-react';
+import { useCountdown } from '@/hooks/useCountdown';
+import { getCookie, setCookie } from '@/utils/cookies';
+
+const COOKIE_NAME = 'grand_opening_modal_dismissed';
+const GRAND_OPENING_DATE = new Date('2026-01-01T00:00:00');
+
+const GrandOpeningModal = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const countdown = useCountdown({ targetDate: GRAND_OPENING_DATE });
+
+  useEffect(() => {
+    // Check if user has dismissed the modal before
+    const dismissed = getCookie(COOKIE_NAME);
+
+    // Show modal if not dismissed and not expired
+    if (!dismissed && !countdown.isExpired) {
+      // Small delay for better UX
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [countdown.isExpired]);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    // Set cookie to not show again for 7 days
+    setCookie(COOKIE_NAME, 'true', 7);
+  };
+
+  if (!isVisible || countdown.isExpired) {
+    return null;
+  }
+
+  return (
+    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in'>
+      {/* Backdrop */}
+      <div className='absolute inset-0 bg-black/80 backdrop-blur-sm' onClick={handleClose} />
+
+      {/* Modal Content */}
+      <div className='relative bg-gradient-to-br from-lafftale-darkgray via-gray-900 to-lafftale-darkgray border-2 border-lafftale-gold/30 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-scale-in'>
+        {/* Close Button */}
+        <button
+          onClick={handleClose}
+          className='absolute top-4 right-4 z-10 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10'
+          aria-label='Close modal'
+        >
+          <X size={24} />
+        </button>
+
+        {/* Decorative Top Bar */}
+        <div className='h-2 bg-gradient-to-r from-lafftale-bronze via-lafftale-gold to-lafftale-bronze' />
+
+        {/* Content */}
+        <div className='p-8 md:p-12 text-center'>
+          {/* Icon */}
+          <div className='flex justify-center mb-6'>
+            <div className='p-4 bg-lafftale-gold/10 rounded-full border border-lafftale-gold/30'>
+              <PartyPopper size={48} className='text-lafftale-gold' />
+            </div>
+          </div>
+
+          {/* Title */}
+          <h2 className='text-3xl md:text-4xl font-bold mb-4 text-white'>
+            Grand Opening <span className='text-lafftale-bronze'>2026</span>
+          </h2>
+
+          <p className='text-gray-300 text-lg mb-8 max-w-md mx-auto'>
+            Join us for the official launch of <span className='text-lafftale-gold font-semibold'>Lafftale</span> and
+            embark on an epic journey through the Silkroad!
+          </p>
+
+          {/* Countdown */}
+          <div className='mb-8'>
+            <div className='flex items-center justify-center gap-2 mb-4 text-lafftale-bronze'>
+              <Calendar size={20} />
+              <span className='font-semibold'>January 1st, 2026</span>
+            </div>
+
+            <div className='grid grid-cols-4 gap-3 md:gap-6 max-w-lg mx-auto'>
+              <CountdownBox value={countdown.days} label='Days' />
+              <CountdownBox value={countdown.hours} label='Hours' />
+              <CountdownBox value={countdown.minutes} label='Minutes' />
+              <CountdownBox value={countdown.seconds} label='Seconds' />
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+            <a
+              href='/register'
+              className='px-8 py-3 bg-gradient-to-r from-lafftale-bronze to-lafftale-gold text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg'
+            >
+              Register Now
+            </a>
+            <a
+              href='/download'
+              className='px-8 py-3 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors border border-white/20'
+            >
+              Download Client
+            </a>
+          </div>
+
+          {/* Footer Text */}
+          <p className='mt-6 text-sm text-gray-500'>Click anywhere outside to close • Won't show again for 7 days</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface CountdownBoxProps {
+  value: number;
+  label: string;
+}
+
+const CountdownBox = ({ value, label }: CountdownBoxProps) => {
+  return (
+    <div className='bg-lafftale-darkgray/50 border border-lafftale-gold/20 rounded-lg p-3 md:p-4'>
+      <div className='text-3xl md:text-4xl font-bold text-lafftale-gold mb-1'>{String(value).padStart(2, '0')}</div>
+      <div className='text-xs md:text-sm text-gray-400 uppercase tracking-wider'>{label}</div>
+    </div>
+  );
+};
+
+export default GrandOpeningModal;

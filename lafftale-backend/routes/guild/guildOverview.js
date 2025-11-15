@@ -28,12 +28,16 @@ router.get('/overview/:guildName', async (req, res) => {
         g.ID,
         g.Name,
         g.Lvl,
-        g.Alliance,
+        CASE 
+          WHEN g.Alliance = 0 OR g.Alliance IS NULL THEN NULL
+          ELSE ag.Name
+        END as Alliance,
         g.MasterCommentTitle,
         g.MasterComment,
         g.FoundationDate as CreatedDate,
         (SELECT COUNT(*) FROM _GuildMember gm WHERE gm.GuildID = g.ID) as MemberCount
       FROM _Guild g
+      LEFT JOIN _Guild ag ON g.Alliance = ag.ID AND g.Alliance > 0
       WHERE g.Name = @guildName
         AND g.Name IS NOT NULL 
         AND g.Name != ''

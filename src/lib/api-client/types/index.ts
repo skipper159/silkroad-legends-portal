@@ -263,8 +263,8 @@ export interface GuildInfo {
   Lvl: number;
   /** Guild master character ID */
   MasterID: number;
-  /** Alliance ID */
-  Alliance?: number;
+  /** Alliance guild name */
+  Alliance?: string;
   /** Guild notice/description */
   Notice?: string;
   /** Guild foundation date */
@@ -643,13 +643,25 @@ export const API_ENDPOINTS = {
   PUTADMINREFERRALSSETTINGS: { method: 'PUT', path: '/admin/referrals/settings' },
   GETADMINREFERRALSANTICHEAT: { method: 'GET', path: '/admin/referrals/anti-cheat' },
   GETAPIADMINTICKETSTICKETS: { method: 'GET', path: '/api/admin_tickets/tickets' },
-  PUTAPIADMINTICKETSTICKETSIDCLOSE: { method: 'PUT', path: '/api/admin_tickets/tickets/{id}/close' },
-  GETAPIADMINTICKETSTICKETSIDMESSAGES: { method: 'GET', path: '/api/admin_tickets/tickets/{id}/messages' },
-  POSTAPIADMINTICKETSTICKETSIDREPLY: { method: 'POST', path: '/api/admin_tickets/tickets/{id}/reply' },
+  PUTAPIADMINTICKETSTICKETSIDCLOSE: {
+    method: 'PUT',
+    path: '/api/admin_tickets/tickets/{id}/close',
+  },
+  GETAPIADMINTICKETSTICKETSIDMESSAGES: {
+    method: 'GET',
+    path: '/api/admin_tickets/tickets/{id}/messages',
+  },
+  POSTAPIADMINTICKETSTICKETSIDREPLY: {
+    method: 'POST',
+    path: '/api/admin_tickets/tickets/{id}/reply',
+  },
   GETAPIADMINWEBACCOUNTS: { method: 'GET', path: '/api/admin/webaccounts' },
   GETAPIADMINGAMEACCOUNTS: { method: 'GET', path: '/api/admin/gameaccounts' },
   POSTAPIADMINGAMEACCOUNTSIDBAN: { method: 'POST', path: '/api/admin/gameaccounts/{id}/ban' },
-  POSTAPIADMINGAMEACCOUNTSIDTIMEOUT: { method: 'POST', path: '/api/admin/gameaccounts/{id}/timeout' },
+  POSTAPIADMINGAMEACCOUNTSIDTIMEOUT: {
+    method: 'POST',
+    path: '/api/admin/gameaccounts/{id}/timeout',
+  },
   GETAPIADMINVOUCHERS: { method: 'GET', path: '/api/admin/vouchers' },
   POSTAPIADMINVOUCHERS: { method: 'POST', path: '/api/admin/vouchers' },
   GETAPIADMINVOUCHERSID: { method: 'GET', path: '/api/admin/vouchers/{id}' },
@@ -688,7 +700,10 @@ export const API_ENDPOINTS = {
   GETAPIVOTES: { method: 'GET', path: '/api/votes' },
   GETAPIVOTESUSERSTATUS: { method: 'GET', path: '/api/votes/user-status' },
   POSTAPIVOTESIDVOTE: { method: 'POST', path: '/api/votes/{id}/vote' },
-  GETAPICHARACTERSCHARACTERSGAMEACCOUNTID: { method: 'GET', path: '/api/characters/characters/{gameAccountId}' },
+  GETAPICHARACTERSCHARACTERSGAMEACCOUNTID: {
+    method: 'GET',
+    path: '/api/characters/characters/{gameAccountId}',
+  },
   GETAPICHARACTERSGAMEACCOUNTSMY: { method: 'GET', path: '/api/characters/gameaccounts/my' },
   GETAPICHARACTERSINVENTORYCHARID: { method: 'GET', path: '/api/characters/inventory/{charId}' },
   GETAPICHARACTERSCHARIDDETAILS: { method: 'GET', path: '/api/characters/{charId}/details' },
@@ -708,4 +723,3 @@ export const API_ENDPOINTS = {
   PUTAPIUSERTICKETSID: { method: 'PUT', path: '/api/user_tickets/{id}' },
   POSTAPIUSERTICKETSIDMESSAGE: { method: 'POST', path: '/api/user_tickets/{id}/message' },
 } as const;
-

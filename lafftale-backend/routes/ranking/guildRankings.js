@@ -44,14 +44,20 @@ async function getGuildRanking(limit = 100, offset = 0, options = {}) {
         SELECT * FROM (
           SELECT ROW_NUMBER() OVER (ORDER BY COUNT(c.CharID) DESC, g.Lvl DESC) AS rank,
                  g.ID as GuildID, g.Name as GuildName, g.Lvl as GuildLevel, 
-                 g.GatheredSP, g.Alliance, g.MasterCommentTitle as Notice,
+                 g.GatheredSP, 
+                 CASE 
+                   WHEN g.Alliance = 0 OR g.Alliance IS NULL THEN NULL
+                   ELSE ag.Name
+                 END as Alliance,
+                 g.MasterCommentTitle as Notice,
                  COUNT(c.CharID) as MemberCount,
                  AVG(CAST(c.CurLevel AS FLOAT)) as AvgLevel,
                  MAX(c.CurLevel) as MaxLevel
           FROM _Guild g
           LEFT JOIN _Char c ON g.ID = c.GuildID AND c.Deleted = 0
+          LEFT JOIN _Guild ag ON g.Alliance = ag.ID AND g.Alliance > 0
           WHERE g.Name IS NOT NULL AND g.Name != '' AND g.Name != 'DummyGuild'
-          GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.Alliance, g.MasterCommentTitle
+          GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.Alliance, ag.Name, g.MasterCommentTitle
           HAVING COUNT(c.CharID) > 0
         ) AS ranked
         WHERE rank > @offset AND rank <= (@offset + @limit)

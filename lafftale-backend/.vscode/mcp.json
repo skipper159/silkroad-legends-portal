@@ -1,0 +1,88 @@
+{
+  "servers": {
+    "mssql-nodejs": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "GB_JoymaxPortal",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "false"
+      }
+    },
+    "mssql-cms": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "SRO_CMS",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "false"
+      }
+    },
+    "mssql-account": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "SILKROAD_R_ACCOUNT",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "false"
+      }
+    },
+    "mssql-shard": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "SILKROAD_R_SHARD",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "true"
+      }
+    },
+    "mssql-log": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "SILKROAD_R_SHARD_LOG",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "true"
+      }
+    },
+    "mssql-vanguard": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\thoma\\Silkroad Web\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "89.163.230.156",
+        "DATABASE_NAME": "Vanguard",
+        "USERNAME": "sa",
+        "PASSWORD": "Oppermann2025",
+        "READONLY": "true"
+      }
+    }
+  }
+}

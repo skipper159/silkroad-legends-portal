@@ -143,6 +143,7 @@ SELECT
   ISNULL(tcj.JobLevel, 1) as currentJobLevel,
   ISNULL(tcj.PromotionPhase, 0) as currentPromotionPhase,
   _Char.GuildID,
+  ISNULL(g.Name, NULL) AS GuildName,
   _Char.RefObjID AS CharIcon,
 
   -- Race-Ermittlung über CodeName128 aus RefObjCommon (verbesserte Logik)
@@ -159,6 +160,7 @@ FROM _Char
 LEFT JOIN _RefObjChar rchar ON _Char.RefObjID = rchar.ID
 LEFT JOIN _RefObjCommon roc ON rchar.ID = roc.ID
 LEFT JOIN _CharTradeConflictJob tcj ON tcj.CharID = _Char.CharID
+LEFT JOIN _Guild g ON g.ID = _Char.GuildID
 WHERE _Char.CharID IN (${charIdParams}) AND _Char.Deleted = 0
     `);
 

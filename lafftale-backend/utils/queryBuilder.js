@@ -299,11 +299,16 @@ class QueryBuilder {
       g.GatheredSP as GuildPoints,
       COUNT(c.CharID) as MemberCount,
       g.FoundationDate as FoundationDate,
-      g.Alliance,
+      CASE 
+        WHEN g.Alliance = 0 OR g.Alliance IS NULL THEN NULL
+        ELSE ag.Name
+      END as Alliance,
       g.MasterCommentTitle as Notice
     `;
 
-    let fromClause = `_Guild g LEFT JOIN _Char c ON g.ID = c.GuildID AND c.Deleted = 0`;
+    let fromClause = `_Guild g 
+      LEFT JOIN _Char c ON g.ID = c.GuildID AND c.Deleted = 0
+      LEFT JOIN _Guild ag ON g.Alliance = ag.ID AND g.Alliance > 0`;
     let whereClause = `g.Name IS NOT NULL AND g.Name != '' AND g.Name != 'DummyGuild'`;
 
     const parameters = {};
@@ -313,7 +318,7 @@ class QueryBuilder {
       parameters.guildName = `%${guildName}%`;
     }
 
-    const groupByClause = `GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.FoundationDate, g.Alliance, g.MasterCommentTitle`;
+    const groupByClause = `GROUP BY g.ID, g.Name, g.Lvl, g.GatheredSP, g.FoundationDate, g.Alliance, ag.Name, g.MasterCommentTitle`;
     const orderByClause = `ORDER BY g.Lvl DESC, g.GatheredSP DESC, COUNT(c.CharID) DESC`;
 
     // Custom query building for guild rankings with GROUP BY
@@ -597,6 +602,50 @@ class QueryBuilder {
     const parameters = { characterName };
 
     return { query, parameters };
+  }
+
+  /**
+   * Builds query to get unique kills for a character
+   * Returns the last 15 unique monster kills with monster information
+   */
+  static buildUniqueKillsQuery(charID) {
+    const query = `
+      SELECT TOP 15
+        ck.MobID,
+        ck.EventDate,
+        ro.NameStrID128 as MonsterCodeName,
+        ro.ObjName128 as MonsterName
+      FROM _CharUniqueKill ck
+      LEFT JOIN _RefObjCommon ro ON ck.MobID = ro.ID
+      WHERE ck.CharID = @charID
+      ORDER BY ck.EventDate DESC
+    `;
+
+    const parameters = { charID };
+
+    return { query, parameters };
+  }
+
+  /**
+   * Builds query to get recent unique kills from all players
+   * Returns the last 10 unique monster kills globally with character and monster information
+   */
+  static buildRecentUniqueKillsQuery() {
+    const query = `
+      SELECT TOP 10
+        ck.MobID,
+        ck.CharID,
+        ck.EventDate,
+        c.CharName16 as CharacterName,
+        ro.NameStrID128 as MonsterCodeName,
+        ro.ObjName128 as MonsterName
+      FROM _CharUniqueKill ck
+      LEFT JOIN _Char c ON ck.CharID = c.CharID
+      LEFT JOIN _RefObjCommon ro ON ck.MobID = ro.ID
+      ORDER BY ck.EventDate DESC
+    `;
+
+    return { query, parameters: {} };
   }
 }
 
