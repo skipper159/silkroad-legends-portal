@@ -72,7 +72,7 @@ router.get('/gameaccounts', async (req, res) => {
 
     // Build WHERE clause for search
     let whereClause = '';
-    const request = accountDb.request();
+    const request = accountPool.request();
 
     if (search) {
       whereClause = 'WHERE u.StrUserID LIKE @searchPattern';
@@ -88,7 +88,7 @@ router.get('/gameaccounts', async (req, res) => {
     );
 
     // Get total count for pagination
-    const countRequest = accountDb.request();
+    const countRequest = accountPool.request();
     if (search) {
       countRequest.input('searchPattern', sql.NVarChar, `%${search}%`);
     }
