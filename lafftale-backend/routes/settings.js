@@ -63,7 +63,7 @@ router.put('/:key', async (req, res) => {
     const existing = await pool
       .request()
       .input('key', sql.NVarChar, key)
-      .query('SELECT id FROM settings WHERE [key] = @key');
+      .query('SELECT [key] FROM settings WHERE [key] = @key');
 
     if (existing.recordset.length > 0) {
       // Update existing setting
@@ -71,7 +71,7 @@ router.put('/:key', async (req, res) => {
         .request()
         .input('key', sql.NVarChar, key)
         .input('value', sql.NVarChar, value)
-        .input('updatedAt', sql.DateTime, new Date())
+        .input('updatedAt', sql.DateTime2, new Date())
         .query('UPDATE settings SET value = @value, updated_at = @updatedAt WHERE [key] = @key');
     } else {
       // Create new setting
@@ -79,8 +79,8 @@ router.put('/:key', async (req, res) => {
         .request()
         .input('key', sql.NVarChar, key)
         .input('value', sql.NVarChar, value)
-        .input('createdAt', sql.DateTime, new Date())
-        .input('updatedAt', sql.DateTime, new Date())
+        .input('createdAt', sql.DateTime2, new Date())
+        .input('updatedAt', sql.DateTime2, new Date())
         .query(
           'INSERT INTO settings ([key], value, created_at, updated_at) VALUES (@key, @value, @createdAt, @updatedAt)'
         );
