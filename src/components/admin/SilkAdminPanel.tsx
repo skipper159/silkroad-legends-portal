@@ -265,223 +265,296 @@ const SilkAdminPanel = () => {
     <div className='space-y-6'>
       {/* Server Statistics Cards */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <div className='flex items-center justify-between'>
+        <Card className='bg-lafftale-dark border-lafftale-gold/20'>
+          <div className='p-6 flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Total Silk Volume</p>
-              <p className='text-2xl font-bold text-lafftale-gold'>
+              <p className='text-sm font-medium text-gray-400'>Total Silk Volume</p>
+              <p className='text-2xl font-bold text-lafftale-gold mt-2'>
                 {serverStats ? formatNumber(serverStats.totalSilkValue) : '---'}
               </p>
             </div>
-            <Coins className='h-8 w-8 text-lafftale-gold' />
+            <div className='p-3 bg-lafftale-gold/10 rounded-full'>
+              <Coins className='h-6 w-6 text-lafftale-gold' />
+            </div>
           </div>
         </Card>
 
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <div className='flex items-center justify-between'>
+        <Card className='bg-lafftale-dark border-purple-900/50'>
+          <div className='p-6 flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Premium Silk</p>
-              <p className='text-2xl font-bold text-purple-400'>
+              <p className='text-sm font-medium text-gray-400'>Premium Silk</p>
+              <p className='text-2xl font-bold text-purple-400 mt-2'>
                 {serverStats ? formatNumber(serverStats.totalPremiumSilk) : '---'}
               </p>
             </div>
-            <Crown className='h-8 w-8 text-purple-400' />
+            <div className='p-3 bg-purple-900/20 rounded-full'>
+              <Crown className='h-6 w-6 text-purple-400' />
+            </div>
           </div>
         </Card>
 
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <div className='flex items-center justify-between'>
+        <Card className='bg-lafftale-dark border-green-900/50'>
+          <div className='p-6 flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Accounts with Silk</p>
-              <p className='text-2xl font-bold text-green-400'>
+              <p className='text-sm font-medium text-gray-400'>Accounts with Silk</p>
+              <p className='text-2xl font-bold text-green-400 mt-2'>
                 {serverStats ? formatNumber(serverStats.accountsWithSilk) : '---'}
               </p>
             </div>
-            <Users className='h-8 w-8 text-green-400' />
+            <div className='p-3 bg-green-900/20 rounded-full'>
+              <Users className='h-6 w-6 text-green-400' />
+            </div>
           </div>
         </Card>
 
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <div className='flex items-center justify-between'>
+        <Card className='bg-lafftale-dark border-blue-900/50'>
+          <div className='p-6 flex items-center justify-between'>
             <div>
-              <p className='text-sm text-gray-400'>Total Donations</p>
-              <p className='text-2xl font-bold text-blue-400'>
+              <p className='text-sm font-medium text-gray-400'>Total Donations</p>
+              <p className='text-2xl font-bold text-blue-400 mt-2'>
                 ${serverStats ? formatNumber(serverStats.donations.totalDonatedUSD) : '---'}
               </p>
             </div>
-            <DollarSign className='h-8 w-8 text-blue-400' />
+            <div className='p-3 bg-blue-900/20 rounded-full'>
+              <DollarSign className='h-6 w-6 text-blue-400' />
+            </div>
           </div>
         </Card>
       </div>
 
       {/* Stats Refresh Button */}
-      <div className='flex justify-between items-center'>
-        <div className='text-sm text-gray-400'>
+      <div className='flex justify-between items-center px-2'>
+        <div className='text-xs text-gray-500 font-mono'>
           {serverStats && (
             <span>
               Last update: {formatDate(serverStats.lastCalculated)}
               {serverStats.cached && ' (cached)'}
-              {serverStats.calculationDuration && ` - ${serverStats.calculationDuration}s`}
+              {serverStats.calculationDuration && ` • ${serverStats.calculationDuration}s`}
             </span>
           )}
         </div>
-        <Button onClick={() => fetchServerStats(true)} disabled={statsLoading} variant='outline' size='sm'>
-          {statsLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <RefreshCw className='h-4 w-4' />}
-          <span className='ml-2'>Update Statistics</span>
+        <Button
+          onClick={() => fetchServerStats(true)}
+          disabled={statsLoading}
+          variant='ghost'
+          size='sm'
+          className='text-gray-400 hover:text-white hover:bg-white/5'
+        >
+          {statsLoading ? <Loader2 className='h-3 w-3 animate-spin mr-2' /> : <RefreshCw className='h-3 w-3 mr-2' />}
+          Update Statistics
         </Button>
       </div>
 
-      {/* Search and Controls */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-        <div className='flex flex-col sm:flex-row gap-4'>
-          <div className='flex-1'>
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-              <Input
-                placeholder='Search by username...'
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className='pl-10 bg-lafftale-dark border-lafftale-gold/30'
-              />
-            </div>
-          </div>
-          <Button
-            onClick={handleSearch}
-            disabled={isSearching}
-            className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/80'
-          >
-            {isSearching ? <Loader2 className='h-4 w-4 animate-spin' /> : <Search className='h-4 w-4' />}
-            <span className='ml-2'>Search</span>
-          </Button>
-        </div>
-      </Card>
-
       {/* Give Silk Panel */}
       {selectedAccount && (
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
-          <h3 className='text-lg font-bold mb-4 text-lafftale-gold'>Give Silk to: {selectedAccount.username}</h3>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            <div>
-              <label className='block text-sm text-gray-400 mb-2'>Silk Amount</label>
-              <Input
-                type='number'
-                placeholder='e.g. 1000'
-                value={giveAmount}
-                onChange={(e) => setGiveAmount(e.target.value)}
-                className='bg-lafftale-dark border-lafftale-gold/30'
-                min='1'
-              />
+        <Card className='bg-lafftale-dark border-lafftale-gold/40 shadow-lg shadow-lafftale-gold/5 animate-in fade-in slide-in-from-top-4 duration-300'>
+          <div className='p-6'>
+            <div className='flex items-center gap-3 mb-6 border-b border-gray-800 pb-4'>
+              <div className='p-2 bg-lafftale-gold/20 rounded'>
+                <Gift className='h-5 w-5 text-lafftale-gold' />
+              </div>
+              <div>
+                <h3 className='text-lg font-bold text-white'>Give Silk Reward</h3>
+                <p className='text-sm text-gray-400'>
+                  To user: <span className='text-lafftale-gold'>{selectedAccount.username}</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <label className='block text-sm text-gray-400 mb-2'>Reason (optional)</label>
-              <Input
-                placeholder='e.g. Event Reward'
-                value={giveReason}
-                onChange={(e) => setGiveReason(e.target.value)}
-                className='bg-lafftale-dark border-lafftale-gold/30'
-              />
-            </div>
-            <div className='flex items-end gap-2'>
-              <Button
-                onClick={handleGiveSilk}
-                disabled={isGivingProcess || !giveAmount || parseInt(giveAmount) <= 0}
-                className='bg-green-600 hover:bg-green-700'
-              >
-                {isGivingProcess ? <Loader2 className='h-4 w-4 animate-spin' /> : <Gift className='h-4 w-4' />}
-                <span className='ml-2'>Give</span>
-              </Button>
-              <Button onClick={() => setSelectedAccount(null)} variant='outline'>
-                Cancel
-              </Button>
+
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+              <div className='space-y-2'>
+                <label className='text-sm font-medium text-gray-300'>Amount</label>
+                <div className='relative'>
+                  <Coins className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500' />
+                  <Input
+                    type='number'
+                    placeholder='e.g. 1000'
+                    value={giveAmount}
+                    onChange={(e) => setGiveAmount(e.target.value)}
+                    className='bg-lafftale-darkgray border-gray-700 pl-9 focus:border-lafftale-gold/50'
+                    min='1'
+                  />
+                </div>
+              </div>
+              <div className='space-y-2'>
+                <label className='text-sm font-medium text-gray-300'>Reason (Optional)</label>
+                <Input
+                  placeholder='e.g. Event Reward'
+                  value={giveReason}
+                  onChange={(e) => setGiveReason(e.target.value)}
+                  className='bg-lafftale-darkgray border-gray-700 focus:border-lafftale-gold/50'
+                />
+              </div>
+              <div className='flex items-end gap-3'>
+                <Button
+                  onClick={handleGiveSilk}
+                  disabled={isGivingProcess || !giveAmount || parseInt(giveAmount) <= 0}
+                  className='bg-green-600 hover:bg-green-700 text-white flex-1'
+                >
+                  {isGivingProcess ? (
+                    <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                  ) : (
+                    <Gift className='h-4 w-4 mr-2' />
+                  )}
+                  Send Silk
+                </Button>
+                <Button
+                  onClick={() => setSelectedAccount(null)}
+                  variant='outline'
+                  className='border-gray-700 hover:bg-gray-800'
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
       )}
 
+      {/* Search and Controls */}
+      <div className='flex gap-4'>
+        <div className='relative flex-1'>
+          <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500' />
+          <Input
+            placeholder='Search by username...'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className='pl-10 bg-lafftale-dark border-lafftale-gold/30 text-white placeholder:text-gray-600'
+          />
+        </div>
+        <Button
+          onClick={handleSearch}
+          disabled={isSearching}
+          className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze px-6'
+        >
+          {isSearching ? <Loader2 className='h-4 w-4 animate-spin' /> : <Search className='h-4 w-4' />}
+          <span className='ml-2 hidden sm:inline'>Search</span>
+        </Button>
+      </div>
+
       {/* Accounts Table */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='overflow-hidden border-lafftale-gold/30 bg-lafftale-dark'>
         <div className='overflow-x-auto'>
-          <table className='w-full text-sm'>
-            <thead>
-              <tr className='border-b border-lafftale-gold/30'>
-                <th className='text-left p-4 text-lafftale-gold'>Username</th>
-                <th className='text-left p-4 text-lafftale-gold'>Portal JID</th>
-                <th className='text-left p-4 text-lafftale-gold'>Game JID</th>
-                <th className='text-left p-4 text-lafftale-gold'>Premium Silk</th>
-                <th className='text-left p-4 text-lafftale-gold'>Silk</th>
-                <th className='text-left p-4 text-lafftale-gold'>VIP Level</th>
-                <th className='text-left p-4 text-lafftale-gold'>Reg. Date</th>
-                <th className='text-left p-4 text-lafftale-gold'>Actions</th>
+          <table className='min-w-full text-left text-sm text-gray-300'>
+            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+              <tr>
+                <th className='p-3 pl-4'>User Details</th>
+                <th className='p-3'>IDs (Portal/Game)</th>
+                <th className='p-3'>Premium Silk</th>
+                <th className='p-3'>Normal Silk</th>
+                <th className='p-3'>VIP Status</th>
+                <th className='p-3'>Registered</th>
+                <th className='p-3 text-right pr-4'>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {accounts.map((account) => (
-                <tr key={account.portalJID} className='border-b border-gray-700 hover:bg-lafftale-dark/30'>
-                  <td className='p-4'>
-                    <div>
-                      <div className='font-medium'>{account.username}</div>
+              {accounts.length > 0 ? (
+                accounts.map((account) => (
+                  <tr
+                    key={account.portalJID}
+                    className='border-b border-lafftale-gold/10 hover:bg-lafftale-darkgray/30 transition-colors'
+                  >
+                    <td className='p-3 pl-4'>
+                      <div className='font-medium text-white'>{account.username}</div>
                       {account.nickname && account.nickname !== account.username && (
-                        <div className='text-xs text-gray-400'>{account.nickname}</div>
+                        <div className='text-xs text-gray-500'>Nick: {account.nickname}</div>
                       )}
-                    </div>
-                  </td>
-                  <td className='p-4 text-gray-300'>{account.portalJID}</td>
-                  <td className='p-4 text-gray-300'>{account.gameJID}</td>
-                  <td className='p-4 text-purple-400 font-bold'>{formatNumber(account.silkBalance.premiumSilk)}</td>
-                  <td className='p-4 text-green-400 font-bold'>{formatNumber(account.silkBalance.silk)}</td>
-                  <td className='p-4'>
-                    {account.silkBalance.vipLevel > 0 ? (
-                      <span className='text-yellow-400 font-bold'>VIP {account.silkBalance.vipLevel}</span>
-                    ) : (
-                      <span className='text-gray-400'>-</span>
-                    )}
-                  </td>
-                  <td className='p-4 text-gray-400'>{formatDate(account.gameRegDate)}</td>
-                  <td className='p-4'>
-                    <Button size='sm' variant='outline' onClick={() => setSelectedAccount(account)} className='text-xs'>
-                      <Gift className='h-3 w-3 mr-1' />
-                      Give Silk
-                    </Button>
+                    </td>
+                    <td className='p-3'>
+                      <div className='flex gap-2 text-xs'>
+                        <span className='bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700 text-gray-400'>
+                          P: {account.portalJID}
+                        </span>
+                        <span className='bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700 text-gray-400'>
+                          G: {account.gameJID}
+                        </span>
+                      </div>
+                    </td>
+                    <td className='p-3'>
+                      <span className='font-bold text-purple-400'>{formatNumber(account.silkBalance.premiumSilk)}</span>
+                    </td>
+                    <td className='p-3'>
+                      <span className='font-bold text-green-400'>{formatNumber(account.silkBalance.silk)}</span>
+                    </td>
+                    <td className='p-3'>
+                      {account.silkBalance.vipLevel > 0 ? (
+                        <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-900/20 text-yellow-500 border border-yellow-900/40'>
+                          VIP {account.silkBalance.vipLevel}
+                        </span>
+                      ) : (
+                        <span className='text-gray-600 text-xs'>-</span>
+                      )}
+                    </td>
+                    <td className='p-3 text-gray-400 text-xs'>{formatDate(account.gameRegDate)}</td>
+                    <td className='p-3 pr-4 text-right'>
+                      <Button
+                        size='sm'
+                        variant='outline'
+                        onClick={() => setSelectedAccount(account)}
+                        className='h-7 text-xs border-lafftale-gold/30 text-lafftale-gold hover:bg-lafftale-gold/10'
+                      >
+                        <Gift className='h-3 w-3 mr-1.5' />
+                        Give Silk
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className='p-8 text-center text-gray-500'>
+                    No accounts found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
-        {pagination && pagination.totalPages > 1 && (
-          <div className='p-4 border-t border-lafftale-gold/30 flex items-center justify-between'>
-            <div className='text-sm text-gray-400'>
-              Page {pagination.currentPage} of {pagination.totalPages} ({formatNumber(pagination.totalCount)} Accounts
-              total)
-            </div>
-            <div className='flex gap-2'>
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={() => handlePageChange(pagination.currentPage - 1)}
-                disabled={!pagination.hasPrev}
-              >
-                Back
-              </Button>
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={() => handlePageChange(pagination.currentPage + 1)}
-                disabled={!pagination.hasNext}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        )}
       </Card>
 
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className='flex justify-between items-center bg-lafftale-dark p-4 rounded-lg border border-lafftale-gold/20'>
+          <div className='text-sm text-gray-400'>
+            Page {pagination.currentPage} of {pagination.totalPages} ({formatNumber(pagination.totalCount)} total)
+          </div>
+          <div className='flex gap-2'>
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+              disabled={!pagination.hasPrev}
+              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
+            >
+              Previous
+            </Button>
+
+            <div className='flex items-center gap-1'>
+              {/* Simplified Pagination for now, ideally matched exact logic if needed */}
+              <div className='text-xs text-gray-500 font-mono px-2'>
+                {pagination.currentPage} / {pagination.totalPages}
+              </div>
+            </div>
+
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+              disabled={!pagination.hasNext}
+              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+
       {error && (
-        <Card className='bg-red-900/20 border-red-500/30 p-4'>
-          <p className='text-red-400'>❌ Error: {error}</p>
+        <Card className='bg-red-900/20 border-red-500/30 p-4 animate-in fade-in slide-in-from-top-2'>
+          <p className='text-red-400 flex items-center gap-2'>
+            <span className='h-2 w-2 rounded-full bg-red-500 animate-pulse' />
+            Error: {error}
+          </p>
         </Card>
       )}
     </div>

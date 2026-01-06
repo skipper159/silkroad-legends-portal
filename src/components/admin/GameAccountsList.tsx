@@ -119,97 +119,124 @@ const GameAccountsList = () => {
   }
 
   return (
-    <>
-      <div className='mb-4 flex gap-2'>
-        <input
-          type='text'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder='Search by username...'
-          className='flex-1 px-3 py-2 border border-lafftale-gold/30 bg-lafftale-dark text-white rounded-md'
-        />
-        <Button
-          onClick={handleSearch}
-          disabled={isSearching}
-          className='bg-lafftale-gold text-black hover:bg-lafftale-gold/80'
-        >
-          {isSearching ? <Loader2 className='animate-spin' size={16} /> : 'Search'}
-        </Button>
-      </div>
+    <div className='space-y-6'>
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder='Search by username...' />
 
-      <Card className='overflow-x-auto border-lafftale-gold/30'>
-        <table className='min-w-full text-left text-sm text-gray-300'>
-          <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
-            <tr>
-              <th className='p-3'>ID</th>
-              <th className='p-3'>Username</th>
-              <th className='p-3'>Character</th>
-              <th className='p-3'>Guild</th>
-              <th className='p-3'>Job</th>
-              <th className='p-3'>REG IP</th>
-              <th className='p-3'>Reg Time</th>
-              <th className='p-3'>Play Time</th>
-              <th className='p-3'>Banned</th>
-              <th className='p-3'>Timeout</th>
-              <th className='p-3 text-center'>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accounts.length > 0 ? (
-              accounts.map((acc) => (
-                <tr key={acc.GameAccountId} className='border-b border-lafftale-gold/30 hover:bg-lafftale-dark/20'>
-                  <td className='p-3'>{acc.GameAccountId}</td>
-                  <td className='p-3'>{acc.Username}</td>
-                  <td className='p-3'>{acc.CharName16 || '—'}</td>
-                  <td className='p-3'>{acc.GuildName || '—'}</td>
-                  <td className='p-3'>{acc.JobName || acc.JobType || '—'}</td>
-                  <td className='p-3'>{acc.REG_IP || '—'}</td>
-                  <td className='p-3'>{acc.RegTime ? new Date(acc.RegTime).toLocaleString() : '—'}</td>
-                  <td className='p-3'>{acc.AccPlayTime || '—'}</td>
-                  <td className='p-3'>{acc.IsBanned ? '✅' : '❌'}</td>
-                  <td className='p-3'>{acc.TimeoutUntil ? new Date(acc.TimeoutUntil).toLocaleString() : '—'}</td>
-                  <td className='p-3 flex gap-2 justify-center'>
-                    <Button size='sm' variant='destructive' onClick={() => banAccount(acc.GameAccountId)}>
-                      <Ban size={16} />
-                    </Button>
-                    <Button size='sm' variant='secondary' onClick={() => timeoutAccount(acc.GameAccountId)}>
-                      <TimerReset size={16} />
-                    </Button>
-                    <Button size='sm' variant='outline'>
-                      <Info size={16} />
-                    </Button>
+      <Card className='overflow-hidden border-lafftale-gold/30 bg-lafftale-dark'>
+        <div className='overflow-x-auto'>
+          <table className='min-w-full text-left text-sm text-gray-300'>
+            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+              <tr>
+                <th className='p-3'>ID</th>
+                <th className='p-3'>Username</th>
+                <th className='p-3'>Character Info</th>
+                <th className='p-3'>Guild</th>
+                <th className='p-3'>Stats</th>
+                <th className='p-3'>Status</th>
+                <th className='p-3 text-center'>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {accounts.length > 0 ? (
+                accounts.map((acc) => (
+                  <tr
+                    key={acc.GameAccountId}
+                    className='border-b border-lafftale-gold/10 hover:bg-lafftale-darkgray/30'
+                  >
+                    <td className='p-3 text-gray-500'>#{acc.GameAccountId}</td>
+                    <td className='p-3'>
+                      <div className='font-medium text-white'>{acc.Username}</div>
+                      <div className='text-xs text-gray-500'>IP: {acc.REG_IP || '—'}</div>
+                    </td>
+                    <td className='p-3'>
+                      <div className='text-white'>{acc.CharName16 || '—'}</div>
+                      <div className='text-xs text-gray-500'>{acc.JobName || 'No Job'}</div>
+                    </td>
+                    <td className='p-3 text-gray-300'>{acc.GuildName || '—'}</td>
+                    <td className='p-3 text-xs'>
+                      <div className='text-gray-400'>
+                        Reg: {acc.RegTime ? new Date(acc.RegTime).toLocaleDateString() : '—'}
+                      </div>
+                      <div className='text-gray-500'>PlayTime: {acc.AccPlayTime || '0'}m</div>
+                    </td>
+                    <td className='p-3'>
+                      <div className='flex flex-col gap-1'>
+                        {acc.IsBanned ? (
+                          <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900/30 text-red-400 border border-red-900/50'>
+                            Banned
+                          </span>
+                        ) : (
+                          <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900/30 text-green-400 border border-green-900/50'>
+                            Active
+                          </span>
+                        )}
+                        {acc.TimeoutUntil && (
+                          <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-900/30 text-yellow-400 border border-yellow-900/50'>
+                            Timeout: {new Date(acc.TimeoutUntil).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className='p-3 flex gap-2 justify-center'>
+                      <Button
+                        size='sm'
+                        variant='destructive'
+                        className='h-8 w-8 p-0'
+                        onClick={() => banAccount(acc.GameAccountId)}
+                        title='Ban Account'
+                      >
+                        <Ban size={14} />
+                      </Button>
+                      <Button
+                        size='sm'
+                        variant='secondary'
+                        className='h-8 w-8 p-0 bg-yellow-600/20 text-yellow-500 hover:bg-yellow-600/40'
+                        onClick={() => timeoutAccount(acc.GameAccountId)}
+                        title='Timeout'
+                      >
+                        <TimerReset size={14} />
+                      </Button>
+                      <Button
+                        size='sm'
+                        variant='outline'
+                        className='h-8 w-8 p-0 border-gray-700 text-blue-400 hover:bg-blue-900/20'
+                        title='Info'
+                      >
+                        <Info size={14} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className='p-8 text-center text-gray-500'>
+                    No results found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={11} className='p-4 text-center text-gray-400'>
-                  No results found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </Card>
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='mt-4 flex justify-between items-center'>
+        <div className='flex justify-between items-center bg-lafftale-dark p-4 rounded-lg border border-lafftale-gold/20'>
           <div className='text-sm text-gray-400'>
             Showing {accounts.length} of {pagination.totalCount} results
           </div>
           <div className='flex gap-2'>
             <Button
               variant='outline'
+              size='sm'
               disabled={!pagination.hasPrev || loading}
               onClick={() => handlePageChange(currentPage - 1)}
-              className='text-lafftale-gold border-lafftale-gold/30'
+              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
             >
               Previous
             </Button>
 
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1'>
               {/* Show page numbers */}
               {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                 let page;
@@ -226,12 +253,13 @@ const GameAccountsList = () => {
                 return (
                   <Button
                     key={page}
-                    variant={page === currentPage ? 'default' : 'outline'}
+                    size='sm'
+                    variant={page === currentPage ? 'default' : 'ghost'}
                     onClick={() => handlePageChange(page)}
-                    className={`min-w-[40px] ${
+                    className={`min-w-[32px] h-8 ${
                       page === currentPage
-                        ? 'bg-lafftale-gold text-black'
-                        : 'text-lafftale-gold border-lafftale-gold/30'
+                        ? 'bg-lafftale-gold text-black hover:bg-lafftale-bronze'
+                        : 'text-gray-400 hover:text-white'
                     }`}
                   >
                     {page}
@@ -242,16 +270,17 @@ const GameAccountsList = () => {
 
             <Button
               variant='outline'
+              size='sm'
               disabled={!pagination.hasNext || loading}
               onClick={() => handlePageChange(currentPage + 1)}
-              className='text-lafftale-gold border-lafftale-gold/30'
+              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
             >
               Next
             </Button>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
