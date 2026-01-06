@@ -9,15 +9,45 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { weburl } from '@/lib/api';
+import TwoFactorModal from '@/components/TwoFactorModal';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [tempToken, setTempToken] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  const handleLoginSuccess = (data: { token: string; user: any }) => {
+    try {
+      // JWT dekodieren
+      const payload = JSON.parse(atob(data.token.split('.')[1]));
+      console.log('JWT Payload:', payload);
+
+      // Update auth context and save token
+      const isAdmin = payload.isAdmin || false;
+      login(data.token, isAdmin);
+
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back to Lafftale online!',
+      });
+
+      // Sofortige Navigation ohne Verzögerung
+      if (isAdmin) {
+        navigate('/AdminDashboard', { replace: true });
+      } else {
+        navigate('/account', { replace: true });
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      navigate('/account', { replace: true });
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,35 +62,16 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome back to Lafftale online!',
-        });
-
-        try {
-          // JWT dekodieren
-          const payload = JSON.parse(atob(data.token.split('.')[1]));
-          console.log('JWT Payload:', payload);
-          console.log('User data being sent:', data.user);
-
-          // Update auth context and save token
-          const isAdmin = payload.isAdmin || false;
-          console.log('isAdmin status:', isAdmin);
-          login(data.token, isAdmin);
-
-          // Sofortige Navigation ohne Verzögerung
-          if (isAdmin) {
-            console.log('Redirecting to AdminDashboard');
-            navigate('/AdminDashboard', { replace: true });
-          } else {
-            console.log('Redirecting to account');
-            navigate('/account', { replace: true });
-          }
-        } catch (error) {
-          console.error('Error decoding JWT:', error);
-          // Fallback for JWT decoding errors
-          navigate('/account', { replace: true });
+        // Check if 2FA is required
+        if (data.requires2FA && data.tempToken) {
+          setTempToken(data.tempToken);
+          setShow2FAModal(true);
+          setIsLoading(false);
+          return;
         }
+
+        // Normal login success
+        handleLoginSuccess(data);
       } else {
         if (data?.needsVerification) {
           toast({
@@ -68,8 +79,6 @@ const Login = () => {
             description: 'Please verify your email address to log in.',
             variant: 'destructive',
           });
-
-          // Redirect to the page for resending the verification email
           setTimeout(() => navigate('/resend-verification'), 2000);
         } else {
           toast({
@@ -89,6 +98,22 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handle2FASuccess = (data: { token: string; user: object }) => {
+    setShow2FAModal(false);
+    setTempToken(null);
+    handleLoginSuccess(data as { token: string; user: any });
+  };
+
+  const handle2FACancel = () => {
+    setShow2FAModal(false);
+    setTempToken(null);
+    toast({
+      title: '2FA Cancelled',
+      description: 'Login cancelled. Please try again.',
+      variant: 'destructive',
+    });
   };
 
   return (
@@ -163,6 +188,11 @@ const Login = () => {
         </div>
       </main>
       <Footer />
+
+      {/* 2FA Modal */}
+      {show2FAModal && tempToken && (
+        <TwoFactorModal tempToken={tempToken} onSuccess={handle2FASuccess} onCancel={handle2FACancel} />
+      )}
     </div>
   );
 };

@@ -1,16 +1,39 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { X, Calendar, PartyPopper } from 'lucide-react';
 import { useCountdown } from '@/hooks/useCountdown';
+import { useWebSettings } from '@/hooks/useWebSettings';
 import { getCookie, setCookie } from '@/utils/cookies';
 
 const COOKIE_NAME = 'grand_opening_modal_dismissed';
-const GRAND_OPENING_DATE = new Date('2026-03-31T00:00:00');
 
 const GrandOpeningModal = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const countdown = useCountdown({ targetDate: GRAND_OPENING_DATE });
+  const { settings, loading } = useWebSettings();
+
+  // Parse the date from settings
+  const targetDate = useMemo(() => {
+    if (!settings.grand_opening_date) return new Date('2026-03-31T00:00:00');
+    return new Date(`${settings.grand_opening_date}T00:00:00`);
+  }, [settings.grand_opening_date]);
+
+  // Format date for display
+  const formattedDate = useMemo(() => {
+    return targetDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }, [targetDate]);
+
+  const countdown = useCountdown({ targetDate });
 
   useEffect(() => {
+    // Don't show if still loading settings
+    if (loading) return;
+
+    // Don't show if disabled in admin settings
+    if (!settings.grand_opening_enabled) return;
+
     // Check if user has dismissed the modal before
     const dismissed = getCookie(COOKIE_NAME);
 
@@ -23,15 +46,15 @@ const GrandOpeningModal = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [countdown.isExpired]);
+  }, [loading, settings.grand_opening_enabled, countdown.isExpired]);
 
   const handleClose = () => {
     setIsVisible(false);
-    // Set cookie to not show again for 7 days
-    setCookie(COOKIE_NAME, 'true', 7);
+    // Set cookie with dynamic dismiss duration from settings
+    setCookie(COOKIE_NAME, 'true', settings.grand_opening_dismiss_days);
   };
 
-  if (!isVisible || countdown.isExpired) {
+  if (!isVisible || countdown.isExpired || loading) {
     return null;
   }
 
@@ -65,7 +88,7 @@ const GrandOpeningModal = () => {
 
           {/* Title */}
           <h2 className='text-3xl md:text-4xl font-bold mb-4 text-white'>
-            Grand Opening <span className='text-lafftale-bronze'>2026</span>
+            Grand Opening <span className='text-lafftale-bronze'>{targetDate.getFullYear()}</span>
           </h2>
 
           <p className='text-gray-300 text-lg mb-8 max-w-md mx-auto'>
@@ -77,7 +100,7 @@ const GrandOpeningModal = () => {
           <div className='mb-8'>
             <div className='flex items-center justify-center gap-2 mb-4 text-lafftale-bronze'>
               <Calendar size={20} />
-              <span className='font-semibold'>March 31st, 2026</span>
+              <span className='font-semibold'>{formattedDate}</span>
             </div>
 
             <div className='grid grid-cols-4 gap-3 md:gap-6 max-w-lg mx-auto'>
@@ -104,7 +127,6 @@ const GrandOpeningModal = () => {
             </a>
           </div>
 
-          {/* Footer Text */}
           {/* Mobile Close Button */}
           <button
             onClick={handleClose}
@@ -113,7 +135,7 @@ const GrandOpeningModal = () => {
             Close
           </button>
           <p className='mt-4 text-sm text-gray-500 hidden md:block'>
-            Click anywhere outside to close • Won't show again for 7 days
+            Click anywhere outside to close • Won't show again for {settings.grand_opening_dismiss_days} days
           </p>
         </div>
       </div>

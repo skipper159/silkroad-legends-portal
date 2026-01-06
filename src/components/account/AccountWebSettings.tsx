@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import TwoFactorSetup from './TwoFactorSetup';
 
 interface AccountWebSettingsProps {
   userData: {
@@ -16,108 +17,105 @@ interface AccountWebSettingsProps {
 
 const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
   const [email, setEmail] = useState(userData.email);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { toast } = useToast();
 
   const handleEmailChange = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
       toast({
-        title: "Password Required",
-        description: "Please enter your current password to change email",
-        variant: "destructive"
+        title: 'Password Required',
+        description: 'Please enter your current password to change email',
+        variant: 'destructive',
       });
       return;
     }
 
     // Mock API call - will be replaced with actual API call later
     toast({
-      title: "Email Updated",
-      description: "Your email has been successfully updated",
+      title: 'Email Updated',
+      description: 'Your email has been successfully updated',
     });
-    setCurrentPassword("");
+    setCurrentPassword('');
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
       toast({
-        title: "Current Password Required",
-        description: "Please enter your current password",
-        variant: "destructive"
+        title: 'Current Password Required',
+        description: 'Please enter your current password',
+        variant: 'destructive',
       });
       return;
     }
 
     if (newPassword !== confirmPassword) {
       toast({
-        title: "Password Mismatch",
-        description: "New passwords do not match",
-        variant: "destructive"
+        title: 'Password Mismatch',
+        description: 'New passwords do not match',
+        variant: 'destructive',
       });
       return;
     }
 
     if (newPassword.length < 8) {
       toast({
-        title: "Password Too Short",
-        description: "New password must be at least 8 characters long",
-        variant: "destructive"
+        title: 'Password Too Short',
+        description: 'New password must be at least 8 characters long',
+        variant: 'destructive',
       });
       return;
     }
 
     // Mock API call - will be replaced with actual API call later
     toast({
-      title: "Password Updated",
-      description: "Your password has been successfully changed",
+      title: 'Password Updated',
+      description: 'Your password has been successfully changed',
     });
-    
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       <div>
-        <h2 className="text-2xl font-bold font-cinzel text-lafftale-gold mb-6">Web Account Settings</h2>
-        
-        <Card className="bg-lafftale-darkgray border-lafftale-gold/30">
+        <h2 className='text-2xl font-bold font-cinzel text-lafftale-gold mb-6'>Web Account Settings</h2>
+
+        <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
           <CardHeader>
-            <CardTitle className="text-lafftale-gold">Change Email Address</CardTitle>
+            <CardTitle className='text-lafftale-gold'>Change Email Address</CardTitle>
             <CardDescription>Update the email address associated with your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleEmailChange} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">New Email Address</Label>
+            <form onSubmit={handleEmailChange} className='space-y-4'>
+              <div className='space-y-2'>
+                <Label htmlFor='email'>New Email Address</Label>
                 <Input
-                  id="email"
-                  type="email"
+                  id='email'
+                  type='email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-lafftale-dark/70 border-lafftale-gold/20"
+                  className='bg-lafftale-dark/70 border-lafftale-gold/20'
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="current-password-email">Current Password</Label>
+              <div className='space-y-2'>
+                <Label htmlFor='current-password-email'>Current Password</Label>
                 <Input
-                  id="current-password-email"
-                  type="password"
+                  id='current-password-email'
+                  type='password'
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="bg-lafftale-dark/70 border-lafftale-gold/20"
+                  className='bg-lafftale-dark/70 border-lafftale-gold/20'
                   required
                 />
               </div>
-              <Button 
-                type="submit"
-                className="bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark"
-              >
+              <Button type='submit' className='bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'>
                 Update Email
               </Button>
             </form>
@@ -125,55 +123,55 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
         </Card>
       </div>
 
-      <Card className="bg-lafftale-darkgray border-lafftale-gold/30">
+      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className="text-lafftale-gold">Change Password</CardTitle>
+          <CardTitle className='text-lafftale-gold'>Change Password</CardTitle>
           <CardDescription>Update your account password</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
+          <form onSubmit={handlePasswordChange} className='space-y-4'>
+            <div className='space-y-2'>
+              <Label htmlFor='current-password'>Current Password</Label>
               <Input
-                id="current-password"
-                type="password"
+                id='current-password'
+                type='password'
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="bg-lafftale-dark/70 border-lafftale-gold/20"
+                className='bg-lafftale-dark/70 border-lafftale-gold/20'
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='new-password'>New Password</Label>
               <Input
-                id="new-password"
-                type="password"
+                id='new-password'
+                type='password'
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="bg-lafftale-dark/70 border-lafftale-gold/20"
+                className='bg-lafftale-dark/70 border-lafftale-gold/20'
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='confirm-password'>Confirm New Password</Label>
               <Input
-                id="confirm-password"
-                type="password"
+                id='confirm-password'
+                type='password'
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="bg-lafftale-dark/70 border-lafftale-gold/20"
+                className='bg-lafftale-dark/70 border-lafftale-gold/20'
                 required
               />
             </div>
-            <Button 
-              type="submit"
-              className="bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark"
-            >
+            <Button type='submit' className='bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'>
               Change Password
             </Button>
           </form>
         </CardContent>
       </Card>
+
+      {/* Two-Factor Authentication */}
+      <TwoFactorSetup />
     </div>
   );
 };

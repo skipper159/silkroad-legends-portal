@@ -9,7 +9,6 @@ import DownloadsManager from '@/components/admin/DownloadsManager';
 import VoucherManager from '@/components/admin/VoucherManager';
 import VotesManager from '@/components/admin/VotesManager';
 import ReferralManager from '@/components/admin/ReferralManager';
-import FooterLinksManager from '@/components/admin/FooterLinksManager';
 import UserRolesManager from '@/components/admin/UserRolesManager';
 import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
 import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
@@ -24,7 +23,6 @@ import {
   Gift,
   Vote,
   UserPlus,
-  FileText,
   Shield,
   Coins,
   Settings,
@@ -137,14 +135,6 @@ const AdminDashboard = () => {
                   <span className='sm:hidden'>Ref</span>
                 </TabsTrigger>
                 <TabsTrigger
-                  value='pages'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
-                >
-                  <FileText size={16} />
-                  <span className='hidden sm:inline'>Footer Links</span>
-                  <span className='sm:hidden'>Links</span>
-                </TabsTrigger>
-                <TabsTrigger
                   value='settings'
                   className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
                 >
@@ -190,10 +180,6 @@ const AdminDashboard = () => {
 
               <TabsContent value='referrals' className='mt-0'>
                 <ReferralManager />
-              </TabsContent>
-
-              <TabsContent value='pages' className='mt-0'>
-                <FooterLinksManager />
               </TabsContent>
 
               <TabsContent value='settings' className='mt-0'>

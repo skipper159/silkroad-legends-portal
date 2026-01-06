@@ -270,4 +270,44 @@ router.get('/users/statistics', authenticateToken, verifyAdmin, async (req, res)
   }
 });
 
+// Reset user 2FA (admin action for support tickets)
+router.post('/users/:id/reset-2fa', authenticateToken, verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pool = await getWebDb();
+
+    // Check if user exists and has 2FA enabled
+    const userResult = await pool
+      .request()
+      .input('id', sql.BigInt, id)
+      .query('SELECT id, username, totp_enabled FROM users WHERE id = @id');
+
+    if (userResult.recordset.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const user = userResult.recordset[0];
+
+    if (!user.totp_enabled) {
+      return res.status(400).json({ error: 'User does not have 2FA enabled' });
+    }
+
+    // Disable 2FA and clear secret
+    await pool
+      .request()
+      .input('id', sql.BigInt, id)
+      .query('UPDATE users SET totp_enabled = 0, totp_secret = NULL WHERE id = @id');
+
+    console.log(`Admin ${req.user.username} reset 2FA for user ${user.username} (ID: ${id})`);
+
+    res.json({
+      success: true,
+      message: `Two-Factor Authentication reset for user ${user.username}`,
+    });
+  } catch (err) {
+    console.error('Error resetting user 2FA:', err);
+    res.status(500).json({ error: 'Failed to reset user 2FA' });
+  }
+});
+
 module.exports = router;

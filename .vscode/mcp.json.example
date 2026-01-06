@@ -1,0 +1,60 @@
+{
+  "servers": {
+    "mssql-cms": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Path\\To\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "localhost",
+        "DATABASE_NAME": "SRO_CMS",
+        "USERNAME": "sa",
+        "PASSWORD": "your_secure_password",
+        "READONLY": "false"
+      }
+    },
+    "mssql-account": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Path\\To\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "localhost",
+        "DATABASE_NAME": "SILKROAD_R_ACCOUNT",
+        "USERNAME": "sa",
+        "PASSWORD": "your_secure_password",
+        "READONLY": "false"
+      }
+    },
+    "mssql-shard": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Path\\To\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "localhost",
+        "DATABASE_NAME": "SILKROAD_R_SHARD",
+        "USERNAME": "sa",
+        "PASSWORD": "your_secure_password",
+        "READONLY": "true"
+      }
+    },
+    "mssql-log": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Path\\To\\SQL-AI-samples\\MssqlMcp\\Node\\dist\\index.js"
+      ],
+      "env": {
+        "SERVER_NAME": "localhost",
+        "DATABASE_NAME": "SILKROAD_R_SHARD_LOG",
+        "USERNAME": "sa",
+        "PASSWORD": "your_secure_password",
+        "READONLY": "true"
+      }
+    }
+  }
+}

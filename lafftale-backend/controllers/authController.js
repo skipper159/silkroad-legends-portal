@@ -636,6 +636,25 @@ async function loginUser(req, res) {
       });
     }
 
+    // ✅ TWO-FACTOR AUTHENTICATION CHECK
+    // If 2FA is enabled, return temp token instead of full JWT
+    if (user.recordset[0].totp_enabled) {
+      const tempToken = jwt.sign(
+        {
+          id: user.recordset[0].id,
+          requires2FA: true,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '5m' } // Short-lived token for 2FA verification
+      );
+
+      return res.json({
+        requires2FA: true,
+        tempToken: tempToken,
+        message: 'Please enter your 2FA code',
+      });
+    }
+
     // Update last login time (updated_at field)
     await pool
       .request()

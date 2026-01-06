@@ -1,11 +1,23 @@
 import { useState } from 'react';
 import { Cookie, Settings, Shield } from 'lucide-react';
 import { useCookieConsent } from '@/context/CookieConsentContext';
+import { useWebSettings } from '@/hooks/useWebSettings';
 import CookieSettingsModal from '@/components/CookieSettingsModal';
 
 const CookieBanner = () => {
   const { preferences, acceptAll, declineAll } = useCookieConsent();
+  const { settings, loading } = useWebSettings();
   const [showSettings, setShowSettings] = useState(false);
+
+  // Don't show banner while loading settings
+  if (loading) {
+    return null;
+  }
+
+  // Don't show banner if cookie consent is disabled in admin settings
+  if (!settings.cookie_consent_enabled) {
+    return null;
+  }
 
   // Don't show banner if user has already made a choice
   if (preferences.hasConsent) {

@@ -189,6 +189,25 @@
     },
     "/api/upload/image/{filename}": {
       "$ref": "./paths/admin/upload.json#/api/upload/image/{filename}"
+    },
+
+    "/api/2fa/status": {
+      "$ref": "./paths/auth/twoFactor.json#/status"
+    },
+    "/api/2fa/setup": {
+      "$ref": "./paths/auth/twoFactor.json#/setup"
+    },
+    "/api/2fa/verify": {
+      "$ref": "./paths/auth/twoFactor.json#/verify"
+    },
+    "/api/2fa/disable": {
+      "$ref": "./paths/auth/twoFactor.json#/disable"
+    },
+    "/api/2fa/login": {
+      "$ref": "./paths/auth/twoFactor.json#/login"
+    },
+    "/api/admin/users/{id}/reset-2fa": {
+      "$ref": "./paths/auth/twoFactor.json#/adminReset"
     }
   }
 }

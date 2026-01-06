@@ -111,6 +111,7 @@ app.use('/api/admin/referrals', require('./routes/admin_referrals'));
 app.use('/api/admin/silk', require('./routes/adminSilk'));
 app.use('/api/admin/cron', require('./routes/adminCron'));
 app.use('/api/user-roles', require('./routes/user-roles'));
+app.use('/api/2fa', require('./routes/twoFactor'));
 
 // TEMPORARY: Migration endpoints (remove after migration complete)
 const migrationController = require('./controllers/migrationController');
