@@ -180,7 +180,7 @@ const News = () => {
                               className='w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110'
                               onError={(e) => {
                                 // Fallback if image fails to load
-                                (e.target as HTMLImageElement).src = '/image/Web/news-placeholder.png';
+                                (e.target as HTMLImageElement).src = '/placeholder.svg';
                               }}
                             />
                             <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 z-20'>
