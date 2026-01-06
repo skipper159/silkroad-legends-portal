@@ -68,6 +68,7 @@ BEGIN
         [slug] nvarchar(255) NOT NULL,
         [content] ntext NOT NULL,
         [image] nvarchar(255) NULL,
+        [excerpt] nvarchar(500) NULL,
         [category] nvarchar(100) NULL,
         [active] bit NOT NULL DEFAULT 1,
         [featured] bit NOT NULL DEFAULT 0,
@@ -1083,3 +1084,43 @@ PRINT '';
 PRINT 'Next step: Run 03_seed_data.sql for sample data';
 PRINT '============================================';
 GO
+- -   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+ - -   S I L K R O A D   L E G E N D S   P O R T A L   -   D A T A B A S E   U P D A T E  
+ - -   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+ - -   P a r t   6 :   C r e a t e   S i t e   M o d a l s   T a b l e  
+ - -   F o r   m a n a g i n g   d y n a m i c   e v e n t   p o p u p s / m o d a l s   v i a   A d m i n   P a n e l  
+ - -   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+  
+ U S E   S R O _ C M S ;  
+ G O  
+  
+ I F   N O T   E X I S T S   ( S E L E C T   *   F R O M   s y s . o b j e c t s   W H E R E   o b j e c t _ i d   =   O B J E C T _ I D ( N ' [ d b o ] . [ s i t e _ m o d a l s ] ' )   A N D   t y p e   i n   ( N ' U ' ) )  
+ B E G I N  
+         C R E A T E   T A B L E   [ d b o ] . [ s i t e _ m o d a l s ]   (  
+                 [ i d ]   i n t   I D E N T I T Y ( 1 , 1 )   N O T   N U L L ,  
+                 [ t i t l e ]   n v a r c h a r ( 2 5 5 )   N O T   N U L L ,  
+                 [ c o n t e n t ]   n v a r c h a r ( M A X )   N U L L ,  
+                 [ i m a g e _ u r l ]   n v a r c h a r ( 5 0 0 )   N U L L ,  
+                 [ b u t t o n _ t e x t ]   n v a r c h a r ( 1 0 0 )   N U L L ,  
+                 [ b u t t o n _ u r l ]   n v a r c h a r ( 5 0 0 )   N U L L ,  
+                 [ s t a r t _ d a t e ]   d a t e t i m e 2 ( 0 )   N U L L ,  
+                 [ e n d _ d a t e ]   d a t e t i m e 2 ( 0 )   N U L L ,  
+                 [ i s _ a c t i v e ]   b i t   N O T   N U L L   D E F A U L T   1 ,  
+                 [ p r i o r i t y ]   i n t   N O T   N U L L   D E F A U L T   0 ,  
+                 [ s h o w _ o n c e ]   b i t   N O T   N U L L   D E F A U L T   1 ,  
+                 [ c r e a t e d _ a t ]   d a t e t i m e 2 ( 0 )   D E F A U L T   G E T D A T E ( ) ,  
+                 [ u p d a t e d _ a t ]   d a t e t i m e 2 ( 0 )   D E F A U L T   G E T D A T E ( ) ,  
+                 C O N S T R A I N T   [ P K _ s i t e _ m o d a l s ]   P R I M A R Y   K E Y   C L U S T E R E D   ( [ i d ]   A S C )  
+         ) ;  
+          
+         C R E A T E   I N D E X   [ i d x _ s i t e _ m o d a l s _ a c t i v e ]   O N   [ s i t e _ m o d a l s ]   ( [ i s _ a c t i v e ] ) ;  
+         C R E A T E   I N D E X   [ i d x _ s i t e _ m o d a l s _ d a t e s ]   O N   [ s i t e _ m o d a l s ]   ( [ s t a r t _ d a t e ] ,   [ e n d _ d a t e ] ) ;  
+          
+         P R I N T   ' ‚ S&   T a b l e   [ s i t e _ m o d a l s ]   c r e a t e d ' ;  
+ E N D  
+ E L S E  
+ B E G I N  
+         P R I N T   ' ‚  π Ô ∏ è   T a b l e   [ s i t e _ m o d a l s ]   a l r e a d y   e x i s t s ' ;  
+ E N D  
+ G O  
+ 
