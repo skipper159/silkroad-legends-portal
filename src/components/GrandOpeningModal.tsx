@@ -4,7 +4,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { getCookie, setCookie } from '@/utils/cookies';
 
 const COOKIE_NAME = 'grand_opening_modal_dismissed';
-const GRAND_OPENING_DATE = new Date('2026-01-01T00:00:00');
+const GRAND_OPENING_DATE = new Date('2026-03-31T00:00:00');
 
 const GrandOpeningModal = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -77,7 +77,7 @@ const GrandOpeningModal = () => {
           <div className='mb-8'>
             <div className='flex items-center justify-center gap-2 mb-4 text-lafftale-bronze'>
               <Calendar size={20} />
-              <span className='font-semibold'>January 1st, 2026</span>
+              <span className='font-semibold'>March 31st, 2026</span>
             </div>
 
             <div className='grid grid-cols-4 gap-3 md:gap-6 max-w-lg mx-auto'>
@@ -105,7 +105,16 @@ const GrandOpeningModal = () => {
           </div>
 
           {/* Footer Text */}
-          <p className='mt-6 text-sm text-gray-500'>Click anywhere outside to close • Won't show again for 7 days</p>
+          {/* Mobile Close Button */}
+          <button
+            onClick={handleClose}
+            className='mt-6 px-6 py-2 bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-colors border border-white/20 text-sm md:hidden'
+          >
+            Close
+          </button>
+          <p className='mt-4 text-sm text-gray-500 hidden md:block'>
+            Click anywhere outside to close • Won't show again for 7 days
+          </p>
         </div>
       </div>
     </div>
