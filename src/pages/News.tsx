@@ -207,7 +207,7 @@ const News = () => {
 
                           <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>
                             {item.content && typeof item.content === 'string'
-                              ? item.content.substring(0, 150) + '...'
+                              ? item.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
                               : 'No content available'}
                           </p>
 

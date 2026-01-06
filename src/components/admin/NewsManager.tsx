@@ -306,18 +306,22 @@ const NewsManager = () => {
                         )}
                       </div>
                       <CardDescription className='text-gray-400'>Slug: /{item.slug}</CardDescription>
-                      <div className='flex items-center gap-4 text-sm text-gray-500 mt-1'>
-                        <span className='flex items-center gap-1'>
-                          <Calendar size={14} />
-                          {formatDate(item.created_at)}
-                        </span>
-                        {item.image && (
-                          <span className='flex items-center gap-1'>
-                            <ImageIcon size={14} />
-                            Bild
-                          </span>
-                        )}
-                      </div>
+                      {item.image && (
+                        <div className='relative w-16 h-10 rounded overflow-hidden border border-gray-700'>
+                          <img
+                            src={item.image.startsWith('http') ? item.image : `${weburl}${item.image}`}
+                            alt={item.title}
+                            className='w-full h-full object-cover'
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder.svg';
+                            }}
+                          />
+                        </div>
+                      )}
+                      <span className='flex items-center gap-1'>
+                        <Calendar size={14} />
+                        {formatDate(item.created_at)}
+                      </span>
                     </div>
                     <div className='flex items-center gap-2'>
                       <Button variant='outline' size='sm' onClick={() => startEditing(item)}>

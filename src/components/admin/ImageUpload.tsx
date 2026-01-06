@@ -151,7 +151,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
         >
           <Upload className='h-12 w-12 mx-auto mb-4 text-gray-400' />
           <p className='text-lg mb-2'>{uploading ? 'Uploading...' : 'Drop images here or click'}</p>
-          <p className='text-sm text-gray-400'>JPG, PNG, WebP, GIF bis 5MB</p>
+          <p className='text-sm text-gray-400'>JPG, PNG, WebP, GIF bis 50MB</p>
 
           <input
             ref={fileInputRef}

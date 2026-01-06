@@ -9,5 +9,10 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   return fetch(url, { ...options, headers });
 };
 
-export const weburl = import.meta.env.VITE_API_weburl;
-export const webUrl = import.meta.env.VITE_API_webURL;
+// Unified weburl export with fallback
+const defaultUrl = import.meta.env.DEV
+  ? 'http://localhost:3000'
+  : 'https://backend.lafftale.online';
+export const weburl =
+  import.meta.env.VITE_API_weburl || import.meta.env.VITE_API_webURL || defaultUrl;
+export const webUrl = weburl;

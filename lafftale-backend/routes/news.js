@@ -134,7 +134,7 @@ router.get('/admin/all', verifyToken, verifyAdmin, async (req, res) => {
       .request()
       .input('offset', sql.Int, offset)
       .input('limit', sql.Int, limit).query(`
-        SELECT id, title, slug, category, image, active, created_at, updated_at, featured, views
+        SELECT id, title, slug, category, image, active, created_at, updated_at, featured, views, content
         FROM news 
         ORDER BY created_at DESC
         OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
