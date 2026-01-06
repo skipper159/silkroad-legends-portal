@@ -99,56 +99,92 @@ router.get('/gameaccounts', async (req, res) => {
 
     console.log('Game accounts query result:', userAccounts.recordset.length, 'records found');
 
-    // Get character data with guild information
-    await charPoolConnect;
-    console.log('Connected to char database');
+    // Get JIDs for efficient querying
+    const jids = userAccounts.recordset.map((u) => u.JID);
 
-    const characters = await charPool.request().query(
-      `SELECT c.CharID, c.CharName16, c.RefObjID, c.GuildID
-       FROM _Char c`
-    );
+    if (jids.length > 0) {
+      // Get character data for these accounts
+      // Use logic from characters.js: TB_User(JID) -> _User(UserJID) -> _Char(CharID)
+      await charPoolConnect;
 
-    // Get guild information
-    const guilds = await charPool.request().query(
-      `SELECT g.ID as GuildID, g.Name as GuildName
-       FROM _Guild g`
-    );
+      const jidList = jids.join(',');
 
-    console.log('Characters query result:', characters.recordset.length, 'records found');
-    console.log('Guilds query result:', guilds.recordset.length, 'records found');
+      // Get all characters for these accounts
+      const charsResult = await charPool.request().query(`
+        SELECT u.UserJID, c.CharID, c.CharName16, c.RefObjID, c.GuildID, c.CurLevel
+        FROM _User u
+        JOIN _Char c ON u.CharID = c.CharID
+        WHERE u.UserJID IN (${jidList}) AND c.Deleted = 0
+      `);
 
-    const combined = userAccounts.recordset.map((acc) => {
-      // Find character for this account
-      const character = characters.recordset.find((c) => c.CharID === acc.JID) || {};
-      const guild = guilds.recordset.find((g) => g.GuildID === character.GuildID) || {};
+      // Find relevant guilds
+      const guildIds = [
+        ...new Set(charsResult.recordset.map((c) => c.GuildID).filter((id) => id > 0)),
+      ];
+      let guildsMap = {};
 
-      return {
-        GameAccountId: acc.JID,
-        Username: acc.Username,
-        CharName16: character.CharName16 || null,
-        CharID: character.CharID || null,
-        GuildID: character.GuildID || null,
-        GuildName: guild.GuildName || null,
-        JobType: character.RefObjID || null,
-        JobName: null, // Would need RefObjCommon lookup
-        REG_IP: acc.UserIP || null,
-        RegTime: acc.VisitDate || null,
-        AccPlayTime: acc.AccPlayTime || '0',
-        IsBanned: false, // Would need ban table lookup
-        TimeoutUntil: null, // Would need timeout table lookup
-      };
-    });
+      if (guildIds.length > 0) {
+        const guildList = guildIds.join(',');
+        const guildsResult = await charPool.request().query(`
+          SELECT ID, Name FROM _Guild WHERE ID IN (${guildList})
+        `);
 
-    res.json({
-      data: combined,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(totalCount / limit),
-        totalCount: totalCount,
-        hasNext: page < Math.ceil(totalCount / limit),
-        hasPrev: page > 1,
-      },
-    });
+        guildsResult.recordset.forEach((g) => {
+          guildsMap[g.ID] = g.Name;
+        });
+      }
+
+      // Group chars by UserJID and find main char (highest level)
+      const charsByJid = {};
+      charsResult.recordset.forEach((c) => {
+        if (!charsByJid[c.UserJID] || c.CurLevel > charsByJid[c.UserJID].CurLevel) {
+          charsByJid[c.UserJID] = c;
+        }
+      });
+
+      const combined = userAccounts.recordset.map((acc) => {
+        const character = charsByJid[acc.JID] || {};
+
+        return {
+          GameAccountId: acc.JID,
+          Username: acc.Username,
+          CharName16: character.CharName16 || null,
+          CharID: character.CharID || null,
+          GuildID: character.GuildID || null,
+          GuildName: character.GuildID ? guildsMap[character.GuildID] || null : null,
+          JobType: character.RefObjID || null,
+          JobName: null,
+          REG_IP: acc.UserIP || null,
+          RegTime: acc.VisitDate || null,
+          AccPlayTime: acc.AccPlayTime || '0',
+          IsBanned: false,
+          TimeoutUntil: null,
+        };
+      });
+
+      res.json({
+        data: combined,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalCount / limit),
+          totalCount: totalCount,
+          hasNext: page < Math.ceil(totalCount / limit),
+          hasPrev: page > 1,
+        },
+      });
+    } else {
+      // Return empty if no accounts found
+      res.json({
+        data: [],
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalCount / limit),
+          totalCount: totalCount,
+          hasNext: page < Math.ceil(totalCount / limit),
+          hasPrev: page > 1,
+        },
+      });
+    }
   } catch (err) {
     console.error('Error fetching game accounts:', err);
     res.status(500).json({
