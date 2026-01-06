@@ -23,14 +23,14 @@ jobs:
             --exclude 'node_modules' \
             --exclude '.env' \
             --exclude 'public/uploads' \
-            lafftale-backend/ /home/lafftale-backend/htdocs/backend.lafftale.online/
+            lafftale-backend/ ${{ secrets.DEPLOY_HOST_BACKEND }}
 
       - name: Install production dependencies
-        working-directory: /home/lafftale-backend/htdocs/backend.lafftale.online
+        working-directory: ${{ secrets.DEPLOY_HOST_BACKEND }}
         run: npm ci --production
 
       - name: Restart PM2 service
-        run: pm2 restart lafftale-api || pm2 start /home/lafftale-backend/htdocs/backend.lafftale.online/app.js --name lafftale-api
+        run: pm2 restart ${{ secrets.PM2_SERVICE_NAME }} || pm2 start ${{ secrets.DEPLOY_HOST_BACKEND }}app.js --name ${{ secrets.PM2_SERVICE_NAME }}
 
       - name: Deployment complete
         run: echo "✅ Backend deployed and PM2 restarted"

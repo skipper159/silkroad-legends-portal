@@ -29,12 +29,12 @@ jobs:
       - name: Build frontend
         run: npm run build
         env:
-          VITE_API_baseurl: https://backend.lafftale.online
-          VITE_API_weburl: https://backend.lafftale.online
-          VITE_ASSETS_weburl: https://lafftale.online
+          VITE_API_baseurl: ${{ secrets.API_BASE_URL }}
+          VITE_API_weburl: ${{ secrets.API_BASE_URL }}
+          VITE_ASSETS_weburl: ${{ secrets.APP_URL }}
 
       - name: Deploy to production
-        run: rsync -av --delete dist/ /home/lafftale/htdocs/lafftale.online/
+        run: rsync -av --delete dist/ ${{ secrets.DEPLOY_HOST_FRONTEND }}
 
       - name: Deployment complete
         run: echo "✅ Frontend deployed to lafftale.online"
