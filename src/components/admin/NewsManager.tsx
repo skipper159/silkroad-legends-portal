@@ -38,6 +38,7 @@ interface NewsItem {
   updated_at: string;
   featured?: boolean;
   views?: number;
+  excerpt?: string;
 }
 
 // Form data interface
@@ -47,6 +48,7 @@ interface NewsFormData {
   content: string;
   category: string;
   image: string;
+  excerpt: string;
   active: boolean;
 }
 
@@ -61,6 +63,7 @@ const NewsManager = () => {
     content: '',
     category: 'Update',
     image: '',
+    excerpt: '',
     active: false,
   });
 
@@ -185,6 +188,7 @@ const NewsManager = () => {
       content: '',
       category: 'Update',
       image: '',
+      excerpt: '',
       active: false,
     });
     setEditingNews(null);
@@ -199,6 +203,7 @@ const NewsManager = () => {
       content: newsItem.content,
       category: newsItem.category,
       image: newsItem.image || '',
+      excerpt: newsItem.excerpt || '',
       active: newsItem.active,
     });
     setActiveTab('form');
@@ -391,6 +396,17 @@ const NewsManager = () => {
                     placeholder='enter-url-slug'
                   />
                 </div>
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='excerpt'>Short Description / Excerpt (Optional)</Label>
+                <Textarea
+                  id='excerpt'
+                  value={formData.excerpt}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
+                  placeholder='Brief summary shown in the news list. If empty, content will be used.'
+                  rows={3}
+                />
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>

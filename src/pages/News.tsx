@@ -13,6 +13,7 @@ interface NewsItem {
   title: string;
   slug: string;
   content: string;
+  excerpt?: string;
   category: string;
   image?: string;
   active: boolean;
@@ -205,8 +206,10 @@ const News = () => {
                             {item.title}
                           </h3>
 
-                          <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>
-                            {item.content && typeof item.content === 'string'
+                          <p className='text-gray-400 mb-4 line-clamp-3 group-hover:text-gray-300 transition-colors duration-300'>
+                            {item.excerpt
+                              ? item.excerpt
+                              : item.content && typeof item.content === 'string'
                               ? item.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
                               : 'No content available'}
                           </p>

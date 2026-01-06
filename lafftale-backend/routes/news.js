@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     const request = pool.request().input('offset', sql.Int, offset).input('limit', sql.Int, limit);
 
     let query = `
-      SELECT id, title, slug, category, image, created_at, updated_at, content, featured, views
+      SELECT id, title, slug, category, image, created_at, updated_at, content, featured, views, excerpt
       FROM news 
       WHERE active = 1
     `;
@@ -134,7 +134,7 @@ router.get('/admin/all', verifyToken, verifyAdmin, async (req, res) => {
       .request()
       .input('offset', sql.Int, offset)
       .input('limit', sql.Int, limit).query(`
-        SELECT id, title, slug, category, image, active, created_at, updated_at, featured, views, content
+        SELECT id, title, slug, category, image, active, created_at, updated_at, featured, views, content, excerpt
         FROM news 
         ORDER BY created_at DESC
         OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
@@ -195,13 +195,14 @@ router.post('/admin', verifyToken, verifyAdmin, async (req, res) => {
       .input('content', sql.Text, content)
       .input('category', sql.NVarChar, category)
       .input('image', sql.NVarChar, image || null)
+      .input('excerpt', sql.NVarChar, req.body.excerpt || null)
       .input('active', sql.Bit, active || false)
       .input('createdAt', sql.DateTime, new Date())
       .input('updatedAt', sql.DateTime, new Date())
       .input('publishedAt', sql.DateTime, active ? new Date() : new Date()).query(`
-        INSERT INTO news (author_id, title, slug, content, category, image, active, created_at, updated_at, published_at)
+        INSERT INTO news (author_id, title, slug, content, category, image, excerpt, active, created_at, updated_at, published_at)
         OUTPUT INSERTED.id
-        VALUES (@authorId, @title, @slug, @content, @category, @image, @active, @createdAt, @updatedAt, @publishedAt)
+        VALUES (@authorId, @title, @slug, @content, @category, @image, @excerpt, @active, @createdAt, @updatedAt, @publishedAt)
       `);
 
     res.status(201).json({
@@ -260,6 +261,11 @@ router.put('/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
     if (image !== undefined) {
       updateFields.push('image = @image');
       request.input('image', sql.NVarChar, image);
+    }
+
+    if (req.body.excerpt !== undefined) {
+      updateFields.push('excerpt = @excerpt');
+      request.input('excerpt', sql.NVarChar, req.body.excerpt);
     }
 
     if (active !== undefined) {
