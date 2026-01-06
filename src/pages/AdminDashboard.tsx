@@ -9,7 +9,6 @@ import DownloadsManager from '@/components/admin/DownloadsManager';
 import VoucherManager from '@/components/admin/VoucherManager';
 import VotesManager from '@/components/admin/VotesManager';
 import ReferralManager from '@/components/admin/ReferralManager';
-import UserRolesManager from '@/components/admin/UserRolesManager';
 import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
 import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
 import AdminSettings from '@/components/admin/settings/AdminSettings';

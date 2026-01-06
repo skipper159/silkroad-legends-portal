@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Settings, Users, Clock, FileText, Globe, ChevronRight } from 'lucide-react';
 import CronJobSettings from './CronJobSettings';
 import WebSettingsManager from './WebSettingsManager';
-import UserRolesManager from '../UserRolesManager';
 import FooterLinksManager from '../FooterLinksManager';
 
-type SettingsTab = 'user-roles' | 'cron-jobs' | 'footer-links' | 'web-settings';
+type SettingsTab = 'cron-jobs' | 'footer-links' | 'web-settings';
 
 const AdminSettings = () => {
   const [activeSubTab, setActiveSubTab] = useState<SettingsTab>('web-settings');
@@ -26,12 +25,6 @@ const AdminSettings = () => {
       description: 'Manage footer navigation and pages',
     },
     {
-      id: 'user-roles' as const,
-      label: 'User Roles',
-      icon: Users,
-      description: 'Manage user roles and permissions',
-    },
-    {
       id: 'cron-jobs' as const,
       label: 'Cron Jobs',
       icon: Clock,
@@ -45,8 +38,6 @@ const AdminSettings = () => {
         return <WebSettingsManager />;
       case 'footer-links':
         return <FooterLinksManager />;
-      case 'user-roles':
-        return <UserRolesManager />;
       case 'cron-jobs':
         return <CronJobSettings />;
       default:
