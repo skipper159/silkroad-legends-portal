@@ -186,11 +186,11 @@ const SiteModalsManager = () => {
   }
 
   return (
-    <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
-        <div>
-          <h2 className='text-lg font-bold text-white'>Event Modals</h2>
-          <p className='text-gray-400'>Manage popups for events and announcements</p>
+    <Card className='bg-lafftale-dark border-gray-700'>
+      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
+        <div className='space-y-1.5'>
+          <CardTitle className='text-lg font-bold text-white'>Event Modals</CardTitle>
+          <CardDescription className='text-gray-400'>Manage popups for events and announcements</CardDescription>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -205,7 +205,7 @@ const SiteModalsManager = () => {
               New Modal
             </Button>
           </DialogTrigger>
-          <DialogContent className='bg-lafftale-dark border-lafftale-gold/30 max-w-2xl max-h-[90vh] overflow-y-auto'>
+          <DialogContent className='bg-lafftale-dark border-gray-700 max-w-2xl max-h-[90vh] overflow-y-auto'>
             <DialogHeader>
               <DialogTitle className='text-lafftale-gold'>
                 {editingModal ? 'Edit Modal' : 'Create New Modal'}
@@ -331,89 +331,92 @@ const SiteModalsManager = () => {
             </form>
           </DialogContent>
         </Dialog>
-      </div>
-
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {modals.map((modal) => (
-          <Card key={modal.id} className='bg-lafftale-dark border-lafftale-gold/20 overflow-hidden'>
-            {modal.image_url && (
-              <div className='h-32 w-full overflow-hidden bg-black/50'>
-                <img
-                  src={`${weburl}${modal.image_url}`}
-                  alt={modal.title}
-                  className='w-full h-full object-cover opacity-80'
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-              </div>
-            )}
-            <CardHeader className='pb-2'>
-              <div className='flex justify-between items-start'>
-                <CardTitle className='text-white flex items-center gap-2'>
-                  {modal.title}
-                  {!modal.is_active && (
-                    <span className='text-xs bg-red-500/20 text-red-500 px-2 py-0.5 rounded'>Inactive</span>
-                  )}
-                </CardTitle>
-                <span className='text-xs text-lafftale-gold font-mono border border-lafftale-gold/30 px-1 rounded'>
-                  P{modal.priority}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className='pt-2 space-y-4'>
-              <div className='text-sm text-gray-400 space-y-1'>
-                {modal.start_date && (
-                  <div className='flex items-center gap-2'>
-                    <Calendar className='h-3 w-3' />
-                    <span>Starts: {new Date(modal.start_date).toLocaleDateString()}</span>
-                  </div>
-                )}
-                {modal.end_date && (
-                  <div className='flex items-center gap-2'>
-                    <Calendar className='h-3 w-3' />
-                    <span>Ends: {new Date(modal.end_date).toLocaleDateString()}</span>
-                  </div>
-                )}
-                <div className='flex items-center gap-2'>
-                  <Eye className='h-3 w-3' />
-                  <span>Mode: {modal.show_once ? 'Once per day' : 'Always'}</span>
+      </CardHeader>
+      <CardContent>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+          {modals.map((modal) => (
+            <Card key={modal.id} className='bg-black/20 border-gray-700 overflow-hidden'>
+              {modal.image_url && (
+                <div className='h-32 w-full overflow-hidden bg-black/50'>
+                  <img
+                    src={`${weburl}${modal.image_url}`}
+                    alt={modal.title}
+                    className='w-full h-full object-cover opacity-80'
+                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                  />
                 </div>
-                {modal.button_url && (
+              )}
+              <CardHeader className='pb-2 p-4'>
+                <div className='flex justify-between items-start'>
+                  <CardTitle className='text-base text-gray-200 flex items-center gap-2'>
+                    {modal.title}
+                    {!modal.is_active && (
+                      <span className='text-[10px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider'>
+                        Inactive
+                      </span>
+                    )}
+                  </CardTitle>
+                  <span className='text-xs text-gray-400 font-mono border border-gray-700 px-1.5 py-0.5 rounded'>
+                    P{modal.priority}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className='pt-0 p-4 space-y-3'>
+                <div className='text-xs text-gray-500 space-y-1.5'>
+                  {modal.start_date && (
+                    <div className='flex items-center gap-2'>
+                      <Calendar className='h-3 w-3' />
+                      <span>Starts: {new Date(modal.start_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {modal.end_date && (
+                    <div className='flex items-center gap-2'>
+                      <Calendar className='h-3 w-3' />
+                      <span>Ends: {new Date(modal.end_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
                   <div className='flex items-center gap-2'>
-                    <MousePointerClick className='h-3 w-3' />
-                    <span>Has Button</span>
+                    <Eye className='h-3 w-3' />
+                    <span>Mode: {modal.show_once ? 'Once per day' : 'Always'}</span>
                   </div>
-                )}
-              </div>
+                  {modal.button_url && (
+                    <div className='flex items-center gap-2'>
+                      <MousePointerClick className='h-3 w-3' />
+                      <span>Has Button</span>
+                    </div>
+                  )}
+                </div>
 
-              <div className='flex justify-end gap-2 pt-2 border-t border-gray-700/50'>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => openEdit(modal)}
-                  className='h-8 text-blue-400 hover:text-blue-300'
-                >
-                  <Edit className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => handleDelete(modal.id)}
-                  className='h-8 text-red-400 hover:text-red-300 hover:bg-red-900/10'
-                >
-                  <Trash2 className='h-4 w-4' />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className='flex justify-end gap-2 pt-2 border-t border-gray-800'>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => openEdit(modal)}
+                    className='h-7 w-7 p-0 text-blue-400 hover:text-blue-300'
+                  >
+                    <Edit className='h-3.5 w-3.5' />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => handleDelete(modal.id)}
+                    className='h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/10'
+                  >
+                    <Trash2 className='h-3.5 w-3.5' />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
 
-        {!modals.length && (
-          <div className='col-span-full py-12 text-center text-gray-500 bg-lafftale-dark/30 rounded-lg border border-dashed border-gray-700'>
-            No modals found. Create one to get started!
-          </div>
-        )}
-      </div>
-    </div>
+          {!modals.length && (
+            <div className='col-span-full py-12 text-center text-gray-500 bg-black/20 rounded-lg border border-dashed border-gray-700'>
+              No modals found. Create one to get started!
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

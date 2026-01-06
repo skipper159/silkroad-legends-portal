@@ -28,7 +28,7 @@ router.get('/webaccounts', async (req, res) => {
     console.log('Connected to web database');
 
     const result = await pool.request().query(`
-      SELECT u.id, u.username, u.email, u.created_at, u.updated_at, ur.is_admin 
+      SELECT u.id, u.username, u.email, u.created_at, u.updated_at, ur.is_admin, u.totp_enabled
       FROM users u 
       LEFT JOIN user_roles ur ON u.id = ur.user_id
     `);
@@ -43,6 +43,7 @@ router.get('/webaccounts', async (req, res) => {
       RegisteredAt: account.created_at,
       LastLogin: account.updated_at,
       IsAdmin: account.is_admin || false,
+      totp_enabled: account.totp_enabled || false,
     }));
 
     console.log('Transformed data:', transformedData);
