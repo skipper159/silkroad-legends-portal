@@ -290,12 +290,12 @@ const NewsManager = () => {
 
           <div className='grid gap-4'>
             {news.map((item) => (
-              <Card key={item.id} className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+              <Card key={item.id} className='bg-lafftale-dark border-lafftale-gold/30'>
                 <CardHeader className='pb-2'>
                   <div className='flex justify-between items-start'>
                     <div className='flex-1'>
                       <div className='flex items-center gap-2 mb-2'>
-                        <CardTitle className='text-lg text-lafftale-gold'>{item.title}</CardTitle>
+                        <CardTitle className='text-lg text-white'>{item.title}</CardTitle>
                         <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
                           {item.category}
                         </span>
@@ -342,7 +342,7 @@ const NewsManager = () => {
             ))}
 
             {news.length === 0 && (
-              <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+              <Card className='bg-lafftale-dark border-lafftale-gold/30'>
                 <CardContent className='text-center py-10'>
                   <p className='text-gray-400'>No news available.</p>
                   <Button
@@ -350,7 +350,7 @@ const NewsManager = () => {
                       resetForm();
                       setActiveTab('form');
                     }}
-                    className='btn-primary mt-4'
+                    className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze mt-4'
                   >
                     <Plus size={16} className='mr-2' />
                     Erste News erstellen
@@ -362,10 +362,10 @@ const NewsManager = () => {
         </TabsContent>
 
         <TabsContent value='form' className='space-y-6'>
-          <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+          <Card className='bg-lafftale-dark border-lafftale-gold/30'>
             <CardHeader>
-              <CardTitle className='text-lafftale-gold'>{editingNews ? 'Edit News' : 'Create New News'}</CardTitle>
-              <CardDescription>Fill out the fields to create or edit news</CardDescription>
+              <CardTitle className='text-white'>{editingNews ? 'Edit News' : 'Create New News'}</CardTitle>
+              <CardDescription className='text-gray-400'>Fill out the fields to create or edit news</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>

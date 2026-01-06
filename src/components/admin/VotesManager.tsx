@@ -260,11 +260,11 @@ const VotesManager = () => {
           <p className='text-gray-400'>Manage vote sites and rewards</p>
         </div>
       </div>
-      
-      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Vote Sites</CardTitle>
-          <CardDescription>Manage your voting platforms</CardDescription>
+          <CardTitle className='text-white'>Vote Sites</CardTitle>
+          <CardDescription className='text-gray-400'>Manage your voting platforms</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
@@ -281,7 +281,7 @@ const VotesManager = () => {
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className='btn-primary'
+                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
                   onClick={() => {
                     resetForm();
                     setModalOpen(true);
@@ -402,7 +402,11 @@ const VotesManager = () => {
                     <Button type='button' variant='outline' onClick={() => setModalOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type='submit' disabled={loading} className='btn-primary'>
+                    <Button
+                      type='submit'
+                      disabled={loading}
+                      className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                    >
                       {loading ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
                       {editingVote ? 'Update' : 'Add'}
                     </Button>
@@ -412,20 +416,20 @@ const VotesManager = () => {
             </Dialog>
           </div>
 
-          <div className='border rounded-lg'>
+          <div className='border border-lafftale-gold/30 rounded-lg overflow-hidden'>
             <div className='overflow-x-auto'>
               <table className='w-full'>
-                <thead>
-                  <tr className='border-b bg-muted/50'>
-                    <th className='text-left p-4 font-medium'>Site</th>
-                    <th className='text-left p-4 font-medium'>Title</th>
-                    <th className='text-left p-4 font-medium'>Reward</th>
-                    <th className='text-left p-4 font-medium'>Timeout</th>
-                    <th className='text-left p-4 font-medium'>Status</th>
-                    <th className='text-left p-4 font-medium'>Actions</th>
+                <thead className='bg-lafftale-gold/10'>
+                  <tr className='border-b border-lafftale-gold/20'>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Site</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Title</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Reward</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Timeout</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Status</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className='divide-y divide-gray-700/50'>
                   {filteredVotes.length === 0 ? (
                     <tr>
                       <td colSpan={6} className='text-center p-8 text-muted-foreground'>
@@ -434,18 +438,18 @@ const VotesManager = () => {
                     </tr>
                   ) : (
                     filteredVotes.map((vote) => (
-                      <tr key={vote.id} className='border-b hover:bg-muted/50'>
-                        <td className='p-4'>
+                      <tr key={vote.id} className='hover:bg-lafftale-gold/5 transition-colors'>
+                        <td className='p-4 text-gray-300'>
                           <div className='flex items-center gap-3'>
                             {vote.image && <img src={vote.image} alt={vote.site} className='w-8 h-8 rounded' />}
                             <div>
-                              <div className='font-medium'>{vote.site}</div>
-                              <div className='text-sm text-muted-foreground'>
+                              <div className='font-medium text-white'>{vote.site}</div>
+                              <div className='text-sm text-gray-400'>
                                 <a
                                   href={vote.url}
                                   target='_blank'
                                   rel='noopener noreferrer'
-                                  className='flex items-center gap-1 hover:underline'
+                                  className='flex items-center gap-1 hover:underline hover:text-lafftale-gold'
                                 >
                                   <ExternalLink className='h-3 w-3' />
                                   Visit site
@@ -454,19 +458,25 @@ const VotesManager = () => {
                             </div>
                           </div>
                         </td>
-                        <td className='p-4'>
+                        <td className='p-4 text-gray-300'>
                           <div className='font-medium'>{vote.title}</div>
                         </td>
                         <td className='p-4'>
-                          <Badge variant='secondary'>{vote.reward} Points</Badge>
+                          <Badge variant='secondary' className='bg-lafftale-gold/20 text-lafftale-gold'>
+                            {vote.reward} Points
+                          </Badge>
                         </td>
-                        <td className='p-4'>
+                        <td className='p-4 text-gray-300'>
                           <span className='text-sm'>{vote.timeout}h</span>
                         </td>
                         <td className='p-4'>
                           <Badge
                             variant={vote.active ? 'default' : 'secondary'}
-                            className='cursor-pointer'
+                            className={`cursor-pointer ${
+                              vote.active
+                                ? 'bg-green-900/50 text-green-400 hover:bg-green-900'
+                                : 'bg-gray-800 text-gray-400'
+                            }`}
                             onClick={() => toggleActive(vote.id, vote.active)}
                           >
                             {vote.active ? 'Active' : 'Inactive'}
@@ -474,14 +484,19 @@ const VotesManager = () => {
                         </td>
                         <td className='p-4'>
                           <div className='flex gap-2'>
-                            <Button variant='outline' size='sm' onClick={() => openEditModal(vote)}>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => openEditModal(vote)}
+                              className='border-gray-600 hover:bg-gray-800 hover:text-white'
+                            >
                               <Edit className='h-4 w-4' />
                             </Button>
                             <Button
                               variant='outline'
                               size='sm'
                               onClick={() => deleteVote(vote.id)}
-                              className='text-red-600 hover:text-red-700'
+                              className='border-red-900/50 text-red-500 hover:bg-red-950 hover:text-red-400'
                             >
                               <Trash2 className='h-4 w-4' />
                             </Button>

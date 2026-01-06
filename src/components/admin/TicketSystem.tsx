@@ -220,9 +220,9 @@ const TicketSystem = () => {
         </Button>
       </div>
 
-      <Card className='overflow-x-auto border-lafftale-gold/30'>
+      <Card className='overflow-x-auto bg-lafftale-dark border-lafftale-gold/30'>
         <table className='min-w-full text-left text-sm text-gray-300'>
-          <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+          <thead className='bg-lafftale-gold/10 text-lafftale-gold uppercase'>
             <tr>
               <th className='p-3'>Ticket</th>
               <th className='p-3'>Username</th>
@@ -237,7 +237,7 @@ const TicketSystem = () => {
               tickets.map((ticket) => (
                 <tr
                   key={ticket.Id}
-                  className={`border-b border-lafftale-gold/30 hover:bg-lafftale-dark/20 ${
+                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 transition-colors ${
                     ticket.Status === 'closed' ? 'opacity-60' : ''
                   }`}
                 >
@@ -281,7 +281,7 @@ const TicketSystem = () => {
 
       {/* Pagination Controls */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='flex items-center justify-between bg-lafftale-darkgray p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='flex items-center justify-between bg-lafftale-dark p-4 rounded-lg border border-lafftale-gold/30'>
           <p className='text-sm text-gray-400'>
             Showing {(pagination.currentPage - 1) * 10 + 1} to{' '}
             {Math.min(pagination.currentPage * 10, pagination.totalCount)} of {pagination.totalCount} tickets

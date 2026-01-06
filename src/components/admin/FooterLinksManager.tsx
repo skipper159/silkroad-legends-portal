@@ -602,7 +602,7 @@ const FooterLinksManager = () => {
                               alt={link.title}
                               className='w-12 h-12 object-cover rounded'
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/placeholder.png';
+                                (e.target as HTMLImageElement).src = '/placeholder.svg';
                               }}
                             />
                           ) : (

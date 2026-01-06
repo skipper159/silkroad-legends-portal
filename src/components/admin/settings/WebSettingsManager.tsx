@@ -132,7 +132,7 @@ const WebSettingsManager = () => {
   return (
     <div className='space-y-6'>
       {/* Grand Opening Modal Settings */}
-      <Card className='bg-lafftale-dark border-gray-700'>
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardHeader>
           <div className='flex items-center gap-3'>
             <div className='p-2 bg-lafftale-gold/20 rounded-lg'>
@@ -148,7 +148,7 @@ const WebSettingsManager = () => {
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Enable/Disable Toggle */}
-          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray rounded-lg'>
+          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray/50 rounded-lg border border-lafftale-gold/20'>
             <div>
               <Label className='text-white text-base'>Enable Modal</Label>
               <p className='text-sm text-gray-400'>Show the grand opening popup to visitors</p>
@@ -170,7 +170,7 @@ const WebSettingsManager = () => {
               type='date'
               value={settings.grand_opening_date}
               onChange={(e) => setSettings((prev) => ({ ...prev, grand_opening_date: e.target.value }))}
-              className='bg-lafftale-darkgray border-gray-600 text-white max-w-xs'
+              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
             />
             <p className='text-sm text-gray-400'>The countdown will display until this date</p>
           </div>
@@ -192,7 +192,7 @@ const WebSettingsManager = () => {
                   grand_opening_dismiss_days: parseInt(e.target.value) || 7,
                 }))
               }
-              className='bg-lafftale-darkgray border-gray-600 text-white max-w-xs'
+              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
             />
             <p className='text-sm text-gray-400'>How many days until the modal shows again after being dismissed</p>
           </div>
@@ -200,7 +200,7 @@ const WebSettingsManager = () => {
       </Card>
 
       {/* Cookie Consent Settings */}
-      <Card className='bg-lafftale-dark border-gray-700'>
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardHeader>
           <div className='flex items-center gap-3'>
             <div className='p-2 bg-blue-500/20 rounded-lg'>
@@ -216,7 +216,7 @@ const WebSettingsManager = () => {
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Enable/Disable Toggle */}
-          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray rounded-lg'>
+          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray/50 rounded-lg border border-lafftale-gold/20'>
             <div>
               <Label className='text-white text-base'>Enable Cookie Consent</Label>
               <p className='text-sm text-gray-400'>Show cookie consent banner to new visitors</p>
@@ -244,7 +244,7 @@ const WebSettingsManager = () => {
                   cookie_consent_expire_days: parseInt(e.target.value) || 365,
                 }))
               }
-              className='bg-lafftale-darkgray border-gray-600 text-white max-w-xs'
+              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
             />
             <p className='text-sm text-gray-400'>How long to remember the user's cookie preferences</p>
           </div>

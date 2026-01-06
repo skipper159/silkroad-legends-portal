@@ -237,7 +237,7 @@ const VoucherManager: React.FC = () => {
       </div>
 
       {/* Filter und Suche */}
-      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardContent className='pt-6'>
           <div className='flex gap-4'>
             <div className='flex-1'>
@@ -269,10 +269,10 @@ const VoucherManager: React.FC = () => {
 
       {/* Voucher erstellen */}
       {showCreateForm && (
-        <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+        <Card className='bg-lafftale-dark border-lafftale-gold/30'>
           <CardHeader>
-            <CardTitle className='text-lafftale-gold'>Create New Voucher</CardTitle>
-            <CardDescription>Create a new voucher code</CardDescription>
+            <CardTitle className='text-white'>Create New Voucher</CardTitle>
+            <CardDescription className='text-gray-400'>Create a new voucher code</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -357,10 +357,10 @@ const VoucherManager: React.FC = () => {
       )}
 
       {/* Voucher Liste */}
-      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Voucher Overview</CardTitle>
-          <CardDescription>
+          <CardTitle className='text-white'>Voucher Overview</CardTitle>
+          <CardDescription className='text-gray-400'>
             {filteredVouchers.length} von {vouchers.length} Vouchers
           </CardDescription>
         </CardHeader>
@@ -379,13 +379,18 @@ const VoucherManager: React.FC = () => {
               {filteredVouchers.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
+                  className='flex items-center justify-between p-4 border border-lafftale-gold/20 rounded-lg bg-lafftale-gold/5 hover:bg-lafftale-gold/10 transition-colors'
                 >
                   <div className='flex items-center gap-4'>
                     <div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-mono font-bold'>{voucher.code}</span>
-                        <Button size='sm' variant='ghost' onClick={() => copyToClipboard(voucher.code)}>
+                        <span className='font-mono font-bold text-white'>{voucher.code}</span>
+                        <Button
+                          size='sm'
+                          variant='ghost'
+                          onClick={() => copyToClipboard(voucher.code)}
+                          className='text-gray-400 hover:text-white'
+                        >
                           <Copy className='h-3 w-3' />
                         </Button>
                       </div>
@@ -404,14 +409,14 @@ const VoucherManager: React.FC = () => {
                   </div>
                   <div className='flex items-center gap-2'>
                     <div className='text-right'>
-                      <div className='font-bold text-lg'>+{voucher.amount}</div>
+                      <div className='font-bold text-lg text-lafftale-gold'>+{voucher.amount}</div>
                       <div className='text-sm text-gray-500'>{voucher.is_active ? 'Active' : 'Inactive'}</div>
                     </div>
                     <Button
                       size='sm'
                       variant='ghost'
                       onClick={() => handleDeleteVoucher(voucher.id)}
-                      className='text-red-600 hover:text-red-700 hover:bg-red-50'
+                      className='text-red-500 hover:text-red-400 hover:bg-red-950/50'
                     >
                       <Trash2 className='h-4 w-4' />
                     </Button>

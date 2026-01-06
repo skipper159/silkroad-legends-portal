@@ -120,7 +120,12 @@ const GameAccountsList = () => {
 
   return (
     <div className='space-y-6'>
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder='Search by username...' />
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onSearch={handleSearch}
+        placeholder='Search by username...'
+      />
 
       <Card className='overflow-hidden border-lafftale-gold/30 bg-lafftale-dark'>
         <div className='overflow-x-auto'>

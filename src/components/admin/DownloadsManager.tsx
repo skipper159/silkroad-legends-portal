@@ -191,13 +191,15 @@ const DownloadsManager = () => {
 
   return (
     <div className='space-y-6'>
-      <Card>
+      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Download className='h-5 w-5' />
+          <CardTitle className='flex items-center gap-2 text-white'>
+            <div className='p-2 bg-lafftale-gold/20 rounded-lg'>
+              <Download className='h-5 w-5 text-lafftale-gold' />
+            </div>
             Downloads Management
           </CardTitle>
-          <CardDescription>Manage downloads for users</CardDescription>
+          <CardDescription className='text-gray-400'>Manage downloads for users</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
@@ -214,6 +216,7 @@ const DownloadsManager = () => {
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
                 <Button
+                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
                   onClick={() => {
                     resetForm();
                     setModalOpen(true);
@@ -286,18 +289,18 @@ const DownloadsManager = () => {
             </Dialog>
           </div>
 
-          <div className='border rounded-lg'>
+          <div className='border border-lafftale-gold/30 rounded-lg overflow-hidden'>
             <div className='overflow-x-auto'>
               <table className='w-full'>
-                <thead>
-                  <tr className='border-b bg-muted/50'>
-                    <th className='text-left p-4 font-medium'>Title</th>
-                    <th className='text-left p-4 font-medium'>Description</th>
-                    <th className='text-left p-4 font-medium'>Created</th>
-                    <th className='text-left p-4 font-medium'>Actions</th>
+                <thead className='bg-lafftale-gold/10'>
+                  <tr className='border-b border-lafftale-gold/20'>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Title</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Description</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Created</th>
+                    <th className='text-left p-4 font-medium text-lafftale-gold'>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className='divide-y divide-gray-700/50'>
                   {filteredDownloads.length === 0 ? (
                     <tr>
                       <td colSpan={4} className='text-center p-8 text-muted-foreground'>
@@ -306,31 +309,34 @@ const DownloadsManager = () => {
                     </tr>
                   ) : (
                     filteredDownloads.map((download) => (
-                      <tr key={download.id} className='border-b hover:bg-muted/50'>
-                        <td className='p-4'>
-                          <div className='font-medium'>{download.title}</div>
+                      <tr key={download.id} className='hover:bg-lafftale-gold/5 transition-colors'>
+                        <td className='p-4 text-gray-300'>
+                          <div className='font-medium text-white'>{download.title}</div>
                           {download.file_url && (
-                            <div className='text-sm text-muted-foreground truncate max-w-xs'>{download.file_url}</div>
+                            <div className='text-sm text-gray-400 truncate max-w-xs'>{download.file_url}</div>
                           )}
                         </td>
-                        <td className='p-4'>
-                          <div className='text-sm text-muted-foreground max-w-xs truncate'>
-                            {download.description || 'No description'}
-                          </div>
+                        <td className='p-4 text-gray-300'>
+                          <div className='text-sm max-w-xs truncate'>{download.description || 'No description'}</div>
                         </td>
-                        <td className='p-4'>
+                        <td className='p-4 text-gray-300'>
                           <div className='text-sm'>{new Date(download.created_at).toLocaleDateString('en-US')}</div>
                         </td>
                         <td className='p-4'>
                           <div className='flex gap-2'>
-                            <Button variant='outline' size='sm' onClick={() => openEditModal(download)}>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => openEditModal(download)}
+                              className='border-gray-600 hover:bg-gray-800 hover:text-white'
+                            >
                               <Edit className='h-4 w-4' />
                             </Button>
                             <Button
                               variant='outline'
                               size='sm'
                               onClick={() => deleteDownload(download.id)}
-                              className='text-red-600 hover:text-red-700'
+                              className='border-red-900/50 text-red-500 hover:bg-red-950 hover:text-red-400'
                             >
                               <Trash2 className='h-4 w-4' />
                             </Button>

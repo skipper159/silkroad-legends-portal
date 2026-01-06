@@ -72,12 +72,14 @@ router.get('/gameaccounts', async (req, res) => {
 
     // Build WHERE clause for search
     let whereClause = '';
+    const request = accountDb.request();
+
     if (search) {
-      whereClause = `WHERE u.StrUserID LIKE '%${search}%'`;
+      whereClause = 'WHERE u.StrUserID LIKE @searchPattern';
+      request.input('searchPattern', sql.NVarChar, `%${search}%`);
     }
 
-    const accountDb = await getAccountDb();
-    const userAccounts = await accountDb.request().query(
+    const userAccounts = await request.query(
       `SELECT u.JID, u.StrUserID AS Username, u.VisitDate, u.UserIP, u.AccPlayTime
        FROM TB_User u 
        ${whereClause}
@@ -86,9 +88,13 @@ router.get('/gameaccounts', async (req, res) => {
     );
 
     // Get total count for pagination
-    const countResult = await accountDb
-      .request()
-      .query(`SELECT COUNT(*) as total FROM TB_User u ${whereClause}`);
+    const countRequest = accountDb.request();
+    if (search) {
+      countRequest.input('searchPattern', sql.NVarChar, `%${search}%`);
+    }
+    const countResult = await countRequest.query(
+      `SELECT COUNT(*) as total FROM TB_User u ${whereClause}`
+    );
     const totalCount = countResult.recordset[0].total;
 
     console.log('Game accounts query result:', userAccounts.recordset.length, 'records found');
