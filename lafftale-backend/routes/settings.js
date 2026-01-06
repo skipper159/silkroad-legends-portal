@@ -8,7 +8,7 @@ const { pool, poolConnect, sql } = require('../db');
 router.get('/', async (req, res) => {
   await poolConnect;
   try {
-    const result = await pool.request().query('SELECT * FROM settings ORDER BY key');
+    const result = await pool.request().query('SELECT * FROM settings ORDER BY [key]');
 
     // Convert to key-value object for easier frontend handling
     const settings = {};
