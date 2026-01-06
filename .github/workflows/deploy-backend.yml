@@ -1,0 +1,36 @@
+name: Deploy Backend
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lafftale-backend/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync backend files
+        run: |
+          rsync -av --delete \
+            --exclude 'node_modules' \
+            --exclude '.env' \
+            --exclude 'public/uploads' \
+            lafftale-backend/ /home/lafftale-backend/htdocs/backend.lafftale.online/
+
+      - name: Install production dependencies
+        working-directory: /home/lafftale-backend/htdocs/backend.lafftale.online
+        run: npm ci --production
+
+      - name: Restart PM2 service
+        run: pm2 restart lafftale-api || pm2 start /home/lafftale-backend/htdocs/backend.lafftale.online/app.js --name lafftale-api
+
+      - name: Deployment complete
+        run: echo "✅ Backend deployed and PM2 restarted"
