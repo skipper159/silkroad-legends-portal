@@ -13,7 +13,7 @@ router.get('/users', authenticateToken, verifyAdmin, async (req, res) => {
 
     let query = `
       SELECT u.id, u.username, u.email, u.is_admin, u.is_active, 
-             u.created_at, u.updated_at, u.last_login, u.jid,
+             u.created_at, u.updated_at, u.last_login, u.jid, u.totp_enabled,
              COUNT(*) OVER() as total_count
       FROM users u
       WHERE 1=1

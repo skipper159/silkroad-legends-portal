@@ -87,6 +87,7 @@ app.use('/api/metrics', require('./routes/metrics'));
 app.use('/api/characters', require('./routes/characters'));
 app.use('/api/character', require('./routes/character/publicCharacter'));
 app.use('/api/unique-kills', require('./routes/uniqueKills'));
+app.use('/api/modals', require('./routes/siteModals'));
 app.use('/api/guild', require('./routes/guild/guildOverview'));
 app.use('/api/characterdetails', require('./routes/characterdetails'));
 app.use('/api/silk', require('./routes/silk'));

@@ -45,6 +45,7 @@
       "Page": { "$ref": "./components/schemas/cms.json#/Page" },
       "Download": { "$ref": "./components/schemas/cms.json#/Download" },
       "Vote": { "$ref": "./components/schemas/cms.json#/Vote" },
+      "SiteModal": { "$ref": "./components/schemas/cms.json#/SiteModal" },
 
       "UserRole": { "$ref": "./components/schemas/auth.json#/UserRole" },
       "LoginRequest": {
@@ -190,6 +191,10 @@
     "/api/upload/image/{filename}": {
       "$ref": "./paths/admin/upload.json#/api/upload/image/{filename}"
     },
+
+    "/api/modals": { "$ref": "./paths/admin/modals.json#/root" },
+    "/api/modals/{id}": { "$ref": "./paths/admin/modals.json#/byId" },
+    "/api/modals/active": { "$ref": "./paths/admin/modals.json#/active" },
 
     "/api/2fa/status": {
       "$ref": "./paths/auth/twoFactor.json#/status"

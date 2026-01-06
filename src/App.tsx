@@ -17,6 +17,7 @@ import ResendVerification from './pages/ResendVerification';
 import CharacterOverview from './components/CharacterOverview';
 import GuildOverview from './components/GuildOverview';
 import GrandOpeningModal from './components/GrandOpeningModal';
+import GlobalEventModal from './components/GlobalEventModal';
 import CookieBanner from './components/CookieBanner';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { AuthProvider } from './context/AuthContext';
@@ -37,6 +38,7 @@ function App() {
       <CookieConsentProvider>
         <BrowserRouter>
           <GrandOpeningModal />
+          <GlobalEventModal />
           <CookieBanner />
           <Routes>
             {' '}

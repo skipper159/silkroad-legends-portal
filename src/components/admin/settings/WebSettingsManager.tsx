@@ -8,6 +8,7 @@ import { Loader2, Save, PartyPopper, Cookie, Calendar } from 'lucide-react';
 import { weburl } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import SiteModalsManager from './SiteModalsManager';
 
 interface WebSettings {
   grand_opening_enabled: boolean;
@@ -249,6 +250,9 @@ const WebSettingsManager = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dynamic Event Modals */}
+      <SiteModalsManager />
 
       {/* Save Button */}
       <div className='flex justify-end'>

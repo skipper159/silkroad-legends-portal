@@ -658,6 +658,68 @@
           }
         }
       },
+      "SiteModal": {
+        "type": "object",
+        "description": "Dynamic event modal/popup",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Modal ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "Modal title"
+          },
+          "content": {
+            "type": "string",
+            "description": "HTML content"
+          },
+          "image_url": {
+            "type": "string",
+            "description": "Optional image URL"
+          },
+          "button_text": {
+            "type": "string",
+            "description": "Action button text"
+          },
+          "button_url": {
+            "type": "string",
+            "description": "Action button URL"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true
+          },
+          "priority": {
+            "type": "integer",
+            "default": 0
+          },
+          "show_once": {
+            "type": "boolean",
+            "default": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
       "PaginationInfo": {
         "type": "object",
         "description": "Pagination metadata for API responses",
@@ -3617,6 +3679,241 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "root": {
+      "get": {
+        "summary": "Get All Modals",
+        "description": "Retrieve a list of all site modals (Admin only)",
+        "tags": [
+          "Site Modals"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of modals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../../../components/schemas/cms.json#/SiteModal"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Admin access required"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Modal",
+        "description": "Create a new event modal (Admin only)",
+        "tags": [
+          "Site Modals"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "type": "string"
+                  },
+                  "button_text": {
+                    "type": "string"
+                  },
+                  "button_url": {
+                    "type": "string"
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  },
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "show_once": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Modal created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "byId": {
+      "put": {
+        "summary": "Update Modal",
+        "description": "Update an existing modal (Admin only)",
+        "tags": [
+          "Site Modals"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "type": "string"
+                  },
+                  "button_text": {
+                    "type": "string"
+                  },
+                  "button_url": {
+                    "type": "string"
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  },
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "show_once": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Modal updated successfully"
+          },
+          "404": {
+            "description": "Modal not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Modal",
+        "description": "Delete a modal (Admin only)",
+        "tags": [
+          "Site Modals"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Modal deleted successfully"
+          },
+          "404": {
+            "description": "Modal not found"
+          }
+        }
+      }
+    },
+    "active": {
+      "get": {
+        "summary": "Get Active Modals",
+        "description": "Get all currently active, public modals",
+        "tags": [
+          "Site Modals"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of active modals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../../../components/schemas/cms.json#/SiteModal"
+                  }
+                }
+              }
+            }
           }
         }
       }

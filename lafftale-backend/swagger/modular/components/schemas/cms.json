@@ -210,5 +210,25 @@
         "description": "Whether accounts are auto-created in game DB"
       }
     }
+  },
+  "SiteModal": {
+    "type": "object",
+    "description": "Dynamic event modal/popup",
+    "properties": {
+      "id": { "type": "integer", "description": "Modal ID" },
+      "title": { "type": "string", "description": "Modal title" },
+      "content": { "type": "string", "description": "HTML content" },
+      "image_url": { "type": "string", "description": "Optional image URL" },
+      "button_text": { "type": "string", "description": "Action button text" },
+      "button_url": { "type": "string", "description": "Action button URL" },
+      "start_date": { "type": "string", "format": "date-time" },
+      "end_date": { "type": "string", "format": "date-time" },
+      "is_active": { "type": "boolean", "default": true },
+      "priority": { "type": "integer", "default": 0 },
+      "show_once": { "type": "boolean", "default": true },
+      "created_at": { "type": "string", "format": "date-time" },
+      "updated_at": { "type": "string", "format": "date-time" }
+    },
+    "required": ["id", "title"]
   }
 }
