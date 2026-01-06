@@ -4,10 +4,10 @@
 
 This project uses GitHub Actions with a Self-Hosted Runner for automatic deployment.
 
-| Component | URL                             | Directory                                               |
-| --------- | ------------------------------- | ------------------------------------------------------- |
-| Frontend  | https://lafftale.online         | `/home/lafftale/htdocs/lafftale.online`                 |
-| Backend   | https://backend.lafftale.online | `/home/lafftale-backend/htdocs/backend.lafftale.online` |
+| Component | URL                         | Directory           |
+| --------- | --------------------------- | ------------------- |
+| Frontend  | https://your-domain.com     | `/path/to/frontend` |
+| Backend   | https://api.your-domain.com | `/path/to/backend`  |
 
 ---
 
