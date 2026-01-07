@@ -185,16 +185,14 @@ cd Installation/Database
 
 ## 🚢 Deployment
 
-This project uses **GitHub Actions with a Self-Hosted Runner** for automatic deployment.
+This project supports **multiple deployment strategies**:
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions including:
+1.  **GitHub Actions (Automated)** - Recommended for production with a dedicated server.
+2.  **Manual / Vercel /Railway** - Recommended for testing, shared hosting, or PaaS.
 
-- Server setup
-- GitHub Runner configuration
-- Environment variable management
-- PM2 process management
+See [DEPLOYMENT.md](./DEPLOYMENT.md) to choose the best method for your needs.
 
-### Quick Deployment Overview
+### Quick Deployment Overview (GitHub Actions)
 
 1. Push to `main` branch
 2. GitHub Actions automatically triggers
