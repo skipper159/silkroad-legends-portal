@@ -48,6 +48,61 @@ router.get('/:key', async (req, res) => {
 // Admin routes - require authentication
 router.use(adminAuth);
 
+// Bulk update multiple settings at once
+router.put('/', async (req, res) => {
+  const settings = req.body;
+
+  if (!settings || typeof settings !== 'object' || Object.keys(settings).length === 0) {
+    return res.status(400).json({ error: 'Settings object is required' });
+  }
+
+  await poolConnect;
+  const transaction = new sql.Transaction(pool);
+
+  try {
+    await transaction.begin();
+    const request = new sql.Request(transaction);
+
+    for (const [key, value] of Object.entries(settings)) {
+      // Skip null/undefined values
+      if (value === null || value === undefined) continue;
+
+      const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+
+      // Check if setting exists
+      const existing = await request
+        .input(`key_${key.replace(/\W/g, '_')}`, sql.NVarChar, key)
+        .query(`SELECT [key] FROM settings WHERE [key] = @key_${key.replace(/\W/g, '_')}`);
+
+      if (existing.recordset.length > 0) {
+        // Update existing setting
+        await new sql.Request(transaction)
+          .input('key', sql.NVarChar, key)
+          .input('value', sql.NVarChar, stringValue)
+          .input('updatedAt', sql.DateTime2, new Date())
+          .query('UPDATE settings SET value = @value, updated_at = @updatedAt WHERE [key] = @key');
+      } else {
+        // Create new setting
+        await new sql.Request(transaction)
+          .input('key', sql.NVarChar, key)
+          .input('value', sql.NVarChar, stringValue)
+          .input('createdAt', sql.DateTime2, new Date())
+          .input('updatedAt', sql.DateTime2, new Date())
+          .query(
+            'INSERT INTO settings ([key], value, created_at, updated_at) VALUES (@key, @value, @createdAt, @updatedAt)'
+          );
+      }
+    }
+
+    await transaction.commit();
+    res.json({ message: 'Settings updated successfully', count: Object.keys(settings).length });
+  } catch (err) {
+    await transaction.rollback();
+    console.error('Error bulk updating settings:', err);
+    res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
 // Update or create setting
 router.put('/:key', async (req, res) => {
   const { key } = req.params;

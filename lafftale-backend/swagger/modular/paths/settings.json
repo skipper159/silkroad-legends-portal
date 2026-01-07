@@ -1,0 +1,170 @@
+{
+  "/api/settings": {
+    "get": {
+      "summary": "Get all settings",
+      "description": "Retrieves all settings as a key-value object",
+      "tags": ["Settings"],
+      "responses": {
+        "200": {
+          "description": "Settings retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "example": {
+                  "site_name": "Silkroad Legends",
+                  "theme_color_scheme": "ocean",
+                  "hero_title": "Welcome to Our Server"
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Failed to fetch settings"
+        }
+      }
+    },
+    "put": {
+      "summary": "Bulk update settings",
+      "description": "Updates or creates multiple settings at once. Requires admin authentication.",
+      "tags": ["Settings"],
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "example": {
+                "site_name": "My Server",
+                "site_logo_url": "/uploads/logo.png",
+                "hero_title": "Welcome",
+                "hero_subtitle": "Experience the adventure",
+                "footer_copyright": "© 2025 My Server",
+                "social_discord": "https://discord.gg/example",
+                "bg_login": "{\"url\":\"/uploads/bg.jpg\",\"opacity\":80,\"overlayOpacity\":50,\"overlayColor\":\"#000000\"}"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Settings updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string" },
+                  "count": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Settings object is required"
+        },
+        "401": {
+          "description": "Unauthorized - Admin authentication required"
+        },
+        "500": {
+          "description": "Failed to update settings"
+        }
+      }
+    }
+  },
+  "/api/settings/{key}": {
+    "get": {
+      "summary": "Get specific setting",
+      "description": "Retrieves a single setting by key",
+      "tags": ["Settings"],
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "Setting key"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Setting retrieved successfully"
+        },
+        "404": {
+          "description": "Setting not found"
+        }
+      }
+    },
+    "put": {
+      "summary": "Update single setting",
+      "description": "Updates or creates a single setting. Requires admin authentication.",
+      "tags": ["Settings"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "string" }
+              },
+              "required": ["value"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Setting updated successfully"
+        },
+        "400": {
+          "description": "Value is required"
+        },
+        "401": {
+          "description": "Unauthorized"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Delete setting",
+      "description": "Deletes a setting by key. Requires admin authentication.",
+      "tags": ["Settings"],
+      "security": [{ "bearerAuth": [] }],
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Setting deleted successfully"
+        },
+        "404": {
+          "description": "Setting not found"
+        }
+      }
+    }
+  }
+}
