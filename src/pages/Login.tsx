@@ -8,11 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { weburl } from '@/lib/api';
 import TwoFactorModal from '@/components/TwoFactorModal';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const Login = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout, AuthLayout } = currentTemplate.components;
+  const LayoutComponent = AuthLayout || Layout;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -112,11 +113,11 @@ const Login = () => {
   };
 
   return (
-    <Layout>
+    <LayoutComponent>
       <div
         className='flex-grow bg-cover bg-center py-16 md:py-24'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.loginBackground}')`,
         }}
       >
         <div className='container mx-auto px-4'>
@@ -208,7 +209,7 @@ const Login = () => {
       {show2FAModal && tempToken && (
         <TwoFactorModal tempToken={tempToken} onSuccess={handle2FASuccess} onCancel={handle2FACancel} />
       )}
-    </Layout>
+    </LayoutComponent>
   );
 };
 

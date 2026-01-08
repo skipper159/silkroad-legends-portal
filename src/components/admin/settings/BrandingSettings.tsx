@@ -11,29 +11,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Globe, Image as ImageIcon, Type, Link2, Upload, Save, Loader2, LayoutTemplate, Share2 } from 'lucide-react';
+import { ConfigFieldType, TemplateConfigField } from '@/lib/template-system/types';
 
 const BrandingSettings = () => {
-  const { theme, setBranding, setBackground, setSocialLink } = useTheme();
+  const { theme, setBranding, setBackground, setSocialLink, currentTemplate } = useTheme();
   const { token } = useAuth();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
 
-  // File input refs
-  const logoInputRef = useRef<HTMLInputElement>(null);
-  const faviconInputRef = useRef<HTMLInputElement>(null);
-  const loginBgInputRef = useRef<HTMLInputElement>(null);
-  const registerBgInputRef = useRef<HTMLInputElement>(null);
-  const heroBgInputRef = useRef<HTMLInputElement>(null);
-  const pageBgInputRef = useRef<HTMLInputElement>(null);
+  // File input ref generic
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeUploadField, setActiveUploadField] = useState<string | null>(null);
 
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    target: 'logo' | 'favicon' | 'login' | 'register' | 'hero' | 'page'
-  ) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldKey: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(target);
+    setUploading(fieldKey);
     const formData = new FormData();
     formData.append('images', file);
 
@@ -50,21 +44,40 @@ const BrandingSettings = () => {
       if (data.success && data.data.length > 0) {
         const imageUrl = data.data[0].url;
 
-        if (target === 'logo') {
+        // Map field keys to state updaters
+        if (fieldKey === 'logo') {
           setBranding('siteLogoUrl', imageUrl);
-        } else if (target === 'favicon') {
+        } else if (fieldKey === 'favicon') {
+          // Special case, favicon might not be in config but usually is
           setBranding('faviconUrl', imageUrl);
-        } else {
-          setBackground(target, { url: imageUrl });
+        } else if (fieldKey.includes('Background') || fieldKey === 'heroBackground') {
+          // Normalize key: 'accountHeaderBackground' -> 'account', 'loginBackground' -> 'login'
+          let bgType = fieldKey.replace('Background', '').replace('Header', '').toLowerCase();
+
+          // Special cases
+          if (fieldKey === 'heroBackground') bgType = 'hero';
+          if (fieldKey === 'heroContainerBackground') bgType = 'heroContainer';
+          if (fieldKey === 'serverInfoHeaderBackground') bgType = 'serverInfo';
+
+          if ((theme.backgrounds as any)[bgType]) {
+            setBackground(bgType as any, { url: imageUrl });
+          }
         }
 
         toast({ title: 'Image uploaded successfully' });
       }
     } catch (error) {
-      toast({ title: 'Upload failed', variant: 'destructive' });
+      console.error('Upload error:', error);
+      toast({ title: 'Failed to upload image', variant: 'destructive' });
     } finally {
       setUploading(null);
+      setActiveUploadField(null);
     }
+  };
+
+  const handleCreateUploadClick = (fieldKey: string) => {
+    setActiveUploadField(fieldKey);
+    fileInputRef.current?.click();
   };
 
   const handleSaveAll = async () => {
@@ -77,24 +90,37 @@ const BrandingSettings = () => {
         bg_login: JSON.stringify(theme.backgrounds.login),
         bg_register: JSON.stringify(theme.backgrounds.register),
         bg_hero: JSON.stringify(theme.backgrounds.hero),
+        bg_hero_container: JSON.stringify(theme.backgrounds.heroContainer),
         bg_page: JSON.stringify(theme.backgrounds.page),
+        bg_sidebar: JSON.stringify(theme.backgrounds.sidebar),
+        bg_global: JSON.stringify(theme.backgrounds.global),
+
+        // Headers
+        bg_account: JSON.stringify(theme.backgrounds.account),
+        bg_admin: JSON.stringify(theme.backgrounds.admin),
+        bg_server_info: JSON.stringify(theme.backgrounds.serverInfo),
+        bg_news: JSON.stringify(theme.backgrounds.news),
+        bg_rankings: JSON.stringify(theme.backgrounds.rankings),
+        bg_download: JSON.stringify(theme.backgrounds.download),
+        bg_guide: JSON.stringify(theme.backgrounds.guide),
+
         hero_title: theme.heroTitle,
         hero_subtitle: theme.heroSubtitle,
-        hero_cta_text: theme.heroCTAText,
-        hero_cta_url: theme.heroCTAUrl,
         footer_copyright: theme.footerCopyright,
         footer_about_text: theme.footerAboutText,
+
         social_discord: theme.socialLinks.discord,
         social_facebook: theme.socialLinks.facebook,
         social_youtube: theme.socialLinks.youtube,
         social_twitter: theme.socialLinks.twitter,
+
         seo_title: theme.seoTitle,
         seo_description: theme.seoDescription,
         download_url: theme.downloadUrl,
       };
 
       const response = await fetch(`${weburl}/api/settings`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -102,17 +128,82 @@ const BrandingSettings = () => {
         body: JSON.stringify(settings),
       });
 
-      if (response.ok) {
-        toast({ title: 'Branding settings saved!' });
-      } else {
-        throw new Error('Failed to save');
-      }
+      if (!response.ok) throw new Error('Failed to save settings');
+
+      toast({ title: 'Branding settings saved successfully' });
     } catch (error) {
+      console.error('Save error:', error);
       toast({ title: 'Failed to save settings', variant: 'destructive' });
     } finally {
       setSaving(false);
     }
   };
+
+  // Helper to get value
+  const getFieldValue = (field: TemplateConfigField) => {
+    if (field.key === 'logo') return theme.siteLogoUrl;
+    if (field.key.includes('Background') || field.key === 'heroBackground') {
+      let bgType = field.key.replace('Background', '').replace('Header', '').toLowerCase();
+      if (field.key === 'heroBackground') bgType = 'hero';
+      if (field.key === 'heroContainerBackground') bgType = 'heroContainer';
+      if (field.key === 'serverInfoHeaderBackground') bgType = 'serverInfo';
+
+      return (theme.backgrounds as any)[bgType]?.url;
+    }
+    return '';
+  };
+
+  const renderBackgroundControls = (field: TemplateConfigField) => {
+    let bgType = field.key.replace('Background', '').replace('Header', '').toLowerCase();
+    if (field.key === 'heroBackground') bgType = 'hero';
+    if (field.key === 'heroContainerBackground') bgType = 'heroContainer';
+    if (field.key === 'serverInfoHeaderBackground') bgType = 'serverInfo';
+
+    const bgSettings = (theme.backgrounds as any)[bgType];
+
+    if (!bgSettings) return null;
+
+    return (
+      <div className='mt-4 space-y-3 p-3 bg-theme-background/50 rounded-md border border-theme-border/50'>
+        <div>
+          <Label className='text-xs'>Image Opacity: {bgSettings.opacity}%</Label>
+          <Slider
+            value={[bgSettings.opacity]}
+            onValueChange={([v]) => setBackground(bgType as any, { opacity: v })}
+            min={0}
+            max={100}
+            step={5}
+            className='mt-2'
+          />
+        </div>
+        <div>
+          <Label className='text-xs'>Overlay Opacity: {bgSettings.overlayOpacity}%</Label>
+          <Slider
+            value={[bgSettings.overlayOpacity]}
+            onValueChange={([v]) => setBackground(bgType as any, { overlayOpacity: v })}
+            min={0}
+            max={100}
+            step={5}
+            className='mt-2'
+          />
+        </div>
+        <div className='flex gap-2 items-center'>
+          <Label className='text-xs'>Overlay Color</Label>
+          <input
+            type='color'
+            value={bgSettings.overlayColor}
+            onChange={(e) => setBackground(bgType as any, { overlayColor: e.target.value })}
+            className='h-6 w-8 rounded border-0 cursor-pointer'
+          />
+        </div>
+      </div>
+    );
+  };
+
+  // Filter sections based on config
+  const imageFields = currentTemplate.customizationConfig?.filter((f) => f.section === 'branding.images') || [];
+  // Ensure we always show favicon as it is global
+  const hasImages = imageFields.length > 0;
 
   return (
     <Card className='border-theme-border bg-theme-surface'>
@@ -122,20 +213,27 @@ const BrandingSettings = () => {
           Branding Settings
         </CardTitle>
         <CardDescription className='text-theme-text-muted'>
-          Customize your site's identity, backgrounds, and text content.
+          Customize settings available for:{' '}
+          <span className='font-bold text-theme-primary'>{currentTemplate.metadata.name}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue='identity' className='space-y-4'>
-          <TabsList className='grid w-full grid-cols-5 bg-theme-background'>
+        {/* Hidden File Input for All Uploads */}
+        <input
+          ref={fileInputRef}
+          type='file'
+          accept='image/*'
+          className='hidden'
+          onChange={(e) => activeUploadField && handleImageUpload(e, activeUploadField)}
+        />
+
+        <Tabs defaultValue='images' className='space-y-4'>
+          <TabsList className='grid w-full grid-cols-4 bg-theme-background'>
+            <TabsTrigger value='images' className='flex gap-2'>
+              <ImageIcon className='h-4 w-4' /> Images
+            </TabsTrigger>
             <TabsTrigger value='identity' className='flex gap-2'>
               <Globe className='h-4 w-4' /> Identity
-            </TabsTrigger>
-            <TabsTrigger value='backgrounds' className='flex gap-2'>
-              <ImageIcon className='h-4 w-4' /> Backgrounds
-            </TabsTrigger>
-            <TabsTrigger value='hero' className='flex gap-2'>
-              <Type className='h-4 w-4' /> Hero
             </TabsTrigger>
             <TabsTrigger value='footer' className='flex gap-2'>
               <Type className='h-4 w-4' /> Footer
@@ -145,224 +243,109 @@ const BrandingSettings = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Site Identity Tab */}
-          <TabsContent value='identity' className='space-y-6'>
-            <div className='grid gap-4'>
-              <div>
-                <Label>Site Name</Label>
-                <Input
-                  value={theme.siteName}
-                  onChange={(e) => setBranding('siteName', e.target.value)}
-                  placeholder='Your Site Name'
-                  className='bg-theme-background border-theme-border'
-                />
-                <p className='text-xs text-theme-text-muted mt-1'>Shown in sidebar, header, and browser tab</p>
+          {/* Dynamic Images Tab */}
+          <TabsContent value='images' className='space-y-6'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              {/* Always show Favicon */}
+              <div className='border border-theme-border rounded-lg p-4'>
+                <Label>Favicon</Label>
+                <p className='text-xs text-theme-text-muted mb-3'>Browser tab icon</p>
+                <div className='flex gap-4 items-center'>
+                  {theme.faviconUrl && (
+                    <img
+                      src={`${weburl}${theme.faviconUrl}`}
+                      alt='Favicon'
+                      className='h-10 w-10 object-contain border border-theme-border rounded'
+                    />
+                  )}
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    disabled={uploading === 'favicon'}
+                    onClick={() => handleCreateUploadClick('favicon')}
+                  >
+                    {uploading === 'favicon' ? (
+                      <Loader2 className='h-3 w-3 animate-spin' />
+                    ) : (
+                      <Upload className='h-3 w-3 mr-2' />
+                    )}
+                    Upload
+                  </Button>
+                </div>
               </div>
 
-              <div className='grid grid-cols-2 gap-4'>
-                <div>
-                  <Label>Logo</Label>
-                  <div className='flex gap-2 items-center mt-2'>
-                    {theme.siteLogoUrl && (
+              {/* Render Configured Images */}
+              {imageFields.map((field) => (
+                <div key={field.key} className='border border-theme-border rounded-lg p-4'>
+                  <Label>{field.label}</Label>
+                  {field.description && <p className='text-xs text-theme-text-muted mb-3'>{field.description}</p>}
+
+                  <div className='flex gap-4 items-center'>
+                    {getFieldValue(field) && (
                       <img
-                        src={`${weburl}${theme.siteLogoUrl}`}
-                        alt='Logo'
-                        className='h-12 w-12 object-contain border border-theme-border rounded'
+                        src={`${weburl}${getFieldValue(field)}`}
+                        alt={field.label}
+                        className='h-20 w-auto max-w-[150px] object-cover border border-theme-border rounded'
                       />
                     )}
-                    <input
-                      ref={logoInputRef}
-                      type='file'
-                      accept='image/*'
-                      className='hidden'
-                      onChange={(e) => handleImageUpload(e, 'logo')}
-                    />
                     <Button
                       type='button'
                       variant='outline'
-                      disabled={uploading === 'logo'}
-                      onClick={() => logoInputRef.current?.click()}
+                      size='sm'
+                      disabled={uploading === field.key}
+                      onClick={() => handleCreateUploadClick(field.key)}
                     >
-                      {uploading === 'logo' ? (
-                        <Loader2 className='h-4 w-4 animate-spin' />
+                      {uploading === field.key ? (
+                        <Loader2 className='h-3 w-3 animate-spin' />
                       ) : (
-                        <Upload className='h-4 w-4 mr-2' />
+                        <Upload className='h-3 w-3 mr-2' />
                       )}
-                      Upload Logo
+                      Upload
                     </Button>
                   </div>
-                </div>
 
-                <div>
-                  <Label>Favicon</Label>
-                  <div className='flex gap-2 items-center mt-2'>
-                    {theme.faviconUrl && (
-                      <img
-                        src={`${weburl}${theme.faviconUrl}`}
-                        alt='Favicon'
-                        className='h-8 w-8 object-contain border border-theme-border rounded'
-                      />
-                    )}
-                    <input
-                      ref={faviconInputRef}
-                      type='file'
-                      accept='image/*'
-                      className='hidden'
-                      onChange={(e) => handleImageUpload(e, 'favicon')}
-                    />
-                    <Button
-                      type='button'
-                      variant='outline'
-                      disabled={uploading === 'favicon'}
-                      onClick={() => faviconInputRef.current?.click()}
-                    >
-                      {uploading === 'favicon' ? (
-                        <Loader2 className='h-4 w-4 animate-spin' />
-                      ) : (
-                        <Upload className='h-4 w-4 mr-2' />
-                      )}
-                      Upload Favicon
-                    </Button>
-                  </div>
+                  {/* Render sliders if it is a background field */}
+                  {(field.key.includes('Background') || field.key === 'heroBackground') &&
+                    renderBackgroundControls(field)}
                 </div>
-              </div>
+              ))}
             </div>
+            {!hasImages && (
+              <div className='p-8 text-center text-theme-text-muted'>
+                No image settings available for this template.
+              </div>
+            )}
           </TabsContent>
 
-          {/* Backgrounds Tab */}
-          <TabsContent value='backgrounds' className='space-y-6'>
-            {(['login', 'register', 'hero', 'page'] as const).map((area) => {
-              const getInputRef = () => {
-                switch (area) {
-                  case 'login':
-                    return loginBgInputRef;
-                  case 'register':
-                    return registerBgInputRef;
-                  case 'hero':
-                    return heroBgInputRef;
-                  case 'page':
-                    return pageBgInputRef;
-                }
-              };
-              const inputRef = getInputRef();
-
-              return (
-                <div key={area} className='border border-theme-border rounded-lg p-4'>
-                  <h4 className='font-semibold capitalize mb-4'>{area} Background</h4>
-
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div>
-                      <Label>Image</Label>
-                      <div className='flex gap-2 items-center mt-2'>
-                        {theme.backgrounds[area].url && (
-                          <img
-                            src={`${weburl}${theme.backgrounds[area].url}`}
-                            alt={`${area} bg`}
-                            className='h-16 w-24 object-cover border border-theme-border rounded'
-                          />
-                        )}
-                        <input
-                          ref={inputRef}
-                          type='file'
-                          accept='image/*'
-                          className='hidden'
-                          onChange={(e) => handleImageUpload(e, area)}
-                        />
-                        <Button
-                          type='button'
-                          variant='outline'
-                          size='sm'
-                          disabled={uploading === area}
-                          onClick={() => inputRef.current?.click()}
-                        >
-                          {uploading === area ? (
-                            <Loader2 className='h-4 w-4 animate-spin' />
-                          ) : (
-                            <Upload className='h-4 w-4' />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className='space-y-3'>
-                      <div>
-                        <Label>Image Opacity: {theme.backgrounds[area].opacity}%</Label>
-                        <Slider
-                          value={[theme.backgrounds[area].opacity]}
-                          onValueChange={([v]) => setBackground(area, { opacity: v })}
-                          min={0}
-                          max={100}
-                          step={5}
-                          className='mt-2'
-                        />
-                      </div>
-                      <div>
-                        <Label>Overlay Opacity: {theme.backgrounds[area].overlayOpacity}%</Label>
-                        <Slider
-                          value={[theme.backgrounds[area].overlayOpacity]}
-                          onValueChange={([v]) => setBackground(area, { overlayOpacity: v })}
-                          min={0}
-                          max={100}
-                          step={5}
-                          className='mt-2'
-                        />
-                      </div>
-                      <div className='flex gap-2 items-center'>
-                        <Label>Overlay Color</Label>
-                        <input
-                          type='color'
-                          value={theme.backgrounds[area].overlayColor}
-                          onChange={(e) => setBackground(area, { overlayColor: e.target.value })}
-                          className='h-8 w-12 rounded border-0 cursor-pointer'
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </TabsContent>
-
-          {/* Hero Section Tab */}
-          <TabsContent value='hero' className='space-y-4'>
+          {/* Identity Tab (Static for now) */}
+          <TabsContent value='identity' className='space-y-6'>
             <div>
-              <Label>Hero Title</Label>
+              <Label>Site Name</Label>
               <Input
-                value={theme.heroTitle}
-                onChange={(e) => setBranding('heroTitle', e.target.value)}
-                placeholder='Welcome to Our Server'
+                value={theme.siteName}
+                onChange={(e) => setBranding('siteName', e.target.value)}
+                placeholder='Your Site Name'
                 className='bg-theme-background border-theme-border'
               />
             </div>
-            <div>
+            {/* If we had Hero Title in config, we would render it here dynamically, but for now keeping static sections for simplicity 
+                 unless requested to fully dynamic text fields. The user prioritized images. */}
+            <div className='pt-4 border-t border-theme-border'>
+              <Label>Hero Title (Default/Hero Templates)</Label>
+              <Input
+                value={theme.heroTitle}
+                onChange={(e) => setBranding('heroTitle', e.target.value)}
+                className='bg-theme-background border-theme-border mt-2'
+              />
+            </div>
+            <div className='pt-4'>
               <Label>Hero Subtitle</Label>
               <Textarea
                 value={theme.heroSubtitle}
                 onChange={(e) => setBranding('heroSubtitle', e.target.value)}
-                placeholder='Experience the best gaming...'
-                className='bg-theme-background border-theme-border'
-                rows={2}
+                className='bg-theme-background border-theme-border mt-2'
               />
-            </div>
-            <div className='grid grid-cols-2 gap-4'>
-              <div>
-                <Label>CTA Button Text</Label>
-                <Input
-                  value={theme.heroCTAText}
-                  onChange={(e) => setBranding('heroCTAText', e.target.value)}
-                  placeholder='Play Now'
-                  className='bg-theme-background border-theme-border'
-                />
-              </div>
-              <div>
-                <Label>CTA Button URL</Label>
-                <Input
-                  value={theme.heroCTAUrl}
-                  onChange={(e) => setBranding('heroCTAUrl', e.target.value)}
-                  placeholder='/download'
-                  className='bg-theme-background border-theme-border'
-                />
-              </div>
             </div>
           </TabsContent>
 
@@ -373,7 +356,6 @@ const BrandingSettings = () => {
               <Input
                 value={theme.footerCopyright}
                 onChange={(e) => setBranding('footerCopyright', e.target.value)}
-                placeholder='© 2025 Your Server. All rights reserved.'
                 className='bg-theme-background border-theme-border'
               />
             </div>
@@ -382,15 +364,15 @@ const BrandingSettings = () => {
               <Textarea
                 value={theme.footerAboutText}
                 onChange={(e) => setBranding('footerAboutText', e.target.value)}
-                placeholder='Your server description...'
                 className='bg-theme-background border-theme-border'
                 rows={3}
               />
             </div>
           </TabsContent>
 
-          {/* Links & SEO Tab */}
+          {/* Links Tab - Kept static as widely used */}
           <TabsContent value='links' className='space-y-6'>
+            {/* Social Links & SEO Inputs (Same as before) */}
             <div>
               <h4 className='font-semibold mb-3 flex items-center gap-2'>
                 <Share2 className='h-4 w-4' /> Social Links
@@ -401,7 +383,6 @@ const BrandingSettings = () => {
                   <Input
                     value={theme.socialLinks.discord}
                     onChange={(e) => setSocialLink('discord', e.target.value)}
-                    placeholder='https://discord.gg/...'
                     className='bg-theme-background border-theme-border'
                   />
                 </div>
@@ -410,7 +391,6 @@ const BrandingSettings = () => {
                   <Input
                     value={theme.socialLinks.facebook}
                     onChange={(e) => setSocialLink('facebook', e.target.value)}
-                    placeholder='https://facebook.com/...'
                     className='bg-theme-background border-theme-border'
                   />
                 </div>
@@ -419,7 +399,6 @@ const BrandingSettings = () => {
                   <Input
                     value={theme.socialLinks.youtube}
                     onChange={(e) => setSocialLink('youtube', e.target.value)}
-                    placeholder='https://youtube.com/...'
                     className='bg-theme-background border-theme-border'
                   />
                 </div>
@@ -428,28 +407,11 @@ const BrandingSettings = () => {
                   <Input
                     value={theme.socialLinks.twitter}
                     onChange={(e) => setSocialLink('twitter', e.target.value)}
-                    placeholder='https://twitter.com/...'
                     className='bg-theme-background border-theme-border'
                   />
                 </div>
               </div>
             </div>
-
-            <div>
-              <h4 className='font-semibold mb-3 flex items-center gap-2'>
-                <Link2 className='h-4 w-4' /> Download
-              </h4>
-              <div>
-                <Label>Download URL</Label>
-                <Input
-                  value={theme.downloadUrl}
-                  onChange={(e) => setBranding('downloadUrl', e.target.value)}
-                  placeholder='https://mega.nz/...'
-                  className='bg-theme-background border-theme-border'
-                />
-              </div>
-            </div>
-
             <div>
               <h4 className='font-semibold mb-3 flex items-center gap-2'>
                 <Globe className='h-4 w-4' /> SEO
@@ -460,7 +422,6 @@ const BrandingSettings = () => {
                   <Input
                     value={theme.seoTitle}
                     onChange={(e) => setBranding('seoTitle', e.target.value)}
-                    placeholder='Your Server - Private Server'
                     className='bg-theme-background border-theme-border'
                   />
                 </div>
@@ -469,12 +430,19 @@ const BrandingSettings = () => {
                   <Textarea
                     value={theme.seoDescription}
                     onChange={(e) => setBranding('seoDescription', e.target.value)}
-                    placeholder='Join the ultimate gaming experience...'
                     className='bg-theme-background border-theme-border'
                     rows={2}
                   />
                 </div>
               </div>
+            </div>
+            <div>
+              <Label>Download URL</Label>
+              <Input
+                value={theme.downloadUrl}
+                onChange={(e) => setBranding('downloadUrl', e.target.value)}
+                className='bg-theme-background border-theme-border'
+              />
             </div>
           </TabsContent>
         </Tabs>

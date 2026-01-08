@@ -36,8 +36,45 @@ const DefaultTemplate: TemplateDefinition = {
     // I will use a generic path that likely maps to what was there or a fallback.
     // Wait, the user asked for dynamic support.
     registerBackground: getPublicUrl('image/Web/register-bg.jpg'),
-    pageHeaderBackground: getPublicUrl('image/Web/header-bg.jpg'),
+    pageHeaderBackground:
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop', // Default placeholder
+    sidebarBackground: '', // Not used in Default but satisfies interface if needed, or if I switch layouts
+    cardGradient: 'bg-lafftale-darkgray/80 backdrop-blur-md border border-lafftale-gold/20',
   },
+  customizationConfig: [
+    {
+      key: 'logo',
+      label: 'Site Logo',
+      type: 'image',
+      section: 'branding.images',
+      description: 'Main site logo',
+    },
+    {
+      key: 'heroBackground',
+      label: 'Home Hero Background',
+      type: 'image',
+      section: 'branding.images',
+      description: 'Background image for the main landing page hero section',
+    },
+    {
+      key: 'loginBackground',
+      label: 'Login Screen Background',
+      type: 'image',
+      section: 'branding.images',
+    },
+    {
+      key: 'registerBackground',
+      label: 'Register Screen Background',
+      type: 'image',
+      section: 'branding.images',
+    },
+    {
+      key: 'pageHeaderBackground',
+      label: 'Page Header Background',
+      type: 'image',
+      section: 'branding.images',
+    },
+  ],
 };
 
 export default DefaultTemplate;

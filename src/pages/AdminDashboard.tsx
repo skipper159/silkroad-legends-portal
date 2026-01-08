@@ -11,15 +11,15 @@ import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
 import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
 import AdminSettings from '@/components/admin/settings/AdminSettings';
 import NewsManager from '@/components/admin/NewsManager';
-import ActiveTemplate from '@/config/theme-config';
+import { useTheme } from '@/context/ThemeContext';
 import { Users, Database, TicketCheck, Download, Gift, Vote, UserPlus, Coins, Settings, Newspaper } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 
-const { Layout } = ActiveTemplate.components;
-
 const AdminDashboard = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const [activeTab, setActiveTab] = useState('webaccounts');
   const { token, isAdmin } = useAuth();
 
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
         <div
           className='py-20 bg-cover bg-top'
           style={{
-            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+            backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
           }}
         >
           <div className='container mx-auto px-4 text-center'>

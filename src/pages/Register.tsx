@@ -7,11 +7,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { weburl } from '@/lib/api';
 import useFingerprint from '@/hooks/useFingerprint';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const Register = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout, AuthLayout } = currentTemplate.components;
+  const LayoutComponent = AuthLayout || Layout;
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -132,11 +133,11 @@ const Register = () => {
   };
 
   return (
-    <Layout>
+    <LayoutComponent>
       <div
         className='flex-grow bg-cover bg-center py-16 md:py-24'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.registerBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.registerBackground}')`,
         }}
       >
         <div className='container mx-auto px-4'>
@@ -324,7 +325,7 @@ const Register = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </LayoutComponent>
   );
 };
 

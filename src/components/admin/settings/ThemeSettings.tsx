@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Save, Palette, Type, Square, Sparkles, Eye } from 'lucide-react';
+import { Loader2, Save, Palette, Type, Square, Sparkles, Eye, LayoutTemplate } from 'lucide-react';
 import { weburl } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -19,13 +19,24 @@ import {
   ColorSchemeId,
   CardStylePresetId,
 } from '@/context/ThemeContext';
+import { AVAILABLE_TEMPLATES, TemplateId } from '@/templates/registry';
 
 const ThemeSettings = () => {
   const { token } = useAuth();
-  const { theme, setColorScheme, setCustomColor, setFontHeading, setFontBody, applyPreset, setCardSetting } =
-    useTheme();
+  const {
+    theme,
+    setColorScheme,
+    setCustomColor,
+    setFontHeading,
+    setFontBody,
+    applyPreset,
+    setCardSetting,
+    setActiveTemplate,
+  } = useTheme();
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'colors' | 'cards' | 'buttons' | 'typography' | 'effects'>('colors');
+  const [activeTab, setActiveTab] = useState<'colors' | 'cards' | 'buttons' | 'typography' | 'effects' | 'template'>(
+    'colors'
+  );
 
   // Save individual setting to API
   const saveSetting = async (key: string, value: string) => {
@@ -75,6 +86,8 @@ const ThemeSettings = () => {
         { key: 'custom_color_accent', value: theme.customColors.accent },
         { key: 'custom_color_secondary', value: theme.customColors.secondary },
         { key: 'custom_color_highlight', value: theme.customColors.highlight },
+
+        { key: 'active_template', value: theme.activeTemplate },
       ];
 
       await Promise.all(settings.map((s) => saveSetting(s.key, s.value)));
@@ -163,6 +176,7 @@ const ThemeSettings = () => {
             { id: 'buttons', label: 'Buttons', icon: Square },
             { id: 'typography', label: 'Typography', icon: Type },
             { id: 'effects', label: 'Effects', icon: Sparkles },
+            { id: 'template', label: 'Template', icon: LayoutTemplate },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -515,6 +529,42 @@ const ThemeSettings = () => {
                 <p className='text-sm text-theme-text-muted'>Add glow to primary elements</p>
               </div>
               <Switch checked={theme.enableGlow} onCheckedChange={(checked) => setCardSetting('enableGlow', checked)} />
+            </div>
+          </div>
+        )}
+
+        {/* Template Tab */}
+        {activeTab === 'template' && (
+          <div className='space-y-6'>
+            <div>
+              <Label className='mb-3 block'>Active Template</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                {AVAILABLE_TEMPLATES.map((template) => (
+                  <button
+                    key={template.id}
+                    onClick={() => setActiveTemplate(template.id as TemplateId)}
+                    className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                      theme.activeTemplate === template.id
+                        ? 'border-theme-primary ring-2 ring-theme-primary/20 bg-theme-primary/5'
+                        : 'border-theme-border hover:border-theme-primary/50'
+                    }`}
+                  >
+                    <LayoutTemplate
+                      size={32}
+                      className={theme.activeTemplate === template.id ? 'text-theme-primary' : 'text-theme-text-muted'}
+                    />
+                    <span className='font-medium'>{template.name}</span>
+                    {theme.activeTemplate === template.id && (
+                      <span className='text-xs text-theme-primary bg-theme-primary/10 px-2 py-0.5 rounded-full'>
+                        Active
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <p className='text-sm text-theme-text-muted mt-4'>
+                Note: Switching templates may require a page refresh to fully take effect on some legacy components.
+              </p>
             </div>
           </div>
         )}

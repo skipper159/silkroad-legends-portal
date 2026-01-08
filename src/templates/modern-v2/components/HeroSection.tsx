@@ -3,11 +3,41 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from '@/context/ThemeContext';
 import { ArrowRight, Play } from 'lucide-react';
 
+import { weburl } from '@/lib/api';
+
 const HeroSection = () => {
   const { theme } = useTheme();
 
+  const getBgUrl = (url: string) => {
+    if (!url) return '/image/Web/top-player-bg.jpg';
+    if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:')) return url;
+    return `${weburl}${url}`;
+  };
+
+  const { currentTemplate } = useTheme();
+
+  // Hero Image (inside the graphic slot)
+  const heroImage = getBgUrl(theme.backgrounds.hero.url);
+  const opacity = theme.backgrounds.hero.url ? theme.backgrounds.hero.opacity / 100 : 0.6;
+
+  // Container Background (New request: "Area around the Hero Section")
+  const containerBg = currentTemplate.assets.heroContainerBackground;
+  // If no container bg, fallback to default theme surface
+  const containerStyle = containerBg
+    ? {
+        backgroundImage: `url(${containerBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : {};
+
   return (
-    <section className='relative py-20 overflow-hidden rounded-3xl bg-theme-surface border border-theme-border'>
+    <section
+      className={`relative py-20 overflow-hidden rounded-3xl border border-theme-border ${
+        !containerBg && 'bg-theme-surface'
+      }`}
+      style={containerStyle}
+    >
       <div className="absolute inset-0 bg-[url('/bg-pattern.svg')] opacity-5"></div>
       <div className='absolute top-0 right-0 w-96 h-96 bg-theme-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2'></div>
 
@@ -50,9 +80,10 @@ const HeroSection = () => {
               </div>
             </div>
             <img
-              src='/image/Web/top-player-bg.jpg'
+              src={heroImage}
               alt='Trailer'
-              className='w-full h-full object-cover opacity-60 mix-blend-overlay'
+              className='w-full h-full object-cover mix-blend-overlay'
+              style={{ opacity }}
             />
           </div>
         </div>

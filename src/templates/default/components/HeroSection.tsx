@@ -1,10 +1,36 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
+import { weburl } from '@/lib/api';
 
 const HeroSection = () => {
+  const { theme } = useTheme();
+
+  const getBgUrl = (url: string) => {
+    if (!url) return null;
+    if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:')) return url;
+    return `${weburl}${url}`;
+  };
+
+  const dynamicHeroBg = getBgUrl(theme.backgrounds.hero.url);
+
+  const heroStyle = dynamicHeroBg
+    ? {
+        backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 18, ${
+          theme.backgrounds.hero.overlayOpacity / 100
+        }), rgba(18, 18, 18, ${Math.min(
+          1,
+          theme.backgrounds.hero.overlayOpacity / 100 + 0.2
+        )})), url('${dynamicHeroBg}')`,
+      }
+    : undefined;
+
   return (
-    <div className='bg-hero-pattern bg-cover bg-center min-h-[calc(100vh-4rem)] flex items-center justify-center'>
+    <div
+      className='bg-hero-pattern bg-cover bg-center min-h-[calc(100vh-4rem)] flex items-center justify-center'
+      style={heroStyle}
+    >
       <div className='container mx-auto px-4 py-28 text-center'>
         <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in'>
           Experience <span className='text-lafftale-bronze'>Lafftale</span>

@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { weburl } from '@/lib/api';
+import { TEMPLATES, TemplateId } from '@/templates/registry';
+import { TemplateDefinition } from '@/lib/template-system/types';
 
 // Color scheme definitions
 export const COLOR_SCHEMES = {
@@ -246,6 +248,16 @@ interface ThemeSettings {
     register: BackgroundSettings;
     hero: BackgroundSettings;
     page: BackgroundSettings;
+    sidebar: BackgroundSettings;
+    global: BackgroundSettings; // New
+    heroContainer: BackgroundSettings; // New
+    account: BackgroundSettings; // New
+    admin: BackgroundSettings; // New
+    serverInfo: BackgroundSettings; // New
+    news: BackgroundSettings; // New
+    rankings: BackgroundSettings; // New
+    download: BackgroundSettings; // New
+    guide: BackgroundSettings; // New
   };
   // === NEW: Hero Section Text ===
   heroTitle: string;
@@ -267,6 +279,8 @@ interface ThemeSettings {
   seoDescription: string;
   // === NEW: Download ===
   downloadUrl: string;
+  // === NEW: Template ===
+  activeTemplate: TemplateId;
 }
 
 interface ThemeContextType {
@@ -281,6 +295,8 @@ interface ThemeContextType {
   setBranding: <K extends keyof ThemeSettings>(key: K, value: ThemeSettings[K]) => void;
   setBackground: (area: keyof ThemeSettings['backgrounds'], settings: Partial<BackgroundSettings>) => void;
   setSocialLink: (platform: keyof ThemeSettings['socialLinks'], url: string) => void;
+  setActiveTemplate: (templateId: TemplateId) => void;
+  currentTemplate: TemplateDefinition;
   isLoading: boolean;
 }
 
@@ -320,6 +336,16 @@ const defaultTheme: ThemeSettings = {
     register: { ...defaultBackgroundSettings },
     hero: { ...defaultBackgroundSettings },
     page: { ...defaultBackgroundSettings },
+    sidebar: { ...defaultBackgroundSettings },
+    global: { ...defaultBackgroundSettings },
+    heroContainer: { ...defaultBackgroundSettings },
+    account: { ...defaultBackgroundSettings },
+    admin: { ...defaultBackgroundSettings },
+    serverInfo: { ...defaultBackgroundSettings },
+    news: { ...defaultBackgroundSettings },
+    rankings: { ...defaultBackgroundSettings },
+    download: { ...defaultBackgroundSettings },
+    guide: { ...defaultBackgroundSettings },
   },
   // Hero text defaults
   heroTitle: 'Welcome to Silkroad Legends',
@@ -341,6 +367,7 @@ const defaultTheme: ThemeSettings = {
   seoDescription: 'Join the ultimate Silkroad Online experience on Silkroad Legends private server.',
   // Download
   downloadUrl: '',
+  activeTemplate: 'modern-v2', // Default to Modern V2
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -460,6 +487,18 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
               register: data.bg_register ? JSON.parse(data.bg_register) : defaultTheme.backgrounds.register,
               hero: data.bg_hero ? JSON.parse(data.bg_hero) : defaultTheme.backgrounds.hero,
               page: data.bg_page ? JSON.parse(data.bg_page) : defaultTheme.backgrounds.page,
+              sidebar: data.bg_sidebar ? JSON.parse(data.bg_sidebar) : defaultTheme.backgrounds.sidebar,
+              global: data.bg_global ? JSON.parse(data.bg_global) : defaultTheme.backgrounds.global,
+              heroContainer: data.bg_hero_container
+                ? JSON.parse(data.bg_hero_container)
+                : defaultTheme.backgrounds.heroContainer,
+              account: data.bg_account ? JSON.parse(data.bg_account) : defaultTheme.backgrounds.account,
+              admin: data.bg_admin ? JSON.parse(data.bg_admin) : defaultTheme.backgrounds.admin,
+              serverInfo: data.bg_server_info ? JSON.parse(data.bg_server_info) : defaultTheme.backgrounds.serverInfo,
+              news: data.bg_news ? JSON.parse(data.bg_news) : defaultTheme.backgrounds.news,
+              rankings: data.bg_rankings ? JSON.parse(data.bg_rankings) : defaultTheme.backgrounds.rankings,
+              download: data.bg_download ? JSON.parse(data.bg_download) : defaultTheme.backgrounds.download,
+              guide: data.bg_guide ? JSON.parse(data.bg_guide) : defaultTheme.backgrounds.guide,
             },
             // Hero text
             heroTitle: data.hero_title || defaultTheme.heroTitle,
@@ -481,6 +520,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             seoDescription: data.seo_description || defaultTheme.seoDescription,
             // Download
             downloadUrl: data.download_url || defaultTheme.downloadUrl,
+            activeTemplate: (data.active_template as TemplateId) || defaultTheme.activeTemplate,
           };
 
           // Validate color scheme
@@ -570,6 +610,67 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const setActiveTemplate = (templateId: TemplateId) => {
+    setTheme((prev) => ({ ...prev, activeTemplate: templateId }));
+  };
+
+  const staticTemplate = TEMPLATES[theme.activeTemplate] || TEMPLATES['default'];
+
+  // Helper to ensure full URL for assets
+  const getFullAssetUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) return path;
+    return `${weburl}${path}`;
+  };
+
+  // Merge dynamic settings (images, etc.) into the active template assets
+  const currentTemplate: TemplateDefinition = {
+    ...staticTemplate,
+    assets: {
+      ...staticTemplate.assets,
+      logo: theme.siteLogoUrl ? getFullAssetUrl(theme.siteLogoUrl) : staticTemplate.assets.logo,
+      loginBackground: theme.backgrounds.login.url
+        ? getFullAssetUrl(theme.backgrounds.login.url)
+        : staticTemplate.assets.loginBackground,
+      registerBackground: theme.backgrounds.register.url
+        ? getFullAssetUrl(theme.backgrounds.register.url)
+        : staticTemplate.assets.registerBackground,
+      pageHeaderBackground: theme.backgrounds.page.url
+        ? getFullAssetUrl(theme.backgrounds.page.url)
+        : staticTemplate.assets.pageHeaderBackground,
+      sidebarBackground: theme.backgrounds.sidebar.url
+        ? getFullAssetUrl(theme.backgrounds.sidebar.url)
+        : staticTemplate.assets.sidebarBackground,
+      globalBackground: theme.backgrounds.global.url
+        ? getFullAssetUrl(theme.backgrounds.global.url)
+        : staticTemplate.assets.globalBackground,
+      heroContainerBackground: theme.backgrounds.heroContainer.url
+        ? getFullAssetUrl(theme.backgrounds.heroContainer.url)
+        : staticTemplate.assets.heroContainerBackground,
+      accountHeaderBackground: theme.backgrounds.account.url
+        ? getFullAssetUrl(theme.backgrounds.account.url)
+        : staticTemplate.assets.accountHeaderBackground,
+      adminHeaderBackground: theme.backgrounds.admin.url
+        ? getFullAssetUrl(theme.backgrounds.admin.url)
+        : staticTemplate.assets.adminHeaderBackground,
+      serverInfoHeaderBackground: theme.backgrounds.serverInfo.url
+        ? getFullAssetUrl(theme.backgrounds.serverInfo.url)
+        : staticTemplate.assets.serverInfoHeaderBackground,
+      newsHeaderBackground: theme.backgrounds.news.url
+        ? getFullAssetUrl(theme.backgrounds.news.url)
+        : staticTemplate.assets.newsHeaderBackground,
+      rankingsHeaderBackground: theme.backgrounds.rankings.url
+        ? getFullAssetUrl(theme.backgrounds.rankings.url)
+        : staticTemplate.assets.rankingsHeaderBackground,
+      downloadHeaderBackground: theme.backgrounds.download.url
+        ? getFullAssetUrl(theme.backgrounds.download.url)
+        : staticTemplate.assets.downloadHeaderBackground,
+      guideHeaderBackground: theme.backgrounds.guide.url
+        ? getFullAssetUrl(theme.backgrounds.guide.url)
+        : staticTemplate.assets.guideHeaderBackground,
+    },
+  };
+
   return (
     <ThemeContext.Provider
       value={{
@@ -584,6 +685,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         setBranding,
         setBackground,
         setSocialLink,
+        setActiveTemplate,
+        currentTemplate,
         isLoading,
       }}
     >

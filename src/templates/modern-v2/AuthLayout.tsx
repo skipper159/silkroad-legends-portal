@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@/context/ThemeContext';
-import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -8,7 +7,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const AuthLayout = ({ children }: LayoutProps) => {
   const { currentTemplate, theme } = useTheme();
   const globalBg = currentTemplate.assets.globalBackground;
   const bgSettings = theme.backgrounds?.global || {
@@ -19,7 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <div className='min-h-screen bg-theme-background text-theme-text font-sans flex relative'>
+    <div className='min-h-screen bg-theme-background text-theme-text font-sans flex flex-col relative'>
       {/* Global Background Layer */}
       {globalBg && (
         <div
@@ -41,19 +40,15 @@ const Layout = ({ children }: LayoutProps) => {
         }}
       />
 
-      {/* Sidebar - Desktop Only for now (Sticky) */}
-      <Sidebar className='hidden md:flex w-64 flex-col sticky top-0 h-screen shrink-0 z-50' />
+      {/* Full width header */}
+      <Header />
 
-      {/* Main Content Wrapper */}
-      <div className='flex-1 flex flex-col transition-all duration-300 relative z-10 overflow-x-hidden'>
-        <Header />
+      {/* Main Content - Full width, centered */}
+      <main className='flex-1 flex flex-col relative w-full z-10'>{children}</main>
 
-        <main className='flex-1 p-0 relative'>{children}</main>
-
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
 
-export default Layout;
+export default AuthLayout;

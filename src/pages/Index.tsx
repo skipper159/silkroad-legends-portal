@@ -1,9 +1,10 @@
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout, HeroSection, ServerStatusWidget, FeaturesSection, NewsSection, RankingPreviewSection } =
-  ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const Index = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout, HeroSection, ServerStatusWidget, FeaturesSection, NewsSection, RankingPreviewSection } =
+    currentTemplate.components;
+
   return (
     <Layout>
       <HeroSection />

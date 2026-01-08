@@ -1,16 +1,16 @@
 import React from 'react';
 import { RankingTabs } from '@/components/Rankings';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const Rankings: React.FC = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   return (
     <Layout>
       <div
         className='py-12 bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 text-center'>

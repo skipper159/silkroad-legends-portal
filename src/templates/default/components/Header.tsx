@@ -3,13 +3,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import logo from '/lafftale_logo_300x300.png';
+import { useTheme } from '@/context/ThemeContext';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout, isAdmin } = useAuth();
+  const { currentTemplate } = useTheme();
+
+  const logo = currentTemplate.assets.logo;
 
   const isActive = (path: string) => location.pathname === path;
 

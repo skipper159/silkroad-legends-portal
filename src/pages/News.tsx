@@ -4,9 +4,7 @@ import { Newspaper, AlertCircle, Calendar, Users, Award } from 'lucide-react';
 import { weburl } from '@/lib/api';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 // News Item Interface Definition - updated to match backend
 interface NewsItem {
@@ -41,6 +39,8 @@ const getCategoryClass = (category: string) => {
 };
 
 const News = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const [news, setNews] = useState<NewsItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -126,7 +126,7 @@ const News = () => {
       <div
         className='py-12 bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 text-center'>
