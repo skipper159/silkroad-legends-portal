@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Newspaper, AlertCircle, Calendar, Users, Award } from 'lucide-react';
 import { weburl } from '@/lib/api';
-import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import ActiveTemplate from '@/config/theme-config';
+
+const { Layout } = ActiveTemplate.components;
 
 // News Item Interface Definition - updated to match backend
 interface NewsItem {
@@ -34,9 +35,9 @@ const getCategoryIcon = (category: string) => {
 const getCategoryClass = (category: string) => {
   const lowerCategory = category?.toLowerCase();
   if (lowerCategory === 'update') return 'bg-blue-600';
-  if (lowerCategory === 'event') return 'bg-yellow-500 text-black';
+  if (lowerCategory === 'event') return 'bg-theme-highlight text-theme-surface';
   if (lowerCategory === 'community') return 'bg-green-600';
-  return 'bg-silkroad-crimson';
+  return 'bg-theme-accent';
 };
 
 const News = () => {
@@ -121,14 +122,18 @@ const News = () => {
   };
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
-      <div className='py-12 bg-header-bg bg-cover bg-center'>
+    <Layout>
+      <div
+        className='py-12 bg-cover bg-center'
+        style={{
+          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+        }}
+      >
         <div className='container mx-auto px-4 text-center'>
           <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
-            News <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>& Updates</span>
+            News <span className='text-theme-accent font-cinzel text-4xl font-bold'>& Updates</span>
           </h1>
-          <p className='text-lg max-w-2xl mx-auto mb-10 text-gray-300'>
+          <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
             Stay up to date with the latest updates, events and community news from Lafftale Silkroad Online.
           </p>
         </div>
@@ -156,7 +161,7 @@ const News = () => {
             <div className='mt-8'>
               {loading ? (
                 <div className='flex justify-center items-center py-20'>
-                  <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-lafftale-gold'></div>
+                  <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
                 </div>
               ) : error ? (
                 <div className='flex flex-col items-center py-20'>
@@ -189,11 +194,11 @@ const News = () => {
                                 <span
                                   className={`${getCategoryClass(
                                     item.category
-                                  )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-shadow duration-300`}
+                                  )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(var(--theme-highlight),0.4)] transition-shadow duration-300`}
                                 >
                                   {getCategoryIcon(item.category)} {item.category}
                                 </span>
-                                <span className='text-xs text-gray-300 group-hover:text-lafftale-gold transition-colors duration-300'>
+                                <span className='text-xs text-theme-text-muted group-hover:text-theme-primary transition-colors duration-300'>
                                   {formatDate(item.created_at)}
                                 </span>
                               </div>
@@ -202,11 +207,11 @@ const News = () => {
                         </div>
 
                         <div className='p-4'>
-                          <h3 className='text-xl font-bold mb-2 text-lafftale-gold group-hover:text-lafftale-bronze transition-colors duration-300'>
+                          <h3 className='text-xl font-bold mb-2 text-theme-primary group-hover:text-theme-accent transition-colors duration-300'>
                             {item.title}
                           </h3>
 
-                          <p className='text-gray-400 mb-4 line-clamp-3 group-hover:text-gray-300 transition-colors duration-300'>
+                          <p className='text-theme-text-muted mb-4 line-clamp-3 group-hover:text-theme-text transition-colors duration-300'>
                             {item.excerpt
                               ? item.excerpt
                               : item.content && typeof item.content === 'string'
@@ -217,7 +222,7 @@ const News = () => {
                           <Button
                             variant='link'
                             asChild
-                            className='p-0 text-lafftale-gold hover:text-lafftale-bronze transition-colors duration-300'
+                            className='p-0 text-theme-primary hover:text-theme-accent transition-colors duration-300'
                           >
                             <Link to={`/news/${item.slug}`}>Read More →</Link>
                           </Button>
@@ -226,7 +231,7 @@ const News = () => {
                     ))
                   ) : (
                     <div className='col-span-full text-center py-10'>
-                      <p className='text-gray-400'>
+                      <p className='text-theme-text-muted'>
                         {activeCategory === 'all'
                           ? 'No news available.'
                           : `No news available in category "${activeCategory}".`}
@@ -239,9 +244,7 @@ const News = () => {
           </Tabs>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

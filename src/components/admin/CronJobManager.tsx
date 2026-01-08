@@ -132,8 +132,8 @@ const CronJobManager = () => {
         </CardHeader>
         <CardContent>
           <div className='text-center py-4'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-lafftale-gold mx-auto'></div>
-            <p className='text-sm text-gray-400 mt-2'>Loading cron jobs...</p>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-theme-primary mx-auto'></div>
+            <p className='text-sm text-theme-text-muted mt-2'>Loading cron jobs...</p>
           </div>
         </CardContent>
       </Card>
@@ -145,10 +145,10 @@ const CronJobManager = () => {
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
-            <Clock className='h-5 w-5 text-lafftale-gold' />
+            <Clock className='h-5 w-5 text-theme-primary' />
             Cron Job Management
           </CardTitle>
-          <p className='text-sm text-gray-400'>Manage automatic calculations and scheduled tasks</p>
+          <p className='text-sm text-theme-text-muted'>Manage automatic calculations and scheduled tasks</p>
         </CardHeader>
         <CardContent>
           {error && (
@@ -162,7 +162,7 @@ const CronJobManager = () => {
 
           <div className='space-y-4'>
             {jobs.map((job) => (
-              <Card key={job.job_name} className='bg-lafftale-darkgray border-gray-700'>
+              <Card key={job.job_name} className='bg-theme-surface border-gray-700'>
                 <CardContent className='p-4'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
@@ -177,7 +177,7 @@ const CronJobManager = () => {
                               Active
                             </span>
                           ) : (
-                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-gray-700 text-gray-400 rounded-md text-xs'>
+                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-gray-700 text-theme-text-muted rounded-md text-xs'>
                               <Square className='w-2 h-2' />
                               Inactive
                             </span>
@@ -185,11 +185,11 @@ const CronJobManager = () => {
                         </div>
                       </div>
 
-                      <p className='text-sm text-gray-400 mb-3'>{job.description}</p>
+                      <p className='text-sm text-theme-text-muted mb-3'>{job.description}</p>
 
                       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
                         <div>
-                          <span className='text-gray-400'>Schedule:</span>
+                          <span className='text-theme-text-muted'>Schedule:</span>
                           {editingJob === job.job_name ? (
                             <div className='flex items-center gap-2 mt-1'>
                               <Input
@@ -201,29 +201,31 @@ const CronJobManager = () => {
                               <Button
                                 size='sm'
                                 onClick={() => updateJob(job.job_name, tempCronExpression, job.enabled)}
-                                className='bg-lafftale-gold text-black hover:bg-yellow-500'
+                                className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                               >
                                 Save
                               </Button>
                             </div>
                           ) : (
                             <div className='mt-1'>
-                              <code className='text-lafftale-gold text-xs bg-gray-800 px-2 py-1 rounded'>
+                              <code className='text-theme-primary text-xs bg-gray-800 px-2 py-1 rounded'>
                                 {job.cron_expression}
                               </code>
-                              <p className='text-xs text-gray-500 mt-1'>{getCronDescription(job.cron_expression)}</p>
+                              <p className='text-xs text-theme-text-muted mt-1'>
+                                {getCronDescription(job.cron_expression)}
+                              </p>
                             </div>
                           )}
                         </div>
 
                         <div>
-                          <span className='text-gray-400'>Last run:</span>
+                          <span className='text-theme-text-muted'>Last run:</span>
                           <p className='text-white mt-1'>{formatDate(job.last_run)}</p>
-                          <p className='text-xs text-gray-500'>Count: {job.run_count}</p>
+                          <p className='text-xs text-theme-text-muted'>Count: {job.run_count}</p>
                         </div>
 
                         <div>
-                          <span className='text-gray-400'>Next run:</span>
+                          <span className='text-theme-text-muted'>Next run:</span>
                           <p className='text-white mt-1'>
                             {job.enabled && job.nextRunEstimate ? formatDate(job.nextRunEstimate) : 'Disabled'}
                           </p>
@@ -237,7 +239,7 @@ const CronJobManager = () => {
                           checked={job.enabled}
                           onCheckedChange={(enabled) => updateJob(job.job_name, job.cron_expression, enabled)}
                         />
-                        <span className='text-sm text-gray-400'>Enabled</span>
+                        <span className='text-sm text-theme-text-muted'>Enabled</span>
                       </div>
 
                       <Button
@@ -255,7 +257,7 @@ const CronJobManager = () => {
                       <Button
                         size='sm'
                         onClick={() => triggerJob(job.job_name)}
-                        className='bg-lafftale-gold text-black hover:bg-yellow-500'
+                        className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                       >
                         <Play className='h-4 w-4' />
                       </Button>
@@ -267,7 +269,7 @@ const CronJobManager = () => {
           </div>
 
           {jobs.length === 0 && !loading && (
-            <div className='text-center py-8 text-gray-400'>
+            <div className='text-center py-8 text-theme-text-muted'>
               <Clock className='h-12 w-12 mx-auto mb-4 opacity-50' />
               <p>No cron jobs configured</p>
             </div>
@@ -293,7 +295,7 @@ const CronJobManager = () => {
             <p>
               <code>0 1 1 * *</code> - Monthly (1st day at 01:00)
             </p>
-            <p className='text-gray-400'>Format: Minute Hour Day Month Weekday</p>
+            <p className='text-theme-text-muted'>Format: Minute Hour Day Month Weekday</p>
           </div>
         </CardContent>
       </Card>

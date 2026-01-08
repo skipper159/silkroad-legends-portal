@@ -81,21 +81,21 @@ const GlobalEventModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDismiss}>
-      <DialogContent className='bg-lafftale-dark border-lafftale-gold sm:max-w-md md:max-w-lg lg:max-w-2xl p-0 overflow-hidden'>
+      <DialogContent className='bg-theme-surface border-theme-primary sm:max-w-md md:max-w-lg lg:max-w-2xl p-0 overflow-hidden'>
         {/* Image Header */}
         {modal.image_url && (
           <div className='w-full h-48 md:h-64 relative bg-black/50'>
             <img src={`${weburl}${modal.image_url}`} alt={modal.title} className='w-full h-full object-cover' />
-            <div className='absolute inset-0 bg-gradient-to-t from-lafftale-dark to-transparent' />
+            <div className='absolute inset-0 bg-theme-surface' />
           </div>
         )}
 
         <div className='p-6 relative'>
           <DialogHeader className='mb-4'>
-            <DialogTitle className='text-2xl font-cinzel text-lafftale-gold'>{modal.title}</DialogTitle>
+            <DialogTitle className='text-2xl font-cinzel text-theme-primary'>{modal.title}</DialogTitle>
           </DialogHeader>
 
-          <DialogDescription className='text-gray-300 whitespace-pre-line'>
+          <DialogDescription className='text-theme-text-muted whitespace-pre-line'>
             {/* Render HTML content safely or plain text */}
             <div dangerouslySetInnerHTML={{ __html: modal.content }} />
           </DialogDescription>
@@ -104,13 +104,13 @@ const GlobalEventModal = () => {
             <Button
               variant='outline'
               onClick={handleDismiss}
-              className='border-lafftale-gold/50 text-lafftale-gold hover:bg-lafftale-gold/10 w-full sm:w-auto'
+              className='border-lafftale-gold/50 text-theme-primary hover:bg-lafftale-gold/10 w-full sm:w-auto'
             >
               Close
             </Button>
             {modal.button_url && modal.button_text && (
               <Button
-                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze w-full sm:w-auto'
+                className='bg-theme-primary text-theme-primary-foreground hover:bg-theme-accent w-full sm:w-auto'
                 onClick={() => {
                   window.open(modal.button_url, '_blank');
                   handleDismiss();

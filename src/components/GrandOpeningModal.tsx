@@ -64,7 +64,7 @@ const GrandOpeningModal = () => {
       <div className='absolute inset-0 bg-black/80 backdrop-blur-sm' onClick={handleClose} />
 
       {/* Modal Content */}
-      <div className='relative bg-gradient-to-br from-lafftale-darkgray via-gray-900 to-lafftale-darkgray border-2 border-lafftale-gold/30 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-scale-in'>
+      <div className='relative bg-theme-surface border-2 border-theme-primary/30 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-scale-in'>
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -75,30 +75,30 @@ const GrandOpeningModal = () => {
         </button>
 
         {/* Decorative Top Bar */}
-        <div className='h-2 bg-gradient-to-r from-lafftale-bronze via-lafftale-gold to-lafftale-bronze' />
+        <div className='h-2 bg-gradient-to-r from-theme-accent via-theme-primary to-theme-accent' />
 
         {/* Content */}
         <div className='p-8 md:p-12 text-center'>
           {/* Icon */}
           <div className='flex justify-center mb-6'>
-            <div className='p-4 bg-lafftale-gold/10 rounded-full border border-lafftale-gold/30'>
-              <PartyPopper size={48} className='text-lafftale-gold' />
+            <div className='p-4 bg-theme-primary/10 rounded-full border border-theme-primary/30'>
+              <PartyPopper size={48} className='text-theme-primary' />
             </div>
           </div>
 
           {/* Title */}
           <h2 className='text-3xl md:text-4xl font-bold mb-4 text-white'>
-            Grand Opening <span className='text-lafftale-bronze'>{targetDate.getFullYear()}</span>
+            Grand Opening <span className='text-theme-accent'>{targetDate.getFullYear()}</span>
           </h2>
 
-          <p className='text-gray-300 text-lg mb-8 max-w-md mx-auto'>
-            Join us for the official launch of <span className='text-lafftale-gold font-semibold'>Lafftale</span> and
+          <p className='text-theme-text-muted text-lg mb-8 max-w-md mx-auto'>
+            Join us for the official launch of <span className='text-theme-primary font-semibold'>Lafftale</span> and
             embark on an epic journey through the Silkroad!
           </p>
 
           {/* Countdown */}
           <div className='mb-8'>
-            <div className='flex items-center justify-center gap-2 mb-4 text-lafftale-bronze'>
+            <div className='flex items-center justify-center gap-2 mb-4 text-theme-accent'>
               <Calendar size={20} />
               <span className='font-semibold'>{formattedDate}</span>
             </div>
@@ -115,7 +115,7 @@ const GrandOpeningModal = () => {
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
             <a
               href='/register'
-              className='px-8 py-3 bg-gradient-to-r from-lafftale-bronze to-lafftale-gold text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg'
+              className='px-8 py-3 bg-gradient-to-r from-theme-accent to-theme-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg'
             >
               Register Now
             </a>
@@ -130,7 +130,7 @@ const GrandOpeningModal = () => {
           {/* Mobile Close Button */}
           <button
             onClick={handleClose}
-            className='mt-6 px-6 py-2 bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-colors border border-white/20 text-sm md:hidden'
+            className='mt-6 px-6 py-2 bg-white/10 text-theme-text-muted rounded-lg hover:bg-white/20 transition-colors border border-white/20 text-sm md:hidden'
           >
             Close
           </button>
@@ -150,9 +150,9 @@ interface CountdownBoxProps {
 
 const CountdownBox = ({ value, label }: CountdownBoxProps) => {
   return (
-    <div className='bg-lafftale-darkgray/50 border border-lafftale-gold/20 rounded-lg p-3 md:p-4'>
-      <div className='text-3xl md:text-4xl font-bold text-lafftale-gold mb-1'>{String(value).padStart(2, '0')}</div>
-      <div className='text-xs md:text-sm text-gray-400 uppercase tracking-wider'>{label}</div>
+    <div className='bg-theme-surface/50 border border-theme-primary/20 rounded-lg p-3 md:p-4'>
+      <div className='text-3xl md:text-4xl font-bold text-theme-primary mb-1'>{String(value).padStart(2, '0')}</div>
+      <div className='text-xs md:text-sm text-theme-text-muted uppercase tracking-wider'>{label}</div>
     </div>
   );
 };

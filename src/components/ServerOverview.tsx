@@ -115,7 +115,7 @@ const ServerOverview = () => {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {/* Top Player Card */}
           <div
-            className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
+            className='card border-theme-primary/30 hover:border-theme-primary/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
                 'image/Web/top-player-bg.jpg'
@@ -125,20 +125,20 @@ const ServerOverview = () => {
             }}
           >
             <div className='relative z-10 flex items-start'>
-              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-lafftale-gold to-amber-600 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-lafftale-gold/50 transition-all duration-300'>
-                <Trophy size={24} className='text-lafftale-dark' />
+              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-theme-primary to-amber-600 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-theme-primary/50 transition-all duration-300'>
+                <Trophy size={24} className='text-theme-primary-foreground' />
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Top Player</h4>
+                  <h4 className='text-theme-primary text-lg font-semibold drop-shadow-lg'>Top Player</h4>
                 </div>
                 <p className='font-bold text-white drop-shadow-lg text-lg'>
                   {topPlayer?.name ?? (loading ? 'Loading...' : '—')}
                 </p>
-                <div className='text-sm text-lafftale-beige/90 drop-shadow-md'>
+                <div className='text-sm text-theme-text-muted/90 drop-shadow-md'>
                   <span>{topPlayer?.guild ?? '—'}</span>
                 </div>
-                <div className='text-xs text-lafftale-gold mt-1 drop-shadow-md'>
+                <div className='text-xs text-theme-primary mt-1 drop-shadow-md'>
                   {topPlayer?.itemPoints ? `${topPlayer.itemPoints.toLocaleString()} Item Points` : ''}
                 </div>
               </div>
@@ -147,7 +147,7 @@ const ServerOverview = () => {
 
           {/* Top Guild Card */}
           <div
-            className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
+            className='card border-theme-primary/30 hover:border-theme-primary/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
                 'image/Web/top-guild-bg.jpg'
@@ -157,17 +157,17 @@ const ServerOverview = () => {
             }}
           >
             <div className='relative z-10 flex items-start'>
-              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-lafftale-gold to-amber-600 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-lafftale-gold/50 transition-all duration-300'>
-                <Crown size={24} className='text-lafftale-dark' />
+              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-theme-primary to-amber-600 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-theme-primary/50 transition-all duration-300'>
+                <Crown size={24} className='text-theme-primary-foreground' />
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Top Guild</h4>
+                  <h4 className='text-theme-primary text-lg font-semibold drop-shadow-lg'>Top Guild</h4>
                 </div>
                 <p className='font-bold text-white drop-shadow-lg text-lg'>
                   {topGuild?.name ?? (loading ? 'Loading...' : '—')}
                 </p>
-                <div className='text-sm text-lafftale-beige/90 drop-shadow-md'>
+                <div className='text-sm text-theme-text-muted/90 drop-shadow-md'>
                   {topGuild?.activityPoints ? `${topGuild.activityPoints} Activity Points` : ''}
                 </div>
               </div>
@@ -176,7 +176,7 @@ const ServerOverview = () => {
 
           {/* Fortress Owner Card */}
           <div
-            className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
+            className='card border-theme-primary/30 hover:border-theme-primary/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
                 'image/Web/fortress-owner-bg.jpg'
@@ -186,17 +186,17 @@ const ServerOverview = () => {
             }}
           >
             <div className='relative z-10 flex items-start'>
-              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-lafftale-bronze to-amber-700 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-lafftale-bronze/50 transition-all duration-300'>
-                <Castle size={24} className='text-lafftale-dark' />
+              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-theme-accent to-amber-700 flex items-center justify-center shadow-lg mr-4 group-hover:shadow-theme-accent/50 transition-all duration-300'>
+                <Castle size={24} className='text-theme-primary-foreground' />
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Fortress Owner</h4>
+                  <h4 className='text-theme-primary text-lg font-semibold drop-shadow-lg'>Fortress Owner</h4>
                 </div>
                 <p className='font-bold text-white drop-shadow-lg text-lg'>
                   {fortressOwner?.guild ?? (loading ? 'Loading...' : '—')}
                 </p>
-                <div className='text-sm text-lafftale-beige/90 drop-shadow-md'>
+                <div className='text-sm text-theme-text-muted/90 drop-shadow-md'>
                   {fortressOwner?.fortress ? `${fortressOwner.fortress}` : ''}
                 </div>
               </div>
@@ -205,7 +205,7 @@ const ServerOverview = () => {
 
           {/* Players Online Card */}
           <div
-            className='card border-lafftale-gold/30 hover:border-lafftale-gold/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
+            className='card border-theme-primary/30 hover:border-theme-primary/60 transition-all duration-300 relative overflow-hidden group hover:scale-105'
             style={{
               backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4)), url('${getPublicUrl(
                 'image/Web/players-online-bg.jpg'
@@ -221,7 +221,7 @@ const ServerOverview = () => {
               </div>
               <div>
                 <div className='flex items-center mb-1'>
-                  <h4 className='text-lafftale-gold text-lg font-semibold drop-shadow-lg'>Players Online</h4>
+                  <h4 className='text-theme-primary text-lg font-semibold drop-shadow-lg'>Players Online</h4>
                 </div>
                 <p className='font-bold text-white text-2xl drop-shadow-lg animate-pulse'>
                   {playersOnline ?? (loading ? 'Loading...' : '—')}
@@ -237,19 +237,19 @@ const ServerOverview = () => {
         {/* Recent Unique Kills Live Ticker */}
         <div className='mt-12'>
           <div className='flex justify-center mb-6'>
-            <h3 className='text-2xl md:text-3xl font-bold text-lafftale-gold'>🔥 Recent Unique Kills</h3>
+            <h3 className='text-2xl md:text-3xl font-bold text-theme-primary'>🔥 Recent Unique Kills</h3>
           </div>
 
           {killsLoading ? (
             <div className='flex justify-center py-8'>
-              <div className='w-8 h-8 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+              <div className='w-8 h-8 border-2 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
             </div>
           ) : recentKills.length > 0 ? (
             <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
               {recentKills.map((kill, index) => (
                 <div
                   key={`${kill.mobId}-${kill.charId}-${kill.eventDate}-${index}`}
-                  className='p-4 bg-lafftale-dark/60 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/50 transition-all duration-300 hover:scale-[1.02]'
+                  className='p-4 bg-theme-surface/60 rounded-lg border border-theme-primary/20 hover:border-theme-primary/50 transition-all duration-300 hover:scale-[1.02]'
                 >
                   <div className='flex items-center justify-between gap-3'>
                     <div className='flex items-center gap-3 flex-1 min-w-0'>
@@ -260,7 +260,7 @@ const ServerOverview = () => {
                         <div className='flex items-center gap-2 mb-1'>
                           <Link
                             to={`/character/${encodeURIComponent(kill.characterName)}`}
-                            className='text-sm font-bold text-lafftale-gold hover:text-lafftale-bronze transition-colors truncate'
+                            className='text-sm font-bold text-theme-primary hover:text-lafftale-bronze transition-colors truncate'
                           >
                             {kill.characterName}
                           </Link>
@@ -286,7 +286,7 @@ const ServerOverview = () => {
               ))}
             </div>
           ) : (
-            <div className='text-center text-gray-400 py-8 bg-lafftale-dark/30 rounded-lg border border-lafftale-gold/10'>
+            <div className='text-center text-gray-400 py-8 bg-theme-surface/30 rounded-lg border border-theme-primary/10'>
               <p className='text-sm'>No recent unique kills</p>
             </div>
           )}

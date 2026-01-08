@@ -65,7 +65,7 @@ const getPointsColor = (points: number) => {
   if (points >= 50) return 'text-orange-400';
   if (points >= 20) return 'text-blue-400';
   if (points >= 10) return 'text-green-400';
-  return 'text-gray-400';
+  return 'text-theme-text-muted';
 };
 
 export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
@@ -88,7 +88,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
       return (
         <Link
           to={`/character/${encodeURIComponent(player.CharName16)}`}
-          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          className='text-theme-primary hover:text-theme-primary/80 transition-colors duration-200 cursor-pointer'
           title={`View ${player.CharName16}'s character details`}
         >
           {player.CharName16}
@@ -110,7 +110,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
       return (
         <Link
           to={`/guild/${encodeURIComponent(guildName)}`}
-          className='text-lafftale-gold hover:text-lafftale-bronze transition-colors cursor-pointer'
+          className='text-theme-primary hover:text-theme-accent transition-colors cursor-pointer'
           title={`View ${guildName}'s guild details`}
         >
           {guildName}
@@ -123,7 +123,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center h-64'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-lafftale-gold'></div>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
       </div>
     );
   }
@@ -142,13 +142,13 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Character</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Guild</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Total Kills</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Points</TableHead>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Character</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Total Kills</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -156,7 +156,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
             filteredData.map((player) => (
               <TableRow
                 key={`${player.rank}-${player.CharName16}`}
-                className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 transition-colors ${
+                className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 transition-colors ${
                   player.rank <= 3 ? 'bg-lafftale-gold/10' : ''
                 }`}
               >
@@ -165,7 +165,11 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
                     {player.rank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          player.rank === 1 ? 'text-yellow-500' : player.rank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          player.rank === 1
+                            ? 'text-yellow-500'
+                            : player.rank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(player.rank)}
@@ -185,7 +189,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
                   <GuildNameComponent guildName={player.GuildName || ''} />
                 </TableCell>
                 <TableCell className='text-center'>
-                  <span className='text-lafftale-gold'>{player.Level}</span>
+                  <span className='text-theme-primary'>{player.Level}</span>
                 </TableCell>
                 <TableCell className='text-center'>
                   <span className='text-blue-400 font-bold'>{player.TotalKills.toLocaleString()}</span>
@@ -199,7 +203,7 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className='text-center text-gray-500 py-8'>
+              <TableCell colSpan={6} className='text-center text-theme-text-muted py-8'>
                 {searchTerm ? 'No players found matching your search.' : 'No unique kill data available.'}
               </TableCell>
             </TableRow>
@@ -221,9 +225,9 @@ export const UniqueRankingTable: React.FC<UniqueRankingTableProps> = ({
       )}
 
       {/* Legend */}
-      <div className='mt-4 bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
-        <h4 className='text-sm font-semibold text-lafftale-gold mb-2'>Legend:</h4>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-300'>
+      <div className='mt-4 bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
+        <h4 className='text-sm font-semibold text-theme-primary mb-2'>Legend:</h4>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-theme-text-muted'>
           <div className='flex items-center gap-2'>
             <span className='text-blue-400'>●</span>
             <span>Total Kills: Total number of unique monster kills</span>

@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { weburl } from '@/lib/api';
 import TwoFactorModal from '@/components/TwoFactorModal';
+import ActiveTemplate from '@/config/theme-config';
+
+const { Layout } = ActiveTemplate.components;
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -24,11 +25,9 @@ const Login = () => {
 
   const handleLoginSuccess = (data: { token: string; user: any }) => {
     try {
-      // JWT dekodieren
       const payload = JSON.parse(atob(data.token.split('.')[1]));
       console.log('JWT Payload:', payload);
 
-      // Update auth context and save token
       const isAdmin = payload.isAdmin || false;
       login(data.token, isAdmin);
 
@@ -37,7 +36,6 @@ const Login = () => {
         description: 'Welcome back to Lafftale online!',
       });
 
-      // Sofortige Navigation ohne Verzögerung
       if (isAdmin) {
         navigate('/AdminDashboard', { replace: true });
       } else {
@@ -62,15 +60,12 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Check if 2FA is required
         if (data.requires2FA && data.tempToken) {
           setTempToken(data.tempToken);
           setShow2FAModal(true);
           setIsLoading(false);
           return;
         }
-
-        // Normal login success
         handleLoginSuccess(data);
       } else {
         if (data?.needsVerification) {
@@ -117,34 +112,51 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
-      <main className='flex-grow bg-login-bg bg-cover bg-center'>
-        <div className='container mx-auto px-4 py-16 md:py-24'>
+    <Layout>
+      <div
+        className='flex-grow bg-cover bg-center py-16 md:py-24'
+        style={{
+          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+        }}
+      >
+        <div className='container mx-auto px-4'>
           <div className='max-w-md mx-auto'>
-            <div className='card backdrop-blur-sm border-silkroad-gold/30'>
+            <div
+              className='p-6 transition-all'
+              style={{
+                backgroundColor: 'var(--theme-card-bg)',
+                backdropFilter: 'blur(var(--theme-card-blur))',
+                borderRadius: 'var(--theme-card-radius)',
+                border: 'var(--theme-card-border-width) solid var(--theme-border)',
+                boxShadow: 'var(--theme-card-shadow)',
+              }}
+            >
               <div className='text-center mb-8'>
-                <h1 className='text-3xl font-bold'>Login</h1>
-                <p className='text-gray-400 mt-2'>Sign in to your Silkroad Lafftale account</p>
+                <h2 className='text-3xl font-bold text-theme-primary'>Login</h2>
+                <p className='text-theme-text-muted mt-2'>Sign in to your Silkroad Lafftale account</p>
               </div>
 
               <form onSubmit={handleLogin} className='space-y-6'>
                 <div className='space-y-2'>
-                  <Label htmlFor='username'>Username or Email</Label>
+                  <Label htmlFor='username' className='text-theme-text'>
+                    Username or Email
+                  </Label>
                   <Input
                     id='username'
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder='Enter your username or email'
                     required
-                    className='bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold'
+                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
                   />
                 </div>
 
                 <div className='space-y-2'>
                   <div className='flex justify-between items-center'>
-                    <Label htmlFor='password'>Password</Label>
-                    <Link to='/forgot-password' className='text-sm text-silkroad-gold hover:underline'>
+                    <Label htmlFor='password' className='text-theme-text'>
+                      Password
+                    </Label>
+                    <Link to='/forgot-password' className='text-sm text-theme-primary hover:underline'>
                       Forgot Password?
                     </Link>
                   </div>
@@ -155,7 +167,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder='Enter your password'
                     required
-                    className='bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold'
+                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
                   />
                 </div>
 
@@ -165,20 +177,24 @@ const Login = () => {
                     checked={rememberMe}
                     onCheckedChange={(checked) => setRememberMe(!!checked)}
                   />
-                  <Label htmlFor='remember' className='text-sm text-gray-300'>
+                  <Label htmlFor='remember' className='text-sm text-theme-text-muted'>
                     Remember me
                   </Label>
                 </div>
 
-                <Button type='submit' className='btn-primary w-full' disabled={isLoading}>
+                <Button
+                  type='submit'
+                  className='w-full bg-theme-primary hover:bg-theme-primary-hover text-white font-bold py-3 rounded-lg transition-all duration-300'
+                  disabled={isLoading}
+                >
                   {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
 
               <div className='mt-6 text-center'>
-                <p className='text-gray-400'>
+                <p className='text-theme-text-muted'>
                   Don't have an account?{' '}
-                  <Link to='/register' className='text-silkroad-gold hover:underline'>
+                  <Link to='/register' className='text-theme-primary hover:underline'>
                     Register now
                   </Link>
                 </p>
@@ -186,14 +202,13 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </main>
-      <Footer />
+      </div>
 
       {/* 2FA Modal */}
       {show2FAModal && tempToken && (
         <TwoFactorModal tempToken={tempToken} onSuccess={handle2FASuccess} onCancel={handle2FACancel} />
       )}
-    </div>
+    </Layout>
   );
 };
 

@@ -5,7 +5,7 @@ import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import logo from '/lafftale_logo_300x300.png';
 
-const Navbar = () => {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -192,9 +192,7 @@ const Navbar = () => {
             <Link
               to='/guide'
               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/guide')
-                  ? 'bg-lafftale-gold/20 text-lafftale-gold'
-                  : 'text-gray-300 hover:text-lafftale-gold'
+                isActive('/guide') ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'text-gray-300 hover:text-lafftale-gold'
               }`}
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -254,4 +252,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;

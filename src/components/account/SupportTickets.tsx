@@ -128,7 +128,7 @@ const SupportTickets = () => {
   return (
     <>
       <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-xl font-bold text-lafftale-gold'>Support Tickets</h2>
+        <h2 className='text-xl font-bold text-theme-primary'>Support Tickets</h2>
         <Button onClick={() => setOpenNewModal(true)} className='flex items-center gap-2'>
           <PlusCircle size={16} />
           New Ticket
@@ -136,14 +136,14 @@ const SupportTickets = () => {
       </div>
 
       {loading ? (
-        <div className='flex justify-center py-6 text-lafftale-gold'>
+        <div className='flex justify-center py-6 text-theme-primary'>
           <Loader2 className='animate-spin mr-2' />
           Loading tickets...
         </div>
       ) : (
         <Card className='overflow-x-auto'>
           <table className='min-w-full text-left text-sm text-gray-300'>
-            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+            <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>Subject</th>
                 <th className='p-3'>Priority</th>
@@ -155,7 +155,7 @@ const SupportTickets = () => {
             <tbody>
               {tickets.length > 0 ? (
                 tickets.map((ticket) => (
-                  <tr key={ticket.Id} className='border-b border-lafftale-gold/10 hover:bg-lafftale-dark/20'>
+                  <tr key={ticket.Id} className='border-b border-theme-primary/10 hover:bg-theme-surface/20'>
                     <td className='p-3'>{ticket.Subject}</td>
                     <td className='p-3 font-semibold'>
                       <span
@@ -204,9 +204,9 @@ const SupportTickets = () => {
 
       {/* Modal: Create Ticket */}
       <Dialog open={openNewModal} onOpenChange={setOpenNewModal}>
-        <DialogContent className='bg-lafftale-darkgray border border-lafftale-gold/20 text-gray-300'>
+        <DialogContent className='bg-theme-surface border border-theme-primary/20 text-theme-text-muted'>
           <DialogHeader>
-            <DialogTitle className='text-lafftale-gold'>Create new Ticket</DialogTitle>
+            <DialogTitle className='text-theme-primary'>Create new Ticket</DialogTitle>
             <DialogDescription>Please describe your issue. One open ticket at a time is allowed.</DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
@@ -241,9 +241,9 @@ const SupportTickets = () => {
 
       {/* Modal: Ticket Details */}
       <Dialog open={openDetailModal} onOpenChange={setOpenDetailModal}>
-        <DialogContent className='max-w-2xl bg-lafftale-darkgray border-lafftale-gold/20 text-gray-300'>
+        <DialogContent className='max-w-2xl bg-theme-surface border-theme-primary/20 text-theme-text-muted'>
           <DialogHeader>
-            <DialogTitle className='text-lafftale-gold'>
+            <DialogTitle className='text-theme-primary'>
               Ticket #{selectedTicket?.Id} – {selectedTicket?.Subject}
             </DialogTitle>
             <DialogDescription>Below is your conversation history.</DialogDescription>
@@ -264,11 +264,11 @@ const SupportTickets = () => {
                       key={msg.Id}
                       className={`p-3 rounded text-sm w-fit max-w-[85%] ${
                         msg.IsFromStaff
-                          ? 'ml-auto bg-yellow-100 text-yellow-900 text-right'
-                          : 'mr-auto bg-gray-800 text-white text-left'
+                          ? 'ml-auto bg-theme-primary/20 text-theme-primary text-right border border-theme-primary/30'
+                          : 'mr-auto bg-theme-surface text-theme-text text-left border border-theme-border'
                       }`}
                     >
-                      <div className='text-xs mb-1 text-lafftale-gold'>
+                      <div className='text-xs mb-1 text-theme-primary'>
                         {msg.SenderName} • {new Date(msg.SentAt).toLocaleString()}
                       </div>
                       <div>

@@ -34,7 +34,7 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -47,20 +47,20 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Fortress</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Guild</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Tax Ratio</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Defense Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Last Conquest</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Region</TableHead>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Fortress</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Tax Ratio</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Defense Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Last Conquest</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Region</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={7} className='text-center py-8 text-theme-text-muted'>
                 No fortress rankings found
               </TableCell>
             </TableRow>
@@ -71,7 +71,7 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({
               return (
                 <TableRow
                   key={fortress.GuildID || index}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 ${
                     actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
@@ -79,7 +79,11 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({
                     {actualRank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          actualRank === 1 ? 'text-yellow-500' : actualRank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          actualRank === 1
+                            ? 'text-yellow-500'
+                            : actualRank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(actualRank)}
@@ -89,21 +93,21 @@ const FortressRankingTable: React.FC<FortressRankingProps> = ({
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant='outline' className='text-lafftale-gold border-lafftale-gold/50'>
+                    <Badge variant='outline' className='text-theme-primary border-theme-primary/50'>
                       {fortress.FortressName}
                     </Badge>
                   </TableCell>
-                  <TableCell className='font-medium text-lafftale-gold'>{fortress.GuildName}</TableCell>
+                  <TableCell className='font-medium text-theme-primary'>{fortress.GuildName}</TableCell>
                   <TableCell className='hidden md:table-cell text-center'>{fortress.TaxRatio}%</TableCell>
                   <TableCell className='hidden md:table-cell text-center'>
                     <Badge variant='secondary' className='bg-blue-500/20 text-blue-400'>
                       Lv. {fortress.DefenseLevel || 1}
                     </Badge>
                   </TableCell>
-                  <TableCell className='hidden lg:table-cell text-gray-400 text-sm'>
+                  <TableCell className='hidden lg:table-cell text-theme-text-muted text-sm'>
                     {fortress.LastConquest ? new Date(fortress.LastConquest).toLocaleDateString() : 'Unknown'}
                   </TableCell>
-                  <TableCell className='hidden lg:table-cell text-gray-400 text-sm'>
+                  <TableCell className='hidden lg:table-cell text-theme-text-muted text-sm'>
                     {fortress.Region || 'Unknown'}
                   </TableCell>
                 </TableRow>

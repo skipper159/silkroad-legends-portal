@@ -22,11 +22,14 @@ import CookieBanner from './components/CookieBanner';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { AuthProvider } from './context/AuthContext';
 import { CookieConsentProvider } from './context/CookieConsentContext';
+import { ThemeProvider } from './context/ThemeContext';
 import './styles/sro-items.css';
 import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from './routes/ProtectedRoute';
 import NewsSection from './components/NewsSection';
-import ServerRules from './components/Legal/Server Rules';
+import ServerRules from './components/Legal/ServerRules';
+import TermsOfService from './components/Legal/TermsOfService';
+import Impressum from './components/Legal/Impressum';
 import ConfirmAccountDeletion from './pages/ConfirmAccountDeletion';
 import Guide from './pages/Guide';
 import BeginnerGuide from './pages/BeginnerGuide';
@@ -34,44 +37,48 @@ import ServerGuide from './pages/ServerGuide';
 
 function App() {
   return (
-    <AuthProvider>
-      <CookieConsentProvider>
-        <BrowserRouter>
-          <GrandOpeningModal />
-          <GlobalEventModal />
-          <CookieBanner />
-          <Routes>
-            {' '}
-            <Route path='/' element={<Index />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/forgot-password' element={<ForgotPassword />} />
-            <Route path='/reset-password/:token' element={<ResetPassword />} />
-            <Route path='/verify-email/:token' element={<VerifyEmail />} />
-            <Route path='/confirm-account-deletion/:token' element={<ConfirmAccountDeletion />} />
-            <Route path='/resend-verification' element={<ResendVerification />} />
-            <Route path='/rankings' element={<Rankings />} />
-            <Route path='/download' element={<Download />} />
-            <Route path='/news' element={<News />} />
-            <Route path='/news/:slug' element={<NewsDetail />} />
-            <Route path='/server-info' element={<ServerInfo />} />
-            <Route path='/rules' element={<ServerRules />} />
-            <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-            <Route path='/guide' element={<Guide />} />
-            <Route path='/guide/beginner' element={<BeginnerGuide />} />
-            <Route path='/guide/server' element={<ServerGuide />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path='/account' element={<Account />} />
-              <Route path='/AdminDashboard' element={<AdminDashboard />} />
-              <Route path='/character/:characterName' element={<CharacterOverview />} />
-              <Route path='/guild/:guildName' element={<GuildOverview />} />
-            </Route>
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
-      </CookieConsentProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <CookieConsentProvider>
+          <BrowserRouter>
+            <GrandOpeningModal />
+            <GlobalEventModal />
+            <CookieBanner />
+            <Routes>
+              {' '}
+              <Route path='/' element={<Index />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/forgot-password' element={<ForgotPassword />} />
+              <Route path='/reset-password/:token' element={<ResetPassword />} />
+              <Route path='/verify-email/:token' element={<VerifyEmail />} />
+              <Route path='/confirm-account-deletion/:token' element={<ConfirmAccountDeletion />} />
+              <Route path='/resend-verification' element={<ResendVerification />} />
+              <Route path='/rankings' element={<Rankings />} />
+              <Route path='/download' element={<Download />} />
+              <Route path='/news' element={<News />} />
+              <Route path='/news/:slug' element={<NewsDetail />} />
+              <Route path='/server-info' element={<ServerInfo />} />
+              <Route path='/rules' element={<ServerRules />} />
+              <Route path='/terms' element={<TermsOfService />} />
+              <Route path='/impressum' element={<Impressum />} />
+              <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+              <Route path='/guide' element={<Guide />} />
+              <Route path='/guide/beginner' element={<BeginnerGuide />} />
+              <Route path='/guide/server' element={<ServerGuide />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path='/account' element={<Account />} />
+                <Route path='/AdminDashboard' element={<AdminDashboard />} />
+                <Route path='/character/:characterName' element={<CharacterOverview />} />
+                <Route path='/guild/:guildName' element={<GuildOverview />} />
+              </Route>
+              <Route path='*' element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </CookieConsentProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

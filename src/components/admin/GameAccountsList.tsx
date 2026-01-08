@@ -107,7 +107,7 @@ const GameAccountsList = () => {
 
   if (loading) {
     return (
-      <div className='flex justify-center py-10 text-lafftale-gold'>
+      <div className='flex justify-center py-10 text-theme-primary'>
         <Loader2 className='animate-spin mr-2' />
         Loading...
       </div>
@@ -127,10 +127,10 @@ const GameAccountsList = () => {
         placeholder='Search by username...'
       />
 
-      <Card className='overflow-hidden border-lafftale-gold/30 bg-lafftale-dark'>
+      <Card className='overflow-hidden border-theme-primary/30 bg-theme-surface'>
         <div className='overflow-x-auto'>
           <table className='min-w-full text-left text-sm text-gray-300'>
-            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+            <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>ID</th>
                 <th className='p-3'>Username</th>
@@ -144,10 +144,7 @@ const GameAccountsList = () => {
             <tbody>
               {accounts.length > 0 ? (
                 accounts.map((acc) => (
-                  <tr
-                    key={acc.GameAccountId}
-                    className='border-b border-lafftale-gold/10 hover:bg-lafftale-darkgray/30'
-                  >
+                  <tr key={acc.GameAccountId} className='border-b border-theme-primary/10 hover:bg-theme-surface/30'>
                     <td className='p-3 text-gray-500'>#{acc.GameAccountId}</td>
                     <td className='p-3'>
                       <div className='font-medium text-white'>{acc.Username}</div>
@@ -176,7 +173,7 @@ const GameAccountsList = () => {
                           </span>
                         )}
                         {acc.TimeoutUntil && (
-                          <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-900/30 text-yellow-400 border border-yellow-900/50'>
+                          <span className='inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-theme-highlight/20 text-theme-highlight border border-theme-highlight/40'>
                             Timeout: {new Date(acc.TimeoutUntil).toLocaleDateString()}
                           </span>
                         )}
@@ -195,7 +192,7 @@ const GameAccountsList = () => {
                       <Button
                         size='sm'
                         variant='secondary'
-                        className='h-8 w-8 p-0 bg-yellow-600/20 text-yellow-500 hover:bg-yellow-600/40'
+                        className='h-8 w-8 p-0 bg-theme-highlight/20 text-theme-highlight hover:bg-theme-highlight/30'
                         onClick={() => timeoutAccount(acc.GameAccountId)}
                         title='Timeout'
                       >
@@ -226,7 +223,7 @@ const GameAccountsList = () => {
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='flex justify-between items-center bg-lafftale-dark p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='flex justify-between items-center bg-theme-surface p-4 rounded-lg border border-theme-primary/20'>
           <div className='text-sm text-gray-400'>
             Showing {accounts.length} of {pagination.totalCount} results
           </div>
@@ -236,7 +233,7 @@ const GameAccountsList = () => {
               size='sm'
               disabled={!pagination.hasPrev || loading}
               onClick={() => handlePageChange(currentPage - 1)}
-              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
+              className='text-theme-primary border-theme-primary/30 hover:bg-theme-primary/10'
             >
               Previous
             </Button>
@@ -263,7 +260,7 @@ const GameAccountsList = () => {
                     onClick={() => handlePageChange(page)}
                     className={`min-w-[32px] h-8 ${
                       page === currentPage
-                        ? 'bg-lafftale-gold text-black hover:bg-lafftale-bronze'
+                        ? 'bg-theme-primary text-theme-text-on-primary hover:bg-theme-accent'
                         : 'text-gray-400 hover:text-white'
                     }`}
                   >
@@ -278,7 +275,7 @@ const GameAccountsList = () => {
               size='sm'
               disabled={!pagination.hasNext || loading}
               onClick={() => handlePageChange(currentPage + 1)}
-              className='text-lafftale-gold border-lafftale-gold/30 hover:bg-lafftale-gold/10'
+              className='text-theme-primary border-theme-primary/30 hover:bg-theme-primary/10'
             >
               Next
             </Button>

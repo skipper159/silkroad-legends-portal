@@ -35,6 +35,36 @@
     --ring: 43 74% 52%;
 
     --radius: 0.5rem;
+
+    /* Dynamic Theme Variables - Set by ThemeContext */
+    --theme-primary: #10b981;
+    --theme-primary-hover: #059669;
+    --theme-background: #09090b;
+    --theme-surface: #18181b;
+    --theme-border: #27272a;
+    --theme-text: #fafafa;
+    --theme-text-muted: #a1a1aa;
+    --theme-accent: #14b8a6;
+    --theme-secondary: #84cc16;
+    --theme-highlight: #facc15;
+    --theme-primary-glow: rgba(16, 185, 129, 0.25);
+    --theme-font-heading: 'Inter', sans-serif;
+    --theme-font-body: 'Inter', sans-serif;
+
+    /* Card Styling Variables */
+    --theme-card-bg: rgba(24, 24, 27, 1);
+    --theme-card-blur: 0px;
+    --theme-card-radius: 0.5rem;
+    --theme-card-border-width: 1px;
+    --theme-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    /* Button Styling Variables */
+    --theme-button-radius: 0.5rem;
+    --theme-button-style: solid;
+
+    /* Effect Variables */
+    --theme-transition-speed: 200ms;
+    --theme-glow-enabled: 0;
   }
 
   * {
@@ -42,7 +72,10 @@
   }
 
   body {
-    @apply bg-lafftale-dark text-foreground font-inter;
+    @apply bg-theme-background text-foreground;
+    font-family: var(--theme-font-body);
+    background-color: var(--theme-background);
+    color: var(--theme-text);
     background-image: linear-gradient(to bottom, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)),
       url('/image/Web/Background.png');
     background-attachment: fixed;
@@ -55,15 +88,16 @@
   h4,
   h5,
   h6 {
-    @apply font-cinzel text-lafftale-gold;
+    font-family: var(--theme-font-heading);
+    color: var(--theme-primary);
   }
 
   .btn-primary {
-    @apply bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+    @apply bg-theme-primary hover:bg-theme-primary-hover text-theme-background font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
   }
 
   .btn-secondary {
-    @apply bg-lafftale-darkred hover:bg-red-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300;
+    @apply bg-theme-secondary hover:bg-theme-secondary/80 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300;
   }
 
   .btn-outline {
@@ -139,7 +173,7 @@
   }
 
   .card {
-    @apply bg-lafftale-darkgray border border-lafftale-gold/30 rounded-lg p-6 shadow-lg;
+    @apply bg-theme-surface border border-theme-border rounded-lg p-6 shadow-lg;
   }
 
   .glow-text {

@@ -39,7 +39,7 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
       return (
         <Link
           to={`/character/${encodeURIComponent(playerName)}`}
-          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          className='text-theme-primary hover:text-theme-primary/80 transition-colors duration-200 cursor-pointer'
           title={`View ${playerName}'s character details`}
         >
           {playerName}
@@ -56,7 +56,7 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -69,13 +69,13 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Race</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Guild</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-right'>Item Points</TableHead>
+          <TableRow className='border-b border-theme-border'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Player</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Race</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-right'>Item Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,8 +94,8 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
               return (
                 <TableRow
                   key={player.CharID || index}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
-                    actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
+                  className={`border-b border-theme-border hover:bg-theme-primary/5 ${
+                    actualRank <= 3 ? 'bg-theme-primary/10' : ''
                   }`}
                 >
                   <TableCell className='font-medium text-center'>
@@ -150,7 +150,7 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
                   <TableCell className='hidden lg:table-cell'>
                     {player.GuildName || player.Guild || 'no guild'}
                   </TableCell>
-                  <TableCell className='text-right font-semibold text-lafftale-gold'>
+                  <TableCell className='text-right font-semibold text-theme-primary'>
                     {player.ItemPoints || '0'}
                   </TableCell>
                 </TableRow>

@@ -71,6 +71,19 @@ const config: Config = {
           dark: '#121212',
           darkgray: '#1E1E1E',
         },
+        // Dynamic Theme Colors - Set by ThemeContext via CSS variables
+        theme: {
+          primary: 'var(--theme-primary)',
+          'primary-hover': 'var(--theme-primary-hover)',
+          background: 'var(--theme-background)',
+          surface: 'var(--theme-surface)',
+          border: 'var(--theme-border)',
+          text: 'var(--theme-text)',
+          'text-muted': 'var(--theme-text-muted)',
+          accent: 'var(--theme-accent)',
+          secondary: 'var(--theme-secondary)',
+          highlight: 'var(--theme-highlight)',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -91,7 +91,7 @@ const DownloadSection = () => {
     const isDownloading = downloading[download.id] || false;
 
     return (
-      <div className='bg-silkroad-dark/30 border border-silkroad-gold/20 rounded-lg overflow-hidden flex flex-col mb-6'>
+      <div className='bg-theme-surface/30 border border-theme-primary/20 rounded-lg overflow-hidden flex flex-col mb-6'>
         <div className='flex flex-col md:flex-row'>
           {/* Image Section */}
           {download.image && (
@@ -111,8 +111,8 @@ const DownloadSection = () => {
 
           {/* Content Section */}
           <div className={`w-full ${download.image ? 'md:w-2/3' : 'md:w-full'} p-4`}>
-            <h3 className='text-xl font-semibold text-lafftale-gold mb-2'>{download.title}</h3>
-            <p className='text-gray-300 text-sm mb-4'>{download.description}</p>
+            <h3 className='text-xl font-semibold text-theme-primary mb-2'>{download.title}</h3>
+            <p className='text-theme-text-muted text-sm mb-4'>{download.description}</p>
 
             <Button
               onClick={() => handleDownload(download.id, download.file_url)}
@@ -146,22 +146,22 @@ const DownloadSection = () => {
       <Button onClick={handleFallbackDownload} className='btn-primary flex items-center gap-2' disabled={isDownloading}>
         <Download size={20} />
         {isDownloading ? 'Downloading...' : 'Lafftale Client'}
-        <span className='text-xs bg-silkroad-dark/70 px-2 py-1 rounded-full'>{fileSize}</span>
+        <span className='text-xs bg-theme-surface/70 px-2 py-1 rounded-full'>{fileSize}</span>
       </Button>
     );
   };
 
   return (
-    <section className='py-20 bg-silkroad-darkgray/60'>
+    <section className='py-20 bg-theme-surface/60'>
       <div className='container mx-auto px-4'>
         <div className='max-w-5xl mx-auto mt-10'>
           <div className='card'>
-            <h2 className='text-2xl font-bold text-center text-lafftale-gold mb-8'>Available Downloads</h2>
+            <h2 className='text-2xl font-bold text-center text-theme-primary mb-8'>Available Downloads</h2>
 
             {/* Loading State */}
             {loading && (
               <div className='flex justify-center items-center py-12'>
-                <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-lafftale-gold'></div>
+                <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-theme-primary'></div>
               </div>
             )}
 
@@ -205,25 +205,25 @@ const DownloadSection = () => {
 
                 <TabsContent value='requirements'>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                    <div className='card bg-silkroad-dark/50'>
+                    <div className='card bg-theme-surface/50'>
                       <h3 className='text-center text-xl mb-4'>Minimum Requirements</h3>
                       <ul className='space-y-2'>
                         {Object.entries(clientRequirements.minimum).map(([key, value]) => (
                           <li key={key} className='flex justify-between'>
-                            <span className='text-silkroad-gold'>{key.charAt(0).toUpperCase() + key.slice(1)}:</span>
-                            <span className='text-gray-300'>{value}</span>
+                            <span className='text-theme-primary'>{key.charAt(0).toUpperCase() + key.slice(1)}:</span>
+                            <span className='text-theme-text-muted'>{value}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className='card bg-silkroad-dark/50'>
+                    <div className='card bg-theme-surface/50'>
                       <h3 className='text-center text-xl mb-4'>Recommended</h3>
                       <ul className='space-y-2'>
                         {Object.entries(clientRequirements.recommended).map(([key, value]) => (
                           <li key={key} className='flex justify-between'>
-                            <span className='text-silkroad-gold'>{key.charAt(0).toUpperCase() + key.slice(1)}:</span>
-                            <span className='text-gray-300'>{value}</span>
+                            <span className='text-theme-primary'>{key.charAt(0).toUpperCase() + key.slice(1)}:</span>
+                            <span className='text-theme-text-muted'>{value}</span>
                           </li>
                         ))}
                       </ul>
@@ -232,28 +232,30 @@ const DownloadSection = () => {
                 </TabsContent>
 
                 <TabsContent value='instructions'>
-                  <div className='card bg-silkroad-dark/50'>
+                  <div className='card bg-theme-surface/50'>
                     <h3 className='text-center text-xl mb-4'>Installation Steps</h3>
                     <ol className='list-decimal list-inside space-y-4 text-left pl-4'>
-                      <li className='text-gray-300'>
-                        <span className='text-silkroad-gold font-medium'>Download the Client</span>
-                        <p className='mt-1 text-sm text-gray-400 pl-5'>
+                      <li className='text-theme-text-muted'>
+                        <span className='text-theme-primary font-medium'>Download the Client</span>
+                        <p className='mt-1 text-sm text-theme-text-muted pl-5'>
                           Download the client files using one of the download options above.
                         </p>
                       </li>
-                      <li className='text-gray-300'>
-                        <span className='text-silkroad-gold font-medium'>Extract the File</span>
-                        <p className='mt-1 text-sm text-gray-400 pl-5'>
+                      <li className='text-theme-text-muted'>
+                        <span className='text-theme-primary font-medium'>Extract the File</span>
+                        <p className='mt-1 text-sm text-theme-text-muted pl-5'>
                           Extract the downloaded client with a suitable program like WinRAR or 7-Zip.
                         </p>
                       </li>
-                      <li className='text-gray-300'>
-                        <span className='text-silkroad-gold font-medium'>Create Your Account</span>
-                        <p className='mt-1 text-sm text-gray-400 pl-5'>Register a new account on our website.</p>
+                      <li className='text-theme-text-muted'>
+                        <span className='text-theme-primary font-medium'>Create Your Account</span>
+                        <p className='mt-1 text-sm text-theme-text-muted pl-5'>
+                          Register a new account on our website.
+                        </p>
                       </li>
-                      <li className='text-gray-300'>
-                        <span className='text-silkroad-gold font-medium'>Start the Game</span>
-                        <p className='mt-1 text-sm text-gray-400 pl-5'>
+                      <li className='text-theme-text-muted'>
+                        <span className='text-theme-primary font-medium'>Start the Game</span>
+                        <p className='mt-1 text-sm text-theme-text-muted pl-5'>
                           Run sro_client.exe, enter your login credentials and begin your adventure!
                         </p>
                       </li>

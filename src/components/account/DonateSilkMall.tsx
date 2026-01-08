@@ -1,38 +1,20 @@
-import { useState, useEffect } from "react";
-import { fetchWithAuth, weburl } from "@/lib/api";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Bitcoin,
-  CreditCard,
-  DollarSign,
-  Coins,
-} from "lucide-react";
+import { useState, useEffect } from 'react';
+import { fetchWithAuth, weburl } from '@/lib/api';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bitcoin, CreditCard, DollarSign, Coins } from 'lucide-react';
 
 const silkPackages = [
-  { id: 1, price: 5, amount: 300, bonus: 0, description: "Basic Pack" },
-  { id: 2, price: 10, amount: 600, bonus: 0, description: "Standard Pack" },
-  { id: 3, price: 15, amount: 900, bonus: 150, description: "Value Pack" },
-  { id: 4, price: 25, amount: 1500, bonus: 250, description: "Premium Pack" },
-  { id: 5, price: 50, amount: 3000, bonus: 600, description: "Ultimate Pack" },
+  { id: 1, price: 5, amount: 300, bonus: 0, description: 'Basic Pack' },
+  { id: 2, price: 10, amount: 600, bonus: 0, description: 'Standard Pack' },
+  { id: 3, price: 15, amount: 900, bonus: 150, description: 'Value Pack' },
+  { id: 4, price: 25, amount: 1500, bonus: 250, description: 'Premium Pack' },
+  { id: 5, price: 50, amount: 3000, bonus: 600, description: 'Ultimate Pack' },
 ];
 
 const DonateSilkMall = () => {
-  const [selectedPackage, setSelectedPackage] = useState<string>("1");
+  const [selectedPackage, setSelectedPackage] = useState<string>('1');
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [selectedGameAccount, setSelectedGameAccount] = useState<string | null>(null);
   const [gameAccounts, setGameAccounts] = useState<{ id: number; username: string }[]>([]);
@@ -41,13 +23,11 @@ const DonateSilkMall = () => {
     const fetchGameAccounts = async () => {
       try {
         const response = await fetchWithAuth(`${weburl}/api/gameaccount/my`);
-        if (!response.ok) throw new Error("Failed to fetch game accounts");
+        if (!response.ok) throw new Error('Failed to fetch game accounts');
         const data = await response.json();
-        setGameAccounts(
-          data.map((account: any) => ({ id: account.JID, username: account.StrUserID }))
-        );
+        setGameAccounts(data.map((account: any) => ({ id: account.JID, username: account.StrUserID })));
       } catch (error) {
-        console.error("Error fetching game accounts:", error);
+        console.error('Error fetching game accounts:', error);
       }
     };
     fetchGameAccounts();
@@ -61,74 +41,70 @@ const DonateSilkMall = () => {
 
   const initiatePayment = async () => {
     if (!selectedGameAccount || !paymentMethod || !selectedPack) return;
-  
+
     const body = JSON.stringify({
       accountId: selectedGameAccount,
       amount: selectedPack.price,
     });
-  
-    const headers = { "Content-Type": "application/json" };
-  
-    let endpoint = "";
-  
+
+    const headers = { 'Content-Type': 'application/json' };
+
+    let endpoint = '';
+
     switch (paymentMethod) {
-      case "payop":
-        endpoint = "/api/payment/payop/initiate";
+      case 'payop':
+        endpoint = '/api/payment/payop/initiate';
         break;
-      case "nowcrypto":
-        endpoint = "/api/payment/nowpayments/initiate";
+      case 'nowcrypto':
+        endpoint = '/api/payment/nowpayments/initiate';
         break;
       default:
-        alert("Please select a valid payment method.");
+        alert('Please select a valid payment method.');
         return;
     }
-  
+
     try {
       const res = await fetch(endpoint, {
-        method: "POST",
+        method: 'POST',
         headers,
         body,
       });
-  
+
       const data = await res.json();
-  
+
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
       } else {
-        alert("Payment failed.");
+        alert('Payment failed.');
       }
     } catch (err) {
-      console.error("Payment initiation error:", err);
-      alert("Server error during payment.");
+      console.error('Payment initiation error:', err);
+      alert('Server error during payment.');
     }
   };
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-2xl font-bold font-cinzel text-lafftale-gold">Silk Mall</h3>
-        <div className="flex items-center gap-2">
-          <Coins size={20} className="text-lafftale-gold" />
-          <span className="text-gray-300">
-            Get premium currency for special items and features
-          </span>
+      <div className='flex justify-between items-center mb-6'>
+        <h3 className='text-2xl font-bold font-cinzel text-theme-primary'>Silk Mall</h3>
+        <div className='flex items-center gap-2'>
+          <Coins size={20} className='text-theme-highlight' />
+          <span className='text-theme-text-muted'>Get premium currency for special items and features</span>
         </div>
       </div>
 
-      <div className="mb-6">
-        <Card className="bg-lafftale-darkgray border border-lafftale-gold/30">
+      <div className='mb-6'>
+        <Card className='bg-theme-surface border border-theme-primary/30'>
           <CardHeader>
-            <CardTitle className="text-lafftale-gold font-cinzel text-xl">
-              Select Game Account
-            </CardTitle>
+            <CardTitle className='text-theme-primary font-cinzel text-xl'>Select Game Account</CardTitle>
             <CardDescription>Choose the game account to credit Silk</CardDescription>
           </CardHeader>
           <CardContent>
-            <Select value={selectedGameAccount || ""} onValueChange={handleGameAccountChange}>
-              <SelectTrigger className="w-full bg-lafftale-dark border-lafftale-gold/30">
-                <SelectValue placeholder="Select a game account" />
+            <Select value={selectedGameAccount || ''} onValueChange={handleGameAccountChange}>
+              <SelectTrigger className='w-full bg-theme-surface border-theme-primary/30'>
+                <SelectValue placeholder='Select a game account' />
               </SelectTrigger>
-              <SelectContent className="bg-lafftale-darkgray border-lafftale-gold/30">
+              <SelectContent className='bg-theme-surface border-theme-primary/30'>
                 {gameAccounts.map((account) => (
                   <SelectItem key={account.id} value={account.id.toString()}>
                     {account.username}
@@ -140,48 +116,46 @@ const DonateSilkMall = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
         <div>
-          <Card className="bg-lafftale-darkgray border border-lafftale-gold/30">
+          <Card className='bg-theme-surface border border-theme-primary/30'>
             <CardHeader>
-              <CardTitle className="text-lafftale-gold font-cinzel text-xl">Select Silk Package</CardTitle>
+              <CardTitle className='text-theme-primary font-cinzel text-xl'>Select Silk Package</CardTitle>
               <CardDescription>Choose the amount of Silk you wish to purchase</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={selectedPackage} onValueChange={handlePackageChange}>
-                <SelectTrigger className="w-full bg-lafftale-dark border-lafftale-gold/30">
-                  <SelectValue placeholder="Select a package" />
+                <SelectTrigger className='w-full bg-theme-surface border-theme-primary/30'>
+                  <SelectValue placeholder='Select a package' />
                 </SelectTrigger>
-                <SelectContent className="bg-lafftale-darkgray border-lafftale-gold/30">
+                <SelectContent className='bg-theme-surface border-theme-primary/30'>
                   {silkPackages.map((pack) => (
                     <SelectItem key={pack.id} value={pack.id.toString()}>
-                      ${pack.price} - {pack.amount} Silk {pack.bonus > 0 ? `+ ${pack.bonus} Bonus` : ""}
+                      ${pack.price} - {pack.amount} Silk {pack.bonus > 0 ? `+ ${pack.bonus} Bonus` : ''}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <div className="mt-6 p-4 bg-lafftale-gold/10 rounded-lg border border-lafftale-gold/30">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-300">Price:</span>
-                  <span className="text-white font-bold">${selectedPack?.price}.00</span>
+              <div className='mt-6 p-4 bg-theme-primary/10 rounded-lg border border-theme-primary/30'>
+                <div className='flex justify-between items-center mb-2'>
+                  <span className='text-theme-text-muted'>Price:</span>
+                  <span className='text-white font-bold'>${selectedPack?.price}.00</span>
                 </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-300">Silk Amount:</span>
-                  <span className="text-lafftale-gold font-bold">{selectedPack?.amount}</span>
+                <div className='flex justify-between items-center mb-2'>
+                  <span className='text-theme-text-muted'>Silk Amount:</span>
+                  <span className='text-theme-primary font-bold'>{selectedPack?.amount}</span>
                 </div>
                 {selectedPack?.bonus ? (
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Bonus Silk:</span>
-                    <span className="text-green-400 font-bold">+{selectedPack?.bonus}</span>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-theme-text-muted'>Bonus Silk:</span>
+                    <span className='text-green-400 font-bold'>+{selectedPack?.bonus}</span>
                   </div>
                 ) : null}
                 {selectedPack?.bonus ? (
-                  <div className="mt-3 pt-3 border-t border-lafftale-gold/20 flex justify-between items-center">
-                    <span className="text-gray-300">Total:</span>
-                    <span className="text-white font-bold">
-                      {selectedPack?.amount + selectedPack?.bonus} Silk
-                    </span>
+                  <div className='mt-3 pt-3 border-t border-theme-primary/20 flex justify-between items-center'>
+                    <span className='text-theme-text-muted'>Total:</span>
+                    <span className='text-white font-bold'>{selectedPack?.amount + selectedPack?.bonus} Silk</span>
                   </div>
                 ) : null}
               </div>
@@ -190,41 +164,49 @@ const DonateSilkMall = () => {
         </div>
 
         <div>
-          <Card className="bg-lafftale-darkgray border border-lafftale-gold/30">
+          <Card className='bg-theme-surface border border-theme-primary/30'>
             <CardHeader>
-              <CardTitle className="text-lafftale-gold font-cinzel text-xl">Payment Method</CardTitle>
+              <CardTitle className='text-theme-primary font-cinzel text-xl'>Payment Method</CardTitle>
               <CardDescription>Select your preferred payment option</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4">
+              <div className='grid grid-cols-1 gap-4'>
                 <Button
-                  variant="outline"
-                  className={`flex justify-between items-center h-16 ${paymentMethod === 'payop' ? 'bg-lafftale-gold/20 border-lafftale-gold' : 'bg-lafftale-dark border-lafftale-gold/30'}`}
+                  variant='outline'
+                  className={`flex justify-between items-center h-16 ${
+                    paymentMethod === 'payop'
+                      ? 'bg-theme-primary/20 border-theme-primary'
+                      : 'bg-theme-surface border-theme-primary/30'
+                  }`}
                   onClick={() => selectPaymentMethod('payop')}
                 >
-                  <span className="text-white font-semibold">PayOP</span>
-                  <div className="w-8 h-8 bg-[#1583d7] rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">PO</span>
+                  <span className='text-white font-semibold'>PayOP</span>
+                  <div className='w-8 h-8 bg-[#1583d7] rounded-full flex items-center justify-center'>
+                    <span className='text-white font-bold text-sm'>PO</span>
                   </div>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className={`flex justify-between items-center h-16 ${paymentMethod === 'nowcrypto' ? 'bg-lafftale-gold/20 border-lafftale-gold' : 'bg-lafftale-dark border-lafftale-gold/30'}`} 
+                <Button
+                  variant='outline'
+                  className={`flex justify-between items-center h-16 ${
+                    paymentMethod === 'nowcrypto'
+                      ? 'bg-theme-primary/20 border-theme-primary'
+                      : 'bg-theme-surface border-theme-primary/30'
+                  }`}
                   onClick={() => selectPaymentMethod('nowcrypto')}
                 >
-                  <span className="text-white font-semibold">NOWPayments (Crypto)</span>
-                <Bitcoin size={20} className="text-white" />
+                  <span className='text-white font-semibold'>NOWPayments (Crypto)</span>
+                  <Bitcoin size={20} className='text-white' />
                 </Button>
               </div>
             </CardContent>
-            <CardFooter className="flex-col items-stretch gap-3">
+            <CardFooter className='flex-col items-stretch gap-3'>
               <Button
-                className="btn-primary w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700"
+                className='btn-primary w-full py-4 bg-theme-highlight hover:bg-theme-highlight/90 text-theme-surface font-bold'
                 onClick={initiatePayment}
               >
-                <Coins className="mr-2" size={20} /> Purchase Silk
+                <Coins className='mr-2' size={20} /> Purchase Silk
               </Button>
-              <p className="text-center text-xs text-gray-400">
+              <p className='text-center text-xs text-gray-400'>
                 Silk will be credited to your account immediately after successful payment.
               </p>
             </CardFooter>
@@ -232,9 +214,9 @@ const DonateSilkMall = () => {
         </div>
       </div>
 
-      <div className="mt-8 p-4 bg-lafftale-darkgray/50 border border-lafftale-gold/20 rounded-md text-center">
-        <p className="text-sm text-amber-300">
-          <DollarSign className="inline-block mr-1" size={14} />
+      <div className='mt-8 p-4 bg-theme-surface border border-theme-primary/20 rounded-md text-center'>
+        <p className='text-sm text-theme-primary'>
+          <DollarSign className='inline-block mr-1' size={14} />
           All transactions are secure and processed instantly. For any issues, please contact support.
         </p>
       </div>

@@ -1,28 +1,34 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ActiveTemplate from '@/config/theme-config';
 import { Shield, Cookie, Lock, Eye, FileText, Mail } from 'lucide-react';
+
+const { Layout } = ActiveTemplate.components;
 
 const PrivacyPolicy = () => {
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
+    <Layout>
       <main className='flex-grow'>
-        <div className='container mx-auto px-4 py-16 max-w-4xl'>
-          {/* Header */}
-          <div className='text-center mb-12'>
-            <div className='inline-flex items-center justify-center p-4 bg-lafftale-gold/10 rounded-full mb-6'>
-              <Shield className='text-lafftale-gold' size={48} />
-            </div>
-            <h1 className='text-4xl md:text-5xl font-bold mb-4'>Datenschutzerklärung</h1>
-            <p className='text-gray-400 text-lg'>Letzte Aktualisierung: {new Date().toLocaleDateString('de-DE')}</p>
+        <div
+          className='py-12 bg-cover bg-center text-center'
+          style={{
+            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          }}
+        >
+          <div className='inline-flex items-center justify-center p-4 bg-theme-primary/10 rounded-full mb-6'>
+            <Shield className='text-theme-primary' size={48} />
           </div>
+          <h1 className='text-4xl md:text-5xl font-bold mb-4'>Datenschutzerklärung</h1>
+          <p className='text-theme-text-muted text-lg'>
+            Letzte Aktualisierung: {new Date().toLocaleDateString('de-DE')}
+          </p>
+        </div>
 
+        <div className='container mx-auto px-4 py-16 max-w-4xl'>
           {/* Content */}
-          <div className='space-y-8 text-gray-300'>
+          <div className='space-y-8 text-theme-text-muted'>
             {/* Section 1: Verantwortlicher */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <FileText className='text-lafftale-gold' size={24} />
+                <FileText className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>1. Verantwortlicher</h2>
               </div>
               <p className='mb-3'>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
@@ -32,7 +38,7 @@ const PrivacyPolicy = () => {
                 <p>12345 Musterstadt</p>
                 <p className='mt-2'>
                   E-Mail:{' '}
-                  <a href='mailto:privacy@lafftale.com' className='text-lafftale-gold hover:underline'>
+                  <a href='mailto:privacy@lafftale.com' className='text-theme-primary hover:underline'>
                     privacy@lafftale.com
                   </a>
                 </p>
@@ -40,9 +46,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 2: Datenerfassung */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Eye className='text-lafftale-gold' size={24} />
+                <Eye className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>2. Welche Daten erfassen wir?</h2>
               </div>
 
@@ -67,9 +73,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 3: Cookies */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Cookie className='text-lafftale-gold' size={24} />
+                <Cookie className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>3. Verwendung von Cookies</h2>
               </div>
 
@@ -112,9 +118,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 4: Rechtsgrundlage */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Lock className='text-lafftale-gold' size={24} />
+                <Lock className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>4. Rechtsgrundlage der Verarbeitung</h2>
               </div>
               <p className='mb-3'>Die Verarbeitung Ihrer Daten erfolgt auf Grundlage von:</p>
@@ -132,9 +138,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 5: Ihre Rechte */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Shield className='text-lafftale-gold' size={24} />
+                <Shield className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>5. Ihre Rechte nach DSGVO</h2>
               </div>
               <p className='mb-3'>Sie haben folgende Rechte bezüglich Ihrer personenbezogenen Daten:</p>
@@ -164,9 +170,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 6: Datensicherheit */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Lock className='text-lafftale-gold' size={24} />
+                <Lock className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>6. Datensicherheit</h2>
               </div>
               <p className='mb-3'>
@@ -184,9 +190,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 7: Speicherdauer */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <FileText className='text-lafftale-gold' size={24} />
+                <FileText className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>7. Speicherdauer</h2>
               </div>
               <p className='mb-3'>Wir speichern Ihre personenbezogenen Daten nur so lange, wie:</p>
@@ -203,9 +209,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 8: Drittanbieter */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Eye className='text-lafftale-gold' size={24} />
+                <Eye className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>8. Weitergabe an Dritte</h2>
               </div>
               <p className='mb-3'>Eine Übermittlung Ihrer Daten an Dritte erfolgt nur, wenn:</p>
@@ -218,9 +224,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 9: Kontakt */}
-            <section className='bg-gradient-to-br from-lafftale-gold/10 to-lafftale-bronze/10 border border-lafftale-gold/30 rounded-lg p-6'>
+            <section className='bg-gradient-to-br from-theme-primary/10 to-theme-accent/10 border border-theme-primary/30 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <Mail className='text-lafftale-gold' size={24} />
+                <Mail className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>9. Kontakt & Beschwerden</h2>
               </div>
               <p className='mb-3'>
@@ -230,7 +236,7 @@ const PrivacyPolicy = () => {
                 <p className='font-semibold text-white mb-2'>Datenschutzbeauftragter</p>
                 <p>
                   E-Mail:{' '}
-                  <a href='mailto:privacy@lafftale.com' className='text-lafftale-gold hover:underline'>
+                  <a href='mailto:privacy@lafftale.com' className='text-theme-primary hover:underline'>
                     privacy@lafftale.com
                   </a>
                 </p>
@@ -242,9 +248,9 @@ const PrivacyPolicy = () => {
             </section>
 
             {/* Section 10: Änderungen */}
-            <section className='bg-gray-800/50 border border-lafftale-gold/20 rounded-lg p-6'>
+            <section className='bg-gray-800/50 border border-theme-primary/20 rounded-lg p-6'>
               <div className='flex items-center gap-3 mb-4'>
-                <FileText className='text-lafftale-gold' size={24} />
+                <FileText className='text-theme-primary' size={24} />
                 <h2 className='text-2xl font-bold text-white'>10. Änderungen dieser Datenschutzerklärung</h2>
               </div>
               <p>
@@ -256,8 +262,7 @@ const PrivacyPolicy = () => {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

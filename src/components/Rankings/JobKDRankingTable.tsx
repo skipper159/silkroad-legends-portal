@@ -39,7 +39,7 @@ const getKDRatioColor = (ratio: number) => {
   if (ratio >= 5) return 'text-orange-400';
   if (ratio >= 2) return 'text-green-400';
   if (ratio >= 1) return 'text-blue-400';
-  return 'text-gray-400';
+  return 'text-theme-text-muted';
 };
 
 const getJobLevelBadge = (level: number) => {
@@ -47,7 +47,7 @@ const getJobLevelBadge = (level: number) => {
   if (level >= 200) return 'bg-purple-500/20 text-purple-400 border-purple-400';
   if (level >= 100) return 'bg-blue-500/20 text-blue-400 border-blue-400';
   if (level >= 50) return 'bg-green-500/20 text-green-400 border-green-400';
-  return 'bg-gray-500/20 text-gray-400 border-gray-400';
+  return 'bg-gray-500/20 text-theme-text-muted border-gray-400';
 };
 
 export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
@@ -69,7 +69,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
       return (
         <Link
           to={`/character/${encodeURIComponent(player.CharName16)}`}
-          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          className='text-theme-primary hover:text-theme-primary/80 transition-colors duration-200 cursor-pointer'
           title={`View ${player.CharName16}'s character details`}
         >
           {player.CharName16}
@@ -86,7 +86,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
       return (
         <Link
           to={`/guild/${encodeURIComponent(guildName)}`}
-          className='text-lafftale-gold hover:text-lafftale-bronze transition-colors cursor-pointer'
+          className='text-theme-primary hover:text-theme-accent transition-colors cursor-pointer'
           title={`View ${guildName}'s guild details`}
         >
           {guildName}
@@ -103,7 +103,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -116,26 +116,26 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Race</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Guild</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Job Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center hidden lg:table-cell'>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Player</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Race</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Job Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center hidden lg:table-cell'>
               Job Kills
             </TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center hidden lg:table-cell'>
+            <TableHead className='text-theme-primary font-semibold text-center hidden lg:table-cell'>
               Job Deaths
             </TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>K/D Ratio</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>K/D Ratio</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={9} className='text-center py-8 text-theme-text-muted'>
                 {searchTerm ? 'No players found matching your search.' : 'No job K/D data available.'}
               </TableCell>
             </TableRow>
@@ -150,7 +150,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
               return (
                 <TableRow
                   key={`${displayRank}-${player.CharName16}`}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 ${
                     displayRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
@@ -169,7 +169,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
                           </span>
                         ) : displayRank === 2 ? (
                           <span
-                            className='text-gray-400 text-2xl'
+                            className='text-theme-text-muted text-2xl'
                             style={{
                               fontFamily: 'Arial, "Segoe UI Emoji", "Apple Color Emoji", sans-serif',
                               fontSize: '24px',
@@ -190,7 +190,7 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
                         )}
                       </div>
                     ) : (
-                      <span className='text-lg font-medium text-lafftale-gold'>{displayRank}</span>
+                      <span className='text-lg font-medium text-theme-primary'>{displayRank}</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -258,45 +258,45 @@ export const JobKDRankingTable: React.FC<JobKDRankingTableProps> = ({
       {/* Statistics Summary - Only show if we have data and it's not too condensed */}
       {displayData.length > 0 && displayData.length >= 5 && (
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mt-4'>
-          <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
+          <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-green-400'>
                 {Math.max(...displayData.map((p) => p.JobKills)).toLocaleString()}
               </div>
-              <div className='text-sm text-gray-400'>Most Job Kills</div>
+              <div className='text-sm text-theme-text-muted'>Most Job Kills</div>
             </div>
           </div>
-          <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
+          <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-red-400'>
                 {Math.max(...displayData.map((p) => p.KDRatio)).toFixed(2)}
               </div>
-              <div className='text-sm text-gray-400'>Highest K/D Ratio</div>
+              <div className='text-sm text-theme-text-muted'>Highest K/D Ratio</div>
             </div>
           </div>
-          <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
+          <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-blue-400'>
                 {Math.max(...displayData.map((p) => p.TotalJobLevel))}
               </div>
-              <div className='text-sm text-gray-400'>Highest Job Level</div>
+              <div className='text-sm text-theme-text-muted'>Highest Job Level</div>
             </div>
           </div>
-          <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
+          <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-purple-400'>
                 {displayData.filter((p) => p.KDRatio >= 5).length}
               </div>
-              <div className='text-sm text-gray-400'>Elite Fighters (5+ K/D)</div>
+              <div className='text-sm text-theme-text-muted'>Elite Fighters (5+ K/D)</div>
             </div>
           </div>
         </div>
       )}
 
       {/* Legend */}
-      <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20 mt-4'>
-        <h4 className='text-sm font-semibold text-lafftale-gold mb-2'>Job Combat System:</h4>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-300'>
+      <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20 mt-4'>
+        <h4 className='text-sm font-semibold text-theme-primary mb-2'>Job Combat System:</h4>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-theme-text-muted'>
           <div className='flex items-center gap-2'>
             <Target className='h-3 w-3 text-green-400' />
             <span>Job Kills: Killing players of opposing job types</span>

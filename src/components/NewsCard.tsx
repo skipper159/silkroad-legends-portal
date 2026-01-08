@@ -47,7 +47,7 @@ export const NewsCard = ({ news }: NewsCardProps) => {
   });
 
   return (
-    <div className='bg-silkroad-dark/30 border border-silkroad-gold/20 rounded-lg overflow-hidden flex flex-col mb-6'>
+    <div className='bg-theme-surface/30 border border-theme-primary/20 rounded-lg overflow-hidden flex flex-col mb-6'>
       <div className='flex flex-col md:flex-row'>
         {/* Image Section */}
         {news.image && (
@@ -68,7 +68,7 @@ export const NewsCard = ({ news }: NewsCardProps) => {
         {/* Content Section */}
         <div className={`w-full ${news.image ? 'md:w-2/3' : 'md:w-full'} p-4`}>
           <div className='flex justify-between items-start mb-2'>
-            <h3 className='text-xl font-semibold text-lafftale-gold'>{news.title}</h3>
+            <h3 className='text-xl font-semibold text-theme-primary'>{news.title}</h3>
             <span
               className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${getCategoryColor(news.category)}`}
             >
@@ -77,12 +77,12 @@ export const NewsCard = ({ news }: NewsCardProps) => {
             </span>
           </div>
 
-          <div className='text-gray-400 text-xs mb-3 flex items-center'>
+          <div className='text-theme-text-muted text-xs mb-3 flex items-center'>
             <Calendar size={14} className='mr-1' />
             {formattedDate}
           </div>
 
-          <p className='text-gray-300 text-sm mb-4'>{news.excerpt}</p>
+          <p className='text-theme-text-muted text-sm mb-4'>{news.excerpt}</p>
 
           <Link to={`/news/${news.slug}`}>
             <Button className='btn-primary flex items-center gap-2' size='sm'>

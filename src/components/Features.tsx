@@ -2,32 +2,32 @@ import { Award, Calendar, Shield, Coins, Users } from 'lucide-react';
 
 const featuresData = [
   {
-    icon: <Award className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Award className='h-10 w-10 text-theme-primary' />,
     title: 'Level Cap 100',
     description: 'Progress further than ever with our extended level cap and challenging content.',
   },
   {
-    icon: <Coins className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Coins className='h-10 w-10 text-theme-primary' />,
     title: 'Free Silk on Registration',
     description: 'Begin your adventure with free premium currency to customize your experience.',
   },
   {
-    icon: <Calendar className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Calendar className='h-10 w-10 text-theme-primary' />,
     title: 'Daily Events',
     description: 'New challenges and rewards every day keep the adventure fresh and exciting.',
   },
   {
-    icon: <Coins className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Coins className='h-10 w-10 text-theme-primary' />,
     title: 'Play2Win Economy',
     description: 'Our balanced economy ensures that dedication and skill are always rewarded.',
   },
   {
-    icon: <Shield className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Shield className='h-10 w-10 text-theme-primary' />,
     title: 'Active GM Support',
     description: 'Our team of game masters provide 24/7 support for all your needs.',
   },
   {
-    icon: <Users className='h-10 w-10 text-silkroad-gold' />,
+    icon: <Users className='h-10 w-10 text-theme-primary' />,
     title: 'Thriving Community',
     description: 'Join thousands of players in our active and friendly community.',
   },
@@ -50,14 +50,14 @@ const Features = () => {
             >
               <div className='relative z-10'>
                 <div className='flex justify-center mb-4'>
-                  <div className='p-4 bg-gradient-to-br from-lafftale-gold/20 to-lafftale-bronze/10 rounded-full group-hover:from-lafftale-gold/30 group-hover:to-lafftale-bronze/20 transition-all duration-300 group-hover:animate-icon-float group-hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]'>
+                  <div className='p-4 bg-gradient-to-br from-theme-primary/20 to-theme-accent/10 rounded-full group-hover:from-theme-primary/30 group-hover:to-theme-accent/20 transition-all duration-300 group-hover:animate-icon-float group-hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]'>
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className='text-xl font-bold mb-2 text-lafftale-gold group-hover:text-lafftale-bronze transition-colors duration-300'>
+                <h3 className='text-xl font-bold mb-2 text-theme-primary group-hover:text-theme-accent transition-colors duration-300'>
                   {feature.title}
                 </h3>
-                <p className='text-gray-400 group-hover:text-gray-300 transition-colors duration-300'>
+                <p className='text-theme-text-muted group-hover:text-theme-text-muted transition-colors duration-300'>
                   {feature.description}
                 </p>
               </div>

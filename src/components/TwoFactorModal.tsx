@@ -53,21 +53,21 @@ const TwoFactorModal = ({ tempToken, onSuccess, onCancel }: TwoFactorModalProps)
       <div className='absolute inset-0 bg-black/80 backdrop-blur-sm' onClick={onCancel} />
 
       {/* Modal */}
-      <div className='relative bg-gradient-to-br from-lafftale-darkgray via-gray-900 to-lafftale-darkgray border-2 border-lafftale-gold/30 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-scale-in'>
+      <div className='relative bg-theme-surface border-2 border-theme-primary/30 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-scale-in'>
         {/* Header */}
-        <div className='flex items-center justify-between p-6 border-b border-lafftale-gold/20'>
+        <div className='flex items-center justify-between p-6 border-b border-theme-primary/20'>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-lafftale-gold/10 rounded-lg'>
-              <Shield className='text-lafftale-gold' size={24} />
+            <div className='p-2 bg-theme-primary/10 rounded-lg'>
+              <Shield className='text-theme-primary' size={24} />
             </div>
             <div>
               <h2 className='text-xl font-bold text-white'>Two-Factor Authentication</h2>
-              <p className='text-sm text-gray-400'>Enter your authenticator code</p>
+              <p className='text-sm text-theme-text-muted'>Enter your authenticator code</p>
             </div>
           </div>
           <button
             onClick={onCancel}
-            className='text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10'
+            className='text-theme-text-muted hover:text-white transition-colors p-2 rounded-full hover:bg-white/10'
           >
             <X size={24} />
           </button>
@@ -75,7 +75,7 @@ const TwoFactorModal = ({ tempToken, onSuccess, onCancel }: TwoFactorModalProps)
 
         {/* Content */}
         <form onSubmit={handleSubmit} className='p-6 space-y-6'>
-          <p className='text-gray-300 text-center'>
+          <p className='text-theme-text-muted text-center'>
             Open your authenticator app and enter the 6-digit code for Lafftale
           </p>
 
@@ -92,7 +92,7 @@ const TwoFactorModal = ({ tempToken, onSuccess, onCancel }: TwoFactorModalProps)
                 setError(null);
               }}
               placeholder='000000'
-              className='bg-lafftale-dark/70 border-lafftale-gold/20 text-center text-3xl tracking-[0.5em] font-mono py-4'
+              className='bg-lafftale-dark/70 border-theme-primary/20 text-center text-3xl tracking-[0.5em] font-mono py-4'
               autoFocus
             />
           </div>
@@ -110,14 +110,14 @@ const TwoFactorModal = ({ tempToken, onSuccess, onCancel }: TwoFactorModalProps)
               type='button'
               variant='outline'
               onClick={onCancel}
-              className='flex-1 border-gray-600 text-gray-300 hover:bg-gray-800'
+              className='flex-1 border-gray-600 text-theme-text-muted hover:bg-gray-800'
               disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type='submit'
-              className='flex-1 bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'
+              className='flex-1 bg-theme-primary hover:bg-theme-primary-hover text-theme-primary-foreground'
               disabled={isSubmitting || code.length !== 6}
             >
               {isSubmitting ? (

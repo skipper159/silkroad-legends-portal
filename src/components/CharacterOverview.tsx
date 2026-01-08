@@ -12,8 +12,8 @@ import { getRaceInfo, getCharacterImage, getJobIcon, RaceInfo } from '@/utils/ch
 import { CharacterInventory } from './account/CharacterInventory';
 import { transformInventoryData } from '@/utils/itemUtils';
 import { getMonsterName, formatKillDate } from '@/utils/monsterNames';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ActiveTemplate from '@/config/theme-config';
+const { Layout } = ActiveTemplate.components;
 
 // Use same Character interface as account version
 interface Character {
@@ -245,40 +245,44 @@ const CharacterOverview: React.FC = () => {
 
   return (
     <TooltipProvider>
-      <div className='min-h-screen flex flex-col'>
-        <Navbar />
-        <div className='py-12 bg-header-bg bg-cover bg-center'>
+      <Layout>
+        <div
+          className='py-12 bg-cover bg-center'
+          style={{
+            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          }}
+        >
           <div className='container mx-auto px-4 text-center'>
             <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
-              Character <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>Overview</span>
+              Character <span className='text-theme-accent font-cinzel text-4xl font-bold'>Overview</span>
             </h1>
-            <p className='text-lg max-w-2xl mx-auto mb-10 text-gray-300'>
+            <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
               Detailed view of {selectedCharacter?.name || characterName}'s character information, equipment, and
               inventory.
             </p>
           </div>
         </div>
         <hr />
-        <main className='flex-1 bg-silkroad-darkgray/60'>
+        <main className='flex-1 bg-theme-surface/60'>
           <div className='container mx-auto px-4 py-8'>
             <div className='max-w-6xl mx-auto'>
               {loading ? (
                 <div className='flex justify-center p-12'>
-                  <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                  <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
                 </div>
               ) : error ? (
-                <Card className='bg-lafftale-dark/80 border-lafftale-gold/20'>
+                <Card className='bg-lafftale-dark/80 border-theme-primary/20'>
                   <CardContent className='p-8'>
                     <div className='text-center'>
                       <div className='text-red-400 text-lg mb-2'>{error}</div>
-                      <p className='text-gray-400'>
+                      <p className='text-theme-text-muted'>
                         The character "{characterName}" could not be found or you don't have permission to view it.
                       </p>
                     </div>
                   </CardContent>
                 </Card>
               ) : selectedCharacter ? (
-                <Card className='border-lafftale-gold/20 bg-lafftale-dark/70'>
+                <Card className='border-theme-primary/20 bg-lafftale-dark/70'>
                   <CardContent className='p-6'>
                     {/* Character Header with Race - EXACT same as account version */}
                     <div className='flex items-center gap-3 mb-6'>
@@ -288,69 +292,69 @@ const CharacterOverview: React.FC = () => {
                         className='w-6 h-6'
                       />
                       <div>
-                        <h3 className='text-xl font-bold text-lafftale-gold'>{selectedCharacter.name}</h3>
-                        <p className='text-sm text-lafftale-bronze'>{getCharacterRaceInfo(selectedCharacter).name}</p>
+                        <h3 className='text-xl font-bold text-theme-primary'>{selectedCharacter.name}</h3>
+                        <p className='text-sm text-theme-accent'>{getCharacterRaceInfo(selectedCharacter).name}</p>
                       </div>
                       {selectedCharacter.nickname && (
-                        <p className='text-lafftale-bronze ml-4'>Nickname: {selectedCharacter.nickname}</p>
+                        <p className='text-theme-accent ml-4'>Nickname: {selectedCharacter.nickname}</p>
                       )}
                     </div>
 
                     {/* First Row: Basic Info, Character Attributes, Job Levels - EXACT same as account version */}
                     <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8'>
                       {/* Basic Character Info */}
-                      <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                        <h4 className='text-lafftale-bronze font-bold mb-3'>Character Info</h4>
+                      <div className='p-4 bg-theme-surface/50 rounded-lg border border-theme-primary/20'>
+                        <h4 className='text-theme-accent font-bold mb-3'>Character Info</h4>
                         <div className='space-y-2'>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>Level:</span>
-                            <span className='text-lafftale-gold'>
+                            <span className='text-theme-text-muted'>Level:</span>
+                            <span className='text-theme-primary'>
                               {selectedCharacter.level}/{selectedCharacter.maxLevel}
                             </span>
                           </div>
                           {/* REMOVED Gold section as requested */}
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>Stat Points:</span>
-                            <span className='text-lafftale-gold'>{selectedCharacter.statPoints}</span>
+                            <span className='text-theme-text-muted'>Stat Points:</span>
+                            <span className='text-theme-primary'>{selectedCharacter.statPoints}</span>
                           </div>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>Skill Points:</span>
-                            <span className='text-lafftale-gold'>{selectedCharacter.skillPoints}</span>
+                            <span className='text-theme-text-muted'>Skill Points:</span>
+                            <span className='text-theme-primary'>{selectedCharacter.skillPoints}</span>
                           </div>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>Guild:</span>
+                            <span className='text-theme-text-muted'>Guild:</span>
                             {selectedCharacter.GuildName ? (
                               <Link
                                 to={`/guild/${encodeURIComponent(selectedCharacter.GuildName)}`}
-                                className='text-lafftale-gold hover:text-lafftale-bronze transition-colors underline'
+                                className='text-theme-primary hover:text-theme-accent transition-colors underline'
                               >
                                 {selectedCharacter.GuildName}
                               </Link>
                             ) : (
-                              <span className='text-lafftale-gold'>None</span>
+                              <span className='text-theme-primary'>None</span>
                             )}
                           </div>
                         </div>
                       </div>
 
                       {/* Character Attributes - EXACT same as account version */}
-                      <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                        <h4 className='text-lafftale-bronze font-bold mb-3'>Character Attributes</h4>
+                      <div className='p-4 bg-theme-surface/50 rounded-lg border border-theme-primary/20'>
+                        <h4 className='text-theme-accent font-bold mb-3'>Character Attributes</h4>
                         <div className='space-y-2'>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>STR:</span>
+                            <span className='text-theme-text-muted'>STR:</span>
                             <span className='text-white'>{selectedCharacter.Strength}</span>
                           </div>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>INT:</span>
+                            <span className='text-theme-text-muted'>INT:</span>
                             <span className='text-white'>{selectedCharacter.Intellect}</span>
                           </div>
                           <div className='space-y-1'>
                             <div className='flex justify-between'>
-                              <span className='text-gray-300'>HP:</span>
+                              <span className='text-theme-text-muted'>HP:</span>
                               <span className='text-white'>{selectedCharacter.HP}</span>
                             </div>
-                            <div className='w-full bg-gray-700 rounded-full h-2'>
+                            <div className='w-full bg-gray-700/50 rounded-full h-2'>
                               <div
                                 className='bg-red-500 h-2 rounded-full transition-all duration-300'
                                 style={{ width: '100%' }}
@@ -359,10 +363,10 @@ const CharacterOverview: React.FC = () => {
                           </div>
                           <div className='space-y-1'>
                             <div className='flex justify-between'>
-                              <span className='text-gray-300'>MP:</span>
+                              <span className='text-theme-text-muted'>MP:</span>
                               <span className='text-white'>{selectedCharacter.MP}</span>
                             </div>
-                            <div className='w-full bg-gray-700 rounded-full h-2'>
+                            <div className='w-full bg-gray-700/50 rounded-full h-2'>
                               <div
                                 className='bg-blue-500 h-2 rounded-full transition-all duration-300'
                                 style={{ width: '100%' }}
@@ -373,13 +377,13 @@ const CharacterOverview: React.FC = () => {
                       </div>
 
                       {/* Job Levels - EXACT same as account version */}
-                      <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                        <h4 className='text-lafftale-bronze font-bold mb-3'>Job Levels</h4>
+                      <div className='p-4 bg-theme-surface/50 rounded-lg border border-theme-primary/20'>
+                        <h4 className='text-theme-accent font-bold mb-3'>Job Levels</h4>
                         <div className='space-y-2'>
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
                               <img src={getJobIcon('trader')} alt='Trader' className='w-5 h-5' />
-                              <span className='text-gray-300'>Trader:</span>
+                              <span className='text-theme-text-muted'>Trader:</span>
                             </div>
                             <span
                               className={`text-white ${
@@ -394,7 +398,7 @@ const CharacterOverview: React.FC = () => {
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
                               <img src={getJobIcon('hunter')} alt='Hunter' className='w-5 h-5' />
-                              <span className='text-gray-300'>Hunter:</span>
+                              <span className='text-theme-text-muted'>Hunter:</span>
                             </div>
                             <span
                               className={`text-white ${
@@ -409,7 +413,7 @@ const CharacterOverview: React.FC = () => {
                           <div className='flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
                               <img src={getJobIcon('thief')} alt='Thief' className='w-5 h-5' />
-                              <span className='text-gray-300'>Thief:</span>
+                              <span className='text-theme-text-muted'>Thief:</span>
                             </div>
                             <span
                               className={`text-white ${
@@ -429,17 +433,17 @@ const CharacterOverview: React.FC = () => {
                     <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6'>
                       {/* Equipment */}
                       <div className='flex flex-col items-center'>
-                        <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Equipment</h3>
+                        <h3 className='text-xl font-bold text-theme-primary mb-4'>Equipment</h3>
 
                         {/* Item Points Section - EXACT same as account version */}
                         <div className='mb-4'>
-                          <div className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 min-w-[200px]'>
+                          <div className='p-3 bg-theme-surface/50 rounded-lg border border-theme-primary/20 min-w-[200px]'>
                             <div className='text-center'>
-                              <h4 className='text-lafftale-bronze font-bold mb-1 text-sm'>Item Points</h4>
-                              <div className='text-xl font-bold text-lafftale-gold'>
+                              <h4 className='text-theme-accent font-bold mb-1 text-sm'>Item Points</h4>
+                              <div className='text-xl font-bold text-theme-primary'>
                                 {itemPointsLoading ? (
                                   <div className='flex justify-center'>
-                                    <div className='w-4 h-4 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                                    <div className='w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
                                   </div>
                                 ) : (
                                   itemPoints.toLocaleString('de-DE')
@@ -457,7 +461,7 @@ const CharacterOverview: React.FC = () => {
 
                       {/* Inventory - EXACT same as account version */}
                       <div className='flex flex-col items-center'>
-                        <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Inventory</h3>
+                        <h3 className='text-xl font-bold text-theme-primary mb-4'>Inventory</h3>
                         <div className='flex justify-center w-full'>
                           {selectedCharacter.inventory && (
                             <CharacterInventory
@@ -471,10 +475,10 @@ const CharacterOverview: React.FC = () => {
 
                     {/* Unique Kills Section - Full Width, 3 Columns */}
                     <div className='mb-6'>
-                      <h3 className='text-xl font-bold text-lafftale-gold mb-4 text-center'>Unique Kills</h3>
+                      <h3 className='text-xl font-bold text-theme-primary mb-4 text-center'>Unique Kills</h3>
                       {uniqueKillsLoading ? (
                         <div className='flex justify-center py-8'>
-                          <div className='w-8 h-8 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                          <div className='w-8 h-8 border-2 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
                         </div>
                       ) : uniqueKills.length > 0 ? (
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -483,14 +487,16 @@ const CharacterOverview: React.FC = () => {
                             {uniqueKills.slice(0, 5).map((kill, index) => (
                               <div
                                 key={`${kill.mobId}-${kill.eventDate}-${index}`}
-                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                                className='p-3 bg-theme-surface/50 rounded-lg border border-theme-primary/20 hover:border-theme-primary/40 transition-colors'
                               >
                                 <div className='flex justify-between items-start gap-2'>
                                   <div className='flex-1 min-w-0'>
-                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                    <div className='text-sm font-semibold text-theme-primary truncate'>
                                       {getMonsterName(kill.monsterCodeName)}
                                     </div>
-                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                    <div className='text-xs text-theme-text-muted mt-1'>
+                                      {formatKillDate(kill.eventDate)}
+                                    </div>
                                   </div>
                                   <div className='text-xs text-gray-500 whitespace-nowrap'>
                                     {new Date(kill.eventDate).toLocaleDateString('de-DE', {
@@ -506,7 +512,7 @@ const CharacterOverview: React.FC = () => {
                             {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(0, 5).length) }).map((_, i) => (
                               <div
                                 key={`empty-col1-${i}`}
-                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                                className='p-3 bg-theme-surface/20 rounded-lg border border-theme-primary/10 opacity-30'
                               >
                                 <div className='text-xs text-gray-600 text-center'>-</div>
                               </div>
@@ -518,14 +524,16 @@ const CharacterOverview: React.FC = () => {
                             {uniqueKills.slice(5, 10).map((kill, index) => (
                               <div
                                 key={`${kill.mobId}-${kill.eventDate}-${index + 5}`}
-                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                                className='p-3 bg-theme-surface/50 rounded-lg border border-theme-primary/20 hover:border-theme-primary/40 transition-colors'
                               >
                                 <div className='flex justify-between items-start gap-2'>
                                   <div className='flex-1 min-w-0'>
-                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                    <div className='text-sm font-semibold text-theme-primary truncate'>
                                       {getMonsterName(kill.monsterCodeName)}
                                     </div>
-                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                    <div className='text-xs text-theme-text-muted mt-1'>
+                                      {formatKillDate(kill.eventDate)}
+                                    </div>
                                   </div>
                                   <div className='text-xs text-gray-500 whitespace-nowrap'>
                                     {new Date(kill.eventDate).toLocaleDateString('de-DE', {
@@ -541,7 +549,7 @@ const CharacterOverview: React.FC = () => {
                             {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(5, 10).length) }).map((_, i) => (
                               <div
                                 key={`empty-col2-${i}`}
-                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                                className='p-3 bg-theme-surface/20 rounded-lg border border-theme-primary/10 opacity-30'
                               >
                                 <div className='text-xs text-gray-600 text-center'>-</div>
                               </div>
@@ -553,14 +561,16 @@ const CharacterOverview: React.FC = () => {
                             {uniqueKills.slice(10, 15).map((kill, index) => (
                               <div
                                 key={`${kill.mobId}-${kill.eventDate}-${index + 10}`}
-                                className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 hover:border-lafftale-gold/40 transition-colors'
+                                className='p-3 bg-theme-surface/50 rounded-lg border border-theme-primary/20 hover:border-theme-primary/40 transition-colors'
                               >
                                 <div className='flex justify-between items-start gap-2'>
                                   <div className='flex-1 min-w-0'>
-                                    <div className='text-sm font-semibold text-lafftale-gold truncate'>
+                                    <div className='text-sm font-semibold text-theme-primary truncate'>
                                       {getMonsterName(kill.monsterCodeName)}
                                     </div>
-                                    <div className='text-xs text-gray-400 mt-1'>{formatKillDate(kill.eventDate)}</div>
+                                    <div className='text-xs text-theme-text-muted mt-1'>
+                                      {formatKillDate(kill.eventDate)}
+                                    </div>
                                   </div>
                                   <div className='text-xs text-gray-500 whitespace-nowrap'>
                                     {new Date(kill.eventDate).toLocaleDateString('de-DE', {
@@ -576,7 +586,7 @@ const CharacterOverview: React.FC = () => {
                             {Array.from({ length: Math.max(0, 5 - uniqueKills.slice(10, 15).length) }).map((_, i) => (
                               <div
                                 key={`empty-col3-${i}`}
-                                className='p-3 bg-lafftale-dark/20 rounded-lg border border-lafftale-gold/10 opacity-30'
+                                className='p-3 bg-theme-surface/20 rounded-lg border border-theme-primary/10 opacity-30'
                               >
                                 <div className='text-xs text-gray-600 text-center'>-</div>
                               </div>
@@ -584,14 +594,14 @@ const CharacterOverview: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className='text-center text-gray-400 py-8 bg-lafftale-dark/30 rounded-lg border border-lafftale-gold/10'>
+                        <div className='text-center text-theme-text-muted py-8 bg-theme-surface/30 rounded-lg border border-theme-primary/10'>
                           <p className='text-sm'>No unique kills recorded</p>
                         </div>
                       )}
                     </div>
 
                     {/* Additional Info */}
-                    <div className='mt-8 text-center text-gray-400'>
+                    <div className='mt-8 text-center text-theme-text-muted'>
                       <p>
                         This is a public character view. For detailed character management, visit your account page.
                       </p>
@@ -604,8 +614,7 @@ const CharacterOverview: React.FC = () => {
             </div>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     </TooltipProvider>
   );
 };

@@ -241,8 +241,8 @@ const UserVoting = () => {
         <Card>
           <CardContent className='flex items-center justify-center py-12'>
             <div className='text-center'>
-              <Vote className='h-12 w-12 text-gray-400 mx-auto mb-4' />
-              <p className='text-gray-500'>Please select a game account to continue voting</p>
+              <Vote className='h-12 w-12 text-theme-text-muted mx-auto mb-4' />
+              <p className='text-theme-text-muted'>Please select a game account to continue voting</p>
             </div>
           </CardContent>
         </Card>
@@ -253,7 +253,7 @@ const UserVoting = () => {
             <Card>
               <CardContent className='p-4'>
                 <div className='flex items-center space-x-2'>
-                  <Star className='h-5 w-5 text-yellow-500' />
+                  <Star className='h-5 w-5 text-theme-highlight' />
                   <div>
                     <p className='text-sm font-medium'>Available Votes</p>
                     <p className='text-2xl font-bold'>{getAvailableVotes()}</p>
@@ -326,7 +326,9 @@ const UserVoting = () => {
                   return (
                     <Card
                       key={site.id}
-                      className={`transition-all hover:shadow-md ${canVote ? 'border-green-200' : 'border-gray-200'}`}
+                      className={`transition-all hover:shadow-md ${
+                        canVote ? 'border-theme-secondary' : 'border-theme-border'
+                      }`}
                     >
                       <CardContent className='p-4'>
                         <div className='flex items-start justify-between mb-3'>
@@ -347,7 +349,10 @@ const UserVoting = () => {
                             </div>
                           </div>
                           {canVote ? (
-                            <Badge variant='default' className='bg-green-100 text-green-800'>
+                            <Badge
+                              variant='default'
+                              className='bg-theme-secondary/20 text-theme-secondary hover:bg-theme-secondary/30'
+                            >
                               Available
                             </Badge>
                           ) : (

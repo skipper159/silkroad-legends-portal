@@ -250,18 +250,18 @@ const RankingTabs: React.FC<RankingTabsProps> = () => {
         <Search className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
         {isSearching && (
           <div className='absolute right-3 top-3 h-4 w-4'>
-            <div className='w-4 h-4 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+            <div className='w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
           </div>
         )}
         <Input
           placeholder='Search rankings... (searches automatically after 2 seconds)'
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className='pl-10 pr-10 bg-black/20 border-lafftale-gold/30 text-white placeholder-gray-400'
+          className='pl-10 pr-10 bg-theme-surface border-theme-border text-theme-text placeholder-theme-text-muted'
         />
         {/* Search countdown indicator */}
         {searchInput !== searchTerm && searchInput.trim() && (
-          <div className='absolute right-12 top-3 text-xs text-lafftale-gold/70'>Searching in 2s...</div>
+          <div className='absolute right-12 top-3 text-xs text-theme-primary/70'>Searching in 2s...</div>
         )}
       </div>
 

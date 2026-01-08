@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import AccountWebSettings from '@/components/account/AccountWebSettings';
 import GameAccountManager from '@/components/account/GameAccountManager';
 import CharacterOverview from '@/components/account/CharacterOverview';
@@ -11,6 +9,7 @@ import DonateSilkMall from '@/components/account/DonateSilkMall';
 import UserVoting from '@/components/account/UserVoting';
 import UserVouchers from '@/components/account/UserVouchers';
 import UserReferrals from '@/components/account/UserReferrals';
+import ActiveTemplate from '@/config/theme-config';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +24,8 @@ import {
 import { Shield, User, Settings, TicketCheck, Coins, Vote, Gift, Loader2, UserPlus } from 'lucide-react';
 import { fetchWithAuth } from '@/lib/api';
 import { weburl } from '@/lib/api';
+
+const { Layout } = ActiveTemplate.components;
 
 interface UserData {
   id?: string;
@@ -165,35 +166,31 @@ const Account = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen flex flex-col'>
-        <Navbar />
-        <main className='flex-grow bg-lafftale-dark flex items-center justify-center'>
+      <Layout>
+        <main className='flex-grow bg-theme-background flex items-center justify-center min-h-[50vh]'>
           <div className='flex flex-col items-center'>
-            <Loader2 size={40} className='text-lafftale-gold animate-spin mb-4' />
-            <p className='text-lafftale-gold'>Loading account data...</p>
+            <Loader2 size={40} className='text-theme-primary animate-spin mb-4' />
+            <p className='text-theme-primary'>Loading account data...</p>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   if (error || !userData) {
     return (
-      <div className='min-h-screen flex flex-col'>
-        <Navbar />
-        <main className='flex-grow bg-lafftale-dark flex items-center justify-center'>
+      <Layout>
+        <main className='flex-grow bg-theme-background flex items-center justify-center min-h-[50vh]'>
           {' '}
           <div className='card p-8 text-center'>
             <h2 className='text-2xl text-red-500 mb-4'>Error</h2>
-            <p className='text-gray-300 mb-4'>{error || 'User data could not be loaded'}</p>
-            <Button onClick={() => window.location.reload()} className='bg-lafftale-gold text-lafftale-dark'>
+            <p className='text-theme-text-muted mb-4'>{error || 'User data could not be loaded'}</p>
+            <Button onClick={() => window.location.reload()} className='bg-theme-primary text-white'>
               Try again
             </Button>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
@@ -203,13 +200,17 @@ const Account = () => {
     : userData.lastLogin;
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
+    <Layout>
       <main className='flex-grow'>
-        <div className='py-12 bg-header-bg bg-cover bg-center'>
+        <div
+          className='py-12 bg-cover bg-center'
+          style={{
+            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          }}
+        >
           <div className='container mx-auto px-4 text-center'>
             <h1 className='text-3xl md:text-4xl lg:text-4xl font-bold mb-6'>
-              Dashboard <span className='text-lafftale-bronze font-cinzel text-6xl font-bold'>Account</span>
+              Dashboard <span className='text-theme-accent font-cinzel text-6xl font-bold'>Account</span>
             </h1>
           </div>
         </div>
@@ -221,25 +222,25 @@ const Account = () => {
               <div className='lg:col-span-3'>
                 <div className='card'>
                   <div className='flex flex-col items-center mb-6'>
-                    <div className='w-20 h-20 rounded-full bg-lafftale-darkgray border-2 border-lafftale-gold flex items-center justify-center mb-3'>
-                      <User size={40} className='text-lafftale-gold' />
+                    <div className='w-20 h-20 rounded-full bg-theme-surface border-2 border-theme-primary flex items-center justify-center mb-3'>
+                      <User size={40} className='text-theme-primary' />
                     </div>
                     <h2 className='text-xl font-bold'>{userData.username}</h2>
-                    <span className='text-gray-400 text-sm'>{userData.email}</span>
+                    <span className='text-theme-text-muted text-sm'>{userData.email}</span>
                   </div>
 
                   {/* Game Accounts mit Silk-Guthaben */}
                   {gameAccounts.length > 0 && (
-                    <div className='mb-6 px-2 py-4 bg-lafftale-darkgray border border-lafftale-gold/30 rounded-lg'>
-                      <h3 className='text-md font-bold text-lafftale-gold mb-3 text-center'>Silk Currency</h3>
+                    <div className='mb-6 px-2 py-4 bg-theme-surface border border-theme-primary/30 rounded-lg'>
+                      <h3 className='text-md font-bold text-theme-primary mb-3 text-center'>Silk Currency</h3>
                       <div className='space-y-2'>
                         {gameAccounts.map((account) => (
                           <div
                             key={account.JID}
-                            className='p-2 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 flex justify-between items-center'
+                            className='p-2 bg-theme-surface rounded-lg border border-theme-primary/20 flex justify-between items-center'
                           >
-                            <span className='text-lafftale-gold font-cinzel font-medium'>{account.StrUserID}</span>
-                            <div className='flex items-center gap-1 text-lafftale-gold'>
+                            <span className='text-theme-primary font-cinzel font-medium'>{account.StrUserID}</span>
+                            <div className='flex items-center gap-1 text-theme-primary'>
                               <span>{silkBalance ? silkBalance.premiumSilk.toLocaleString() : '0'}</span>
                               <Coins size={14} />
                             </div>
@@ -276,9 +277,9 @@ const Account = () => {
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className='mt-6 pt-6 border-t border-lafftale-gold/20'>
-                    <p className='text-sm text-gray-400 mb-2'>Last Login: {formattedLastLogin}</p>
-                    <p className='text-sm text-gray-400'>Member since: {userData.registeredAt}</p>
+                  <div className='mt-6 pt-6 border-t border-theme-primary/20'>
+                    <p className='text-sm text-theme-text-muted mb-2'>Last Login: {formattedLastLogin}</p>
+                    <p className='text-sm text-theme-text-muted'>Member since: {userData.registeredAt}</p>
                   </div>
                 </div>
               </div>
@@ -295,16 +296,16 @@ const Account = () => {
                             Delete Account
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className='bg-lafftale-darkgray border-lafftale-gold'>
+                        <AlertDialogContent className='bg-theme-surface border-theme-primary'>
                           <AlertDialogHeader>
-                            <AlertDialogTitle className='text-lafftale-gold'>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogTitle className='text-theme-primary'>Are you absolutely sure?</AlertDialogTitle>
                             <AlertDialogDescription>
                               This action cannot be undone. This will permanently delete your account and all associated
                               game accounts and characters.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className='bg-lafftale-darkgray border-lafftale-gold text-lafftale-gold hover:bg-lafftale-darkgray/50'>
+                            <AlertDialogCancel className='bg-theme-surface border-theme-primary text-theme-primary hover:bg-theme-surface/50'>
                               Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction className='bg-red-600 hover:bg-red-700'>
@@ -349,8 +350,7 @@ const Account = () => {
           </Tabs>
         </div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

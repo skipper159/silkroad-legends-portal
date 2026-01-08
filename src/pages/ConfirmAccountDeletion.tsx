@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, XCircle, Loader2, ShieldCheck } from 'lucide-react';
 import { weburl } from '@/lib/api';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ActiveTemplate from '@/config/theme-config';
+
+const { Layout } = ActiveTemplate.components;
 
 const ConfirmAccountDeletion = () => {
   const { token } = useParams<{ token: string }>();
@@ -54,9 +55,9 @@ const ConfirmAccountDeletion = () => {
     switch (status) {
       case 'loading':
         return (
-          <Card className='bg-lafftale-darkgray border-lafftale-gold/30 max-w-md mx-auto'>
+          <Card className='bg-theme-surface border-theme-primary/30 max-w-md mx-auto'>
             <CardHeader className='text-center'>
-              <CardTitle className='text-lafftale-gold flex items-center justify-center gap-2'>
+              <CardTitle className='text-theme-primary flex items-center justify-center gap-2'>
                 <Loader2 className='animate-spin' size={24} />
                 Processing Deletion
               </CardTitle>
@@ -67,7 +68,7 @@ const ConfirmAccountDeletion = () => {
 
       case 'success':
         return (
-          <Card className='bg-lafftale-darkgray border-green-500/30 max-w-md mx-auto'>
+          <Card className='bg-theme-surface border-green-500/30 max-w-md mx-auto'>
             <CardHeader className='text-center'>
               <CardTitle className='text-green-500 flex items-center justify-center gap-2'>
                 <CheckCircle size={24} />
@@ -78,7 +79,7 @@ const ConfirmAccountDeletion = () => {
             <CardContent className='text-center space-y-4'>
               <div className='p-4 bg-green-500/10 rounded-lg border border-green-500/20'>
                 <p className='text-green-500 font-medium'>
-                  Game Account "<span className='text-lafftale-gold'>{gameAccountName}</span>" has been permanently
+                  Game Account "<span className='text-theme-primary'>{gameAccountName}</span>" has been permanently
                   deleted.
                 </p>
                 <p className='text-sm text-gray-400 mt-2'>
@@ -87,7 +88,7 @@ const ConfirmAccountDeletion = () => {
               </div>
               <Button
                 onClick={() => (window.location.href = '/account')}
-                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                className='bg-theme-primary text-theme-primary-foreground hover:bg-theme-primary/90'
               >
                 Return to Account Management
               </Button>
@@ -97,7 +98,7 @@ const ConfirmAccountDeletion = () => {
 
       case 'expired':
         return (
-          <Card className='bg-lafftale-darkgray border-orange-500/30 max-w-md mx-auto'>
+          <Card className='bg-theme-surface border-orange-500/30 max-w-md mx-auto'>
             <CardHeader className='text-center'>
               <CardTitle className='text-orange-500 flex items-center justify-center gap-2'>
                 <XCircle size={24} />
@@ -116,7 +117,7 @@ const ConfirmAccountDeletion = () => {
               </div>
               <Button
                 onClick={() => (window.location.href = '/account?tab=game-accounts')}
-                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                className='bg-theme-primary text-theme-primary-foreground hover:bg-theme-primary/90'
               >
                 Go to Game Account Management
               </Button>
@@ -126,7 +127,7 @@ const ConfirmAccountDeletion = () => {
 
       case 'used':
         return (
-          <Card className='bg-lafftale-darkgray border-blue-500/30 max-w-md mx-auto'>
+          <Card className='bg-theme-surface border-blue-500/30 max-w-md mx-auto'>
             <CardHeader className='text-center'>
               <CardTitle className='text-blue-500 flex items-center justify-center gap-2'>
                 <ShieldCheck size={24} />
@@ -145,7 +146,7 @@ const ConfirmAccountDeletion = () => {
               </div>
               <Button
                 onClick={() => (window.location.href = '/account')}
-                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                className='bg-theme-primary text-theme-primary-foreground hover:bg-theme-primary/90'
               >
                 Return to Account Management
               </Button>
@@ -156,7 +157,7 @@ const ConfirmAccountDeletion = () => {
       case 'error':
       default:
         return (
-          <Card className='bg-lafftale-darkgray border-red-500/30 max-w-md mx-auto'>
+          <Card className='bg-theme-surface border-red-500/30 max-w-md mx-auto'>
             <CardHeader className='text-center'>
               <CardTitle className='text-red-500 flex items-center justify-center gap-2'>
                 <XCircle size={24} />
@@ -171,7 +172,7 @@ const ConfirmAccountDeletion = () => {
               </div>
               <Button
                 onClick={() => (window.location.href = '/account')}
-                className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                className='bg-theme-primary text-theme-primary-foreground hover:bg-theme-primary/90'
               >
                 Return to Account Management
               </Button>
@@ -182,13 +183,16 @@ const ConfirmAccountDeletion = () => {
   };
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
-      <main className='flex-grow bg-login-bg bg-cover bg-center flex items-center justify-center px-4'>
+    <Layout>
+      <main
+        className='flex-grow bg-cover bg-center flex items-center justify-center px-4'
+        style={{
+          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+        }}
+      >
         <div className='w-full max-w-lg'>{renderContent()}</div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

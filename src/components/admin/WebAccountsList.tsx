@@ -184,7 +184,7 @@ const WebAccountsList = () => {
 
   if (loading && accounts.length === 0) {
     return (
-      <div className='flex justify-center py-10 text-lafftale-gold'>
+      <div className='flex justify-center py-10 text-theme-primary'>
         <Loader2 className='animate-spin mr-2' />
         Loading...
       </div>
@@ -196,36 +196,36 @@ const WebAccountsList = () => {
       {/* Stats Cards */}
       {userStats && (
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-          <Card className='bg-lafftale-dark border-lafftale-gold/20'>
+          <Card className='bg-theme-surface border-theme-primary/20'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-400'>Total Users</CardTitle>
-              <Users className='h-4 w-4 text-lafftale-gold' />
+              <CardTitle className='text-sm font-medium text-theme-text-muted'>Total Users</CardTitle>
+              <Users className='h-4 w-4 text-theme-primary' />
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold text-white'>{userStats.total_users.toLocaleString()}</div>
             </CardContent>
           </Card>
-          <Card className='bg-lafftale-dark border-green-900/50'>
+          <Card className='bg-theme-surface border-green-900/50'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-400'>Active</CardTitle>
+              <CardTitle className='text-sm font-medium text-theme-text-muted'>Active</CardTitle>
               <UserCheck className='h-4 w-4 text-green-500' />
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold text-white'>{userStats.active_users}</div>
             </CardContent>
           </Card>
-          <Card className='bg-lafftale-dark border-blue-900/50'>
+          <Card className='bg-theme-surface border-blue-900/50'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-400'>Admins</CardTitle>
+              <CardTitle className='text-sm font-medium text-theme-text-muted'>Admins</CardTitle>
               <Shield className='h-4 w-4 text-blue-500' />
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold text-white'>{userStats.admin_users}</div>
             </CardContent>
           </Card>
-          <Card className='bg-lafftale-dark border-red-900/50'>
+          <Card className='bg-theme-surface border-red-900/50'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-400'>Inactive</CardTitle>
+              <CardTitle className='text-sm font-medium text-theme-text-muted'>Inactive</CardTitle>
               <UserX className='h-4 w-4 text-red-500' />
             </CardHeader>
             <CardContent>
@@ -237,10 +237,10 @@ const WebAccountsList = () => {
 
       {/* Password Reset Modal */}
       <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>
-        <DialogContent className='bg-lafftale-dark border-lafftale-gold/30 sm:max-w-md'>
+        <DialogContent className='bg-theme-surface border-theme-primary/30 sm:max-w-md'>
           <DialogHeader>
-            <DialogTitle className='text-lafftale-gold'>Reset Password</DialogTitle>
-            <DialogDescription className='text-gray-400'>Enter a new password for the user.</DialogDescription>
+            <DialogTitle className='text-theme-primary'>Reset Password</DialogTitle>
+            <DialogDescription className='text-theme-text-muted'>Enter a new password for the user.</DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
             <div>
@@ -251,7 +251,7 @@ const WebAccountsList = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder='Enter new password...'
-                className='bg-lafftale-darkgray border-gray-600'
+                className='bg-theme-surface/50 border-gray-600'
               />
             </div>
           </div>
@@ -259,7 +259,10 @@ const WebAccountsList = () => {
             <Button variant='outline' onClick={() => setPasswordModalOpen(false)} className='border-gray-600'>
               Cancel
             </Button>
-            <Button onClick={resetPassword} className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'>
+            <Button
+              onClick={resetPassword}
+              className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-accent'
+            >
               Reset Password
             </Button>
           </DialogFooter>
@@ -268,10 +271,10 @@ const WebAccountsList = () => {
 
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} placeholder='Search by username or email...' />
 
-      <Card className='overflow-hidden border-lafftale-gold/30 bg-lafftale-dark'>
+      <Card className='overflow-hidden border-theme-primary/30 bg-theme-surface'>
         <div className='overflow-x-auto'>
           <table className='min-w-full text-left text-sm text-gray-300'>
-            <thead className='bg-lafftale-darkgray text-lafftale-gold uppercase'>
+            <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>User Info</th>
                 <th className='p-3'>Security</th>
@@ -283,11 +286,11 @@ const WebAccountsList = () => {
             <tbody>
               {filteredAccounts.length > 0 ? (
                 filteredAccounts.map((acc) => (
-                  <tr key={acc.Id} className='border-b border-lafftale-gold/10 hover:bg-lafftale-darkgray/30'>
+                  <tr key={acc.Id} className='border-b border-theme-primary/10 hover:bg-theme-surface/30'>
                     <td className='p-3'>
                       <div className='font-medium text-white'>{acc.Username}</div>
-                      <div className='text-xs text-gray-500'>{acc.Email}</div>
-                      <div className='text-xs text-gray-600 mt-1'>
+                      <div className='text-xs text-theme-text-muted'>{acc.Email}</div>
+                      <div className='text-xs text-theme-text-muted mt-1'>
                         ID: {acc.Id} | Reg: {new Date(acc.RegisteredAt).toLocaleDateString()}
                       </div>
                     </td>
@@ -295,7 +298,7 @@ const WebAccountsList = () => {
                       <Button
                         variant='outline'
                         size='sm'
-                        className='h-7 text-xs border-gray-700 hover:bg-lafftale-gold/10'
+                        className='h-7 text-xs border-gray-700 hover:bg-theme-primary/10'
                         onClick={() => {
                           setSelectedUserId(acc.Id);
                           setPasswordModalOpen(true);
@@ -311,7 +314,7 @@ const WebAccountsList = () => {
                             <BadgeCheck className='w-3 h-3 mr-1' /> Enabled
                           </Badge>
                         ) : (
-                          <Badge variant='outline' className='bg-gray-800 text-gray-500 border-gray-700'>
+                          <Badge variant='outline' className='bg-gray-800 text-theme-text-muted border-gray-700'>
                             <ShieldAlert className='w-3 h-3 mr-1' /> Disabled
                           </Badge>
                         )}
@@ -332,7 +335,7 @@ const WebAccountsList = () => {
                       <Badge
                         className={`cursor-pointer select-none ${
                           acc.IsAdmin
-                            ? 'bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                            ? 'bg-theme-primary text-theme-text-on-primary hover:bg-theme-accent'
                             : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                         }`}
                         onClick={() => toggleAdminRole(acc.Id, acc.IsAdmin)}
@@ -343,13 +346,13 @@ const WebAccountsList = () => {
                     </td>
                     <td className='p-3'>
                       {/* Placeholder for future Actions like Ban/Unban if implemented fully */}
-                      <span className='text-xs text-gray-600'>Active</span>
+                      <span className='text-xs text-theme-text-muted'>Active</span>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className='p-8 text-center text-gray-500'>
+                  <td colSpan={5} className='p-8 text-center text-theme-text-muted'>
                     No results found
                   </td>
                 </tr>

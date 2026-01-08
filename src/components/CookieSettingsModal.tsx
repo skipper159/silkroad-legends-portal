@@ -51,21 +51,21 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
       <div className='absolute inset-0 bg-black/80 backdrop-blur-sm' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative bg-gradient-to-br from-lafftale-darkgray via-gray-900 to-lafftale-darkgray border-2 border-lafftale-gold/30 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden animate-scale-in'>
+      <div className='relative bg-theme-surface border-2 border-theme-primary/30 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden animate-scale-in'>
         {/* Header */}
-        <div className='flex items-center justify-between p-6 border-b border-lafftale-gold/20'>
+        <div className='flex items-center justify-between p-6 border-b border-theme-primary/20'>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-lafftale-gold/10 rounded-lg'>
-              <Cookie className='text-lafftale-gold' size={24} />
+            <div className='p-2 bg-theme-primary/10 rounded-lg'>
+              <Cookie className='text-theme-primary' size={24} />
             </div>
             <div>
               <h2 className='text-2xl font-bold text-white'>Cookie Settings</h2>
-              <p className='text-sm text-gray-400'>Manage your privacy preferences</p>
+              <p className='text-sm text-theme-text-muted'>Manage your privacy preferences</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className='text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10'
+            className='text-theme-text-muted hover:text-white transition-colors p-2 rounded-full hover:bg-white/10'
           >
             <X size={24} />
           </button>
@@ -73,7 +73,7 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
 
         {/* Content */}
         <div className='p-6 overflow-y-auto max-h-[60vh]'>
-          <p className='text-gray-300 mb-6'>
+          <p className='text-theme-text-muted mb-6'>
             We use different types of cookies for various purposes. You can decide which categories you want to allow.
             Please note that blocking some types of cookies may impact your experience on our website and the services
             we can offer.
@@ -89,7 +89,7 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
               return (
                 <div
                   key={category}
-                  className='bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-lafftale-gold/30 transition-colors'
+                  className='bg-theme-surface/50 border border-gray-700 rounded-lg p-4 hover:border-theme-primary/30 transition-colors'
                 >
                   <div className='flex items-start justify-between'>
                     <div className='flex items-start gap-3 flex-1'>
@@ -103,7 +103,7 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
                             </span>
                           )}
                         </div>
-                        <p className='text-sm text-gray-400'>{info.description}</p>
+                        <p className='text-sm text-theme-text-muted'>{info.description}</p>
                       </div>
                     </div>
 
@@ -113,7 +113,7 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
                         onClick={() => handleToggle(category)}
                         disabled={isRequired}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          isEnabled ? 'bg-lafftale-gold' : 'bg-gray-600'
+                          isEnabled ? 'bg-theme-primary' : 'bg-gray-600'
                         } ${isRequired ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <span
@@ -145,10 +145,10 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
               <Shield className='text-blue-400 mt-0.5' size={18} />
               <div>
                 <p className='text-sm font-semibold text-blue-400 mb-1'>Your Rights under GDPR</p>
-                <p className='text-xs text-gray-400'>
+                <p className='text-xs text-theme-text-muted'>
                   You have the right to withdraw your consent at any time. For more information about your rights and
                   how we protect your data, please see our{' '}
-                  <a href='/privacy-policy' className='text-lafftale-gold hover:underline' onClick={onClose}>
+                  <a href='/privacy-policy' className='text-theme-primary hover:underline' onClick={onClose}>
                     Privacy Policy
                   </a>
                   .
@@ -159,11 +159,11 @@ const CookieSettingsModal = ({ onClose }: CookieSettingsModalProps) => {
         </div>
 
         {/* Footer Actions */}
-        <div className='p-6 border-t border-lafftale-gold/20 bg-gray-900/50'>
+        <div className='p-6 border-t border-theme-primary/20 bg-gray-900/50'>
           <div className='flex flex-col sm:flex-row gap-3'>
             <button
               onClick={handleAcceptAll}
-              className='flex-1 px-6 py-3 bg-gradient-to-r from-lafftale-bronze to-lafftale-gold text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg'
+              className='flex-1 px-6 py-3 bg-gradient-to-r from-theme-accent to-theme-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity shadow-lg'
             >
               Accept All
             </button>

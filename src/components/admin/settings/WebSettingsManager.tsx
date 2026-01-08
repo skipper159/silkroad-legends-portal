@@ -9,6 +9,8 @@ import { weburl } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import SiteModalsManager from './SiteModalsManager';
+import ThemeSettings from './ThemeSettings';
+import BrandingSettings from './BrandingSettings';
 
 interface WebSettings {
   grand_opening_enabled: boolean;
@@ -250,6 +252,12 @@ const WebSettingsManager = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Theme Settings */}
+      <ThemeSettings />
+
+      {/* Branding Settings */}
+      <BrandingSettings />
 
       {/* Dynamic Event Modals */}
       <SiteModalsManager />

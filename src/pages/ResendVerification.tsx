@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { useToast } from "@/hooks/use-toast";
-import { weburl } from "@/lib/api";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { weburl } from '@/lib/api';
+import ActiveTemplate from '@/config/theme-config';
+
+const { Layout } = ActiveTemplate.components;
 
 const ResendVerification = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
@@ -20,28 +21,31 @@ const ResendVerification = () => {
 
     try {
       const response = await fetch(`${weburl}/api/auth/resend-verification`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
-        setIsSubmitted(true);        toast({
-          title: "Email sent",
-          description: "A new verification email has been sent to your address.",
+        setIsSubmitted(true);
+        toast({
+          title: 'Email sent',
+          description: 'A new verification email has been sent to your address.',
         });
       } else {
-        const data = await response.json();        toast({
-          title: "Error",
-          description: data?.message || "An error occurred while sending the email.",
-          variant: "destructive",
+        const data = await response.json();
+        toast({
+          title: 'Error',
+          description: data?.message || 'An error occurred while sending the email.',
+          variant: 'destructive',
         });
       }
     } catch (error: any) {
-      console.error("Resend verification error:", error);      toast({
-        title: "Network error",
+      console.error('Resend verification error:', error);
+      toast({
+        title: 'Network error',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -49,59 +53,61 @@ const ResendVerification = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow bg-login-bg bg-cover bg-center">
-        <div className="container mx-auto px-4 py-16 md:py-24">
-          <div className="max-w-md mx-auto">
-            <div className="card backdrop-blur-sm border-silkroad-gold/30">
-              <div className="text-center mb-8">                <h1 className="text-3xl font-bold">Resend Verification Email</h1>
-                <p className="text-gray-400 mt-2">
-                  {isSubmitted 
-                    ? "Check your email for the verification link" 
-                    : "Enter your email address to receive a new verification link"}
+    <Layout>
+      <main
+        className='flex-grow bg-cover bg-center'
+        style={{
+          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+        }}
+      >
+        <div className='container mx-auto px-4 py-16 md:py-24'>
+          <div className='max-w-md mx-auto'>
+            <div className='card backdrop-blur-sm border-theme-primary/30'>
+              <div className='text-center mb-8'>
+                {' '}
+                <h1 className='text-3xl font-bold'>Resend Verification Email</h1>
+                <p className='text-theme-text-muted mt-2'>
+                  {isSubmitted
+                    ? 'Check your email for the verification link'
+                    : 'Enter your email address to receive a new verification link'}
                 </p>
               </div>
 
               {!isSubmitted ? (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">                    <Label htmlFor="email">Email</Label>
+                <form onSubmit={handleSubmit} className='space-y-6'>
+                  <div className='space-y-2'>
+                    {' '}
+                    <Label htmlFor='email'>Email</Label>
                     <Input
-                      id="email"
-                      type="email"
+                      id='email'
+                      type='email'
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your registered email address"
+                      placeholder='Enter your registered email address'
                       required
-                      className="bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold"
+                      className='bg-theme-surface/70 border-theme-primary/20 focus:border-theme-primary'
                     />
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="btn-primary w-full"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Sending..." : "Send Verification Link"}
+                  <Button type='submit' className='btn-primary w-full' disabled={isLoading}>
+                    {isLoading ? 'Sending...' : 'Send Verification Link'}
                   </Button>
                 </form>
               ) : (
-                <div className="text-center">                  <p className="mb-6 text-gray-300">
-                    We have sent you an email with a new verification link. 
-                    Please check your inbox and spam folder.
+                <div className='text-center'>
+                  {' '}
+                  <p className='mb-6 text-theme-text-muted'>
+                    We have sent you an email with a new verification link. Please check your inbox and spam folder.
                   </p>
-                  <Button
-                    className="btn-primary w-full"
-                    onClick={() => setIsSubmitted(false)}
-                  >
+                  <Button className='btn-primary w-full' onClick={() => setIsSubmitted(false)}>
                     Resend
                   </Button>
                 </div>
               )}
 
-              <div className="mt-6 text-center">
-                <p className="text-gray-400">
-                  <Link to="/login" className="text-silkroad-gold hover:underline">
+              <div className='mt-6 text-center'>
+                <p className='text-theme-text-muted'>
+                  <Link to='/login' className='text-theme-primary hover:underline'>
                     Back to Login
                   </Link>
                 </p>
@@ -110,8 +116,7 @@ const ResendVerification = () => {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

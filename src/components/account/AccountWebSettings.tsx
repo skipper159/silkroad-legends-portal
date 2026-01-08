@@ -84,11 +84,11 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
   return (
     <div className='space-y-8'>
       <div>
-        <h2 className='text-2xl font-bold font-cinzel text-lafftale-gold mb-6'>Web Account Settings</h2>
+        <h2 className='text-2xl font-bold font-cinzel text-theme-primary mb-6'>Web Account Settings</h2>
 
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+        <Card className='bg-theme-surface border-theme-primary/30'>
           <CardHeader>
-            <CardTitle className='text-lafftale-gold'>Change Email Address</CardTitle>
+            <CardTitle className='text-theme-primary'>Change Email Address</CardTitle>
             <CardDescription>Update the email address associated with your account</CardDescription>
           </CardHeader>
           <CardContent>
@@ -100,7 +100,7 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                   type='email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                  className='bg-theme-surface border-theme-primary/20 text-theme-text'
                   required
                 />
               </div>
@@ -111,11 +111,11 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                   type='password'
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                  className='bg-theme-surface border-theme-primary/20 text-theme-text'
                   required
                 />
               </div>
-              <Button type='submit' className='bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'>
+              <Button type='submit' className='bg-theme-primary hover:bg-theme-primary/90 text-theme-text-on-primary'>
                 Update Email
               </Button>
             </form>
@@ -123,9 +123,9 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
         </Card>
       </div>
 
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-primary/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Change Password</CardTitle>
+          <CardTitle className='text-theme-primary'>Change Password</CardTitle>
           <CardDescription>Update your account password</CardDescription>
         </CardHeader>
         <CardContent>
@@ -137,7 +137,7 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                 type='password'
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                className='bg-theme-surface/70 border-theme-primary/20'
                 required
               />
             </div>
@@ -148,7 +148,7 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                 type='password'
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                className='bg-theme-surface/70 border-theme-primary/20'
                 required
               />
             </div>
@@ -159,11 +159,11 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                 type='password'
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                className='bg-theme-surface/70 border-theme-primary/20'
                 required
               />
             </div>
-            <Button type='submit' className='bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'>
+            <Button type='submit' className='bg-theme-primary hover:bg-theme-primary/90 text-theme-text-on-primary'>
               Change Password
             </Button>
           </form>

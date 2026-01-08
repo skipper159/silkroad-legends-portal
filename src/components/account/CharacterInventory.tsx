@@ -225,7 +225,7 @@ interface CharacterInventoryProps {
 
 export const CharacterInventory: React.FC<CharacterInventoryProps> = ({ characterId, items }) => {
   return (
-    <div className='bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 p-4'>
+    <div className='bg-theme-surface rounded-lg border border-theme-primary/20 p-4'>
       <InventoryGrid items={items} rows={13} cols={8} className='max-w-full' />
     </div>
   );

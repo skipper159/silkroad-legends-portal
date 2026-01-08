@@ -39,7 +39,7 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
       return (
         <Link
           to={`/character/${encodeURIComponent(playerName)}`}
-          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          className='text-theme-primary hover:text-theme-primary/80 transition-colors duration-200 cursor-pointer'
           title={`View ${playerName}'s character details`}
         >
           {playerName}
@@ -53,14 +53,14 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
   // Component for rendering clickable guild name
   const GuildNameComponent: React.FC<{ guildName: string }> = ({ guildName }) => {
     if (!guildName || guildName === 'no guild' || guildName === '' || guildName === 'DummyGuild') {
-      return <span className='text-gray-400'>-</span>;
+      return <span className='text-theme-text-muted'>-</span>;
     }
 
     if (isAuthenticated) {
       return (
         <Link
           to={`/guild/${encodeURIComponent(guildName)}`}
-          className='text-lafftale-gold hover:text-lafftale-gold/80 transition-colors duration-200 cursor-pointer'
+          className='text-theme-primary hover:text-theme-primary/80 transition-colors duration-200 cursor-pointer'
           title={`View ${guildName} guild details`}
         >
           {guildName}
@@ -77,7 +77,7 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -90,19 +90,19 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Player</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Guild</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell text-center'>Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell text-center'>Race</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Honor Points</TableHead>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Player</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell text-center'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell text-center'>Race</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Honor Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={6} className='text-center py-8 text-theme-text-muted'>
                 No honor rankings found
               </TableCell>
             </TableRow>
@@ -114,7 +114,7 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
               return (
                 <TableRow
                   key={player.CharID || index}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 ${
                     actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
@@ -122,7 +122,11 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
                     {actualRank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          actualRank === 1 ? 'text-yellow-500' : actualRank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          actualRank === 1
+                            ? 'text-yellow-500'
+                            : actualRank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(actualRank)}
@@ -164,7 +168,7 @@ const HonorRankingTable: React.FC<HonorRankingProps> = ({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className='text-center font-semibold text-lafftale-gold'>
+                  <TableCell className='text-center font-semibold text-theme-primary'>
                     {(player.HonorPoint || 0).toLocaleString()}
                   </TableCell>
                 </TableRow>

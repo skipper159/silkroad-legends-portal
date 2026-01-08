@@ -3,10 +3,11 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { weburl } from '@/lib/api';
+import ActiveTemplate from '@/config/theme-config';
+
+const { Layout } = ActiveTemplate.components;
 
 const ResetPassword = () => {
   const { token } = useParams<{ token: string }>();
@@ -98,16 +99,20 @@ const ResetPassword = () => {
 
   if (!isValidToken) {
     return (
-      <div className='min-h-screen flex flex-col'>
-        <Navbar />
-        <main className='flex-grow bg-login-bg bg-cover bg-center'>
+      <Layout>
+        <main
+          className='flex-grow bg-cover bg-center'
+          style={{
+            backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+          }}
+        >
           <div className='container mx-auto px-4 py-16 md:py-24'>
             <div className='max-w-md mx-auto'>
-              <div className='card backdrop-blur-sm border-silkroad-gold/30'>
+              <div className='card backdrop-blur-sm border-theme-primary/30'>
                 {' '}
                 <div className='text-center p-6'>
                   <h1 className='text-3xl font-bold text-destructive'>Invalid Link</h1>
-                  <p className='text-gray-400 mt-4 mb-6'>This password reset link is invalid or expired.</p>
+                  <p className='text-theme-text-muted mt-4 mb-6'>This password reset link is invalid or expired.</p>
                   <Link to='/forgot-password'>
                     <Button className='btn-primary'>Request New Reset Link</Button>
                   </Link>
@@ -116,22 +121,25 @@ const ResetPassword = () => {
             </div>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
-      <main className='flex-grow bg-login-bg bg-cover bg-center'>
+    <Layout>
+      <main
+        className='flex-grow bg-cover bg-center'
+        style={{
+          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+        }}
+      >
         <div className='container mx-auto px-4 py-16 md:py-24'>
           <div className='max-w-md mx-auto'>
-            <div className='card backdrop-blur-sm border-silkroad-gold/30'>
+            <div className='card backdrop-blur-sm border-theme-primary/30'>
               <div className='text-center mb-8'>
                 {' '}
                 <h1 className='text-3xl font-bold'>Reset Password</h1>
-                <p className='text-gray-400 mt-2'>
+                <p className='text-theme-text-muted mt-2'>
                   {isSubmitted ? 'Password successfully reset' : 'Enter your new password'}
                 </p>
               </div>
@@ -148,7 +156,7 @@ const ResetPassword = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder='Enter a new password'
                       required
-                      className='bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold'
+                      className='bg-theme-surface/70 border-theme-primary/20 focus:border-theme-primary'
                     />
                   </div>
 
@@ -162,7 +170,7 @@ const ResetPassword = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder='Confirm your new password'
                       required
-                      className='bg-silkroad-dark/70 border-silkroad-gold/20 focus:border-silkroad-gold'
+                      className='bg-theme-surface/70 border-theme-primary/20 focus:border-theme-primary'
                     />
                   </div>
 
@@ -173,7 +181,7 @@ const ResetPassword = () => {
               ) : (
                 <div className='text-center'>
                   {' '}
-                  <p className='mb-6 text-gray-300'>
+                  <p className='mb-6 text-theme-text-muted'>
                     Your password has been successfully reset. You will be redirected to the login page shortly.
                   </p>
                   <Link to='/login'>
@@ -185,8 +193,7 @@ const ResetPassword = () => {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

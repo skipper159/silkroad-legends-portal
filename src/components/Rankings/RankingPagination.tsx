@@ -83,7 +83,7 @@ const RankingPagination: React.FC<RankingPaginationProps> = ({
           size='sm'
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className='bg-black/20 border-lafftale-gold/30 text-white hover:bg-lafftale-gold/20 disabled:opacity-50 disabled:cursor-not-allowed'
+          className='bg-theme-surface/20 border-theme-primary/30 text-theme-text hover:bg-theme-primary/20 disabled:opacity-50 disabled:cursor-not-allowed'
         >
           <ChevronLeft className='h-4 w-4 mr-1' />
           Previous
@@ -94,7 +94,7 @@ const RankingPagination: React.FC<RankingPaginationProps> = ({
           {pageNumbers.map((page, index) => {
             if (page === '...') {
               return (
-                <div key={`ellipsis-${index}`} className='px-2 py-1 text-gray-400'>
+                <div key={`ellipsis-${index}`} className='px-2 py-1 text-theme-text-muted'>
                   <MoreHorizontal className='h-4 w-4' />
                 </div>
               );
@@ -111,8 +111,8 @@ const RankingPagination: React.FC<RankingPaginationProps> = ({
                 onClick={() => onPageChange(pageNum)}
                 className={`min-w-[40px] ${
                   isCurrentPage
-                    ? 'bg-lafftale-gold text-black font-semibold hover:bg-lafftale-gold/90'
-                    : 'bg-black/20 border-lafftale-gold/30 text-white hover:bg-lafftale-gold/20'
+                    ? 'bg-theme-primary text-theme-text-muted font-semibold hover:bg-theme-primary/90'
+                    : 'bg-theme-surface/20 border-theme-primary/30 text-theme-text hover:bg-theme-primary/20'
                 }`}
               >
                 {pageNum}
@@ -127,7 +127,7 @@ const RankingPagination: React.FC<RankingPaginationProps> = ({
           size='sm'
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasMore || currentPage >= calculatedTotalPages}
-          className='bg-black/20 border-lafftale-gold/30 text-white hover:bg-lafftale-gold/20 disabled:opacity-50 disabled:cursor-not-allowed'
+          className='bg-theme-surface/20 border-theme-primary/30 text-theme-text hover:bg-theme-primary/20 disabled:opacity-50 disabled:cursor-not-allowed'
         >
           Next
           <ChevronRight className='h-4 w-4 ml-1' />
@@ -135,7 +135,7 @@ const RankingPagination: React.FC<RankingPaginationProps> = ({
       </div>
 
       {/* Page Info and Stats */}
-      <div className='flex items-center gap-4 text-sm text-gray-400'>
+      <div className='flex items-center gap-4 text-sm text-theme-text-muted'>
         <span>
           Page {currentPage} of {calculatedTotalPages}
         </span>

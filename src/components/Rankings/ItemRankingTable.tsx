@@ -36,11 +36,11 @@ const getRankIcon = (rank: number) => {
     case 1:
       return <Trophy className='h-4 w-4 text-yellow-400' />;
     case 2:
-      return <Crown className='h-4 w-4 text-gray-300' />;
+      return <Crown className='h-4 w-4 text-theme-text-muted' />;
     case 3:
       return <Crown className='h-4 w-4 text-amber-600' />;
     default:
-      return <span className='text-lafftale-gold font-bold'>#{rank}</span>;
+      return <span className='text-theme-primary font-bold'>#{rank}</span>;
   }
 };
 
@@ -81,7 +81,7 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center h-64'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-lafftale-gold'></div>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
       </div>
     );
   }
@@ -102,41 +102,41 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
     <div className='space-y-4'>
       <div className='flex items-center gap-2 mb-4'>
         {isEnhancement ? (
-          <Star className='h-5 w-5 text-lafftale-gold' />
+          <Star className='h-5 w-5 text-theme-primary' />
         ) : (
-          <Gift className='h-5 w-5 text-lafftale-gold' />
+          <Gift className='h-5 w-5 text-theme-primary' />
         )}
-        <h3 className='text-lg font-semibold text-lafftale-gold'>
+        <h3 className='text-lg font-semibold text-theme-primary'>
           {isEnhancement ? 'Item Enhancement Rankings' : 'Rare Item Drop Rankings'}
         </h3>
-        <Badge variant='outline' className='text-lafftale-gold border-lafftale-gold'>
+        <Badge variant='outline' className='text-theme-primary border-theme-primary'>
           Last 6 Months
         </Badge>
       </div>
 
-      <div className='rounded-lg overflow-hidden border border-lafftale-gold/30'>
+      <div className='rounded-lg overflow-hidden border border-theme-primary/30'>
         <Table>
-          <TableHeader className='bg-lafftale-darkgray/50'>
+          <TableHeader className='bg-theme-surface/50'>
             <TableRow>
-              <TableHead className='text-lafftale-gold text-center w-16'>Rank</TableHead>
-              <TableHead className='text-lafftale-gold'>Character</TableHead>
-              <TableHead className='text-lafftale-gold text-center'>Level</TableHead>
+              <TableHead className='text-theme-primary text-center w-16'>Rank</TableHead>
+              <TableHead className='text-theme-primary'>Character</TableHead>
+              <TableHead className='text-theme-primary text-center'>Level</TableHead>
               {isEnhancement ? (
                 <>
-                  <TableHead className='text-lafftale-gold text-center'>Max Enhancement</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>High Enhancements</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>Total Attempts</TableHead>
+                  <TableHead className='text-theme-primary text-center'>Max Enhancement</TableHead>
+                  <TableHead className='text-theme-primary text-center'>High Enhancements</TableHead>
+                  <TableHead className='text-theme-primary text-center'>Total Attempts</TableHead>
                 </>
               ) : (
                 <>
-                  <TableHead className='text-lafftale-gold text-center'>☀️ Sun</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>🌙 Moon</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>⭐ Star</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>💥 Nova</TableHead>
-                  <TableHead className='text-lafftale-gold text-center'>Total Drops</TableHead>
+                  <TableHead className='text-theme-primary text-center'>☀️ Sun</TableHead>
+                  <TableHead className='text-theme-primary text-center'>🌙 Moon</TableHead>
+                  <TableHead className='text-theme-primary text-center'>⭐ Star</TableHead>
+                  <TableHead className='text-theme-primary text-center'>💥 Nova</TableHead>
+                  <TableHead className='text-theme-primary text-center'>Total Drops</TableHead>
                 </>
               )}
-              <TableHead className='text-lafftale-gold text-center'>Guild</TableHead>
+              <TableHead className='text-theme-primary text-center'>Guild</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -144,7 +144,7 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
               filteredData.map((player) => (
                 <TableRow
                   key={`${player.rank}-${player.CharName16}`}
-                  className='border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 transition-colors'
+                  className='border-b border-theme-primary/10 hover:bg-lafftale-gold/5 transition-colors'
                 >
                   <TableCell className='text-center font-medium'>{getRankIcon(player.rank)}</TableCell>
                   <TableCell>
@@ -154,7 +154,7 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell className='text-center'>
-                    <Badge variant='outline' className='text-lafftale-gold border-lafftale-gold/50'>
+                    <Badge variant='outline' className='text-theme-primary border-theme-primary/50'>
                       {player.Level}
                     </Badge>
                   </TableCell>
@@ -200,18 +200,18 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
                   )}
                   <TableCell className='text-center'>
                     {player.GuildName ? (
-                      <Badge variant='secondary' className='bg-lafftale-gold/20 text-lafftale-gold'>
+                      <Badge variant='secondary' className='bg-lafftale-gold/20 text-theme-primary'>
                         {player.GuildName}
                       </Badge>
                     ) : (
-                      <span className='text-gray-500'>-</span>
+                      <span className='text-theme-text-muted'>-</span>
                     )}
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={isEnhancement ? 7 : 9} className='text-center text-gray-500 py-8'>
+                <TableCell colSpan={isEnhancement ? 7 : 9} className='text-center text-theme-text-muted py-8'>
                   {searchTerm ? 'No players found matching your search.' : 'No item data available.'}
                 </TableCell>
               </TableRow>
@@ -221,9 +221,9 @@ export const ItemRankingTable: React.FC<ItemRankingTableProps> = ({
       </div>
 
       {/* Legend */}
-      <div className='bg-lafftale-darkgray/30 rounded-lg p-4 border border-lafftale-gold/20'>
-        <h4 className='text-sm font-semibold text-lafftale-gold mb-2'>Legend:</h4>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-300'>
+      <div className='bg-theme-surface/30 rounded-lg p-4 border border-theme-primary/20'>
+        <h4 className='text-sm font-semibold text-theme-primary mb-2'>Legend:</h4>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-theme-text-muted'>
           {isEnhancement ? (
             <>
               <div className='flex items-center gap-2'>

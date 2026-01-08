@@ -4,9 +4,10 @@ import { ArrowLeft, Calendar, User, Tag, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { weburl } from '@/lib/api';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ActiveTemplate from '@/config/theme-config';
 import ContentRenderer from '@/utils/contentRenderer';
+
+const { Layout } = ActiveTemplate.components;
 
 interface NewsArticle {
   id: number;
@@ -89,47 +90,42 @@ const NewsDetail = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-silkroad-dark via-black to-silkroad-dark'>
-        <Navbar />
+      <Layout>
         <main className='container mx-auto px-4 py-8'>
           <div className='flex justify-center items-center py-16'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-silkroad-gold'></div>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   if (error || !article) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-silkroad-dark via-black to-silkroad-dark'>
-        <Navbar />
+      <Layout>
         <main className='container mx-auto px-4 py-8'>
           <div className='text-center py-16'>
             <h1 className='text-4xl font-bold text-white mb-4'>Article not found</h1>
-            <p className='text-gray-300 mb-8'>{error}</p>
+            <p className='text-theme-text-muted mb-8'>{error}</p>
             <Link to='/news'>
-              <Button className='bg-silkroad-gold hover:bg-silkroad-gold/80 text-black'>
+              <Button className='bg-theme-primary hover:bg-theme-primary/80 text-black'>
                 <ArrowLeft className='h-4 w-4 mr-2' />
                 Back to News
               </Button>
             </Link>
           </div>
         </main>
-        <Footer />
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-silkroad-dark via-black to-silkroad-dark'>
-      <Navbar />
+    <Layout>
       <main className='container mx-auto px-4 py-8'>
         {/* Back to News Button */}
         <div className='mb-6'>
           <Link to='/news'>
-            <Button variant='outline' className='border-silkroad-gold/30 text-silkroad-gold hover:bg-silkroad-gold/10'>
+            <Button variant='outline' className='border-theme-primary/30 text-theme-primary hover:bg-theme-primary/10'>
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to News
             </Button>
@@ -137,7 +133,7 @@ const NewsDetail = () => {
         </div>
 
         <article className='max-w-4xl mx-auto'>
-          <Card className='bg-silkroad-dark/60 border-silkroad-gold/30 backdrop-blur-sm'>
+          <Card className='bg-theme-background/60 border-theme-primary/30 backdrop-blur-sm'>
             <CardContent className='p-8'>
               {/* Category Badge */}
               <div className='mb-4'>
@@ -155,7 +151,7 @@ const NewsDetail = () => {
               <h1 className='text-3xl md:text-4xl font-bold text-white mb-6 leading-tight'>{article.title}</h1>
 
               {/* Meta Information */}
-              <div className='flex flex-wrap items-center gap-6 text-gray-300 mb-8 pb-6 border-b border-silkroad-gold/20'>
+              <div className='flex flex-wrap items-center gap-6 text-theme-text-muted mb-8 pb-6 border-b border-theme-primary/20'>
                 <div className='flex items-center gap-2'>
                   <Calendar className='h-4 w-4' />
                   <span>{formatDate(article.created_at)}</span>
@@ -175,7 +171,7 @@ const NewsDetail = () => {
                   <img
                     src={article.image.startsWith('http') ? article.image : `${weburl}${article.image}`}
                     alt={article.title}
-                    className='w-full h-64 md:h-96 object-cover rounded-lg border border-silkroad-gold/20'
+                    className='w-full h-64 md:h-96 object-cover rounded-lg border border-theme-primary/20'
                   />
                 </div>
               )}
@@ -186,15 +182,17 @@ const NewsDetail = () => {
               </div>
 
               {/* Footer */}
-              <div className='mt-12 pt-6 border-t border-silkroad-gold/20'>
+              <div className='mt-12 pt-6 border-t border-theme-primary/20'>
                 <div className='flex justify-between items-center'>
-                  <div className='text-sm text-gray-400'>Letzte Aktualisierung: {formatDate(article.updated_at)}</div>
+                  <div className='text-sm text-theme-text-muted'>
+                    Letzte Aktualisierung: {formatDate(article.updated_at)}
+                  </div>
 
                   <Link to='/news'>
                     <Button
                       variant='outline'
                       size='sm'
-                      className='border-silkroad-gold/30 text-silkroad-gold hover:bg-silkroad-gold/10'
+                      className='border-theme-primary/30 text-theme-primary hover:bg-theme-primary/10'
                     >
                       Weitere News
                     </Button>
@@ -205,8 +203,7 @@ const NewsDetail = () => {
           </Card>
         </article>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

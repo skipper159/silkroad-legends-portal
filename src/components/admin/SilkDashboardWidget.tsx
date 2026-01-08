@@ -143,10 +143,10 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
 
   if (loading && !serverStats) {
     return (
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-4'>
+      <Card className='bg-theme-surface/50 border-theme-primary/30 p-4'>
         <div className='flex items-center justify-center h-20'>
-          <Loader2 className='h-6 w-6 animate-spin text-lafftale-gold' />
-          <span className='ml-2 text-gray-400'>Loading Silk Statistics...</span>
+          <Loader2 className='h-6 w-6 animate-spin text-theme-primary' />
+          <span className='ml-2 text-theme-text-muted'>Loading Silk Statistics...</span>
         </div>
       </Card>
     );
@@ -170,23 +170,23 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
     // Compact Dashboard Version
     return (
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-        <Card className='bg-gradient-to-br from-yellow-600/20 to-lafftale-gold/20 border-lafftale-gold/50 p-4'>
+        <Card className='bg-gradient-to-br from-theme-highlight/20 to-theme-primary/20 border-theme-primary/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Total Silk Volume</p>
-              <p className='text-xl font-bold text-lafftale-gold'>{formatCompactNumber(serverStats.totalSilkValue)}</p>
-              <p className='text-xs text-gray-400'>{formatNumber(serverStats.totalSilkValue)} Silk</p>
+              <p className='text-xs text-theme-text-muted mb-1'>Total Silk Volume</p>
+              <p className='text-xl font-bold text-theme-primary'>{formatCompactNumber(serverStats.totalSilkValue)}</p>
+              <p className='text-xs text-theme-text-muted'>{formatNumber(serverStats.totalSilkValue)} Silk</p>
             </div>
-            <Coins className='h-8 w-8 text-lafftale-gold' />
+            <Coins className='h-8 w-8 text-theme-primary' />
           </div>
         </Card>
 
         <Card className='bg-gradient-to-br from-purple-600/20 to-purple-400/20 border-purple-400/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Premium Silk</p>
+              <p className='text-xs text-theme-text-muted mb-1'>Premium Silk</p>
               <p className='text-xl font-bold text-purple-400'>{formatCompactNumber(serverStats.totalPremiumSilk)}</p>
-              <p className='text-xs text-gray-400'>
+              <p className='text-xs text-theme-text-muted'>
                 {Math.round((serverStats.totalPremiumSilk / serverStats.totalSilkValue) * 100)}% of total
               </p>
             </div>
@@ -197,9 +197,9 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-green-600/20 to-green-400/20 border-green-400/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Active Accounts</p>
+              <p className='text-xs text-theme-text-muted mb-1'>Active Accounts</p>
               <p className='text-xl font-bold text-green-400'>{formatCompactNumber(serverStats.accountsWithSilk)}</p>
-              <p className='text-xs text-gray-400'>of {formatNumber(serverStats.totalAccounts)}</p>
+              <p className='text-xs text-theme-text-muted'>of {formatNumber(serverStats.totalAccounts)}</p>
             </div>
             <Users className='h-8 w-8 text-green-400' />
           </div>
@@ -208,11 +208,13 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
         <Card className='bg-gradient-to-br from-blue-600/20 to-blue-400/20 border-blue-400/50 p-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <p className='text-xs text-gray-300 mb-1'>Total Donations</p>
+              <p className='text-xs text-theme-text-muted mb-1'>Total Donations</p>
               <p className='text-xl font-bold text-blue-400'>
                 ${formatCompactNumber(serverStats.donations.totalDonatedUSD)}
               </p>
-              <p className='text-xs text-gray-400'>{formatNumber(serverStats.donations.totalDonations)} Purchases</p>
+              <p className='text-xs text-theme-text-muted'>
+                {formatNumber(serverStats.donations.totalDonations)} Purchases
+              </p>
             </div>
             <DollarSign className='h-8 w-8 text-blue-400' />
           </div>
@@ -225,23 +227,23 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-2xl font-bold text-lafftale-gold'>Server Silk Overview</h2>
+        <h2 className='text-2xl font-bold text-theme-primary'>Server Silk Overview</h2>
         <div className='flex items-center gap-4'>
-          <span className='text-sm text-gray-400'>
+          <span className='text-sm text-theme-text-muted'>
             Aktualisiert: {formatDate(serverStats.lastCalculated)}
             {serverStats.cached && ' (cached)'}
-            {serverStats.isStale && <span className='ml-2 text-yellow-400 text-xs'>• Outdated (&gt;1h)</span>}
+            {serverStats.isStale && <span className='ml-2 text-theme-highlight text-xs'>• Outdated (&gt;1h)</span>}
           </span>
           <button
             onClick={fetchCachedServerStats}
             disabled={loading}
-            className='p-2 rounded-md border border-lafftale-gold/30 hover:bg-lafftale-gold/10 transition-colors'
+            className='p-2 rounded-md border border-theme-primary/30 hover:bg-theme-primary/10 transition-colors'
             title='Reload cached statistics'
           >
             {loading ? (
-              <Loader2 className='h-4 w-4 animate-spin text-lafftale-gold' />
+              <Loader2 className='h-4 w-4 animate-spin text-theme-primary' />
             ) : (
-              <RefreshCw className='h-4 w-4 text-lafftale-gold' />
+              <RefreshCw className='h-4 w-4 text-theme-primary' />
             )}
           </button>
         </div>
@@ -249,18 +251,18 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {/* Main Silk Statistics */}
-        <Card className='bg-gradient-to-br from-yellow-600/20 to-lafftale-gold/20 border-lafftale-gold/50 p-6 md:col-span-2 lg:col-span-1'>
+        <Card className='bg-gradient-to-br from-theme-highlight/20 to-theme-primary/20 border-theme-primary/50 p-6 md:col-span-2 lg:col-span-1'>
           <div className='text-center'>
-            <Coins className='h-12 w-12 text-lafftale-gold mx-auto mb-4' />
-            <h3 className='text-lg font-semibold text-lafftale-gold mb-2'>Total Silk Volume</h3>
+            <Coins className='h-12 w-12 text-theme-primary mx-auto mb-4' />
+            <h3 className='text-lg font-semibold text-theme-primary mb-2'>Total Silk Volume</h3>
             <p className='text-4xl font-bold text-white mb-2'>{formatNumber(serverStats.totalSilkValue)}</p>
-            <div className='grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-lafftale-gold/30'>
+            <div className='grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-theme-primary/30'>
               <div>
-                <p className='text-xs text-gray-400'>Premium Silk</p>
+                <p className='text-xs text-theme-text-muted'>Premium Silk</p>
                 <p className='text-lg font-bold text-purple-400'>{formatNumber(serverStats.totalPremiumSilk)}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-400'>Regular Silk</p>
+                <p className='text-xs text-theme-text-muted'>Regular Silk</p>
                 <p className='text-lg font-bold text-green-400'>{formatNumber(serverStats.totalSilk)}</p>
               </div>
             </div>
@@ -273,15 +275,17 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
             <Users className='h-12 w-12 text-green-400 mx-auto mb-4' />
             <h3 className='text-lg font-semibold text-green-400 mb-2'>Account Activity</h3>
             <p className='text-3xl font-bold text-white mb-2'>{formatNumber(serverStats.accountsWithSilk)}</p>
-            <p className='text-sm text-gray-400 mb-4'>Accounts with Silk</p>
+            <p className='text-sm text-theme-text-muted mb-4'>Accounts with Silk</p>
             <div className='space-y-2'>
               <div className='flex justify-between'>
-                <span className='text-xs text-gray-400'>Total Accounts:</span>
+                <span className='text-xs text-theme-text-muted'>Total Accounts:</span>
                 <span className='text-sm font-semibold'>{formatNumber(serverStats.totalAccounts)}</span>
               </div>
               <div className='flex justify-between'>
-                <span className='text-xs text-gray-400'>VIP Accounts:</span>
-                <span className='text-sm font-semibold text-yellow-400'>{formatNumber(serverStats.vipAccounts)}</span>
+                <span className='text-xs text-theme-text-muted'>VIP Accounts:</span>
+                <span className='text-sm font-semibold text-theme-highlight'>
+                  {formatNumber(serverStats.vipAccounts)}
+                </span>
               </div>
             </div>
           </div>
@@ -293,18 +297,18 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
             <DollarSign className='h-12 w-12 text-blue-400 mx-auto mb-4' />
             <h3 className='text-lg font-semibold text-blue-400 mb-2'>Donation Stats</h3>
             <p className='text-3xl font-bold text-white mb-2'>${formatNumber(serverStats.donations.totalDonatedUSD)}</p>
-            <p className='text-sm text-gray-400 mb-4'>Total Revenue</p>
+            <p className='text-sm text-theme-text-muted mb-4'>Total Revenue</p>
             <div className='space-y-2'>
               <div className='flex justify-between'>
-                <span className='text-xs text-gray-400'>Donations:</span>
+                <span className='text-xs text-theme-text-muted'>Donations:</span>
                 <span className='text-sm font-semibold'>{formatNumber(serverStats.donations.totalDonations)}</span>
               </div>
               <div className='flex justify-between'>
-                <span className='text-xs text-gray-400'>Unique Donors:</span>
+                <span className='text-xs text-theme-text-muted'>Unique Donors:</span>
                 <span className='text-sm font-semibold'>{formatNumber(serverStats.donations.uniqueDonors)}</span>
               </div>
               <div className='flex justify-between'>
-                <span className='text-xs text-gray-400'>Donated Silk:</span>
+                <span className='text-xs text-theme-text-muted'>Donated Silk:</span>
                 <span className='text-sm font-semibold text-purple-400'>
                   {formatNumber(serverStats.donations.totalDonatedSilk)}
                 </span>
@@ -316,8 +320,8 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
 
       {/* Performance Info */}
       {serverStats.calculationDuration && (
-        <Card className='bg-lafftale-darkgray/50 border-gray-600 p-4'>
-          <div className='flex items-center justify-center gap-4 text-sm text-gray-400'>
+        <Card className='bg-theme-surface/50 border-gray-600 p-4'>
+          <div className='flex items-center justify-center gap-4 text-sm text-theme-text-muted'>
             <TrendingUp className='h-4 w-4' />
             <span>Statistiken berechnet in {serverStats.calculationDuration} Sekunden</span>
             {serverStats.cached && (

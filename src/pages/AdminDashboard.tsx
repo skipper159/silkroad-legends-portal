@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import WebAccountsList from '@/components/admin/WebAccountsList';
 import GameAccountsList from '@/components/admin/GameAccountsList';
 import TicketSystem from '@/components/admin/TicketSystem';
@@ -13,23 +11,13 @@ import SilkAdminPanel from '@/components/admin/SilkAdminPanel';
 import SilkDashboardWidget from '@/components/admin/SilkDashboardWidget';
 import AdminSettings from '@/components/admin/settings/AdminSettings';
 import NewsManager from '@/components/admin/NewsManager';
-// import SettingsManager from "@/components/admin/SettingsManager";
-import {
-  Users,
-  Database,
-  TicketCheck,
-  Download,
-  Gift,
-  Vote,
-  UserPlus,
-  Shield,
-  Coins,
-  Settings,
-  Newspaper,
-} from 'lucide-react';
+import ActiveTemplate from '@/config/theme-config';
+import { Users, Database, TicketCheck, Download, Gift, Vote, UserPlus, Coins, Settings, Newspaper } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+
+const { Layout } = ActiveTemplate.components;
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('webaccounts');
@@ -41,13 +29,17 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <Navbar />
+    <Layout>
       <main className='flex-grow'>
-        <div className='py-20 bg-header2-bg bg-cover bg-top'>
+        <div
+          className='py-20 bg-cover bg-top'
+          style={{
+            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          }}
+        >
           <div className='container mx-auto px-4 text-center'>
             <h1 className='text-3xl md:text-4xl lg:text-4xl font-bold mb-6'>
-              Dashboard <span className='text-lafftale-bronze font-cinzel text-6xl font-bold'>Admin</span>
+              Dashboard <span className='text-theme-accent font-cinzel text-6xl font-bold'>Admin</span>
             </h1>
           </div>
         </div>
@@ -59,11 +51,11 @@ const AdminDashboard = () => {
           </div>
 
           <Tabs defaultValue='webaccounts' value={activeTab} onValueChange={setActiveTab}>
-            <Card className='bg-lafftale-darkgray border-lafftale-gold/30 mb-6'>
-              <TabsList className='grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-11 gap-2 p-2 bg-transparent border-b border-lafftale-gold/20 h-auto'>
+            <Card className='bg-theme-surface border-theme-primary/30 mb-6'>
+              <TabsList className='grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-11 gap-2 p-2 bg-transparent border-b border-theme-primary/20 h-auto'>
                 <TabsTrigger
                   value='webaccounts'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Users size={16} />
                   <span className='hidden sm:inline'>Web Accounts</span>
@@ -71,7 +63,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='gameaccounts'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Database size={16} />
                   <span className='hidden sm:inline'>Game Accounts</span>
@@ -79,7 +71,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='silk'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Coins size={16} />
                   <span className='hidden sm:inline'>Silk Admin</span>
@@ -87,7 +79,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='news'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Newspaper size={16} />
                   <span className='hidden sm:inline'>News</span>
@@ -95,7 +87,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='tickets'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <TicketCheck size={16} />
                   <span className='hidden sm:inline'>Ticket System</span>
@@ -103,7 +95,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='downloads'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Download size={16} />
                   <span className='hidden sm:inline'>Downloads</span>
@@ -111,7 +103,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='vouchers'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Gift size={16} />
                   <span className='hidden sm:inline'>Vouchers</span>
@@ -119,7 +111,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='votes'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Vote size={16} />
                   <span className='hidden sm:inline'>Vote System</span>
@@ -127,7 +119,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='referrals'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <UserPlus size={16} />
                   <span className='hidden sm:inline'>Referrals</span>
@@ -135,7 +127,7 @@ const AdminDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value='settings'
-                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-lafftale-gold data-[state=active]:text-lafftale-dark text-xs'
+                  className='flex items-center gap-2 px-3 py-2 data-[state=active]:bg-theme-primary data-[state=active]:text-white text-xs'
                 >
                   <Settings size={16} />
                   <span className='hidden sm:inline'>Settings</span>
@@ -144,7 +136,7 @@ const AdminDashboard = () => {
               </TabsList>
             </Card>
 
-            <Card className='bg-lafftale-darkgray border-lafftale-gold/30 p-6'>
+            <Card className='bg-theme-surface border-theme-primary/30 p-6'>
               <TabsContent value='webaccounts' className='mt-0'>
                 <WebAccountsList />
               </TabsContent>
@@ -188,8 +180,7 @@ const AdminDashboard = () => {
           </Tabs>
         </div>
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

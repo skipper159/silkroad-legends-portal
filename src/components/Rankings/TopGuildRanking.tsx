@@ -34,7 +34,7 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -47,18 +47,18 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Guild Name</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell'>Members</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Alliance</TableHead>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Guild Name</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Members</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Alliance</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={5} className='text-center py-8 text-theme-text-muted'>
                 No guilds found
               </TableCell>
             </TableRow>
@@ -69,7 +69,7 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
               return (
                 <TableRow
                   key={guild.ID || index}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 ${
                     actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
@@ -77,7 +77,11 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
                     {actualRank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          actualRank === 1 ? 'text-yellow-500' : actualRank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          actualRank === 1
+                            ? 'text-yellow-500'
+                            : actualRank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(actualRank)}
@@ -89,7 +93,7 @@ const TopGuildRanking: React.FC<TopGuildRankingProps> = ({
                   <TableCell className='font-medium'>
                     <Link
                       to={`/guild/${encodeURIComponent(guild.Name)}`}
-                      className='text-lafftale-gold hover:text-lafftale-bronze transition-colors'
+                      className='text-theme-primary hover:text-theme-accent transition-colors'
                     >
                       {guild.Name}
                     </Link>

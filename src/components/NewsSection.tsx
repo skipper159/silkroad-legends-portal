@@ -31,7 +31,7 @@ const getCategoryClass = (category: string) => {
   if (lowerCategory === 'update') return 'bg-blue-600';
   if (lowerCategory === 'event') return 'bg-yellow-500 text-black';
   if (lowerCategory === 'community') return 'bg-green-600';
-  return 'bg-silkroad-crimson';
+  return 'bg-destructive';
 };
 
 // Fallback news items in case API fails
@@ -140,7 +140,7 @@ const NewsSection = () => {
 
         {loading ? (
           <div className='flex justify-center items-center py-20'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-lafftale-gold'></div>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
           </div>
         ) : (
           <>
@@ -167,11 +167,11 @@ const NewsSection = () => {
                           <span
                             className={`${getCategoryClass(
                               item.category
-                            )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-shadow duration-300`}
+                            )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(var(--theme-primary),0.4)] transition-shadow duration-300`}
                           >
                             {getCategoryIcon(item.category)} {item.category}
                           </span>
-                          <span className='text-xs text-gray-300 group-hover:text-lafftale-gold transition-colors duration-300'>
+                          <span className='text-xs text-theme-text-muted group-hover:text-theme-primary transition-colors duration-300'>
                             {formatDate(item.created_at)}
                           </span>
                         </div>
@@ -179,18 +179,18 @@ const NewsSection = () => {
                     </div>
 
                     <div className='p-4'>
-                      <h3 className='text-xl font-bold mb-2 text-lafftale-gold group-hover:text-lafftale-bronze transition-colors duration-300'>
+                      <h3 className='text-xl font-bold mb-2 text-theme-primary group-hover:text-theme-accent transition-colors duration-300'>
                         {item.title}
                       </h3>
 
-                      <p className='text-gray-400 mb-4 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300'>
+                      <p className='text-theme-text-muted mb-4 line-clamp-2 group-hover:text-theme-text-muted transition-colors duration-300'>
                         {item.excerpt}
                       </p>
 
                       <Button
                         variant='link'
                         asChild
-                        className='p-0 text-lafftale-gold hover:text-lafftale-bronze transition-colors duration-300'
+                        className='p-0 text-theme-primary hover:text-theme-accent transition-colors duration-300'
                       >
                         <Link to={`/news/${item.slug}`}>Read More →</Link>
                       </Button>

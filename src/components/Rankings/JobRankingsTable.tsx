@@ -87,7 +87,7 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
       case 'trader':
         return 'bg-green-500/20 text-green-400 border-green-500/50';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+        return 'bg-gray-500/20 text-theme-text-muted border-gray-500/50';
     }
   };
 
@@ -103,7 +103,7 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
       </div>
     );
   }
@@ -120,55 +120,55 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
     <div>
       {/* Job Statistics */}
       <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-6'>
-        <div className='bg-gray-800/50 p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='bg-theme-surface/50 p-4 rounded-lg border border-theme-primary/20'>
           <div className='text-center'>
-            <div className='text-2xl font-bold text-lafftale-gold'>
+            <div className='text-2xl font-bold text-theme-primary'>
               {statistics?.totalHunters || statistics?.totalThieves || statistics?.totalTraders || 0}
             </div>
-            <div className='text-sm text-gray-400'>Total {jobType}s</div>
+            <div className='text-sm text-theme-text-muted'>Total {jobType}s</div>
           </div>
         </div>
 
-        <div className='bg-gray-800/50 p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='bg-theme-surface/50 p-4 rounded-lg border border-theme-primary/20'>
           <div className='text-center'>
             <div className='text-2xl font-bold text-blue-400'>{Math.round(statistics?.averageLevel || 0)}</div>
-            <div className='text-sm text-gray-400'>Average Level</div>
+            <div className='text-sm text-theme-text-muted'>Average Level</div>
           </div>
         </div>
 
-        <div className='bg-gray-800/50 p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='bg-theme-surface/50 p-4 rounded-lg border border-theme-primary/20'>
           <div className='text-center'>
             <div className='text-2xl font-bold text-green-400'>{statistics?.maxLevel || 0}</div>
-            <div className='text-sm text-gray-400'>Max Level</div>
+            <div className='text-sm text-theme-text-muted'>Max Level</div>
           </div>
         </div>
 
-        <div className='bg-gray-800/50 p-4 rounded-lg border border-lafftale-gold/20'>
+        <div className='bg-theme-surface/50 p-4 rounded-lg border border-theme-primary/20'>
           <div className='text-center'>
             <div className='text-2xl font-bold text-red-400'>{(statistics?.totalKills || 0).toLocaleString()}</div>
-            <div className='text-sm text-gray-400'>Total Kills</div>
+            <div className='text-sm text-theme-text-muted'>Total Kills</div>
           </div>
         </div>
       </div>
 
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-lafftale-gold/20'>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Rank</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold'>Name</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold text-center'>Job Level</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell text-center'>Job Exp</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell text-center'>Kills</TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden md:table-cell text-center'>
+          <TableRow className='border-b border-theme-primary/20'>
+            <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
+            <TableHead className='text-theme-primary font-semibold'>Name</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Job Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell text-center'>Job Exp</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell text-center'>Kills</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell text-center'>
               Reputation
             </TableHead>
-            <TableHead className='text-lafftale-gold font-semibold hidden lg:table-cell'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Guild</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={6} className='text-center py-8 text-theme-text-muted'>
                 No {jobType} rankings found
               </TableCell>
             </TableRow>
@@ -179,7 +179,7 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
               return (
                 <TableRow
                   key={player.CharID || index}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 ${
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 ${
                     actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
@@ -187,7 +187,11 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
                     {actualRank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          actualRank === 1 ? 'text-yellow-500' : actualRank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          actualRank === 1
+                            ? 'text-yellow-500'
+                            : actualRank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(actualRank)}
@@ -200,7 +204,7 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
                     <div className='flex items-center gap-2'>
                       <img src={getRaceImage(player.Race)} alt={player.Race} className='w-4 h-4' />
                       <img src={getJobIcon(player.JobTypeName)} alt={player.JobTypeName} className='w-5 h-5' />
-                      <span className='font-medium text-lafftale-gold'>{player.NickName16 || player.CharName16}</span>
+                      <span className='font-medium text-theme-primary'>{player.NickName16 || player.CharName16}</span>
                     </div>
                   </TableCell>
                   <TableCell className='text-center'>
@@ -217,7 +221,7 @@ const JobTable: React.FC<JobRankingTableProps & { jobType: string }> = ({
                   <TableCell className='hidden md:table-cell text-center text-green-400'>
                     {player.ReputationPoint?.toLocaleString() || 0}
                   </TableCell>
-                  <TableCell className='hidden lg:table-cell text-gray-400 text-sm'>
+                  <TableCell className='hidden lg:table-cell text-theme-text-muted text-sm'>
                     {player.GuildName === 'DummyGuild' || !player.GuildName ? '-' : player.GuildName}
                   </TableCell>
                 </TableRow>
@@ -284,45 +288,45 @@ const JobRankingsTable: React.FC<JobRankingsProps> = ({
       {/* Job Type Overview - Diese Karten dienen nun auch als Navigation */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
         <div
-          className={`bg-gray-800/50 p-4 rounded-lg border ${
+          className={`bg-theme-surface/50 p-4 rounded-lg border ${
             activeJobTab === 'hunter' ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-blue-500/20'
-          } cursor-pointer hover:bg-gray-700/50 transition-all duration-200`}
+          } cursor-pointer hover:bg-theme-surface/50 transition-all duration-200`}
           onClick={() => setActiveJobTab('hunter')}
         >
           <div className='flex items-center gap-2 mb-2'>
             <img src='/assets/job/hunter.png' alt='Hunter' className='w-6 h-6' />
             <h3 className='text-blue-400 font-semibold'>Hunters</h3>
           </div>
-          <p className='text-gray-300 text-sm'>Anti-Thief Specialists</p>
-          <p className='text-xs text-gray-400 mt-1'>{hunterData.length} active hunters</p>
+          <p className='text-theme-text-muted text-sm'>Anti-Thief Specialists</p>
+          <p className='text-xs text-theme-text-muted mt-1'>{hunterData.length} active hunters</p>
         </div>
 
         <div
-          className={`bg-gray-800/50 p-4 rounded-lg border ${
+          className={`bg-theme-surface/50 p-4 rounded-lg border ${
             activeJobTab === 'thief' ? 'border-red-500 shadow-lg shadow-red-500/20' : 'border-red-500/20'
-          } cursor-pointer hover:bg-gray-700/50 transition-all duration-200`}
+          } cursor-pointer hover:bg-theme-surface/50 transition-all duration-200`}
           onClick={() => setActiveJobTab('thief')}
         >
           <div className='flex items-center gap-2 mb-2'>
             <img src='/assets/job/thief.png' alt='Thief' className='w-6 h-6' />
             <h3 className='text-red-400 font-semibold'>Thieves</h3>
           </div>
-          <p className='text-gray-300 text-sm'>Trade Route Raiders</p>
-          <p className='text-xs text-gray-400 mt-1'>{thiefData.length} active thieves</p>
+          <p className='text-theme-text-muted text-sm'>Trade Route Raiders</p>
+          <p className='text-xs text-theme-text-muted mt-1'>{thiefData.length} active thieves</p>
         </div>
 
         <div
-          className={`bg-gray-800/50 p-4 rounded-lg border ${
+          className={`bg-theme-surface/50 p-4 rounded-lg border ${
             activeJobTab === 'trader' ? 'border-green-500 shadow-lg shadow-green-500/20' : 'border-green-500/20'
-          } cursor-pointer hover:bg-gray-700/50 transition-all duration-200`}
+          } cursor-pointer hover:bg-theme-surface/50 transition-all duration-200`}
           onClick={() => setActiveJobTab('trader')}
         >
           <div className='flex items-center gap-2 mb-2'>
             <img src='/assets/job/merchant.png' alt='Trader' className='w-6 h-6' />
             <h3 className='text-green-400 font-semibold'>Traders</h3>
           </div>
-          <p className='text-gray-300 text-sm'>Commerce Masters</p>
-          <p className='text-xs text-gray-400 mt-1'>{traderData.length} active traders</p>
+          <p className='text-theme-text-muted text-sm'>Commerce Masters</p>
+          <p className='text-xs text-theme-text-muted mt-1'>{traderData.length} active traders</p>
         </div>
       </div>
 

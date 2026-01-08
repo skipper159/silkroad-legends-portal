@@ -172,18 +172,18 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
 
   if (loading) {
     return (
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-primary/30'>
         <CardContent className='flex items-center justify-center py-8'>
-          <Loader2 className='h-6 w-6 animate-spin text-lafftale-gold' />
+          <Loader2 className='h-6 w-6 animate-spin text-theme-primary' />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+    <Card className='bg-theme-surface border-theme-primary/30'>
       <CardHeader>
-        <CardTitle className='text-lafftale-gold flex items-center gap-2'>
+        <CardTitle className='text-theme-primary flex items-center gap-2'>
           <Shield className='h-5 w-5' />
           Two-Factor Authentication
         </CardTitle>
@@ -234,7 +234,7 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
                 <div className='mt-4'>
                   <p className='text-sm text-gray-400 mb-2'>Or enter this code manually:</p>
                   <div className='flex items-center justify-center gap-2'>
-                    <code className='px-3 py-2 bg-gray-800 rounded text-lafftale-gold font-mono text-sm'>{secret}</code>
+                    <code className='px-3 py-2 bg-gray-800 rounded text-theme-primary font-mono text-sm'>{secret}</code>
                     <Button variant='ghost' size='sm' onClick={copySecret} className='text-gray-400 hover:text-white'>
                       {copied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
                     </Button>
@@ -256,7 +256,7 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
                   placeholder='000000'
-                  className='bg-lafftale-dark/70 border-lafftale-gold/20 text-center text-2xl tracking-widest'
+                  className='bg-theme-surface border-theme-primary/20 text-theme-text text-center text-2xl tracking-widest'
                 />
               </div>
               <div className='flex gap-3'>
@@ -276,7 +276,7 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
                 </Button>
                 <Button
                   type='submit'
-                  className='flex-1 bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'
+                  className='flex-1 bg-theme-primary hover:bg-theme-accent text-theme-text-on-primary'
                   disabled={isSubmitting || verificationCode.length !== 6}
                 >
                   {isSubmitting ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
@@ -291,7 +291,7 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
         {!isEnabled && !setupMode && (
           <Button
             onClick={handleStartSetup}
-            className='w-full bg-lafftale-gold hover:bg-amber-500 text-lafftale-dark'
+            className='w-full bg-theme-primary hover:bg-theme-accent text-theme-text-on-primary'
             disabled={isSubmitting}
           >
             {isSubmitting ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : <QrCode className='h-4 w-4 mr-2' />}
@@ -310,7 +310,7 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
                 value={disablePassword}
                 onChange={(e) => setDisablePassword(e.target.value)}
                 placeholder='Your current password'
-                className='bg-lafftale-dark/70 border-lafftale-gold/20'
+                className='bg-theme-surface border-theme-primary/20 text-theme-text'
               />
             </div>
             <Button type='submit' variant='destructive' className='w-full' disabled={isSubmitting || !disablePassword}>

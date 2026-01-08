@@ -1,21 +1,17 @@
+import ActiveTemplate from '@/config/theme-config';
 
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import NewsSection from "@/components/NewsSection";
-import ServerOverview from "@/components/ServerOverview";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+const { Layout, HeroSection, ServerStatusWidget, FeaturesSection, NewsSection, RankingPreviewSection } =
+  ActiveTemplate.components;
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <Hero />
-      <ServerOverview />
-      <Features />
+    <Layout>
+      <HeroSection />
+      <ServerStatusWidget />
+      <FeaturesSection />
       <NewsSection />
-      <Footer />
-    </div>
+      <RankingPreviewSection />
+    </Layout>
   );
 };
 

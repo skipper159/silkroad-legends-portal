@@ -203,18 +203,20 @@ const UserVouchers: React.FC = () => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center gap-3'>
-        <Gift className='h-8 w-8 text-lafftale-gold' />
+        <Gift className='h-8 w-8 text-theme-highlight' />
         <div>
-          <h2 className='text-2xl font-bold text-gray-100'>Voucher System</h2>
-          <p className='text-gray-400'>Redeem voucher codes and receive rewards</p>
+          <h2 className='text-2xl font-bold text-theme-primary'>Voucher System</h2>
+          <p className='text-theme-text-muted'>Redeem voucher codes and receive rewards</p>
         </div>
       </div>
 
       {/* Redeem Voucher */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-highlight/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Redeem Voucher</CardTitle>
-          <CardDescription className='text-gray-400'>Enter a voucher code to receive your reward</CardDescription>
+          <CardTitle className='text-theme-highlight'>Redeem Voucher</CardTitle>
+          <CardDescription className='text-theme-text-muted'>
+            Enter a voucher code to receive your reward
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
@@ -230,7 +232,7 @@ const UserVouchers: React.FC = () => {
 
             <div className='flex gap-4'>
               <div className='flex-1'>
-                <Label htmlFor='voucher-code' className='text-gray-300'>
+                <Label htmlFor='voucher-code' className='text-theme-text-muted'>
                   Voucher Code
                 </Label>
                 <Input
@@ -239,7 +241,7 @@ const UserVouchers: React.FC = () => {
                   placeholder='Enter voucher code...'
                   value={redeemCode}
                   onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
-                  className='mt-1 bg-lafftale-dark border-lafftale-gold/30 text-gray-100'
+                  className='mt-1 bg-theme-background border-theme-highlight/30 text-theme-text'
                   disabled={redeeming}
                 />
               </div>
@@ -247,7 +249,7 @@ const UserVouchers: React.FC = () => {
                 <Button
                   onClick={handleRedeemVoucher}
                   disabled={redeeming || !redeemCode.trim() || !selectedAccountJid}
-                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-gold/90'
+                  className='bg-theme-highlight text-theme-surface hover:bg-theme-highlight/90'
                 >
                   {redeeming ? 'Redeeming...' : 'Redeem'}
                 </Button>
@@ -258,18 +260,18 @@ const UserVouchers: React.FC = () => {
       </Card>
 
       {/* Voucher History */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-highlight/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold flex items-center gap-2'>
+          <CardTitle className='text-theme-highlight flex items-center gap-2'>
             <History className='h-5 w-5' />
             Voucher History
           </CardTitle>
-          <CardDescription className='text-gray-400'>Overview of your redeemed vouchers</CardDescription>
+          <CardDescription className='text-theme-text-muted'>Overview of your redeemed vouchers</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='mb-4'>
             <div className='space-y-2'>
-              <Label className='text-gray-300'>Filter by Game Account</Label>
+              <Label className='text-theme-text-muted'>Filter by Game Account</Label>
               <Select
                 value={historyFilterJid?.toString() || 'all'}
                 onValueChange={(value) => {
@@ -284,10 +286,10 @@ const UserVouchers: React.FC = () => {
                   }
                 }}
               >
-                <SelectTrigger className='bg-lafftale-dark border-lafftale-gold/30'>
+                <SelectTrigger className='bg-theme-background border-theme-highlight/30'>
                   <SelectValue placeholder='Show all accounts...' />
                 </SelectTrigger>
-                <SelectContent className='bg-lafftale-darkgray'>
+                <SelectContent className='bg-theme-surface'>
                   <SelectItem value='all'>All Accounts</SelectItem>
                   {availableAccounts.map((account) => (
                     <SelectItem key={account.id} value={account.id.toString()}>
@@ -301,30 +303,30 @@ const UserVouchers: React.FC = () => {
 
           {loading ? (
             <div className='text-center py-8'>
-              <div className='text-gray-400'>Loading voucher history...</div>
+              <div className='text-theme-text-muted'>Loading voucher history...</div>
             </div>
           ) : voucherHistory.length === 0 ? (
             <div className='text-center py-8'>
-              <Gift className='h-12 w-12 text-gray-500 mx-auto mb-4' />
-              <p className='text-gray-400'>
+              <Gift className='h-12 w-12 text-theme-text-muted mx-auto mb-4' />
+              <p className='text-theme-text-muted'>
                 {historyFilterJid
                   ? `No vouchers found for ${historyFilterAccount?.StrUserID || 'selected account'}`
                   : "You haven't redeemed any vouchers yet"}
               </p>
-              <p className='text-gray-500 text-sm'>Your redeemed vouchers will be displayed here</p>
+              <p className='text-theme-text-muted text-sm'>Your redeemed vouchers will be displayed here</p>
             </div>
           ) : (
             <div className='space-y-3'>
               {voucherHistory.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className='flex items-center justify-between p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'
+                  className='flex items-center justify-between p-4 bg-theme-background/50 rounded-lg border border-theme-highlight/20'
                 >
                   <div className='flex items-center gap-3'>
                     <div className='text-2xl'>{getTypeIcon(voucher.type)}</div>
                     <div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-mono text-sm text-lafftale-gold'>{voucher.voucher_code}</span>
+                        <span className='font-mono text-sm text-theme-highlight'>{voucher.voucher_code}</span>
                         {getStatusIcon(voucher.status)}
                       </div>
                       <div className='flex items-center gap-2 mt-1'>
@@ -339,15 +341,15 @@ const UserVouchers: React.FC = () => {
                             {voucher.game_account_name}
                           </Badge>
                         )}
-                        <span className='text-sm text-gray-400'>
+                        <span className='text-sm text-theme-text-muted'>
                           {new Date(voucher.redeemed_at).toLocaleDateString('de-DE')}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className='text-right'>
-                    <div className='text-lg font-bold text-lafftale-gold'>+{voucher.value}</div>
-                    <div className='text-xs text-gray-400 uppercase'>{getTypeString(voucher.type)}</div>
+                    <div className='text-lg font-bold text-theme-highlight'>+{voucher.value}</div>
+                    <div className='text-xs text-theme-text-muted uppercase'>{getTypeString(voucher.type)}</div>
                   </div>
                 </div>
               ))}
