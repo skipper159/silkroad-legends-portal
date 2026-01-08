@@ -148,6 +148,56 @@ router.put('/:key', async (req, res) => {
   }
 });
 
+// Bulk update settings (POST /)
+router.post('/', async (req, res) => {
+  const settings = req.body;
+
+  if (!settings || typeof settings !== 'object') {
+    return res.status(400).json({ error: 'Invalid settings object' });
+  }
+
+  await poolConnect;
+  const transaction = new sql.Transaction(pool);
+
+  try {
+    await transaction.begin();
+
+    for (const [key, value] of Object.entries(settings)) {
+      // Skip if value is not a string (or convert it)
+      const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+
+      const request = new sql.Request(transaction);
+      const existing = await request
+        .input('key', sql.NVarChar, key)
+        .query('SELECT [key] FROM settings WHERE [key] = @key');
+
+      const upsertRequest = new sql.Request(transaction);
+      upsertRequest.input('key', sql.NVarChar, key);
+      upsertRequest.input('value', sql.NVarChar, stringValue);
+      upsertRequest.input('now', sql.DateTime2, new Date());
+
+      if (existing.recordset.length > 0) {
+        await upsertRequest.query(
+          'UPDATE settings SET value = @value, updated_at = @now WHERE [key] = @key'
+        );
+      } else {
+        await upsertRequest.query(
+          'INSERT INTO settings ([key], value, created_at, updated_at) VALUES (@key, @value, @now, @now)'
+        );
+      }
+    }
+
+    await transaction.commit();
+    res.json({ message: 'Settings updated successfully' });
+  } catch (err) {
+    if (transaction._aborted === false) {
+      await transaction.rollback();
+    }
+    console.error('Error batch updating settings:', err);
+    res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
 // Delete setting
 router.delete('/:key', async (req, res) => {
   const { key } = req.params;
