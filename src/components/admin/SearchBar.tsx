@@ -19,11 +19,11 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSearch, placeholder = 'Search 
     <div className='flex gap-2 mb-4'>
       <div className='relative flex-1'>
         <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-          <Search className='w-4 h-4 text-lafftale-gold' />
+          <Search className='w-4 h-4 text-theme-primary' />
         </div>
         <Input
           type='text'
-          className='pl-10 bg-lafftale-dark text-gray-300 border-lafftale-gold/30 focus:border-lafftale-gold focus:ring-lafftale-gold/30 focus-visible:ring-0 focus-visible:ring-offset-0'
+          className='pl-10 bg-theme-background text-theme-text border-theme-border focus:border-theme-primary focus:ring-theme-primary/30 focus-visible:ring-0 focus-visible:ring-offset-0'
           placeholder={placeholder}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -33,7 +33,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSearch, placeholder = 'Search 
       {onSearch && (
         <button
           onClick={onSearch}
-          className='px-4 py-2 bg-lafftale-gold text-lafftale-dark font-medium rounded-md hover:bg-lafftale-bronze transition-colors flex items-center gap-2'
+          className='px-4 py-2 bg-theme-primary text-theme-text-on-primary font-medium rounded-md hover:bg-theme-primary/90 transition-colors flex items-center gap-2'
         >
           <Search className='w-4 h-4' />
           Search

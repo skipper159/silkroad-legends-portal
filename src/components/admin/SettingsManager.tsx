@@ -182,29 +182,31 @@ const SettingsManager = () => {
 
   return (
     <div className='space-y-6'>
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Website Settings</CardTitle>
-          <CardDescription className='text-gray-300'>Manage your website configuration settings</CardDescription>
+          <CardTitle className='text-theme-primary'>Website Settings</CardTitle>
+          <CardDescription className='text-theme-text-muted'>
+            Manage your website configuration settings
+          </CardDescription>
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Site Information */}
           <div className='grid gap-4'>
             <div>
-              <Label htmlFor='site_name' className='text-white'>
+              <Label htmlFor='site_name' className='text-theme-text'>
                 Site Name
               </Label>
               <Input
                 id='site_name'
                 value={settings.site_name || ''}
                 onChange={(e) => handleSettingChange('site_name', e.target.value)}
-                className='bg-lafftale-dark border-gray-600 text-white'
+                className='bg-theme-surface border-theme-border text-theme-text'
                 placeholder='Enter site name'
               />
               <Button
                 onClick={() => updateSetting('site_name', settings.site_name || '')}
                 disabled={saving}
-                className='mt-2 bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                className='mt-2 bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                 size='sm'
               >
                 <Save className='h-4 w-4 mr-2' />
@@ -213,21 +215,21 @@ const SettingsManager = () => {
             </div>
 
             <div>
-              <Label htmlFor='site_description' className='text-white'>
+              <Label htmlFor='site_description' className='text-theme-text'>
                 Site Description
               </Label>
               <Textarea
                 id='site_description'
                 value={settings.site_description || ''}
                 onChange={(e) => handleSettingChange('site_description', e.target.value)}
-                className='bg-lafftale-dark border-gray-600 text-white'
+                className='bg-theme-surface border-theme-border text-theme-text'
                 placeholder='Enter site description'
                 rows={3}
               />
               <Button
                 onClick={() => updateSetting('site_description', settings.site_description || '')}
                 disabled={saving}
-                className='mt-2 bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                className='mt-2 bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                 size='sm'
               >
                 <Save className='h-4 w-4 mr-2' />
@@ -238,8 +240,8 @@ const SettingsManager = () => {
             {/* Boolean Settings */}
             <div className='flex items-center justify-between'>
               <div>
-                <Label className='text-white'>Maintenance Mode</Label>
-                <p className='text-sm text-gray-400'>Enable to put the site in maintenance mode</p>
+                <Label className='text-theme-text'>Maintenance Mode</Label>
+                <p className='text-sm text-theme-text-muted'>Enable to put the site in maintenance mode</p>
               </div>
               <div className='flex items-center gap-2'>
                 <Switch
@@ -251,8 +253,8 @@ const SettingsManager = () => {
 
             <div className='flex items-center justify-between'>
               <div>
-                <Label className='text-white'>Registration Enabled</Label>
-                <p className='text-sm text-gray-400'>Allow new user registrations</p>
+                <Label className='text-theme-text'>Registration Enabled</Label>
+                <p className='text-sm text-theme-text-muted'>Allow new user registrations</p>
               </div>
               <div className='flex items-center gap-2'>
                 <Switch
@@ -263,7 +265,7 @@ const SettingsManager = () => {
             </div>
 
             <div>
-              <Label htmlFor='max_accounts_per_ip' className='text-white'>
+              <Label htmlFor='max_accounts_per_ip' className='text-theme-text'>
                 Max Accounts per IP
               </Label>
               <Input
@@ -271,13 +273,13 @@ const SettingsManager = () => {
                 type='number'
                 value={settings.max_accounts_per_ip || '3'}
                 onChange={(e) => handleSettingChange('max_accounts_per_ip', e.target.value)}
-                className='bg-lafftale-dark border-gray-600 text-white'
+                className='bg-theme-surface border-theme-border text-theme-text'
                 placeholder='3'
               />
               <Button
                 onClick={() => updateSetting('max_accounts_per_ip', settings.max_accounts_per_ip || '3')}
                 disabled={saving}
-                className='mt-2 bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                className='mt-2 bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                 size='sm'
               >
                 <Save className='h-4 w-4 mr-2' />
@@ -289,40 +291,40 @@ const SettingsManager = () => {
       </Card>
 
       {/* Add New Setting */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Add New Setting</CardTitle>
+          <CardTitle className='text-theme-primary'>Add New Setting</CardTitle>
         </CardHeader>
         <CardContent>
           <div className='grid gap-4'>
             <div>
-              <Label htmlFor='new_key' className='text-white'>
+              <Label htmlFor='new_key' className='text-theme-text'>
                 Setting Key
               </Label>
               <Input
                 id='new_key'
                 value={newSettingKey}
                 onChange={(e) => setNewSettingKey(e.target.value)}
-                className='bg-lafftale-dark border-gray-600 text-white'
+                className='bg-theme-surface border-theme-border text-theme-text'
                 placeholder='setting_key'
               />
             </div>
             <div>
-              <Label htmlFor='new_value' className='text-white'>
+              <Label htmlFor='new_value' className='text-theme-text'>
                 Setting Value
               </Label>
               <Input
                 id='new_value'
                 value={newSettingValue}
                 onChange={(e) => setNewSettingValue(e.target.value)}
-                className='bg-lafftale-dark border-gray-600 text-white'
+                className='bg-theme-surface border-theme-border text-theme-text'
                 placeholder='setting_value'
               />
             </div>
             <Button
               onClick={addNewSetting}
               disabled={saving || !newSettingKey || !newSettingValue}
-              className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+              className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
             >
               <Save className='h-4 w-4 mr-2' />
               Add Setting
@@ -332,17 +334,17 @@ const SettingsManager = () => {
       </Card>
 
       {/* All Settings */}
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>All Settings</CardTitle>
+          <CardTitle className='text-theme-primary'>All Settings</CardTitle>
         </CardHeader>
         <CardContent>
           <div className='space-y-2'>
             {Object.entries(settings).map(([key, value]) => (
-              <div key={key} className='flex items-center justify-between p-2 bg-lafftale-dark rounded'>
+              <div key={key} className='flex items-center justify-between p-2 bg-theme-surface/50 rounded'>
                 <div className='flex-1'>
-                  <span className='font-medium text-white'>{key}</span>
-                  <p className='text-sm text-gray-400 truncate'>{value}</p>
+                  <span className='font-medium text-theme-text'>{key}</span>
+                  <p className='text-sm text-theme-text-muted truncate'>{value}</p>
                 </div>
                 <Button onClick={() => deleteSetting(key)} variant='destructive' size='sm'>
                   <Trash2 className='h-4 w-4' />

@@ -176,7 +176,7 @@ const TicketSystem = () => {
 
   if (loading) {
     return (
-      <div className='flex justify-center py-10 text-lafftale-gold'>
+      <div className='flex justify-center py-10 text-theme-primary'>
         <Loader2 className='animate-spin mr-2' />
         Loading...
       </div>
@@ -198,14 +198,14 @@ const TicketSystem = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             placeholder='Search by username or subject...'
-            className='w-full px-3 py-2 border border-lafftale-gold/30 bg-lafftale-dark text-white rounded-md'
+            className='w-full px-3 py-2 border border-theme-border bg-theme-surface text-theme-text rounded-md'
           />
         </div>
         <Select value={statusFilter} onValueChange={handleStatusFilter}>
-          <SelectTrigger className='w-40 border-lafftale-gold/30 bg-lafftale-dark text-white'>
+          <SelectTrigger className='w-40 border-theme-border bg-theme-surface text-theme-text'>
             <SelectValue placeholder='Status' />
           </SelectTrigger>
-          <SelectContent className='bg-lafftale-dark border-lafftale-gold/30'>
+          <SelectContent className='bg-theme-surface border-theme-border'>
             <SelectItem value='all'>All Tickets</SelectItem>
             <SelectItem value='open'>Open</SelectItem>
             <SelectItem value='closed'>Closed</SelectItem>
@@ -214,15 +214,15 @@ const TicketSystem = () => {
         <Button
           onClick={handleSearch}
           disabled={isSearching}
-          className='bg-lafftale-gold text-black hover:bg-lafftale-gold/80'
+          className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/80'
         >
           {isSearching ? <Loader2 className='animate-spin' size={16} /> : 'Search'}
         </Button>
       </div>
 
-      <Card className='overflow-x-auto bg-lafftale-dark border-lafftale-gold/30'>
-        <table className='min-w-full text-left text-sm text-gray-300'>
-          <thead className='bg-lafftale-gold/10 text-lafftale-gold uppercase'>
+      <Card className='overflow-x-auto bg-theme-surface border-theme-border'>
+        <table className='min-w-full text-left text-sm text-theme-text-muted'>
+          <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
             <tr>
               <th className='p-3'>Ticket</th>
               <th className='p-3'>Username</th>
@@ -237,7 +237,7 @@ const TicketSystem = () => {
               tickets.map((ticket) => (
                 <tr
                   key={ticket.Id}
-                  className={`border-b border-lafftale-gold/10 hover:bg-lafftale-gold/5 transition-colors ${
+                  className={`border-b border-theme-border hover:bg-theme-surface/50 transition-colors ${
                     ticket.Status === 'closed' ? 'opacity-60' : ''
                   }`}
                 >
@@ -270,7 +270,7 @@ const TicketSystem = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className='p-4 text-center text-gray-400'>
+                <td colSpan={6} className='p-4 text-center text-theme-text-muted'>
                   No results found
                 </td>
               </tr>
@@ -281,8 +281,8 @@ const TicketSystem = () => {
 
       {/* Pagination Controls */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='flex items-center justify-between bg-lafftale-dark p-4 rounded-lg border border-lafftale-gold/30'>
-          <p className='text-sm text-gray-400'>
+        <div className='flex items-center justify-between bg-theme-surface p-4 rounded-lg border border-theme-border'>
+          <p className='text-sm text-theme-text-muted'>
             Showing {(pagination.currentPage - 1) * 10 + 1} to{' '}
             {Math.min(pagination.currentPage * 10, pagination.totalCount)} of {pagination.totalCount} tickets
           </p>
@@ -303,7 +303,7 @@ const TicketSystem = () => {
             >
               Previous
             </Button>
-            <span className='text-sm text-gray-300 px-3'>
+            <span className='text-sm text-theme-text-muted px-3'>
               Page {pagination.currentPage} of {pagination.totalPages}
             </span>
             <Button
@@ -327,12 +327,14 @@ const TicketSystem = () => {
       )}
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className='max-w-2xl bg-lafftale-darkgray border-lafftale-gold/20 text-gray-300'>
+        <DialogContent className='max-w-2xl bg-theme-surface border-theme-border text-theme-text-muted'>
           <DialogHeader>
-            <DialogTitle className='text-lafftale-gold'>
+            <DialogTitle className='text-theme-primary'>
               Ticket #{selectedTicket?.Id} – {selectedTicket?.Subject}
             </DialogTitle>
-            <DialogDescription className='text-gray-400'>Here you can view ticket details and reply.</DialogDescription>
+            <DialogDescription className='text-theme-text-muted'>
+              Here you can view ticket details and reply.
+            </DialogDescription>
           </DialogHeader>
 
           {loadingDetails ? (
@@ -351,11 +353,11 @@ const TicketSystem = () => {
                       key={msg.Id}
                       className={`p-3 rounded text-sm w-fit max-w-[85%] ${
                         msg.IsFromStaff
-                          ? 'ml-auto bg-yellow-100 text-yellow-900 text-right'
-                          : 'mr-auto bg-gray-800 text-white text-left'
+                          ? 'ml-auto bg-theme-secondary text-white text-right'
+                          : 'mr-auto bg-theme-surface/70 text-theme-text text-left border border-theme-border'
                       }`}
                     >
-                      <div className='text-xs mb-1 text-lafftale-gold'>
+                      <div className='text-xs mb-1 text-theme-primary'>
                         {msg.SenderName} • {new Date(msg.SentAt).toLocaleString()}
                       </div>
                       <div>

@@ -142,16 +142,16 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
         {/* Upload Area */}
         <div
           className={`border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${
-            dragOver ? 'border-silkroad-gold bg-silkroad-gold/10' : 'border-gray-600 hover:border-silkroad-gold/50'
+            dragOver ? 'border-theme-primary bg-theme-primary/10' : 'border-theme-border hover:border-theme-primary/50'
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload className='h-12 w-12 mx-auto mb-4 text-gray-400' />
-          <p className='text-lg mb-2'>{uploading ? 'Uploading...' : 'Drop images here or click'}</p>
-          <p className='text-sm text-gray-400'>JPG, PNG, WebP, GIF bis 50MB</p>
+          <Upload className='h-12 w-12 mx-auto mb-4 text-theme-text-muted' />
+          <p className='text-lg mb-2 text-theme-text'>{uploading ? 'Uploading...' : 'Drop images here or click'}</p>
+          <p className='text-sm text-theme-text-muted'>JPG, PNG, WebP, GIF bis 50MB</p>
 
           <input
             ref={fileInputRef}
@@ -164,7 +164,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
 
           {uploading && (
             <div className='mt-4'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-silkroad-gold mx-auto'></div>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-theme-primary mx-auto'></div>
             </div>
           )}
         </div>
@@ -179,7 +179,7 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
                   <img
                     src={`${weburl}${image.url}`}
                     alt={image.originalName}
-                    className='w-full h-24 object-cover rounded border border-gray-600'
+                    className='w-full h-24 object-cover rounded border border-theme-border'
                   />
 
                   <div className='absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center gap-2'>
@@ -206,16 +206,16 @@ const ImageUpload = ({ onImageUploaded }: ImageUploadProps) => {
                     </Button>
                   </div>
 
-                  <div className='mt-1 text-xs text-gray-400 truncate'>{image.originalName}</div>
+                  <div className='mt-1 text-xs text-theme-text-muted truncate'>{image.originalName}</div>
                 </div>
               ))}
             </div>
 
-            <div className='mt-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded'>
-              <p className='text-sm text-blue-200 mb-2'>
+            <div className='mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded'>
+              <p className='text-sm text-blue-400 mb-2'>
                 <strong>How to insert images into text:</strong>
               </p>
-              <ol className='text-sm text-blue-200 list-decimal list-inside space-y-1'>
+              <ol className='text-sm text-blue-400 list-decimal list-inside space-y-1'>
                 <li>Click "MD" to copy Markdown</li>
                 <li>
                   Insert it into the text editor: <code>![Image](URL)</code>

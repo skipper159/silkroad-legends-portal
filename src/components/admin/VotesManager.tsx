@@ -254,17 +254,17 @@ const VotesManager = () => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center gap-3 mb-6'>
-        <Vote className='h-8 w-8 text-lafftale-gold' />
+        <Vote className='h-8 w-8 text-theme-primary' />
         <div>
-          <h2 className='text-2xl font-bold text-lafftale-gold'>Vote System Management</h2>
-          <p className='text-gray-400'>Manage vote sites and rewards</p>
+          <h2 className='text-2xl font-bold text-theme-primary'>Vote System Management</h2>
+          <p className='text-theme-text-muted'>Manage vote sites and rewards</p>
         </div>
       </div>
 
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
-          <CardTitle className='text-white'>Vote Sites</CardTitle>
-          <CardDescription className='text-gray-400'>Manage your voting platforms</CardDescription>
+          <CardTitle className='text-theme-text'>Vote Sites</CardTitle>
+          <CardDescription className='text-theme-text-muted'>Manage your voting platforms</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
@@ -281,7 +281,7 @@ const VotesManager = () => {
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                  className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                   onClick={() => {
                     resetForm();
                     setModalOpen(true);
@@ -405,7 +405,7 @@ const VotesManager = () => {
                     <Button
                       type='submit'
                       disabled={loading}
-                      className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                      className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                     >
                       {loading ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : null}
                       {editingVote ? 'Update' : 'Add'}
@@ -416,20 +416,20 @@ const VotesManager = () => {
             </Dialog>
           </div>
 
-          <div className='border border-lafftale-gold/30 rounded-lg overflow-hidden'>
+          <div className='border border-theme-border rounded-lg overflow-hidden'>
             <div className='overflow-x-auto'>
               <table className='w-full'>
-                <thead className='bg-lafftale-gold/10'>
-                  <tr className='border-b border-lafftale-gold/20'>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Site</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Title</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Reward</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Timeout</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Status</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Actions</th>
+                <thead className='bg-theme-surface/50'>
+                  <tr className='border-b border-theme-border'>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Site</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Title</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Reward</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Timeout</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Status</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Actions</th>
                   </tr>
                 </thead>
-                <tbody className='divide-y divide-gray-700/50'>
+                <tbody className='divide-y divide-theme-border'>
                   {filteredVotes.length === 0 ? (
                     <tr>
                       <td colSpan={6} className='text-center p-8 text-muted-foreground'>
@@ -438,18 +438,18 @@ const VotesManager = () => {
                     </tr>
                   ) : (
                     filteredVotes.map((vote) => (
-                      <tr key={vote.id} className='hover:bg-lafftale-gold/5 transition-colors'>
-                        <td className='p-4 text-gray-300'>
+                      <tr key={vote.id} className='hover:bg-theme-surface/30 transition-colors'>
+                        <td className='p-4 text-theme-text-muted'>
                           <div className='flex items-center gap-3'>
                             {vote.image && <img src={vote.image} alt={vote.site} className='w-8 h-8 rounded' />}
                             <div>
-                              <div className='font-medium text-white'>{vote.site}</div>
-                              <div className='text-sm text-gray-400'>
+                              <div className='font-medium text-theme-text'>{vote.site}</div>
+                              <div className='text-sm text-theme-text-muted'>
                                 <a
                                   href={vote.url}
                                   target='_blank'
                                   rel='noopener noreferrer'
-                                  className='flex items-center gap-1 hover:underline hover:text-lafftale-gold'
+                                  className='flex items-center gap-1 hover:underline hover:text-theme-primary'
                                 >
                                   <ExternalLink className='h-3 w-3' />
                                   Visit site
@@ -458,15 +458,15 @@ const VotesManager = () => {
                             </div>
                           </div>
                         </td>
-                        <td className='p-4 text-gray-300'>
+                        <td className='p-4 text-theme-text-muted'>
                           <div className='font-medium'>{vote.title}</div>
                         </td>
                         <td className='p-4'>
-                          <Badge variant='secondary' className='bg-lafftale-gold/20 text-lafftale-gold'>
+                          <Badge variant='secondary' className='bg-theme-primary/10 text-theme-primary'>
                             {vote.reward} Points
                           </Badge>
                         </td>
-                        <td className='p-4 text-gray-300'>
+                        <td className='p-4 text-theme-text-muted'>
                           <span className='text-sm'>{vote.timeout}h</span>
                         </td>
                         <td className='p-4'>
@@ -474,8 +474,8 @@ const VotesManager = () => {
                             variant={vote.active ? 'default' : 'secondary'}
                             className={`cursor-pointer ${
                               vote.active
-                                ? 'bg-green-900/50 text-green-400 hover:bg-green-900'
-                                : 'bg-gray-800 text-gray-400'
+                                ? 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
+                                : 'bg-theme-surface/50 text-theme-text-muted'
                             }`}
                             onClick={() => toggleActive(vote.id, vote.active)}
                           >
@@ -488,7 +488,7 @@ const VotesManager = () => {
                               variant='outline'
                               size='sm'
                               onClick={() => openEditModal(vote)}
-                              className='border-gray-600 hover:bg-gray-800 hover:text-white'
+                              className='border-theme-border hover:bg-theme-surface text-theme-text-muted hover:text-theme-text'
                             >
                               <Edit className='h-4 w-4' />
                             </Button>

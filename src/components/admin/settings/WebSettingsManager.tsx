@@ -126,7 +126,7 @@ const WebSettingsManager = () => {
   if (loading) {
     return (
       <div className='flex justify-center items-center p-8'>
-        <Loader2 className='h-8 w-8 animate-spin text-lafftale-gold' />
+        <Loader2 className='h-8 w-8 animate-spin text-theme-primary' />
       </div>
     );
   }
@@ -134,15 +134,15 @@ const WebSettingsManager = () => {
   return (
     <div className='space-y-6'>
       {/* Grand Opening Modal Settings */}
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-lafftale-gold/20 rounded-lg'>
-              <PartyPopper className='h-5 w-5 text-lafftale-gold' />
+            <div className='p-2 bg-theme-primary/20 rounded-lg'>
+              <PartyPopper className='h-5 w-5 text-theme-primary' />
             </div>
             <div>
-              <CardTitle className='text-white'>Grand Opening Modal</CardTitle>
-              <CardDescription className='text-gray-400'>
+              <CardTitle className='text-theme-primary'>Grand Opening Modal</CardTitle>
+              <CardDescription className='text-theme-text-muted'>
                 Configure the announcement popup for new visitors
               </CardDescription>
             </div>
@@ -150,10 +150,10 @@ const WebSettingsManager = () => {
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Enable/Disable Toggle */}
-          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray/50 rounded-lg border border-lafftale-gold/20'>
+          <div className='flex items-center justify-between p-4 bg-theme-surface/50 rounded-lg border border-theme-border'>
             <div>
-              <Label className='text-white text-base'>Enable Modal</Label>
-              <p className='text-sm text-gray-400'>Show the grand opening popup to visitors</p>
+              <Label className='text-theme-text text-base'>Enable Modal</Label>
+              <p className='text-sm text-theme-text-muted'>Show the grand opening popup to visitors</p>
             </div>
             <Switch
               checked={settings.grand_opening_enabled}
@@ -163,8 +163,8 @@ const WebSettingsManager = () => {
 
           {/* Event Date */}
           <div className='grid gap-2'>
-            <Label htmlFor='grand_opening_date' className='text-white flex items-center gap-2'>
-              <Calendar className='h-4 w-4 text-lafftale-gold' />
+            <Label htmlFor='grand_opening_date' className='text-theme-text flex items-center gap-2'>
+              <Calendar className='h-4 w-4 text-theme-primary' />
               Event Date
             </Label>
             <Input
@@ -172,14 +172,14 @@ const WebSettingsManager = () => {
               type='date'
               value={settings.grand_opening_date}
               onChange={(e) => setSettings((prev) => ({ ...prev, grand_opening_date: e.target.value }))}
-              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
+              className='bg-theme-background border-theme-border text-theme-text max-w-xs focus:border-theme-primary'
             />
-            <p className='text-sm text-gray-400'>The countdown will display until this date</p>
+            <p className='text-sm text-theme-text-muted'>The countdown will display until this date</p>
           </div>
 
           {/* Dismiss Duration */}
           <div className='grid gap-2'>
-            <Label htmlFor='dismiss_days' className='text-white'>
+            <Label htmlFor='dismiss_days' className='text-theme-text'>
               Dismiss Duration (days)
             </Label>
             <Input
@@ -194,23 +194,25 @@ const WebSettingsManager = () => {
                   grand_opening_dismiss_days: parseInt(e.target.value) || 7,
                 }))
               }
-              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
+              className='bg-theme-background border-theme-border text-theme-text max-w-xs focus:border-theme-primary'
             />
-            <p className='text-sm text-gray-400'>How many days until the modal shows again after being dismissed</p>
+            <p className='text-sm text-theme-text-muted'>
+              How many days until the modal shows again after being dismissed
+            </p>
           </div>
         </CardContent>
       </Card>
 
       {/* Cookie Consent Settings */}
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-blue-500/20 rounded-lg'>
-              <Cookie className='h-5 w-5 text-blue-400' />
+            <div className='p-2 bg-theme-primary/20 rounded-lg'>
+              <Cookie className='h-5 w-5 text-theme-primary' />
             </div>
             <div>
-              <CardTitle className='text-white'>Cookie Consent Modal</CardTitle>
-              <CardDescription className='text-gray-400'>
+              <CardTitle className='text-theme-text'>Cookie Consent Modal</CardTitle>
+              <CardDescription className='text-theme-text-muted'>
                 Configure the cookie consent banner for GDPR compliance
               </CardDescription>
             </div>
@@ -218,10 +220,10 @@ const WebSettingsManager = () => {
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Enable/Disable Toggle */}
-          <div className='flex items-center justify-between p-4 bg-lafftale-darkgray/50 rounded-lg border border-lafftale-gold/20'>
+          <div className='flex items-center justify-between p-4 bg-theme-surface/50 rounded-lg border border-theme-border'>
             <div>
-              <Label className='text-white text-base'>Enable Cookie Consent</Label>
-              <p className='text-sm text-gray-400'>Show cookie consent banner to new visitors</p>
+              <Label className='text-theme-text text-base'>Enable Cookie Consent</Label>
+              <p className='text-sm text-theme-text-muted'>Show cookie consent banner to new visitors</p>
             </div>
             <Switch
               checked={settings.cookie_consent_enabled}
@@ -231,7 +233,7 @@ const WebSettingsManager = () => {
 
           {/* Cookie Expiry */}
           <div className='grid gap-2'>
-            <Label htmlFor='cookie_expire_days' className='text-white'>
+            <Label htmlFor='cookie_expire_days' className='text-theme-text'>
               Consent Cookie Expiry (days)
             </Label>
             <Input
@@ -246,9 +248,9 @@ const WebSettingsManager = () => {
                   cookie_consent_expire_days: parseInt(e.target.value) || 365,
                 }))
               }
-              className='bg-lafftale-darkgray border-lafftale-gold/30 text-white max-w-xs focus:border-lafftale-gold'
+              className='bg-theme-background border-theme-border text-theme-text max-w-xs focus:border-theme-primary'
             />
-            <p className='text-sm text-gray-400'>How long to remember the user's cookie preferences</p>
+            <p className='text-sm text-theme-text-muted'>How long to remember the user's cookie preferences</p>
           </div>
         </CardContent>
       </Card>
@@ -267,7 +269,7 @@ const WebSettingsManager = () => {
         <Button
           onClick={handleSaveAll}
           disabled={saving}
-          className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze min-w-[150px]'
+          className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90 min-w-[150px]'
         >
           {saving ? (
             <>

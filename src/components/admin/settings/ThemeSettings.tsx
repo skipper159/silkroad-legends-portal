@@ -183,7 +183,7 @@ const ThemeSettings = () => {
         </p>
         <div className='flex gap-2'>
           <button
-            className='px-4 py-2 text-sm font-medium text-white transition-colors'
+            className='px-4 py-2 text-sm font-medium text-theme-text-on-primary transition-colors'
             style={{
               backgroundColor: 'var(--theme-primary)',
               borderRadius: 'var(--theme-button-radius)',
@@ -397,15 +397,26 @@ const ThemeSettings = () => {
               </div>
 
               {/* Preview */}
-              <div className='mt-6 p-4 rounded-lg' style={{ backgroundColor: 'var(--lafftale-dark)' }}>
-                <h4 className='font-semibold mb-2' style={{ color: 'var(--lafftale-gold)' }}>
+              <div
+                className='mt-6 p-4 rounded-lg'
+                style={{ backgroundColor: theme.customColors.brandDark || 'var(--lafftale-dark)' }}
+              >
+                <h4
+                  className='font-semibold mb-2'
+                  style={{ color: theme.customColors.brandGold || 'var(--lafftale-gold)' }}
+                >
                   Preview
                 </h4>
-                <p style={{ color: 'var(--lafftale-bronze)' }}>This shows how your branding colors will look.</p>
-                <div className='mt-2 p-2 rounded' style={{ backgroundColor: 'var(--lafftale-darkgray)' }}>
-                  <span style={{ color: 'var(--lafftale-gold)' }}>Gold Text</span>
+                <p style={{ color: theme.customColors.brandBronze || 'var(--lafftale-bronze)' }}>
+                  This shows how your branding colors will look.
+                </p>
+                <div
+                  className='mt-2 p-2 rounded'
+                  style={{ backgroundColor: theme.customColors.brandDarkGray || 'var(--lafftale-darkgray)' }}
+                >
+                  <span style={{ color: theme.customColors.brandGold || 'var(--lafftale-gold)' }}>Gold Text</span>
                   <span className='mx-2'>|</span>
-                  <span style={{ color: 'var(--lafftale-bronze)' }}>Bronze Text</span>
+                  <span style={{ color: theme.customColors.brandBronze || 'var(--lafftale-bronze)' }}>Bronze Text</span>
                 </div>
               </div>
             </div>
@@ -680,7 +691,7 @@ const ThemeSettings = () => {
                   className='w-full p-2 bg-theme-background border border-theme-border rounded'
                 >
                   {Object.entries(BORDER_WIDTH_OPTIONS).map(([id, opt]) => (
-                    <option key={id} value={id}>
+                    <option key={id} value={String(id)}>
                       {opt.name}
                     </option>
                   ))}
@@ -694,7 +705,7 @@ const ThemeSettings = () => {
                   className='w-full p-2 bg-theme-background border border-theme-border rounded'
                 >
                   {Object.entries(SHADOW_OPTIONS).map(([id, opt]) => (
-                    <option key={id} value={id}>
+                    <option key={id} value={String(id)}>
                       {opt.name}
                     </option>
                   ))}
@@ -717,7 +728,7 @@ const ThemeSettings = () => {
                   className='w-full p-2 bg-theme-background border border-theme-border rounded'
                 >
                   {Object.entries(BUTTON_STYLE_OPTIONS).map(([id, opt]) => (
-                    <option key={id} value={id}>
+                    <option key={id} value={String(id)}>
                       {opt.name}
                     </option>
                   ))}

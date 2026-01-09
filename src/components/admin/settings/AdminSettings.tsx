@@ -49,17 +49,17 @@ const AdminSettings = () => {
     <div className='space-y-6'>
       {/* Header */}
       <div className='flex items-center gap-3 mb-6'>
-        <div className='p-2 bg-lafftale-gold/20 rounded-lg'>
-          <Settings className='h-6 w-6 text-lafftale-gold' />
+        <div className='p-2 bg-theme-primary/20 rounded-lg'>
+          <Settings className='h-6 w-6 text-theme-primary' />
         </div>
         <div>
-          <h1 className='text-2xl font-bold text-white'>System Settings</h1>
-          <p className='text-gray-400'>Configure website, users, and automation</p>
+          <h1 className='text-2xl font-bold text-theme-primary'>System Settings</h1>
+          <p className='text-theme-text-muted'>Configure website, users, and automation</p>
         </div>
       </div>
 
       {/* Sub-Navigation */}
-      <Card className='bg-lafftale-darkgray border-gray-700'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardContent className='p-0'>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0'>
             {subTabs.map((tab, index) => {
@@ -76,17 +76,21 @@ const AdminSettings = () => {
                     h-auto p-4 lg:p-6 rounded-none justify-start text-left
                     ${
                       isActive
-                        ? 'bg-lafftale-gold/10 border-b-4 lg:border-b-0 lg:border-r-4 border-lafftale-gold text-white'
-                        : 'hover:bg-gray-800/50 text-gray-300 hover:text-white'
+                        ? 'bg-theme-primary/10 border-b-4 lg:border-b-0 lg:border-r-4 border-theme-primary text-theme-primary'
+                        : 'hover:bg-theme-surface/80 text-theme-text-muted hover:text-theme-text'
                     }
-                    ${!isLast ? 'border-b lg:border-b-0 lg:border-r border-gray-700' : ''}
+                    ${!isLast ? 'border-b lg:border-b-0 lg:border-r border-theme-border' : ''}
                   `}
                 >
                   <div className='flex items-center gap-3 w-full'>
                     <div
                       className={`
                       p-2 rounded-lg
-                      ${isActive ? 'bg-lafftale-gold/20 text-lafftale-gold' : 'bg-gray-700 text-gray-400'}
+                      ${
+                        isActive
+                          ? 'bg-theme-primary/20 text-theme-primary'
+                          : 'bg-theme-surface/50 text-theme-text-muted'
+                      }
                     `}
                     >
                       <Icon className='h-5 w-5' />
@@ -100,7 +104,7 @@ const AdminSettings = () => {
                     <ChevronRight
                       className={`
                       h-4 w-4 transition-transform hidden lg:block
-                      ${isActive ? 'rotate-90 text-lafftale-gold' : 'text-gray-500'}
+                      ${isActive ? 'rotate-90 text-theme-primary' : 'text-theme-text-muted'}
                     `}
                     />
                   </div>
@@ -115,11 +119,11 @@ const AdminSettings = () => {
       <div className='min-h-[600px]'>{renderContent()}</div>
 
       {/* Breadcrumb */}
-      <div className='flex items-center gap-2 text-sm text-gray-400 border-t border-gray-700 pt-4'>
+      <div className='flex items-center gap-2 text-sm text-theme-text-muted border-t border-theme-border pt-4'>
         <Settings className='h-4 w-4' />
         <span>Settings</span>
         <ChevronRight className='h-3 w-3' />
-        <span className='text-lafftale-gold'>{subTabs.find((tab) => tab.id === activeSubTab)?.label}</span>
+        <span className='text-theme-primary'>{subTabs.find((tab) => tab.id === activeSubTab)?.label}</span>
       </div>
     </div>
   );

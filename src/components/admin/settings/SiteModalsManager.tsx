@@ -182,20 +182,22 @@ const SiteModalsManager = () => {
   };
 
   if (loading && !modals.length) {
-    return <Loader2 className='h-8 w-8 animate-spin mx-auto text-lafftale-gold' />;
+    return <Loader2 className='h-8 w-8 animate-spin mx-auto text-theme-primary' />;
   }
 
   return (
-    <Card className='bg-lafftale-dark border-gray-700'>
+    <Card className='bg-theme-surface border-theme-border'>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
         <div className='space-y-1.5'>
-          <CardTitle className='text-lg font-bold text-white'>Event Modals</CardTitle>
-          <CardDescription className='text-gray-400'>Manage popups for events and announcements</CardDescription>
+          <CardTitle className='text-lg font-bold text-theme-text'>Event Modals</CardTitle>
+          <CardDescription className='text-theme-text-muted'>
+            Manage popups for events and announcements
+          </CardDescription>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
-              className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+              className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
               onClick={() => {
                 resetForm();
                 setIsDialogOpen(true);
@@ -205,9 +207,9 @@ const SiteModalsManager = () => {
               New Modal
             </Button>
           </DialogTrigger>
-          <DialogContent className='bg-lafftale-dark border-gray-700 max-w-2xl max-h-[90vh] overflow-y-auto'>
+          <DialogContent className='bg-theme-surface border-theme-border max-w-2xl max-h-[90vh] overflow-y-auto'>
             <DialogHeader>
-              <DialogTitle className='text-lafftale-gold'>
+              <DialogTitle className='text-theme-primary'>
                 {editingModal ? 'Edit Modal' : 'Create New Modal'}
               </DialogTitle>
             </DialogHeader>
@@ -219,7 +221,7 @@ const SiteModalsManager = () => {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     required
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
                 <div className='space-y-2'>
@@ -228,7 +230,7 @@ const SiteModalsManager = () => {
                     type='number'
                     value={formData.priority}
                     onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
               </div>
@@ -238,7 +240,7 @@ const SiteModalsManager = () => {
                 <Textarea
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className='bg-lafftale-darkgray border-gray-600 min-h-[100px]'
+                  className='bg-theme-surface border-theme-border min-h-[100px]'
                 />
               </div>
 
@@ -248,7 +250,7 @@ const SiteModalsManager = () => {
                   <Input
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                     placeholder='/images/news/...'
                   />
                   <div className='relative'>
@@ -273,7 +275,7 @@ const SiteModalsManager = () => {
                     type='datetime-local'
                     value={formData.start_date}
                     onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
                 <div className='space-y-2'>
@@ -282,7 +284,7 @@ const SiteModalsManager = () => {
                     type='datetime-local'
                     value={formData.end_date}
                     onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
               </div>
@@ -293,7 +295,7 @@ const SiteModalsManager = () => {
                   <Input
                     value={formData.button_text}
                     onChange={(e) => setFormData({ ...formData, button_text: e.target.value })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
                 <div className='space-y-2'>
@@ -301,7 +303,7 @@ const SiteModalsManager = () => {
                   <Input
                     value={formData.button_url}
                     onChange={(e) => setFormData({ ...formData, button_url: e.target.value })}
-                    className='bg-lafftale-darkgray border-gray-600'
+                    className='bg-theme-surface border-theme-border'
                   />
                 </div>
               </div>
@@ -324,7 +326,7 @@ const SiteModalsManager = () => {
               </div>
 
               <div className='flex justify-end pt-4'>
-                <Button type='submit' className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'>
+                <Button type='submit' className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'>
                   Save Modal
                 </Button>
               </div>
@@ -335,7 +337,7 @@ const SiteModalsManager = () => {
       <CardContent>
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
           {modals.map((modal) => (
-            <Card key={modal.id} className='bg-black/20 border-gray-700 overflow-hidden'>
+            <Card key={modal.id} className='bg-theme-surface border-theme-border overflow-hidden'>
               {modal.image_url && (
                 <div className='h-32 w-full overflow-hidden bg-black/50'>
                   <img
@@ -348,7 +350,7 @@ const SiteModalsManager = () => {
               )}
               <CardHeader className='pb-2 p-4'>
                 <div className='flex justify-between items-start'>
-                  <CardTitle className='text-base text-gray-200 flex items-center gap-2'>
+                  <CardTitle className='text-base text-theme-text flex items-center gap-2'>
                     {modal.title}
                     {!modal.is_active && (
                       <span className='text-[10px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider'>
@@ -356,13 +358,13 @@ const SiteModalsManager = () => {
                       </span>
                     )}
                   </CardTitle>
-                  <span className='text-xs text-gray-400 font-mono border border-gray-700 px-1.5 py-0.5 rounded'>
+                  <span className='text-xs text-theme-text-muted font-mono border border-theme-border px-1.5 py-0.5 rounded'>
                     P{modal.priority}
                   </span>
                 </div>
               </CardHeader>
               <CardContent className='pt-0 p-4 space-y-3'>
-                <div className='text-xs text-gray-500 space-y-1.5'>
+                <div className='text-xs text-theme-text-muted space-y-1.5'>
                   {modal.start_date && (
                     <div className='flex items-center gap-2'>
                       <Calendar className='h-3 w-3' />
@@ -387,12 +389,12 @@ const SiteModalsManager = () => {
                   )}
                 </div>
 
-                <div className='flex justify-end gap-2 pt-2 border-t border-gray-800'>
+                <div className='flex justify-end gap-2 pt-2 border-t border-theme-border/50'>
                   <Button
                     variant='ghost'
                     size='sm'
                     onClick={() => openEdit(modal)}
-                    className='h-7 w-7 p-0 text-blue-400 hover:text-blue-300'
+                    className='h-7 w-7 p-0 text-blue-500 hover:text-blue-400 hover:bg-blue-500/10'
                   >
                     <Edit className='h-3.5 w-3.5' />
                   </Button>
@@ -400,7 +402,7 @@ const SiteModalsManager = () => {
                     variant='ghost'
                     size='sm'
                     onClick={() => handleDelete(modal.id)}
-                    className='h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/10'
+                    className='h-7 w-7 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10'
                   >
                     <Trash2 className='h-3.5 w-3.5' />
                   </Button>
@@ -410,7 +412,7 @@ const SiteModalsManager = () => {
           ))}
 
           {!modals.length && (
-            <div className='col-span-full py-12 text-center text-gray-500 bg-black/20 rounded-lg border border-dashed border-gray-700'>
+            <div className='col-span-full py-12 text-center text-theme-text-muted bg-theme-surface rounded-lg border border-dashed border-theme-border'>
               No modals found. Create one to get started!
             </div>
           )}

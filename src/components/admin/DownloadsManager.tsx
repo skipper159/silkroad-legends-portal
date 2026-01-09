@@ -191,20 +191,20 @@ const DownloadsManager = () => {
 
   return (
     <div className='space-y-6'>
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-primary/30'>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2 text-white'>
-            <div className='p-2 bg-lafftale-gold/20 rounded-lg'>
-              <Download className='h-5 w-5 text-lafftale-gold' />
+          <CardTitle className='flex items-center gap-2 text-theme-text'>
+            <div className='p-2 bg-theme-primary/20 rounded-lg'>
+              <Download className='h-5 w-5 text-theme-primary' />
             </div>
             Downloads Management
           </CardTitle>
-          <CardDescription className='text-gray-400'>Manage downloads for users</CardDescription>
+          <CardDescription className='text-theme-text-muted'>Manage downloads for users</CardDescription>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
             <div className='relative flex-1'>
-              <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+              <Search className='absolute left-2 top-2.5 h-4 w-4 text-theme-text-muted' />
               <Input
                 placeholder='Search downloads...'
                 value={searchTerm}
@@ -216,7 +216,7 @@ const DownloadsManager = () => {
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze'
+                  className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                   onClick={() => {
                     resetForm();
                     setModalOpen(true);
@@ -289,37 +289,37 @@ const DownloadsManager = () => {
             </Dialog>
           </div>
 
-          <div className='border border-lafftale-gold/30 rounded-lg overflow-hidden'>
+          <div className='border border-theme-border rounded-lg overflow-hidden'>
             <div className='overflow-x-auto'>
               <table className='w-full'>
-                <thead className='bg-lafftale-gold/10'>
-                  <tr className='border-b border-lafftale-gold/20'>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Title</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Description</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Created</th>
-                    <th className='text-left p-4 font-medium text-lafftale-gold'>Actions</th>
+                <thead className='bg-theme-surface/50'>
+                  <tr className='border-b border-theme-border flex-1'>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Title</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Description</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Created</th>
+                    <th className='text-left p-4 font-medium text-theme-primary'>Actions</th>
                   </tr>
                 </thead>
-                <tbody className='divide-y divide-gray-700/50'>
+                <tbody className='divide-y divide-theme-border'>
                   {filteredDownloads.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className='text-center p-8 text-muted-foreground'>
+                      <td colSpan={4} className='text-center p-8 text-theme-text-muted'>
                         {searchTerm ? 'No downloads found' : 'No downloads available'}
                       </td>
                     </tr>
                   ) : (
                     filteredDownloads.map((download) => (
-                      <tr key={download.id} className='hover:bg-lafftale-gold/5 transition-colors'>
-                        <td className='p-4 text-gray-300'>
-                          <div className='font-medium text-white'>{download.title}</div>
+                      <tr key={download.id} className='hover:bg-theme-surface/50 transition-colors'>
+                        <td className='p-4 text-theme-text-muted'>
+                          <div className='font-medium text-theme-text'>{download.title}</div>
                           {download.file_url && (
-                            <div className='text-sm text-gray-400 truncate max-w-xs'>{download.file_url}</div>
+                            <div className='text-sm text-theme-text-muted truncate max-w-xs'>{download.file_url}</div>
                           )}
                         </td>
-                        <td className='p-4 text-gray-300'>
+                        <td className='p-4 text-theme-text-muted'>
                           <div className='text-sm max-w-xs truncate'>{download.description || 'No description'}</div>
                         </td>
-                        <td className='p-4 text-gray-300'>
+                        <td className='p-4 text-theme-text-muted'>
                           <div className='text-sm'>{new Date(download.created_at).toLocaleDateString('en-US')}</div>
                         </td>
                         <td className='p-4'>
@@ -328,7 +328,7 @@ const DownloadsManager = () => {
                               variant='outline'
                               size='sm'
                               onClick={() => openEditModal(download)}
-                              className='border-gray-600 hover:bg-gray-800 hover:text-white'
+                              className='border-theme-border hover:bg-theme-surface hover:text-white'
                             >
                               <Edit className='h-4 w-4' />
                             </Button>
@@ -336,7 +336,7 @@ const DownloadsManager = () => {
                               variant='outline'
                               size='sm'
                               onClick={() => deleteDownload(download.id)}
-                              className='border-red-900/50 text-red-500 hover:bg-red-950 hover:text-red-400'
+                              className='border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-400'
                             >
                               <Trash2 className='h-4 w-4' />
                             </Button>

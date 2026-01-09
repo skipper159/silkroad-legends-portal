@@ -339,7 +339,7 @@ const FooterLinksManager = () => {
         <CardContent>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             {sections.map((section) => (
-              <Card key={section.id} className='bg-muted/30'>
+              <Card key={section.id} className='bg-theme-surface border border-theme-border'>
                 <CardContent className='p-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -384,12 +384,15 @@ const FooterLinksManager = () => {
                 {hardcodedLinks
                   .filter((link) => link.section === 'quick_links')
                   .map((link) => (
-                    <div key={link.id} className='flex items-center justify-between p-3 bg-muted/30 rounded-lg'>
+                    <div
+                      key={link.id}
+                      className='flex items-center justify-between p-3 bg-theme-surface/30 rounded-lg border border-theme-border'
+                    >
                       <div className='flex items-center gap-2'>
-                        <LinkIcon className='h-4 w-4 text-muted-foreground' />
+                        <LinkIcon className='h-4 w-4 text-theme-text-muted' />
                         <div>
                           <div className='font-medium text-sm'>{link.title}</div>
-                          <div className='text-xs text-muted-foreground'>{link.url}</div>
+                          <div className='text-xs text-theme-text-muted'>{link.url}</div>
                         </div>
                       </div>
                       <div className='flex items-center gap-2'>
@@ -419,12 +422,15 @@ const FooterLinksManager = () => {
                 {hardcodedLinks
                   .filter((link) => link.section === 'legal_links')
                   .map((link) => (
-                    <div key={link.id} className='flex items-center justify-between p-3 bg-muted/30 rounded-lg'>
+                    <div
+                      key={link.id}
+                      className='flex items-center justify-between p-3 bg-theme-surface/30 rounded-lg border border-theme-border'
+                    >
                       <div className='flex items-center gap-2'>
-                        <LinkIcon className='h-4 w-4 text-muted-foreground' />
+                        <LinkIcon className='h-4 w-4 text-theme-text-muted' />
                         <div>
                           <div className='font-medium text-sm'>{link.title}</div>
-                          <div className='text-xs text-muted-foreground'>{link.url}</div>
+                          <div className='text-xs text-theme-text-muted'>{link.url}</div>
                         </div>
                       </div>
                       <div className='flex items-center gap-2'>
@@ -460,7 +466,7 @@ const FooterLinksManager = () => {
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
             <div className='relative flex-1'>
-              <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+              <Search className='absolute left-2 top-2.5 h-4 w-4 text-theme-text-muted' />
               <Input
                 placeholder='Search footer links...'
                 value={searchTerm}
@@ -521,7 +527,7 @@ const FooterLinksManager = () => {
                       onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
                       placeholder='0'
                     />
-                    <p className='text-xs text-muted-foreground mt-1'>Lower numbers will be displayed first</p>
+                    <p className='text-xs text-theme-text-muted mt-1'>Lower numbers will be displayed first</p>
                   </div>
 
                   <div>
@@ -572,11 +578,11 @@ const FooterLinksManager = () => {
             </Dialog>
           </div>
 
-          <div className='border rounded-lg'>
+          <div className='border border-theme-border rounded-lg'>
             <div className='overflow-x-auto'>
               <table className='w-full'>
                 <thead>
-                  <tr className='border-b bg-muted/50'>
+                  <tr className='border-b border-theme-border bg-theme-surface/50'>
                     <th className='text-left p-4 font-medium'>Image</th>
                     <th className='text-left p-4 font-medium'>Title</th>
                     <th className='text-left p-4 font-medium'>URL</th>
@@ -588,13 +594,16 @@ const FooterLinksManager = () => {
                 <tbody>
                   {filteredLinks.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className='text-center p-8 text-muted-foreground'>
+                      <td colSpan={6} className='text-center p-8 text-theme-text-muted'>
                         {searchTerm ? 'No footer links found' : 'No footer links available'}
                       </td>
                     </tr>
                   ) : (
                     filteredLinks.map((link) => (
-                      <tr key={link.id} className='border-b hover:bg-muted/50'>
+                      <tr
+                        key={link.id}
+                        className='border-b border-theme-border hover:bg-theme-surface/30 transition-colors'
+                      >
                         <td className='p-4'>
                           {link.image ? (
                             <img
@@ -606,8 +615,8 @@ const FooterLinksManager = () => {
                               }}
                             />
                           ) : (
-                            <div className='w-12 h-12 bg-muted rounded flex items-center justify-center'>
-                              <LinkIcon className='h-6 w-6 text-muted-foreground' />
+                            <div className='w-12 h-12 bg-theme-surface rounded flex items-center justify-center border border-theme-border'>
+                              <LinkIcon className='h-6 w-6 text-theme-text-muted' />
                             </div>
                           )}
                         </td>
@@ -615,7 +624,7 @@ const FooterLinksManager = () => {
                           <div className='font-medium'>{link.title}</div>
                         </td>
                         <td className='p-4'>
-                          <div className='text-sm text-muted-foreground truncate max-w-xs'>{link.url}</div>
+                          <div className='text-sm text-theme-text-muted truncate max-w-xs'>{link.url}</div>
                         </td>
                         <td className='p-4'>
                           <Badge variant='outline'>{link.display_order}</Badge>
@@ -642,7 +651,7 @@ const FooterLinksManager = () => {
                               variant='outline'
                               size='sm'
                               onClick={() => deleteLink(link.id)}
-                              className='text-red-600 hover:text-red-700'
+                              className='text-red-500 border-red-500/30 hover:bg-red-500/10 hover:text-red-400'
                             >
                               <Trash2 className='h-4 w-4' />
                             </Button>

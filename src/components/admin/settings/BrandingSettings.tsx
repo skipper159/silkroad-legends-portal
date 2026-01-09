@@ -600,7 +600,7 @@ const BrandingSettings = () => {
         <Button
           onClick={handleSaveAll}
           disabled={saving}
-          className='w-full mt-6 bg-theme-primary hover:bg-theme-primary-hover'
+          className='w-full mt-6 bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
         >
           {saving ? <Loader2 className='h-4 w-4 animate-spin mr-2' /> : <Save className='h-4 w-4 mr-2' />}
           Save All Branding Settings

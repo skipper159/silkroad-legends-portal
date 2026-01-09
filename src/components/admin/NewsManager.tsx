@@ -241,13 +241,13 @@ const NewsManager = () => {
   const getCategoryColor = (category: string) => {
     switch (category?.toLowerCase()) {
       case 'update':
-        return 'bg-blue-600 text-white';
+        return 'bg-blue-600/20 text-blue-400 border border-blue-600/30';
       case 'event':
-        return 'bg-yellow-500 text-black';
+        return 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
       case 'community':
-        return 'bg-green-600 text-white';
+        return 'bg-green-600/20 text-green-400 border border-green-600/30';
       default:
-        return 'bg-gray-600 text-white';
+        return 'bg-theme-surface border border-theme-border text-theme-text-muted';
     }
   };
 
@@ -258,7 +258,7 @@ const NewsManager = () => {
   if (loading) {
     return (
       <div className='flex justify-center items-center py-20'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-lafftale-gold'></div>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
       </div>
     );
   }
@@ -267,8 +267,8 @@ const NewsManager = () => {
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <div>
-          <h2 className='text-2xl font-bold text-lafftale-gold'>News Management</h2>
-          <p className='text-gray-400'>Manage news and updates for the portal</p>
+          <h2 className='text-2xl font-bold text-theme-primary'>News Management</h2>
+          <p className='text-theme-text-muted'>Manage news and updates for the portal</p>
         </div>
       </div>
 
@@ -295,12 +295,12 @@ const NewsManager = () => {
 
           <div className='grid gap-4'>
             {news.map((item) => (
-              <Card key={item.id} className='bg-lafftale-dark border-lafftale-gold/30'>
+              <Card key={item.id} className='bg-theme-surface border-theme-border'>
                 <CardHeader className='pb-2'>
                   <div className='flex justify-between items-start'>
                     <div className='flex-1'>
                       <div className='flex items-center gap-2 mb-2'>
-                        <CardTitle className='text-lg text-white'>{item.title}</CardTitle>
+                        <CardTitle className='text-lg text-theme-text'>{item.title}</CardTitle>
                         <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(item.category)}`}>
                           {item.category}
                         </span>
@@ -310,9 +310,9 @@ const NewsManager = () => {
                           <AlertCircle size={16} className='text-yellow-500' />
                         )}
                       </div>
-                      <CardDescription className='text-gray-400'>Slug: /{item.slug}</CardDescription>
+                      <CardDescription className='text-theme-text-muted'>Slug: /{item.slug}</CardDescription>
                       {item.image && (
-                        <div className='relative w-16 h-10 rounded overflow-hidden border border-gray-700'>
+                        <div className='relative w-16 h-10 rounded overflow-hidden border border-theme-border'>
                           <img
                             src={item.image.startsWith('http') ? item.image : `${weburl}${item.image}`}
                             alt={item.title}
@@ -341,7 +341,7 @@ const NewsManager = () => {
                   </div>
                 </CardHeader>
                 <CardContent className='pt-0'>
-                  <p className='text-sm text-gray-300'>
+                  <p className='text-sm text-theme-text-muted'>
                     {item.content && typeof item.content === 'string'
                       ? item.content.substring(0, 150) + '...'
                       : 'No content available'}
@@ -351,15 +351,15 @@ const NewsManager = () => {
             ))}
 
             {news.length === 0 && (
-              <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+              <Card className='bg-theme-surface border-theme-border'>
                 <CardContent className='text-center py-10'>
-                  <p className='text-gray-400'>No news available.</p>
+                  <p className='text-theme-text-muted'>No news available.</p>
                   <Button
                     onClick={() => {
                       resetForm();
                       setActiveTab('form');
                     }}
-                    className='bg-lafftale-gold text-lafftale-dark hover:bg-lafftale-bronze mt-4'
+                    className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90 mt-4'
                   >
                     <Plus size={16} className='mr-2' />
                     Erste News erstellen
@@ -371,10 +371,12 @@ const NewsManager = () => {
         </TabsContent>
 
         <TabsContent value='form' className='space-y-6'>
-          <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+          <Card className='bg-theme-surface border-theme-border'>
             <CardHeader>
-              <CardTitle className='text-white'>{editingNews ? 'Edit News' : 'Create New News'}</CardTitle>
-              <CardDescription className='text-gray-400'>Fill out the fields to create or edit news</CardDescription>
+              <CardTitle className='text-theme-text'>{editingNews ? 'Edit News' : 'Create New News'}</CardTitle>
+              <CardDescription className='text-theme-text-muted'>
+                Fill out the fields to create or edit news
+              </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -461,7 +463,7 @@ const NewsManager = () => {
                   required
                   className='font-mono text-sm'
                 />
-                <div className='text-xs text-gray-400'>
+                <div className='text-xs text-theme-text-muted'>
                   Tip: Use the Image Upload above and copy the Markdown/HTML for images into the text.
                 </div>
               </div>

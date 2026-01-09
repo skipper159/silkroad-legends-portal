@@ -251,12 +251,12 @@ const WebAccountsList = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder='Enter new password...'
-                className='bg-theme-surface/50 border-gray-600'
+                className='bg-theme-surface/50 border-theme-border'
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant='outline' onClick={() => setPasswordModalOpen(false)} className='border-gray-600'>
+            <Button variant='outline' onClick={() => setPasswordModalOpen(false)} className='border-theme-border'>
               Cancel
             </Button>
             <Button
@@ -273,7 +273,7 @@ const WebAccountsList = () => {
 
       <Card className='overflow-hidden border-theme-primary/30 bg-theme-surface'>
         <div className='overflow-x-auto'>
-          <table className='min-w-full text-left text-sm text-gray-300'>
+          <table className='min-w-full text-left text-sm text-theme-text-muted'>
             <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>User Info</th>
@@ -288,7 +288,7 @@ const WebAccountsList = () => {
                 filteredAccounts.map((acc) => (
                   <tr key={acc.Id} className='border-b border-theme-primary/10 hover:bg-theme-surface/30'>
                     <td className='p-3'>
-                      <div className='font-medium text-white'>{acc.Username}</div>
+                      <div className='font-medium text-theme-text'>{acc.Username}</div>
                       <div className='text-xs text-theme-text-muted'>{acc.Email}</div>
                       <div className='text-xs text-theme-text-muted mt-1'>
                         ID: {acc.Id} | Reg: {new Date(acc.RegisteredAt).toLocaleDateString()}
@@ -298,7 +298,7 @@ const WebAccountsList = () => {
                       <Button
                         variant='outline'
                         size='sm'
-                        className='h-7 text-xs border-gray-700 hover:bg-theme-primary/10'
+                        className='h-7 text-xs border-theme-border hover:bg-theme-primary/10'
                         onClick={() => {
                           setSelectedUserId(acc.Id);
                           setPasswordModalOpen(true);
@@ -314,7 +314,10 @@ const WebAccountsList = () => {
                             <BadgeCheck className='w-3 h-3 mr-1' /> Enabled
                           </Badge>
                         ) : (
-                          <Badge variant='outline' className='bg-gray-800 text-theme-text-muted border-gray-700'>
+                          <Badge
+                            variant='outline'
+                            className='bg-theme-surface border-theme-border text-theme-text-muted'
+                          >
                             <ShieldAlert className='w-3 h-3 mr-1' /> Disabled
                           </Badge>
                         )}
@@ -336,7 +339,7 @@ const WebAccountsList = () => {
                         className={`cursor-pointer select-none ${
                           acc.IsAdmin
                             ? 'bg-theme-primary text-theme-text-on-primary hover:bg-theme-accent'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            : 'bg-theme-surface/50 text-theme-text-muted hover:bg-theme-surface'
                         }`}
                         onClick={() => toggleAdminRole(acc.Id, acc.IsAdmin)}
                       >

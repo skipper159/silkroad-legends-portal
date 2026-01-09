@@ -224,10 +224,10 @@ const VoucherManager: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <Gift className='h-8 w-8 text-lafftale-gold' />
+          <Gift className='h-8 w-8 text-theme-primary' />
           <div>
-            <h2 className='text-2xl font-bold text-lafftale-gold'>Voucher Management</h2>
-            <p className='text-gray-400'>Create and manage voucher codes</p>
+            <h2 className='text-2xl font-bold text-theme-primary'>Voucher Management</h2>
+            <p className='text-theme-text-muted'>Create and manage voucher codes</p>
           </div>
         </div>
         <Button onClick={() => setShowCreateForm(!showCreateForm)} className='btn-primary'>
@@ -237,12 +237,12 @@ const VoucherManager: React.FC = () => {
       </div>
 
       {/* Filter und Suche */}
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardContent className='pt-6'>
           <div className='flex gap-4'>
             <div className='flex-1'>
               <div className='relative'>
-                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-text-muted h-4 w-4' />
                 <Input
                   placeholder='Search by code or type...'
                   value={searchTerm}
@@ -269,10 +269,10 @@ const VoucherManager: React.FC = () => {
 
       {/* Voucher erstellen */}
       {showCreateForm && (
-        <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+        <Card className='bg-theme-surface border-theme-border'>
           <CardHeader>
-            <CardTitle className='text-white'>Create New Voucher</CardTitle>
-            <CardDescription className='text-gray-400'>Create a new voucher code</CardDescription>
+            <CardTitle className='text-theme-text'>Create New Voucher</CardTitle>
+            <CardDescription className='text-theme-text-muted'>Create a new voucher code</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -339,7 +339,7 @@ const VoucherManager: React.FC = () => {
                   type='checkbox'
                   checked={newVoucher.is_active}
                   onChange={(e) => setNewVoucher({ ...newVoucher, is_active: e.target.checked })}
-                  className='h-4 w-4 text-lafftale-gold focus:ring-lafftale-gold border-gray-300 rounded'
+                  className='h-4 w-4 text-theme-primary focus:ring-theme-primary border-theme-border rounded'
                 />
                 <Label htmlFor='voucher-active'>Active (voucher can be redeemed immediately)</Label>
               </div>
@@ -357,50 +357,50 @@ const VoucherManager: React.FC = () => {
       )}
 
       {/* Voucher Liste */}
-      <Card className='bg-lafftale-dark border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
-          <CardTitle className='text-white'>Voucher Overview</CardTitle>
-          <CardDescription className='text-gray-400'>
+          <CardTitle className='text-theme-text'>Voucher Overview</CardTitle>
+          <CardDescription className='text-theme-text-muted'>
             {filteredVouchers.length} von {vouchers.length} Vouchers
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className='text-center py-8'>
-              <div className='text-gray-500'>Loading Vouchers...</div>
+              <div className='text-theme-text-muted'>Loading Vouchers...</div>
             </div>
           ) : filteredVouchers.length === 0 ? (
             <div className='text-center py-8'>
-              <Gift className='h-12 w-12 text-gray-400 mx-auto mb-4' />
-              <p className='text-gray-500'>No vouchers found</p>
+              <Gift className='h-12 w-12 text-theme-text-muted mx-auto mb-4' />
+              <p className='text-theme-text-muted'>No vouchers found</p>
             </div>
           ) : (
             <div className='space-y-3'>
               {filteredVouchers.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className='flex items-center justify-between p-4 border border-lafftale-gold/20 rounded-lg bg-lafftale-gold/5 hover:bg-lafftale-gold/10 transition-colors'
+                  className='flex items-center justify-between p-4 border border-theme-primary/20 rounded-lg bg-theme-primary/5 hover:bg-theme-primary/10 transition-colors'
                 >
                   <div className='flex items-center gap-4'>
                     <div>
                       <div className='flex items-center gap-2'>
-                        <span className='font-mono font-bold text-white'>{voucher.code}</span>
+                        <span className='font-mono font-bold text-theme-text'>{voucher.code}</span>
                         <Button
                           size='sm'
                           variant='ghost'
                           onClick={() => copyToClipboard(voucher.code)}
-                          className='text-gray-400 hover:text-white'
+                          className='text-theme-text-muted hover:text-theme-text'
                         >
                           <Copy className='h-3 w-3' />
                         </Button>
                       </div>
                       <div className='flex items-center gap-2 mt-1'>
                         <Badge className={getTypeColor(voucher.type)}>{getTypeString(voucher.type)}</Badge>
-                        <span className='text-sm text-gray-500'>
+                        <span className='text-sm text-theme-text-muted'>
                           {voucher.used_count}/{voucher.max_uses} used
                         </span>
                         {voucher.expires_at && (
-                          <span className='text-sm text-gray-500'>
+                          <span className='text-sm text-theme-text-muted'>
                             Expires: {new Date(voucher.expires_at).toLocaleDateString('de-DE')}
                           </span>
                         )}
@@ -409,8 +409,8 @@ const VoucherManager: React.FC = () => {
                   </div>
                   <div className='flex items-center gap-2'>
                     <div className='text-right'>
-                      <div className='font-bold text-lg text-lafftale-gold'>+{voucher.amount}</div>
-                      <div className='text-sm text-gray-500'>{voucher.is_active ? 'Active' : 'Inactive'}</div>
+                      <div className='font-bold text-lg text-theme-primary'>+{voucher.amount}</div>
+                      <div className='text-sm text-theme-text-muted'>{voucher.is_active ? 'Active' : 'Inactive'}</div>
                     </div>
                     <Button
                       size='sm'

@@ -265,7 +265,7 @@ const SilkAdminPanel = () => {
     <div className='space-y-6'>
       {/* Server Statistics Cards */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-        <Card className='bg-theme-surface border-theme-primary/20'>
+        <Card className='bg-theme-surface border-theme-border'>
           <div className='p-6 flex items-center justify-between'>
             <div>
               <p className='text-sm font-medium text-theme-text-muted'>Total Silk Volume</p>
@@ -338,7 +338,7 @@ const SilkAdminPanel = () => {
           disabled={statsLoading}
           variant='ghost'
           size='sm'
-          className='text-theme-text-muted hover:text-white hover:bg-white/5'
+          className='text-theme-text-muted hover:text-theme-text hover:bg-theme-highlight/10'
         >
           {statsLoading ? <Loader2 className='h-3 w-3 animate-spin mr-2' /> : <RefreshCw className='h-3 w-3 mr-2' />}
           Update Statistics
@@ -349,12 +349,12 @@ const SilkAdminPanel = () => {
       {selectedAccount && (
         <Card className='bg-theme-surface border-theme-primary/40 shadow-lg shadow-theme-primary/5 animate-in fade-in slide-in-from-top-4 duration-300'>
           <div className='p-6'>
-            <div className='flex items-center gap-3 mb-6 border-b border-gray-800 pb-4'>
+            <div className='flex items-center gap-3 mb-6 border-b border-theme-border pb-4'>
               <div className='p-2 bg-theme-primary/20 rounded'>
                 <Gift className='h-5 w-5 text-theme-primary' />
               </div>
               <div>
-                <h3 className='text-lg font-bold text-white'>Give Silk Reward</h3>
+                <h3 className='text-lg font-bold text-theme-text'>Give Silk Reward</h3>
                 <p className='text-sm text-theme-text-muted'>
                   To user: <span className='text-theme-primary'>{selectedAccount.username}</span>
                 </p>
@@ -363,7 +363,7 @@ const SilkAdminPanel = () => {
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
               <div className='space-y-2'>
-                <label className='text-sm font-medium text-gray-300'>Amount</label>
+                <label className='text-sm font-medium text-theme-text-muted'>Amount</label>
                 <div className='relative'>
                   <Coins className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-theme-text-muted' />
                   <Input
@@ -371,18 +371,18 @@ const SilkAdminPanel = () => {
                     placeholder='e.g. 1000'
                     value={giveAmount}
                     onChange={(e) => setGiveAmount(e.target.value)}
-                    className='bg-theme-surface/50 border-gray-700 pl-9 focus:border-theme-primary/50'
+                    className='bg-theme-surface/50 border-theme-border pl-9 focus:border-theme-primary/50'
                     min='1'
                   />
                 </div>
               </div>
               <div className='space-y-2'>
-                <label className='text-sm font-medium text-gray-300'>Reason (Optional)</label>
+                <label className='text-sm font-medium text-theme-text-muted'>Reason (Optional)</label>
                 <Input
                   placeholder='e.g. Event Reward'
                   value={giveReason}
                   onChange={(e) => setGiveReason(e.target.value)}
-                  className='bg-theme-surface/50 border-gray-700 focus:border-theme-primary/50'
+                  className='bg-theme-surface/50 border-theme-border focus:border-theme-primary/50'
                 />
               </div>
               <div className='flex items-end gap-3'>
@@ -401,7 +401,7 @@ const SilkAdminPanel = () => {
                 <Button
                   onClick={() => setSelectedAccount(null)}
                   variant='outline'
-                  className='border-gray-700 hover:bg-gray-800'
+                  className='border-theme-border hover:bg-theme-surface'
                 >
                   Cancel
                 </Button>
@@ -434,9 +434,9 @@ const SilkAdminPanel = () => {
       </div>
 
       {/* Accounts Table */}
-      <Card className='overflow-hidden border-theme-primary/30 bg-theme-surface'>
+      <Card className='overflow-hidden border-theme-border bg-theme-surface'>
         <div className='overflow-x-auto'>
-          <table className='min-w-full text-left text-sm text-gray-300'>
+          <table className='min-w-full text-left text-sm text-theme-text-muted'>
             <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3 pl-4'>User Details</th>
@@ -453,20 +453,20 @@ const SilkAdminPanel = () => {
                 accounts.map((account) => (
                   <tr
                     key={account.portalJID}
-                    className='border-b border-theme-primary/10 hover:bg-theme-surface/30 transition-colors'
+                    className='border-b border-theme-border hover:bg-theme-surface/30 transition-colors'
                   >
                     <td className='p-3 pl-4'>
-                      <div className='font-medium text-white'>{account.username}</div>
+                      <div className='font-medium text-theme-text'>{account.username}</div>
                       {account.nickname && account.nickname !== account.username && (
                         <div className='text-xs text-theme-text-muted'>Nick: {account.nickname}</div>
                       )}
                     </td>
                     <td className='p-3'>
                       <div className='flex gap-2 text-xs'>
-                        <span className='bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700 text-theme-text-muted'>
+                        <span className='bg-theme-surface px-1.5 py-0.5 rounded border border-theme-border text-theme-text-muted'>
                           P: {account.portalJID}
                         </span>
-                        <span className='bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700 text-theme-text-muted'>
+                        <span className='bg-theme-surface px-1.5 py-0.5 rounded border border-theme-border text-theme-text-muted'>
                           G: {account.gameJID}
                         </span>
                       </div>
@@ -483,7 +483,7 @@ const SilkAdminPanel = () => {
                           VIP {account.silkBalance.vipLevel}
                         </span>
                       ) : (
-                        <span className='text-gray-600 text-xs'>-</span>
+                        <span className='text-theme-text-muted text-xs'>-</span>
                       )}
                     </td>
                     <td className='p-3 text-theme-text-muted text-xs'>{formatDate(account.gameRegDate)}</td>
@@ -514,7 +514,7 @@ const SilkAdminPanel = () => {
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='flex justify-between items-center bg-theme-surface p-4 rounded-lg border border-theme-primary/20'>
+        <div className='flex justify-between items-center bg-theme-surface p-4 rounded-lg border border-theme-border'>
           <div className='text-sm text-theme-text-muted'>
             Page {pagination.currentPage} of {pagination.totalPages} ({formatNumber(pagination.totalCount)} total)
           </div>

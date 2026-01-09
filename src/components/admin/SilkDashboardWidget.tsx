@@ -143,7 +143,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
 
   if (loading && !serverStats) {
     return (
-      <Card className='bg-theme-surface/50 border-theme-primary/30 p-4'>
+      <Card className='bg-theme-surface/50 border-theme-border p-4'>
         <div className='flex items-center justify-center h-20'>
           <Loader2 className='h-6 w-6 animate-spin text-theme-primary' />
           <span className='ml-2 text-theme-text-muted'>Loading Silk Statistics...</span>
@@ -255,7 +255,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
           <div className='text-center'>
             <Coins className='h-12 w-12 text-theme-primary mx-auto mb-4' />
             <h3 className='text-lg font-semibold text-theme-primary mb-2'>Total Silk Volume</h3>
-            <p className='text-4xl font-bold text-white mb-2'>{formatNumber(serverStats.totalSilkValue)}</p>
+            <p className='text-4xl font-bold text-theme-text mb-2'>{formatNumber(serverStats.totalSilkValue)}</p>
             <div className='grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-theme-primary/30'>
               <div>
                 <p className='text-xs text-theme-text-muted'>Premium Silk</p>
@@ -274,7 +274,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
           <div className='text-center'>
             <Users className='h-12 w-12 text-green-400 mx-auto mb-4' />
             <h3 className='text-lg font-semibold text-green-400 mb-2'>Account Activity</h3>
-            <p className='text-3xl font-bold text-white mb-2'>{formatNumber(serverStats.accountsWithSilk)}</p>
+            <p className='text-3xl font-bold text-theme-text mb-2'>{formatNumber(serverStats.accountsWithSilk)}</p>
             <p className='text-sm text-theme-text-muted mb-4'>Accounts with Silk</p>
             <div className='space-y-2'>
               <div className='flex justify-between'>
@@ -296,7 +296,9 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
           <div className='text-center'>
             <DollarSign className='h-12 w-12 text-blue-400 mx-auto mb-4' />
             <h3 className='text-lg font-semibold text-blue-400 mb-2'>Donation Stats</h3>
-            <p className='text-3xl font-bold text-white mb-2'>${formatNumber(serverStats.donations.totalDonatedUSD)}</p>
+            <p className='text-3xl font-bold text-theme-text mb-2'>
+              ${formatNumber(serverStats.donations.totalDonatedUSD)}
+            </p>
             <p className='text-sm text-theme-text-muted mb-4'>Total Revenue</p>
             <div className='space-y-2'>
               <div className='flex justify-between'>
@@ -320,7 +322,7 @@ const SilkDashboardWidget = ({ compact = false }: SilkDashboardWidgetProps) => {
 
       {/* Performance Info */}
       {serverStats.calculationDuration && (
-        <Card className='bg-theme-surface/50 border-gray-600 p-4'>
+        <Card className='bg-theme-surface/50 border-theme-border p-4'>
           <div className='flex items-center justify-center gap-4 text-sm text-theme-text-muted'>
             <TrendingUp className='h-4 w-4' />
             <span>Statistiken berechnet in {serverStats.calculationDuration} Sekunden</span>

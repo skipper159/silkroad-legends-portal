@@ -222,8 +222,8 @@ const CronJobSettings = () => {
   if (loading) {
     return (
       <div className='text-center py-8'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-lafftale-gold mx-auto'></div>
-        <p className='text-sm text-gray-400 mt-2'>Loading cron jobs...</p>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-theme-primary mx-auto'></div>
+        <p className='text-sm text-theme-text-muted mt-2'>Loading cron jobs...</p>
       </div>
     );
   }
@@ -241,20 +241,20 @@ const CronJobSettings = () => {
 
       <div className='space-y-4'>
         {jobs.map((job) => (
-          <Card key={job.job_name} className='bg-lafftale-darkgray border-gray-700'>
+          <Card key={job.job_name} className='bg-theme-surface border-theme-border'>
             <CardContent className='p-6'>
               <div className='flex items-start justify-between'>
                 <div className='flex-1'>
                   <div className='flex items-center gap-3 mb-3'>
-                    <h3 className='font-semibold text-white text-lg'>{getJobDisplayName(job.job_name)}</h3>
+                    <h3 className='font-semibold text-theme-text text-lg'>{getJobDisplayName(job.job_name)}</h3>
                     <div className='flex items-center gap-2'>
-                      {job.isRunning ? (
-                        <span className='inline-flex items-center gap-1 px-3 py-1 bg-green-900/20 text-green-400 rounded-md text-sm'>
-                          <div className='w-2 h-2 bg-green-400 rounded-full animate-pulse'></div>
+                      {job.enabled ? (
+                        <span className='inline-flex items-center gap-1 px-3 py-1 bg-green-500/20 text-green-500 rounded-md text-sm'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
                           Active
                         </span>
                       ) : (
-                        <span className='inline-flex items-center gap-1 px-3 py-1 bg-gray-700 text-gray-400 rounded-md text-sm'>
+                        <span className='inline-flex items-center gap-1 px-3 py-1 bg-theme-surface/50 text-theme-text-muted rounded-md text-sm'>
                           <Square className='w-2 h-2' />
                           Inactive
                         </span>
@@ -262,19 +262,19 @@ const CronJobSettings = () => {
                     </div>
                   </div>
 
-                  <p className='text-sm text-gray-400 mb-4'>{job.description}</p>
+                  <p className='text-sm text-theme-text-muted mb-4'>{job.description}</p>
 
                   {editingJob === job.job_name ? (
-                    <div className='space-y-4 bg-gray-800/50 p-4 rounded-lg'>
+                    <div className='space-y-4 bg-theme-background/50 p-4 rounded-lg'>
                       <div>
-                        <label className='block text-sm font-medium text-gray-300 mb-2'>Schedule-Typ</label>
+                        <label className='block text-sm font-medium text-theme-text-muted mb-2'>Schedule-Typ</label>
                         <Select
                           value={cronConfig.type}
                           onValueChange={(value: 'custom' | 'daily' | 'weekly' | 'monthly') =>
                             setCronConfig({ ...cronConfig, type: value })
                           }
                         >
-                          <SelectTrigger className='bg-gray-700 border-gray-600'>
+                          <SelectTrigger className='bg-theme-background border-theme-border'>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -289,25 +289,29 @@ const CronJobSettings = () => {
                       {cronConfig.type !== 'custom' && (
                         <div className='grid grid-cols-2 gap-4'>
                           <div>
-                            <label className='block text-sm font-medium text-gray-300 mb-2'>Stunde (0-23)</label>
+                            <label className='block text-sm font-medium text-theme-text-muted mb-2'>
+                              Stunde (0-23)
+                            </label>
                             <Input
                               type='number'
                               min='0'
                               max='23'
                               value={cronConfig.hour}
                               onChange={(e) => setCronConfig({ ...cronConfig, hour: parseInt(e.target.value) || 0 })}
-                              className='bg-gray-700 border-gray-600'
+                              className='bg-theme-background border-theme-border'
                             />
                           </div>
                           <div>
-                            <label className='block text-sm font-medium text-gray-300 mb-2'>Minute (0-59)</label>
+                            <label className='block text-sm font-medium text-theme-text-muted mb-2'>
+                              Minute (0-59)
+                            </label>
                             <Input
                               type='number'
                               min='0'
                               max='59'
                               value={cronConfig.minute}
                               onChange={(e) => setCronConfig({ ...cronConfig, minute: parseInt(e.target.value) || 0 })}
-                              className='bg-gray-700 border-gray-600'
+                              className='bg-theme-background border-theme-border'
                             />
                           </div>
                         </div>
@@ -315,12 +319,12 @@ const CronJobSettings = () => {
 
                       {cronConfig.type === 'weekly' && (
                         <div>
-                          <label className='block text-sm font-medium text-gray-300 mb-2'>Wochentag</label>
+                          <label className='block text-sm font-medium text-theme-text-muted mb-2'>Wochentag</label>
                           <Select
                             value={cronConfig.dayOfWeek?.toString() || '0'}
                             onValueChange={(value) => setCronConfig({ ...cronConfig, dayOfWeek: parseInt(value) })}
                           >
-                            <SelectTrigger className='bg-gray-700 border-gray-600'>
+                            <SelectTrigger className='bg-theme-background border-theme-border'>
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -336,7 +340,9 @@ const CronJobSettings = () => {
 
                       {cronConfig.type === 'monthly' && (
                         <div>
-                          <label className='block text-sm font-medium text-gray-300 mb-2'>Tag des Monats (1-31)</label>
+                          <label className='block text-sm font-medium text-theme-text-muted mb-2'>
+                            Tag des Monats (1-31)
+                          </label>
                           <Input
                             type='number'
                             min='1'
@@ -345,36 +351,38 @@ const CronJobSettings = () => {
                             onChange={(e) =>
                               setCronConfig({ ...cronConfig, dayOfMonth: parseInt(e.target.value) || 1 })
                             }
-                            className='bg-gray-700 border-gray-600'
+                            className='bg-theme-background border-theme-border'
                           />
                         </div>
                       )}
 
                       {cronConfig.type === 'custom' && (
                         <div>
-                          <label className='block text-sm font-medium text-gray-300 mb-2'>Cron Expression</label>
+                          <label className='block text-sm font-medium text-theme-text-muted mb-2'>
+                            Cron Expression
+                          </label>
                           <Input
                             value={cronConfig.customExpression || ''}
                             onChange={(e) => setCronConfig({ ...cronConfig, customExpression: e.target.value })}
                             placeholder='0 2 * * *'
-                            className='bg-gray-700 border-gray-600'
+                            className='bg-theme-background border-theme-border'
                           />
                         </div>
                       )}
 
                       <div className='pt-2 border-t border-gray-600'>
-                        <p className='text-sm text-gray-400 mb-3'>
-                          Preview: <span className='text-lafftale-gold'>{getScheduleDescription(cronConfig)}</span>
+                        <p className='text-sm text-theme-text-muted mb-3'>
+                          Preview: <span className='text-theme-primary'>{getScheduleDescription(cronConfig)}</span>
                         </p>
-                        <p className='text-xs text-gray-500 mb-3'>
+                        <p className='text-xs text-theme-text-muted/70 mb-3'>
                           Cron Expression:{' '}
-                          <code className='bg-gray-700 px-2 py-1 rounded'>{buildCronExpression(cronConfig)}</code>
+                          <code className='bg-theme-surface px-2 py-1 rounded'>{buildCronExpression(cronConfig)}</code>
                         </p>
                         <div className='flex gap-2'>
                           <Button
                             size='sm'
                             onClick={() => updateJob(job.job_name, cronConfig, job.enabled)}
-                            className='bg-lafftale-gold text-black hover:bg-yellow-500'
+                            className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                           >
                             Save
                           </Button>
@@ -382,7 +390,7 @@ const CronJobSettings = () => {
                             size='sm'
                             variant='outline'
                             onClick={() => setEditingJob(null)}
-                            className='border-gray-600 hover:bg-gray-700'
+                            className='border-theme-border hover:bg-theme-surface/80'
                           >
                             Cancel
                           </Button>
@@ -392,26 +400,26 @@ const CronJobSettings = () => {
                   ) : (
                     <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm'>
                       <div>
-                        <span className='text-gray-400'>Schedule:</span>
+                        <span className='text-theme-text-muted'>Schedule:</span>
                         <div className='mt-1'>
-                          <p className='text-white'>
+                          <p className='text-theme-text'>
                             {getScheduleDescription(parseCronExpression(job.cron_expression))}
                           </p>
-                          <code className='text-lafftale-gold text-xs bg-gray-800 px-2 py-1 rounded mt-1 inline-block'>
+                          <code className='text-theme-primary text-xs bg-theme-background px-2 py-1 rounded mt-1 inline-block'>
                             {job.cron_expression}
                           </code>
                         </div>
                       </div>
 
                       <div>
-                        <span className='text-gray-400'>Last run:</span>
-                        <p className='text-white mt-1'>{formatDate(job.last_run)}</p>
-                        <p className='text-xs text-gray-500'>Runs: {job.run_count}</p>
+                        <span className='text-theme-text-muted'>Last run:</span>
+                        <p className='text-theme-text mt-1'>{formatDate(job.last_run)}</p>
+                        <p className='text-xs text-theme-text-muted'>Runs: {job.run_count}</p>
                       </div>
 
                       <div>
-                        <span className='text-gray-400'>Next run:</span>
-                        <p className='text-white mt-1'>
+                        <span className='text-theme-text-muted'>Next run:</span>
+                        <p className='text-theme-text mt-1'>
                           {job.enabled && job.nextRunEstimate ? formatDate(job.nextRunEstimate) : 'Disabled'}
                         </p>
                       </div>
@@ -428,14 +436,14 @@ const CronJobSettings = () => {
                         updateJob(job.job_name, config, enabled);
                       }}
                     />
-                    <span className='text-sm text-gray-400'>Enabled</span>
+                    <span className='text-sm text-theme-text-muted'>Enabled</span>
                   </div>
 
                   <Button
                     size='sm'
                     variant='outline'
                     onClick={() => setEditingJob(editingJob === job.job_name ? null : job.job_name)}
-                    className='border-gray-600 hover:bg-gray-700'
+                    className='border-theme-border hover:bg-theme-surface/80 text-theme-text-muted'
                   >
                     <Settings className='h-4 w-4' />
                   </Button>
@@ -443,7 +451,7 @@ const CronJobSettings = () => {
                   <Button
                     size='sm'
                     onClick={() => triggerJob(job.job_name)}
-                    className='bg-lafftale-gold text-black hover:bg-yellow-500'
+                    className='bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
                   >
                     <Play className='h-4 w-4' />
                   </Button>
@@ -455,24 +463,24 @@ const CronJobSettings = () => {
       </div>
 
       {jobs.length === 0 && !loading && (
-        <div className='text-center py-8 text-gray-400'>
+        <div className='text-center py-8 text-theme-text-muted'>
           <Clock className='h-12 w-12 mx-auto mb-4 opacity-50' />
           <p>No cron jobs configured</p>
         </div>
       )}
 
-      <Card className='bg-blue-900/20 border-blue-500/30'>
+      <Card className='bg-theme-surface/50 border-theme-border/50'>
         <CardHeader>
-          <CardTitle className='text-blue-400 text-sm flex items-center gap-2'>
+          <CardTitle className='text-theme-primary text-sm flex items-center gap-2'>
             <Calendar className='h-4 w-4' />
             Schedule Help
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='text-xs space-y-2 text-gray-300'>
+          <div className='text-xs space-y-2 text-theme-text-muted/80'>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <p className='font-medium text-blue-400 mb-2'>Predefined schedules:</p>
+                <p className='font-medium text-theme-primary mb-2'>Predefined schedules:</p>
                 <p>
                   <strong>Daily:</strong> Every day at the configured time
                 </p>
@@ -484,7 +492,7 @@ const CronJobSettings = () => {
                 </p>
               </div>
               <div>
-                <p className='font-medium text-blue-400 mb-2'>Examples for custom expressions:</p>
+                <p className='font-medium text-theme-primary mb-2'>Examples for custom expressions:</p>
                 <p>
                   <code>0 */6 * * *</code> - Every 6 hours
                 </p>
@@ -496,7 +504,7 @@ const CronJobSettings = () => {
                 </p>
               </div>
             </div>
-            <p className='text-gray-400 pt-2 border-t border-gray-600'>
+            <p className='text-theme-text-muted pt-2 border-t border-theme-border'>
               Format: Minute (0-59) Hour (0-23) Day (1-31) Month (1-12) Weekday (0-6, 0=Sunday)
             </p>
           </div>

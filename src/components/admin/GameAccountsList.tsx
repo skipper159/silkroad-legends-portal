@@ -127,9 +127,9 @@ const GameAccountsList = () => {
         placeholder='Search by username...'
       />
 
-      <Card className='overflow-hidden border-theme-primary/30 bg-theme-surface'>
+      <Card className='overflow-hidden border-theme-border bg-theme-surface'>
         <div className='overflow-x-auto'>
-          <table className='min-w-full text-left text-sm text-gray-300'>
+          <table className='min-w-full text-left text-sm text-theme-text-muted'>
             <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>ID</th>
@@ -145,21 +145,21 @@ const GameAccountsList = () => {
               {accounts.length > 0 ? (
                 accounts.map((acc) => (
                   <tr key={acc.GameAccountId} className='border-b border-theme-primary/10 hover:bg-theme-surface/30'>
-                    <td className='p-3 text-gray-500'>#{acc.GameAccountId}</td>
+                    <td className='p-3 text-theme-text-muted'>#{acc.GameAccountId}</td>
                     <td className='p-3'>
-                      <div className='font-medium text-white'>{acc.Username}</div>
-                      <div className='text-xs text-gray-500'>IP: {acc.REG_IP || '—'}</div>
+                      <div className='font-medium text-theme-text'>{acc.Username}</div>
+                      <div className='text-xs text-theme-text-muted'>IP: {acc.REG_IP || '—'}</div>
                     </td>
                     <td className='p-3'>
-                      <div className='text-white'>{acc.CharName16 || '—'}</div>
-                      <div className='text-xs text-gray-500'>{acc.JobName || 'No Job'}</div>
+                      <div className='text-theme-text'>{acc.CharName16 || '—'}</div>
+                      <div className='text-xs text-theme-text-muted'>{acc.JobName || 'No Job'}</div>
                     </td>
-                    <td className='p-3 text-gray-300'>{acc.GuildName || '—'}</td>
+                    <td className='p-3 text-theme-text-muted'>{acc.GuildName || '—'}</td>
                     <td className='p-3 text-xs'>
-                      <div className='text-gray-400'>
+                      <div className='text-theme-text-muted'>
                         Reg: {acc.RegTime ? new Date(acc.RegTime).toLocaleDateString() : '—'}
                       </div>
-                      <div className='text-gray-500'>PlayTime: {acc.AccPlayTime || '0'}m</div>
+                      <div className='text-theme-text-muted'>PlayTime: {acc.AccPlayTime || '0'}m</div>
                     </td>
                     <td className='p-3'>
                       <div className='flex flex-col gap-1'>
@@ -201,7 +201,7 @@ const GameAccountsList = () => {
                       <Button
                         size='sm'
                         variant='outline'
-                        className='h-8 w-8 p-0 border-gray-700 text-blue-400 hover:bg-blue-900/20'
+                        className='h-8 w-8 p-0 border-theme-border text-blue-500 hover:bg-blue-500/10'
                         title='Info'
                       >
                         <Info size={14} />
@@ -211,7 +211,7 @@ const GameAccountsList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className='p-8 text-center text-gray-500'>
+                  <td colSpan={7} className='p-8 text-center text-theme-text-muted'>
                     No results found
                   </td>
                 </tr>
@@ -223,8 +223,8 @@ const GameAccountsList = () => {
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className='flex justify-between items-center bg-theme-surface p-4 rounded-lg border border-theme-primary/20'>
-          <div className='text-sm text-gray-400'>
+        <div className='flex justify-between items-center bg-theme-surface p-4 rounded-lg border border-theme-border'>
+          <div className='text-sm text-theme-text-muted'>
             Showing {accounts.length} of {pagination.totalCount} results
           </div>
           <div className='flex gap-2'>
@@ -261,7 +261,7 @@ const GameAccountsList = () => {
                     className={`min-w-[32px] h-8 ${
                       page === currentPage
                         ? 'bg-theme-primary text-theme-text-on-primary hover:bg-theme-accent'
-                        : 'text-gray-400 hover:text-white'
+                        : 'text-theme-text-muted hover:text-theme-text'
                     }`}
                   >
                     {page}

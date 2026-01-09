@@ -123,7 +123,7 @@ const CronJobManager = () => {
 
   if (loading) {
     return (
-      <Card>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Clock className='h-5 w-5' />
@@ -142,7 +142,7 @@ const CronJobManager = () => {
 
   return (
     <div className='space-y-6'>
-      <Card>
+      <Card className='bg-theme-surface border-theme-border'>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Clock className='h-5 w-5 text-theme-primary' />
@@ -162,22 +162,22 @@ const CronJobManager = () => {
 
           <div className='space-y-4'>
             {jobs.map((job) => (
-              <Card key={job.job_name} className='bg-theme-surface border-gray-700'>
+              <Card key={job.job_name} className='bg-theme-surface border-theme-border'>
                 <CardContent className='p-4'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
                       <div className='flex items-center gap-3 mb-2'>
-                        <h3 className='font-semibold text-white'>
+                        <h3 className='font-semibold text-theme-text'>
                           {job.job_name === 'silk_stats_calculation' ? 'Silk Stats Calculation' : job.job_name}
                         </h3>
                         <div className='flex items-center gap-2'>
                           {job.isRunning ? (
-                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-green-900/20 text-green-400 rounded-md text-xs'>
-                              <div className='w-2 h-2 bg-green-400 rounded-full animate-pulse'></div>
+                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-green-500/20 text-green-500 rounded-md text-xs'>
+                              <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
                               Active
                             </span>
                           ) : (
-                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-gray-700 text-theme-text-muted rounded-md text-xs'>
+                            <span className='inline-flex items-center gap-1 px-2 py-1 bg-theme-surface/50 text-theme-text-muted rounded-md text-xs'>
                               <Square className='w-2 h-2' />
                               Inactive
                             </span>
@@ -196,7 +196,7 @@ const CronJobManager = () => {
                                 value={tempCronExpression}
                                 onChange={(e) => setTempCronExpression(e.target.value)}
                                 placeholder='0 2 * * *'
-                                className='text-xs bg-gray-800 border-gray-600'
+                                className='text-xs bg-theme-surface border-theme-border text-theme-text'
                               />
                               <Button
                                 size='sm'
@@ -208,7 +208,7 @@ const CronJobManager = () => {
                             </div>
                           ) : (
                             <div className='mt-1'>
-                              <code className='text-theme-primary text-xs bg-gray-800 px-2 py-1 rounded'>
+                              <code className='text-theme-primary text-xs bg-theme-surface/50 px-2 py-1 rounded'>
                                 {job.cron_expression}
                               </code>
                               <p className='text-xs text-theme-text-muted mt-1'>
@@ -220,13 +220,13 @@ const CronJobManager = () => {
 
                         <div>
                           <span className='text-theme-text-muted'>Last run:</span>
-                          <p className='text-white mt-1'>{formatDate(job.last_run)}</p>
+                          <p className='text-theme-text mt-1'>{formatDate(job.last_run)}</p>
                           <p className='text-xs text-theme-text-muted'>Count: {job.run_count}</p>
                         </div>
 
                         <div>
                           <span className='text-theme-text-muted'>Next run:</span>
-                          <p className='text-white mt-1'>
+                          <p className='text-theme-text mt-1'>
                             {job.enabled && job.nextRunEstimate ? formatDate(job.nextRunEstimate) : 'Disabled'}
                           </p>
                         </div>
@@ -249,7 +249,7 @@ const CronJobManager = () => {
                           setEditingJob(job.job_name);
                           setTempCronExpression(job.cron_expression);
                         }}
-                        className='border-gray-600 hover:bg-gray-700'
+                        className='border-theme-border hover:bg-theme-surface/80 text-theme-text-muted hover:text-theme-text'
                       >
                         <Settings className='h-4 w-4' />
                       </Button>
@@ -277,12 +277,12 @@ const CronJobManager = () => {
         </CardContent>
       </Card>
 
-      <Card className='bg-blue-900/20 border-blue-500/30'>
+      <Card className='bg-theme-surface/50 border-theme-border/50'>
         <CardHeader>
-          <CardTitle className='text-blue-400 text-sm'>Cron Expression Help</CardTitle>
+          <CardTitle className='text-theme-primary text-sm'>Cron Expression Help</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='text-xs space-y-2 text-gray-300'>
+          <div className='text-xs space-y-2 text-theme-text-muted'>
             <p>
               <code>0 2 * * *</code> - Daily at 02:00
             </p>

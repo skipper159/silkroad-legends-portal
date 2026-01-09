@@ -244,11 +244,15 @@ const PagesManager: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
-        return <Badge className='bg-green-100 text-green-800'>Published</Badge>;
+        return <Badge className='bg-green-500/20 text-green-500 border border-green-500/30'>Published</Badge>;
       case 'draft':
-        return <Badge className='bg-yellow-100 text-yellow-800'>Draft</Badge>;
+        return <Badge className='bg-amber-500/20 text-amber-500 border border-amber-500/30'>Draft</Badge>;
       default:
-        return <Badge variant='secondary'>{status}</Badge>;
+        return (
+          <Badge variant='secondary' className='text-theme-text-muted'>
+            {status}
+          </Badge>
+        );
     }
   };
 
@@ -260,7 +264,7 @@ const PagesManager: React.FC = () => {
   if (loading) {
     return (
       <div className='flex justify-center items-center py-8'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-theme-primary'></div>
       </div>
     );
   }
@@ -269,10 +273,10 @@ const PagesManager: React.FC = () => {
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
-          <FileText className='h-8 w-8 text-lafftale-gold' />
+          <FileText className='h-8 w-8 text-theme-primary' />
           <div>
-            <h2 className='text-2xl font-bold text-lafftale-gold'>Pages Manager</h2>
-            <p className='text-gray-400'>Create and manage static pages</p>
+            <h2 className='text-2xl font-bold text-theme-primary'>Pages Manager</h2>
+            <p className='text-theme-text-muted'>Create and manage static pages</p>
           </div>
         </div>
 
@@ -304,7 +308,7 @@ const PagesManager: React.FC = () => {
                   value={newPage.slug}
                   onChange={(e) => setNewPage({ ...newPage, slug: e.target.value })}
                 />
-                <p className='text-xs text-gray-500 mt-1'>URL will be: /pages/{newPage.slug}</p>
+                <p className='text-xs text-theme-text-muted mt-1'>URL will be: /pages/{newPage.slug}</p>
               </div>
               <div>
                 <label className='text-sm font-medium'>Status</label>
@@ -335,19 +339,21 @@ const PagesManager: React.FC = () => {
               <Button variant='outline' onClick={() => setIsCreateDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreatePage} className='btn-primary'>Create Page</Button>
+              <Button onClick={handleCreatePage} className='btn-primary'>
+                Create Page
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
       {/* Filters */}
-      <Card className='bg-silkroad-dark/30 border-silkroad-gold/20'>
+      <Card className='bg-theme-surface/50 border-theme-primary/20'>
         <CardContent className='p-4'>
           <div className='flex gap-4 items-center'>
             <div className='flex-1'>
               <div className='relative'>
-                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-theme-text-muted' />
                 <Input
                   placeholder='Search pages...'
                   value={searchTerm}
@@ -373,19 +379,19 @@ const PagesManager: React.FC = () => {
       {/* Pages List */}
       <div className='space-y-4'>
         {filteredPages.map((page) => (
-          <Card key={page.id} className='bg-silkroad-dark/30 border-silkroad-gold/20 hover:shadow-md transition-shadow'>
+          <Card key={page.id} className='bg-theme-surface border-theme-border hover:shadow-md transition-shadow'>
             <CardContent className='p-6'>
               <div className='flex justify-between items-start gap-4'>
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-2'>
-                    <FileText className='h-5 w-5 text-lafftale-gold' />
-                    <h3 className='text-lg font-semibold text-lafftale-gold'>{page.title}</h3>
+                    <FileText className='h-5 w-5 text-theme-primary' />
+                    <h3 className='text-lg font-semibold text-theme-primary'>{page.title}</h3>
                     {getStatusBadge(page.status)}
                   </div>
 
-                  <p className='text-gray-300 mb-3'>{truncateContent(page.content)}</p>
+                  <p className='text-theme-text-muted mb-3'>{truncateContent(page.content)}</p>
 
-                  <div className='flex items-center gap-4 text-sm text-gray-500'>
+                  <div className='flex items-center gap-4 text-sm text-theme-text-muted'>
                     <div className='flex items-center gap-1'>
                       <Calendar className='h-4 w-4' />
                       {new Date(page.created_at).toLocaleDateString()}
@@ -408,7 +414,7 @@ const PagesManager: React.FC = () => {
                     variant='outline'
                     size='sm'
                     onClick={() => handleDeletePage(page.id)}
-                    className='text-red-600 hover:text-red-700'
+                    className='text-red-500 border-red-500/30 hover:bg-red-500/10 hover:text-red-400'
                   >
                     <Trash2 className='h-4 w-4' />
                   </Button>
@@ -422,7 +428,9 @@ const PagesManager: React.FC = () => {
       {filteredPages.length === 0 && (
         <div className='text-center py-8'>
           <div className='text-6xl mb-4'>📄</div>
-          <p className='text-gray-600'>{pages.length === 0 ? 'No pages created yet' : 'No pages match your filters'}</p>
+          <p className='text-theme-text-muted'>
+            {pages.length === 0 ? 'No pages created yet' : 'No pages match your filters'}
+          </p>
         </div>
       )}
 
@@ -450,7 +458,7 @@ const PagesManager: React.FC = () => {
                   value={editingPage.slug}
                   onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
                 />
-                <p className='text-xs text-gray-500 mt-1'>URL will be: /pages/{editingPage.slug}</p>
+                <p className='text-xs text-theme-text-muted mt-1'>URL will be: /pages/{editingPage.slug}</p>
               </div>
               <div>
                 <label className='text-sm font-medium'>Status</label>
@@ -482,7 +490,9 @@ const PagesManager: React.FC = () => {
             <Button variant='outline' onClick={() => setEditingPage(null)}>
               Cancel
             </Button>
-            <Button onClick={handleUpdatePage} className='btn-primary'>Update Page</Button>
+            <Button onClick={handleUpdatePage} className='btn-primary'>
+              Update Page
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
