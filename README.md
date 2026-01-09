@@ -1,5 +1,11 @@
 # 🏛️ Silkroad Legends Portal
 
+# YT Video Preview Version 1.0.1
+https://youtu.be/MSxzUPT6kqU
+
+# Version 1.0.0
+https://lafftale.online
+
 A modern, full-stack web portal for Silkroad Online private servers. Built with React, TypeScript, and Express.js, featuring real-time player statistics, rankings, donation systems, and comprehensive admin tools.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
