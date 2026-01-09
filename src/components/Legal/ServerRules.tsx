@@ -1,22 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const ServerRules = () => {
+  const { currentTemplate, theme } = useTheme();
+  const { Layout } = currentTemplate.components;
   return (
     <Layout>
       <div
         className='py-12 bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 text-center'>
           <div className='bg-black/50 p-6 rounded-lg inline-block backdrop-blur-sm'>
             <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white'>
-              Server Rules <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>Lafftale</span>
+              Server Rules <span className='text-lafftale-bronze font-cinzel text-4xl font-bold'>{theme.siteName}</span>
             </h1>
             <p className='text-lg max-w-2xl mx-auto mb-10 text-gray-200'>
               Please read the rules carefully to ensure a fair and enjoyable experience for everyone.

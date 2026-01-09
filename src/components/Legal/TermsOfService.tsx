@@ -1,15 +1,15 @@
-import ActiveTemplate from '@/config/theme-config';
+import { useTheme } from '@/context/ThemeContext';
 import { Card, CardContent } from '@/components/ui/card';
 
-const { Layout } = ActiveTemplate.components;
-
 const TermsOfService = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   return (
     <Layout>
       <div
         className='py-12 bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 text-center'>

@@ -2,35 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { BookOpen, Server, Scroll } from 'lucide-react';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const Guide = () => {
+  const { currentTemplate, theme } = useTheme();
+  const { Layout, PageBanner } = currentTemplate.components;
   return (
     <Layout>
-      <div
-        className='py-12 bg-cover bg-center'
-        style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
-        }}
-      >
-        <div className='container mx-auto px-4 text-center'>
-          <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
-            Game Guides <span className='text-theme-accent font-cinzel text-4xl font-bold'>Lafftale</span>
-          </h1>
-          <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
-            Your comprehensive resource center for mastering Silkroad Online on our server
-          </p>
-        </div>
-      </div>
+      <PageBanner
+        title='Game Guides'
+        subtitle='Your comprehensive resource center for mastering Silkroad Online on our server'
+      />
 
       <div className='container mx-auto px-4 py-12 space-y-8'>
         {/* Welcome Section */}
         <section>
           <Card>
             <CardHeader>
-              <CardTitle className='text-3xl'>Welcome to Lafftale Guides</CardTitle>
+              <CardTitle className='text-3xl'>Welcome to {theme.siteName} Guides</CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
               <p className='text-muted-foreground leading-relaxed'>

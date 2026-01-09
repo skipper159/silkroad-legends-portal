@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download, Monitor, LayoutList, AlertCircle } from 'lucide-react';
 import { weburl } from '@/lib/api';
+import { useTheme } from '@/context/ThemeContext';
 
 // Download Interface Definition
 interface DownloadItem {
@@ -35,6 +36,7 @@ const clientRequirements = {
 };
 
 const DownloadSection = () => {
+  const { theme } = useTheme();
   const [downloading, setDownloading] = useState<Record<number, boolean>>({});
   const [downloads, setDownloads] = useState<DownloadItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -145,7 +147,7 @@ const DownloadSection = () => {
     return (
       <Button onClick={handleFallbackDownload} className='btn-primary flex items-center gap-2' disabled={isDownloading}>
         <Download size={20} />
-        {isDownloading ? 'Downloading...' : 'Lafftale Client'}
+        {isDownloading ? 'Downloading...' : `${theme.siteName} Client`}
         <span className='text-xs bg-theme-surface/70 px-2 py-1 rounded-full'>{fileSize}</span>
       </Button>
     );

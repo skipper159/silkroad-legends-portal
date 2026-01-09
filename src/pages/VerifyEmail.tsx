@@ -3,11 +3,11 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { weburl } from '@/lib/api';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const VerifyEmail = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const { token } = useParams<{ token: string }>();
   const [isVerifying, setIsVerifying] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
@@ -56,7 +56,7 @@ const VerifyEmail = () => {
       <main
         className='flex-grow bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.loginBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 py-16 md:py-24'>

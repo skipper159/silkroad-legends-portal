@@ -1,7 +1,13 @@
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '@/context/ThemeContext';
 
-const PageBanner = () => {
+interface PageBannerProps {
+  title?: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+}
+
+const PageBanner = ({ title, subtitle, children }: PageBannerProps) => {
   const { theme, currentTemplate } = useTheme();
   const location = useLocation();
   const path = location.pathname;
@@ -33,33 +39,39 @@ const PageBanner = () => {
     bgSettings = theme.backgrounds?.guide || bgSettings;
   }
 
-  // If no specific or fallback image, don't render anything (or render minimal)
-  if (!bgUrl) return null;
+  // If no specific or fallback image, render with solid background
+  const hasBgImage = !!bgUrl;
 
   return (
-    <div className='relative h-64 w-full overflow-hidden rounded-b-3xl mb-8 border-b border-theme-border'>
+    <div className='relative h-64 w-full overflow-hidden rounded-b-3xl mb-8 border-b border-theme-border bg-theme-surface'>
       {/* Background Image */}
-      <div
-        className='absolute inset-0 bg-cover bg-center transition-all'
-        style={{
-          backgroundImage: `url(${bgUrl})`,
-          filter: `blur(${bgSettings?.blur || 0}px)`,
-          opacity: (bgSettings?.opacity || 100) / 100,
-        }}
-      />
+      {hasBgImage && (
+        <div
+          className='absolute inset-0 bg-cover bg-center transition-all z-0'
+          style={{
+            backgroundImage: `url(${bgUrl})`,
+            filter: `blur(${bgSettings?.blur || 0}px)`,
+            opacity: (bgSettings?.opacity || 100) / 100,
+          }}
+        />
+      )}
 
       {/* Overlay */}
       <div
-        className='absolute inset-0'
+        className='absolute inset-0 z-[1]'
         style={{
           backgroundColor: bgSettings?.overlayColor || '#000000',
           opacity: (bgSettings?.overlayOpacity || 50) / 100,
         }}
       />
 
-      {/* Content - Could be breadcrumbs or page title if passed as props */}
-      <div className='relative z-10 h-full flex items-end p-8'>
-        {/* Placeholder for dynamic title if we decide to pass it */}
+      {/* Content - Title and Subtitle */}
+      <div className='relative z-10 h-full flex flex-col items-center justify-center text-center p-8'>
+        {title && (
+          <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-theme-text mb-4 drop-shadow-lg'>{title}</h1>
+        )}
+        {subtitle && <p className='text-lg max-w-2xl text-theme-text-muted drop-shadow-md'>{subtitle}</p>}
+        {children}
       </div>
     </div>
   );

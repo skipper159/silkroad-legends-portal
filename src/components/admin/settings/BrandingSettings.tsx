@@ -10,11 +10,24 @@ import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
-import { Globe, Image as ImageIcon, Type, Link2, Upload, Save, Loader2, LayoutTemplate, Share2 } from 'lucide-react';
+import {
+  Globe,
+  Image as ImageIcon,
+  Type,
+  Upload,
+  Save,
+  Loader2,
+  LayoutTemplate,
+  Share2,
+  Trash2,
+  Play,
+  Plus,
+  X,
+} from 'lucide-react';
 import { ConfigFieldType, TemplateConfigField } from '@/lib/template-system/types';
 
 const BrandingSettings = () => {
-  const { theme, setBranding, setBackground, setSocialLink, currentTemplate } = useTheme();
+  const { theme, setBranding, setBackground, setSocialLink, setHeroMedia, currentTemplate } = useTheme();
   const { token } = useAuth();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -50,6 +63,14 @@ const BrandingSettings = () => {
         } else if (fieldKey === 'favicon') {
           // Special case, favicon might not be in config but usually is
           setBranding('faviconUrl', imageUrl);
+        } else if (fieldKey.startsWith('heroMedia-')) {
+          // Handle hero media image uploads
+          const index = parseInt(fieldKey.replace('heroMedia-', ''), 10);
+          if (!isNaN(index) && index >= 0 && index < theme.heroMedia.length) {
+            const newMedia = [...theme.heroMedia];
+            newMedia[index] = { ...newMedia[index], url: imageUrl };
+            setHeroMedia(newMedia);
+          }
         } else if (fieldKey.includes('Background') || fieldKey === 'heroBackground') {
           // Normalize key: 'accountHeaderBackground' -> 'account', 'loginBackground' -> 'login'
           let bgType = fieldKey.replace('Background', '').replace('Header', '').toLowerCase();
@@ -78,6 +99,21 @@ const BrandingSettings = () => {
   const handleCreateUploadClick = (fieldKey: string) => {
     setActiveUploadField(fieldKey);
     fileInputRef.current?.click();
+  };
+
+  const handleDeleteImage = (fieldKey: string) => {
+    if (fieldKey === 'logo') {
+      setBranding('siteLogoUrl', '');
+    } else if (fieldKey === 'favicon') {
+      setBranding('faviconUrl', '');
+    } else if (fieldKey.includes('Background') || fieldKey === 'heroBackground') {
+      let bgType = fieldKey.replace('Background', '').replace('Header', '').toLowerCase();
+      if (fieldKey === 'heroBackground') bgType = 'hero';
+      if (fieldKey === 'heroContainerBackground') bgType = 'heroContainer';
+      if (fieldKey === 'serverInfoHeaderBackground') bgType = 'serverInfo';
+      setBackground(bgType as any, { url: '' });
+    }
+    toast({ title: 'Image removed' });
   };
 
   const handleSaveAll = async () => {
@@ -117,6 +153,7 @@ const BrandingSettings = () => {
         seo_title: theme.seoTitle,
         seo_description: theme.seoDescription,
         download_url: theme.downloadUrl,
+        hero_media: JSON.stringify(theme.heroMedia),
       };
 
       const response = await fetch(`${weburl}/api/settings`, {
@@ -228,9 +265,12 @@ const BrandingSettings = () => {
         />
 
         <Tabs defaultValue='images' className='space-y-4'>
-          <TabsList className='grid w-full grid-cols-4 bg-theme-background'>
+          <TabsList className='grid w-full grid-cols-5 bg-theme-background'>
             <TabsTrigger value='images' className='flex gap-2'>
               <ImageIcon className='h-4 w-4' /> Images
+            </TabsTrigger>
+            <TabsTrigger value='hero-media' className='flex gap-2'>
+              <Play className='h-4 w-4' /> Hero Media
             </TabsTrigger>
             <TabsTrigger value='identity' className='flex gap-2'>
               <Globe className='h-4 w-4' /> Identity
@@ -258,20 +298,32 @@ const BrandingSettings = () => {
                       className='h-10 w-10 object-contain border border-theme-border rounded'
                     />
                   )}
-                  <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
-                    disabled={uploading === 'favicon'}
-                    onClick={() => handleCreateUploadClick('favicon')}
-                  >
-                    {uploading === 'favicon' ? (
-                      <Loader2 className='h-3 w-3 animate-spin' />
-                    ) : (
-                      <Upload className='h-3 w-3 mr-2' />
+                  <div className='flex gap-2'>
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      disabled={uploading === 'favicon'}
+                      onClick={() => handleCreateUploadClick('favicon')}
+                    >
+                      {uploading === 'favicon' ? (
+                        <Loader2 className='h-3 w-3 animate-spin' />
+                      ) : (
+                        <Upload className='h-3 w-3 mr-2' />
+                      )}
+                      Upload
+                    </Button>
+                    {theme.faviconUrl && (
+                      <Button
+                        type='button'
+                        variant='destructive'
+                        size='sm'
+                        onClick={() => handleDeleteImage('favicon')}
+                      >
+                        <Trash2 className='h-3 w-3' />
+                      </Button>
                     )}
-                    Upload
-                  </Button>
+                  </div>
                 </div>
               </div>
 
@@ -289,20 +341,32 @@ const BrandingSettings = () => {
                         className='h-20 w-auto max-w-[150px] object-cover border border-theme-border rounded'
                       />
                     )}
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='sm'
-                      disabled={uploading === field.key}
-                      onClick={() => handleCreateUploadClick(field.key)}
-                    >
-                      {uploading === field.key ? (
-                        <Loader2 className='h-3 w-3 animate-spin' />
-                      ) : (
-                        <Upload className='h-3 w-3 mr-2' />
+                    <div className='flex gap-2'>
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        disabled={uploading === field.key}
+                        onClick={() => handleCreateUploadClick(field.key)}
+                      >
+                        {uploading === field.key ? (
+                          <Loader2 className='h-3 w-3 animate-spin' />
+                        ) : (
+                          <Upload className='h-3 w-3 mr-2' />
+                        )}
+                        Upload
+                      </Button>
+                      {getFieldValue(field) && (
+                        <Button
+                          type='button'
+                          variant='destructive'
+                          size='sm'
+                          onClick={() => handleDeleteImage(field.key)}
+                        >
+                          <Trash2 className='h-3 w-3' />
+                        </Button>
                       )}
-                      Upload
-                    </Button>
+                    </div>
                   </div>
 
                   {/* Render sliders if it is a background field */}
@@ -316,6 +380,91 @@ const BrandingSettings = () => {
                 No image settings available for this template.
               </div>
             )}
+          </TabsContent>
+
+          {/* Hero Media Tab */}
+          <TabsContent value='hero-media' className='space-y-6'>
+            <div className='border border-theme-border rounded-lg p-4'>
+              <Label className='text-lg font-semibold'>Hero Slider / Video</Label>
+              <p className='text-xs text-theme-text-muted mb-4'>
+                Add images for a slider or a YouTube video link for the hero section.
+              </p>
+
+              <div className='space-y-4'>
+                {theme.heroMedia.map((item, index) => (
+                  <div
+                    key={index}
+                    className='flex gap-4 items-center p-3 bg-theme-background/50 rounded-lg border border-theme-border/50'
+                  >
+                    <select
+                      value={item.type}
+                      onChange={(e) => {
+                        const newMedia = [...theme.heroMedia];
+                        newMedia[index] = { ...newMedia[index], type: e.target.value as 'image' | 'youtube' };
+                        setHeroMedia(newMedia);
+                      }}
+                      className='bg-theme-background border border-theme-border rounded px-2 py-1 text-sm'
+                    >
+                      <option value='image'>Image</option>
+                      <option value='youtube'>YouTube</option>
+                    </select>
+                    <Input
+                      value={item.url}
+                      onChange={(e) => {
+                        const newMedia = [...theme.heroMedia];
+                        newMedia[index] = { ...newMedia[index], url: e.target.value };
+                        setHeroMedia(newMedia);
+                      }}
+                      placeholder={
+                        item.type === 'youtube'
+                          ? 'https://www.youtube.com/watch?v=...'
+                          : '/uploads/image.jpg or https://...'
+                      }
+                      className='flex-1 bg-theme-background border-theme-border'
+                    />
+                    {item.type === 'image' && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={() => {
+                          setActiveUploadField(`heroMedia-${index}`);
+                          fileInputRef.current?.click();
+                        }}
+                      >
+                        <Upload className='h-3 w-3' />
+                      </Button>
+                    )}
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      size='sm'
+                      onClick={() => {
+                        const newMedia = theme.heroMedia.filter((_, i) => i !== index);
+                        setHeroMedia(newMedia);
+                      }}
+                    >
+                      <X className='h-3 w-3' />
+                    </Button>
+                  </div>
+                ))}
+
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => setHeroMedia([...theme.heroMedia, { type: 'image', url: '' }])}
+                  className='w-full'
+                >
+                  <Plus className='h-4 w-4 mr-2' /> Add Media Item
+                </Button>
+              </div>
+
+              {theme.heroMedia.length === 0 && (
+                <p className='text-sm text-theme-text-muted mt-4 text-center'>
+                  No hero media configured. The default hero background will be used.
+                </p>
+              )}
+            </div>
           </TabsContent>
 
           {/* Identity Tab (Static for now) */}

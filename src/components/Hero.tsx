@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
 const Hero = () => {
+  const { theme } = useTheme();
   return (
     <div className='bg-hero-pattern bg-cover bg-center min-h-[calc(100vh-4rem)] flex items-center justify-center'>
       <div className='container mx-auto px-4 py-28 text-center'>
         <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in'>
-          Experience <span className='text-theme-accent'>Lafftale</span>
+          Experience <span className='text-theme-accent'>{theme.siteName}</span>
         </h1>
         <p className='text-lg md:text-xl max-w-2xl mx-auto mb-10 text-theme-text-muted'>
           Journey through the ancient Silkroad, discover mystical powers, and forge legendary alliances in the ultimate

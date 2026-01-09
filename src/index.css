@@ -65,10 +65,116 @@
     /* Effect Variables */
     --theme-transition-speed: 200ms;
     --theme-glow-enabled: 0;
+
+    /* UI Border Variables - Defaults */
+    --ui-border-color-rgb: 212 175 55;
+    --ui-border-opacity: 0.3;
+    --ui-border-width: 1px;
+    --input-text: #fafafa;
+    --input-bg: 0 0% 20%;
+
+    /* Branding Color Variables - RGB format for Tailwind opacity support */
+    --lafftale-gold: 212 175 55;
+    --lafftale-bronze: 205 127 50;
+    --lafftale-dark: 18 18 18;
+    --lafftale-darkgray: 30 30 30;
   }
 
   * {
     @apply border-border;
+  }
+
+  input,
+  textarea,
+  select {
+    color: var(--input-text);
+    background-color: hsl(var(--input-bg));
+  }
+
+  /* Autofill Fix for Dark Themes */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px hsl(var(--input-bg)) inset !important;
+    -webkit-text-fill-color: var(--input-text) !important;
+    caret-color: var(--input-text) !important;
+  }
+
+  /* === NEW: Customizable UI Elements === */
+
+  /* 1. Scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--theme-scrollbar-thumb);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--theme-scrollbar-thumb); /* Opacity handles itself via HSLA */
+    border: 1px solid transparent;
+  }
+
+  /* 2. Selection */
+  ::selection {
+    background: var(--theme-selection-bg);
+    color: #ffffff; /* Make text white for contrast */
+  }
+
+  /* 3. Sliders (Range Inputs) */
+  input[type='range'] {
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--theme-slider-thumb);
+    margin-top: -6px; /* Adjust for track height */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s;
+  }
+  input[type='range']::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+  input[type='range']::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--theme-border);
+    border-radius: 2px;
+  }
+
+  /* 4. Links (Global) - Use :where to avoid high specificity conflicts */
+  :where(p, li, span) > a {
+    color: var(--theme-link-color);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  :where(p, li, span) > a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+
+  /* 5. Tables (Zebra Striping) */
+  /* Target shadcn TableRow if possible, or generic tr */
+  tr:nth-child(even) {
+    background-color: var(--theme-table-stripe);
+  }
+
+  /* 6. Loaders -> Target spinner classes if they exist, or rely on currentColor overrides */
+  .lucide-loader-2 {
+    color: var(--theme-loader-color);
   }
 
   body {
@@ -93,7 +199,8 @@
   }
 
   .btn-primary {
-    @apply bg-theme-primary hover:bg-theme-primary-hover text-theme-background font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+    @apply hover:bg-theme-primary-hover text-theme-background font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+    background-color: var(--theme-btn-bg); /* Use customizable var */
   }
 
   .btn-secondary {

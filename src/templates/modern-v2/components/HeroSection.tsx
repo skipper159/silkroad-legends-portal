@@ -1,12 +1,14 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/context/ThemeContext';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { weburl } from '@/lib/api';
 
 const HeroSection = () => {
-  const { theme } = useTheme();
+  const { theme, currentTemplate } = useTheme();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const getBgUrl = (url: string) => {
     if (!url) return '/image/Web/top-player-bg.jpg';
@@ -14,9 +16,27 @@ const HeroSection = () => {
     return `${weburl}${url}`;
   };
 
-  const { currentTemplate } = useTheme();
+  // Get YouTube video ID from URL
+  const getYouTubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
 
-  // Hero Image (inside the graphic slot)
+  // Filter valid media items
+  const mediaItems = theme.heroMedia.filter((item) => item.url && item.url.trim() !== '');
+
+  // Auto-advance slider only for images (not for videos)
+  useEffect(() => {
+    if (mediaItems.length > 1 && mediaItems.every((m) => m.type === 'image')) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % mediaItems.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [mediaItems.length]);
+
+  // Hero Image fallback (inside the graphic slot)
   const heroImage = getBgUrl(theme.backgrounds.hero.url);
   const opacity = theme.backgrounds.hero.url ? theme.backgrounds.hero.opacity / 100 : 0.6;
 
@@ -30,6 +50,99 @@ const HeroSection = () => {
         backgroundPosition: 'center',
       }
     : {};
+
+  // Render the hero media content
+  const renderHeroMedia = () => {
+    // Check if there's a YouTube video in heroMedia
+    const youtubeItem = mediaItems.find((item) => item.type === 'youtube');
+    if (youtubeItem) {
+      const videoId = getYouTubeId(youtubeItem.url);
+      if (videoId) {
+        return (
+          <div className='relative aspect-video rounded-2xl overflow-hidden border border-theme-border bg-theme-background/50 shadow-2xl'>
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`}
+              title='Hero Video'
+              className='w-full h-full'
+              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+              allowFullScreen
+            />
+          </div>
+        );
+      }
+    }
+
+    // Check if there are multiple images for slider
+    const imageItems = mediaItems.filter((item) => item.type === 'image');
+    if (imageItems.length > 1) {
+      return (
+        <div className='relative aspect-square md:aspect-video rounded-2xl overflow-hidden border border-theme-border bg-theme-background/50 shadow-2xl'>
+          {/* Slider Images */}
+          {imageItems.map((item, index) => (
+            <img
+              key={index}
+              src={getBgUrl(item.url)}
+              alt={`Slide ${index + 1}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
+
+          {/* Slider Controls */}
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + imageItems.length) % imageItems.length)}
+            className='absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition z-10'
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % imageItems.length)}
+            className='absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition z-10'
+          >
+            <ChevronRight size={24} />
+          </button>
+
+          {/* Slide Indicators */}
+          <div className='absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10'>
+            {imageItems.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-2 h-2 rounded-full transition ${index === currentSlide ? 'bg-white' : 'bg-white/50'}`}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Single image or fallback
+    if (imageItems.length === 1) {
+      return (
+        <div className='relative aspect-square md:aspect-video rounded-2xl overflow-hidden border border-theme-border bg-theme-background/50 shadow-2xl skew-y-3 transform transition hover:skew-y-0 duration-700'>
+          <img src={getBgUrl(imageItems[0].url)} alt='Hero' className='w-full h-full object-cover' />
+        </div>
+      );
+    }
+
+    // Fallback to original hero background
+    return (
+      <div className='relative aspect-square md:aspect-video rounded-2xl overflow-hidden border border-theme-border bg-theme-background/50 shadow-2xl skew-y-3 transform transition hover:skew-y-0 duration-700'>
+        <div className='absolute inset-0 flex items-center justify-center'>
+          <div className='w-20 h-20 rounded-full bg-white/5 flex items-center justify-center backdrop-blur-sm border border-white/10 cursor-pointer hover:scale-110 transition'>
+            <Play size={32} className='fill-white text-white ml-1' />
+          </div>
+        </div>
+        <img
+          src={heroImage}
+          alt='Trailer'
+          className='w-full h-full object-cover mix-blend-overlay'
+          style={{ opacity }}
+        />
+      </div>
+    );
+  };
 
   return (
     <section
@@ -72,21 +185,7 @@ const HeroSection = () => {
         </div>
 
         {/* Visual */}
-        <div className='md:w-1/2 relative'>
-          <div className='relative aspect-square md:aspect-video rounded-2xl overflow-hidden border border-theme-border bg-theme-background/50 shadow-2xl skew-y-3 transform transition hover:skew-y-0 duration-700'>
-            <div className='absolute inset-0 flex items-center justify-center'>
-              <div className='w-20 h-20 rounded-full bg-white/5 flex items-center justify-center backdrop-blur-sm border border-white/10 cursor-pointer hover:scale-110 transition'>
-                <Play size={32} className='fill-white text-white ml-1' />
-              </div>
-            </div>
-            <img
-              src={heroImage}
-              alt='Trailer'
-              className='w-full h-full object-cover mix-blend-overlay'
-              style={{ opacity }}
-            />
-          </div>
-        </div>
+        <div className='md:w-1/2 relative'>{renderHeroMedia()}</div>
       </div>
     </section>
   );

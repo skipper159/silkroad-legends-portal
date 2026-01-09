@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, XCircle, Loader2, ShieldCheck } from 'lucide-react';
 import { weburl } from '@/lib/api';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const ConfirmAccountDeletion = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const { token } = useParams<{ token: string }>();
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'expired' | 'used'>('loading');
   const [gameAccountName, setGameAccountName] = useState<string>('');
@@ -187,7 +187,7 @@ const ConfirmAccountDeletion = () => {
       <main
         className='flex-grow bg-cover bg-center flex items-center justify-center px-4'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.loginBackground}')`,
         }}
       >
         <div className='w-full max-w-lg'>{renderContent()}</div>

@@ -1,16 +1,16 @@
-import ActiveTemplate from '@/config/theme-config';
+import { useTheme } from '@/context/ThemeContext';
 import { Shield, Cookie, Lock, Eye, FileText, Mail } from 'lucide-react';
 
-const { Layout } = ActiveTemplate.components;
-
 const PrivacyPolicy = () => {
+  const { currentTemplate, theme } = useTheme();
+  const { Layout } = currentTemplate.components;
   return (
     <Layout>
       <main className='flex-grow'>
         <div
           className='py-12 bg-cover bg-center text-center'
           style={{
-            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+            backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
           }}
         >
           <div className='inline-flex items-center justify-center p-4 bg-theme-primary/10 rounded-full mb-6'>
@@ -33,7 +33,7 @@ const PrivacyPolicy = () => {
               </div>
               <p className='mb-3'>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
               <div className='bg-gray-900/50 p-4 rounded border border-gray-700'>
-                <p className='font-semibold text-white'>Lafftale Gaming</p>
+                <p className='font-semibold text-white'>{theme.siteName}</p>
                 <p>Musterstraße 123</p>
                 <p>12345 Musterstadt</p>
                 <p className='mt-2'>

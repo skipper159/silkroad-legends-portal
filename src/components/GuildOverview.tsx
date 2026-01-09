@@ -7,8 +7,7 @@ import { fetchWithAuth, weburl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { getRaceInfo, getJobIcon, RaceInfo } from '@/utils/characterUtils';
-import ActiveTemplate from '@/config/theme-config';
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 interface GuildMember {
   CharID: number;
@@ -45,6 +44,8 @@ interface GuildOverviewData {
 }
 
 const GuildOverview: React.FC = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const { guildName } = useParams<{ guildName: string }>();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
@@ -157,7 +158,7 @@ const GuildOverview: React.FC = () => {
         <div
           className='py-12 bg-cover bg-center'
           style={{
-            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+            backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
           }}
         >
           <div className='container mx-auto px-4 text-center'>

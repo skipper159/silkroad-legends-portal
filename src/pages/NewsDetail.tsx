@@ -4,10 +4,8 @@ import { ArrowLeft, Calendar, User, Tag, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { weburl } from '@/lib/api';
-import ActiveTemplate from '@/config/theme-config';
+import { useTheme } from '@/context/ThemeContext';
 import ContentRenderer from '@/utils/contentRenderer';
-
-const { Layout } = ActiveTemplate.components;
 
 interface NewsArticle {
   id: number;
@@ -24,6 +22,8 @@ interface NewsArticle {
 }
 
 const NewsDetail = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState(true);

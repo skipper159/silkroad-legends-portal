@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { weburl } from '@/lib/api';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const ForgotPassword = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
+
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -57,7 +58,7 @@ const ForgotPassword = () => {
       <main
         className='flex-grow bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.loginBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.loginBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 py-16 md:py-24'>

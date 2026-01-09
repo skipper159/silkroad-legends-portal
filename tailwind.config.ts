@@ -20,13 +20,13 @@ const config: Config = {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        border: 'hsl(var(--border) / var(--tw-border-opacity, var(--ui-border-opacity)))',
+        input: 'hsl(var(--input) / var(--tw-border-opacity, var(--ui-border-opacity)))',
+        ring: 'hsl(var(--ring) / <alpha-value>)',
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
@@ -64,12 +64,12 @@ const config: Config = {
           ring: 'hsl(var(--sidebar-ring))',
         },
         lafftale: {
-          gold: '#D4AF37',
-          bronze: '#CD7F32',
+          gold: 'rgb(var(--lafftale-gold) / <alpha-value>)',
+          bronze: 'rgb(var(--lafftale-bronze) / <alpha-value>)',
           darkred: '#8B0000',
           beige: '#F5F5DC',
-          dark: '#121212',
-          darkgray: '#1E1E1E',
+          dark: 'rgb(var(--lafftale-dark) / <alpha-value>)',
+          darkgray: 'rgb(var(--lafftale-darkgray) / <alpha-value>)',
         },
         // Dynamic Theme Colors - Set by ThemeContext via CSS variables
         theme: {
@@ -84,6 +84,9 @@ const config: Config = {
           secondary: 'var(--theme-secondary)',
           highlight: 'var(--theme-highlight)',
         },
+      },
+      borderWidth: {
+        DEFAULT: 'var(--ui-border-width)',
       },
       borderRadius: {
         lg: 'var(--radius)',

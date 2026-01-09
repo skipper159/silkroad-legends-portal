@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { weburl } from '@/lib/api';
+import { useTheme } from '@/context/ThemeContext';
 
 interface FooterLink {
   id: number;
@@ -22,6 +23,7 @@ interface HardcodedLinks {
 }
 
 const Footer = () => {
+  const { theme } = useTheme();
   const [footerLinks, setFooterLinks] = useState<FooterLink[]>([]);
   const [hardcodedLinks, setHardcodedLinks] = useState<HardcodedLinks>({
     quick_links: [],
@@ -99,7 +101,7 @@ const Footer = () => {
       <div className='container mx-auto px-4 py-12'>
         <div className={`grid grid-cols-1 gap-8 ${gridClass}`}>
           <div className={footerLinks.length > 0 ? 'col-span-1 md:col-span-2' : 'col-span-1 md:col-span-2'}>
-            <h3 className='text-2xl font-bold mb-4 text-lafftale-gold'>Silkroad Lafftale</h3>
+            <h3 className='text-2xl font-bold mb-4 text-lafftale-gold'>{theme.siteName}</h3>
             <p className='text-gray-400 mb-4 max-w-md'>
               Experience the revival of a classic MMORPG with upgraded features, balanced gameplay, and a thriving
               community. Begin your journey along the ancient Silkroad today.
@@ -287,7 +289,7 @@ const Footer = () => {
 
         <div className='border-t border-lafftale-gold/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center'>
           <p className='text-gray-500 text-sm'>
-            &copy; {new Date().getFullYear()} Silkroad Lafftale. All rights reserved.
+            &copy; {new Date().getFullYear()} {theme.siteName}. All rights reserved.
           </p>
           <p className='text-gray-500 text-sm mt-2 md:mt-0'>
             Silkroad Online is a registered trademark of Joymax Co., Ltd. This is a private server not affiliated with

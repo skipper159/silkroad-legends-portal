@@ -1,11 +1,12 @@
 import { FC, useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ActiveTemplate from '@/config/theme-config';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const ServerInfo: FC = () => {
+  const { currentTemplate, theme } = useTheme();
+  const { Layout, PageBanner } = currentTemplate.components;
+
   const [serverTime, setServerTime] = useState<string>('');
 
   useEffect(() => {
@@ -31,24 +32,10 @@ const ServerInfo: FC = () => {
 
   return (
     <Layout>
-      <div
-        className='py-12 bg-cover bg-center'
-        style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
-        }}
-      >
-        <div className='container mx-auto px-4 text-center'>
-          <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
-            Server Specs <span className='text-theme-accent font-cinzel text-4xl font-bold'>Lafftale</span>
-          </h1>
-          <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
-            Dive into the golden era of Silkroad Online, reimagined on our private server Lafftale – for true veterans
-            and new explorers alike. Here you'll find a carefully balanced gameplay experience that stays true to the
-            classic SRO version, enhanced with modern features and fair mechanics.
-          </p>
-        </div>
-      </div>
-      <hr></hr>
+      <PageBanner
+        title='Server Specs'
+        subtitle='Dive into the golden era of Silkroad Online, reimagined on our private server – for true veterans and new explorers alike.'
+      />
 
       <div className='container mx-auto py-10'>
         <h1 className='text-4xl font-bold text-center mb-8'>Server Information & Rules</h1>
@@ -111,9 +98,9 @@ const ServerInfo: FC = () => {
                 </div>
 
                 <div className='bg-destructive/10 p-6 rounded-lg'>
-                  <h3 className='text-xl font-semibold mb-4'>About Lafftale Online</h3>
+                  <h3 className='text-xl font-semibold mb-4'>About {theme.siteName}</h3>
                   <p className='text-muted-foreground leading-relaxed'>
-                    Welcome to Lafftale Online! Our server offers a classic Silkroad experience with modern
+                    Welcome to {theme.siteName}! Our server offers a classic Silkroad experience with modern
                     improvements. We place great emphasis on fair gameplay and a friendly community. Our dedicated
                     administrators and moderators are always ready to help.
                   </p>

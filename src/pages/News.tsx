@@ -39,7 +39,7 @@ const getCategoryClass = (category: string) => {
 };
 
 const News = () => {
-  const { currentTemplate } = useTheme();
+  const { currentTemplate, theme } = useTheme();
   const { Layout } = currentTemplate.components;
   const [news, setNews] = useState<NewsItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -134,7 +134,7 @@ const News = () => {
             News <span className='text-theme-accent font-cinzel text-4xl font-bold'>& Updates</span>
           </h1>
           <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
-            Stay up to date with the latest updates, events and community news from Lafftale Silkroad Online.
+            Stay up to date with the latest updates, events and community news from {theme.siteName}.
           </p>
         </div>
       </div>

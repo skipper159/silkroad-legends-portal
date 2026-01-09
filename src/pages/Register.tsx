@@ -10,7 +10,7 @@ import useFingerprint from '@/hooks/useFingerprint';
 import { useTheme } from '@/context/ThemeContext';
 
 const Register = () => {
-  const { currentTemplate } = useTheme();
+  const { currentTemplate, theme } = useTheme();
   const { Layout, AuthLayout } = currentTemplate.components;
   const LayoutComponent = AuthLayout || Layout;
   const [username, setUsername] = useState('');
@@ -101,7 +101,7 @@ const Register = () => {
         const data = await response.text();
         toast({
           title: 'Registration Successful',
-          description: 'Welcome to Silkroad Legends! Redirecting to login in 5 seconds.',
+          description: `Welcome to ${theme.siteName}! Redirecting to login in 5 seconds.`,
         });
         setRedirectCountdown(5);
       } else {
@@ -154,7 +154,7 @@ const Register = () => {
             >
               <div className='text-center mb-8'>
                 <h2 className='text-3xl font-bold text-theme-primary'>Register</h2>
-                <p className='text-theme-text-muted mt-2'>Create your Silkroad Legends account</p>
+                <p className='text-theme-text-muted mt-2'>Create your {theme.siteName} account</p>
                 {referralCode && (
                   <div className='mt-4 space-y-3'>
                     <div className='p-3 bg-theme-primary/10 border border-theme-primary/30 rounded-lg'>
@@ -230,7 +230,7 @@ const Register = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder='Choose a username'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='bg-transparent'
                   />
                 </div>
 
@@ -245,7 +245,7 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder='Enter your email address'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='bg-transparent'
                   />
                 </div>
 
@@ -260,7 +260,7 @@ const Register = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder='Create a strong password'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='bg-transparent'
                   />
                 </div>
 
@@ -275,7 +275,7 @@ const Register = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder='Confirm your password'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='bg-transparent'
                   />
                 </div>
 

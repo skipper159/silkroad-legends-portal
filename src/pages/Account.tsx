@@ -9,7 +9,7 @@ import DonateSilkMall from '@/components/account/DonateSilkMall';
 import UserVoting from '@/components/account/UserVoting';
 import UserVouchers from '@/components/account/UserVouchers';
 import UserReferrals from '@/components/account/UserReferrals';
-import ActiveTemplate from '@/config/theme-config';
+import { useTheme } from '@/context/ThemeContext';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,8 +24,6 @@ import {
 import { Shield, User, Settings, TicketCheck, Coins, Vote, Gift, Loader2, UserPlus } from 'lucide-react';
 import { fetchWithAuth } from '@/lib/api';
 import { weburl } from '@/lib/api';
-
-const { Layout } = ActiveTemplate.components;
 
 interface UserData {
   id?: string;
@@ -57,6 +55,8 @@ interface SilkBalance {
 }
 
 const Account = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const [activeTab, setActiveTab] = useState('web-account');
   const [userData, setUserData] = useState<UserData | null>(null);
   const [gameAccounts, setGameAccounts] = useState<GameAccount[]>([]);
@@ -205,7 +205,7 @@ const Account = () => {
         <div
           className='py-12 bg-cover bg-center'
           style={{
-            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+            backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
           }}
         >
           <div className='container mx-auto px-4 text-center'>

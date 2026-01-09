@@ -100,7 +100,7 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                   type='email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className='bg-theme-surface border-theme-primary/20 text-theme-text'
+                  className='flex-1'
                   required
                 />
               </div>
@@ -111,7 +111,7 @@ const AccountWebSettings = ({ userData }: AccountWebSettingsProps) => {
                   type='password'
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className='bg-theme-surface border-theme-primary/20 text-theme-text'
+                  className='flex-1'
                   required
                 />
               </div>

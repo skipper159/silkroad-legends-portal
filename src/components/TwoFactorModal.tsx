@@ -92,7 +92,7 @@ const TwoFactorModal = ({ tempToken, onSuccess, onCancel }: TwoFactorModalProps)
                 setError(null);
               }}
               placeholder='000000'
-              className='bg-lafftale-dark/70 border-theme-primary/20 text-center text-3xl tracking-[0.5em] font-mono py-4'
+              className='bg-transparent text-center text-3xl tracking-[0.5em] font-mono py-4'
               autoFocus
             />
           </div>

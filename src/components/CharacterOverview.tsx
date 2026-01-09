@@ -12,8 +12,7 @@ import { getRaceInfo, getCharacterImage, getJobIcon, RaceInfo } from '@/utils/ch
 import { CharacterInventory } from './account/CharacterInventory';
 import { transformInventoryData } from '@/utils/itemUtils';
 import { getMonsterName, formatKillDate } from '@/utils/monsterNames';
-import ActiveTemplate from '@/config/theme-config';
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 // Use same Character interface as account version
 interface Character {
@@ -56,6 +55,8 @@ interface UniqueKill {
 }
 
 const CharacterOverview: React.FC = () => {
+  const { currentTemplate } = useTheme();
+  const { Layout } = currentTemplate.components;
   const { characterName } = useParams<{ characterName: string }>();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
@@ -249,7 +250,7 @@ const CharacterOverview: React.FC = () => {
         <div
           className='py-12 bg-cover bg-center'
           style={{
-            backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+            backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
           }}
         >
           <div className='container mx-auto px-4 text-center'>

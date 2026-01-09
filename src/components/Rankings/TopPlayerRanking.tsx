@@ -18,6 +18,24 @@ interface TopPlayerRankingProps {
   totalItems?: number;
 }
 
+// Helper to get race icon (matching UniqueRankingTable style)
+const getRaceIcon = (player: RankingPlayer) => {
+  // Use raceInfo if available, otherwise fall back to 'cn' (China)
+  // Logic matches UniqueRankingTable fallback
+  const flag = player.raceInfo?.flag || 'cn';
+
+  return (
+    <img
+      src={`/assets/race/${flag === 'cn' ? 'china' : 'europe'}.png`}
+      alt={flag === 'cn' ? 'Ch' : 'Eu'}
+      className='w-5 h-5 object-contain'
+      onError={(e) => {
+        e.currentTarget.style.display = 'none';
+      }}
+    />
+  );
+};
+
 const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
   data,
   loading,
@@ -55,8 +73,8 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
 
   if (loading) {
     return (
-      <div className='flex justify-center items-center py-8'>
-        <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
+      <div className='flex justify-center items-center h-64'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary'></div>
       </div>
     );
   }
@@ -69,19 +87,18 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
     <div>
       <Table>
         <TableHeader>
-          <TableRow className='border-b border-theme-border'>
+          <TableRow className='border-b border-theme-primary/20'>
             <TableHead className='text-theme-primary font-semibold text-center'>Rank</TableHead>
             <TableHead className='text-theme-primary font-semibold'>Player</TableHead>
-            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Level</TableHead>
-            <TableHead className='text-theme-primary font-semibold hidden md:table-cell'>Race</TableHead>
-            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell'>Guild</TableHead>
-            <TableHead className='text-theme-primary font-semibold text-right'>Item Points</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden md:table-cell text-center'>Level</TableHead>
+            <TableHead className='text-theme-primary font-semibold hidden lg:table-cell text-center'>Guild</TableHead>
+            <TableHead className='text-theme-primary font-semibold text-center'>Item Points</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {displayData.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className='text-center py-8 text-gray-400'>
+              <TableCell colSpan={5} className='text-center py-8 text-theme-text-muted'>
                 No players found
               </TableCell>
             </TableRow>
@@ -94,15 +111,19 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
               return (
                 <TableRow
                   key={player.CharID || index}
-                  className={`border-b border-theme-border hover:bg-theme-primary/5 ${
-                    actualRank <= 3 ? 'bg-theme-primary/10' : ''
+                  className={`border-b border-theme-primary/10 hover:bg-lafftale-gold/5 transition-colors ${
+                    actualRank <= 3 ? 'bg-lafftale-gold/10' : ''
                   }`}
                 >
                   <TableCell className='font-medium text-center'>
                     {actualRank <= 3 ? (
                       <span
                         className={`text-lg ${
-                          actualRank === 1 ? 'text-yellow-500' : actualRank === 2 ? 'text-gray-400' : 'text-amber-600'
+                          actualRank === 1
+                            ? 'text-yellow-500'
+                            : actualRank === 2
+                            ? 'text-theme-text-muted'
+                            : 'text-amber-600'
                         }`}
                       >
                         {getRankIcon(actualRank)}
@@ -113,44 +134,17 @@ const TopPlayerRanking: React.FC<TopPlayerRankingProps> = ({
                   </TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
+                      {getRaceIcon(player)}
                       <PlayerNameComponent player={player} />
                     </div>
                   </TableCell>
-                  <TableCell className='hidden md:table-cell'>{player.CurLevel || player.Level || 'Unknown'}</TableCell>
-                  <TableCell className='hidden md:table-cell'>
-                    <div className='flex items-center gap-2'>
-                      {/* Display race flag based on race info */}
-                      {player.raceInfo ? (
-                        <>
-                          <img
-                            src={`/assets/race/${player.raceInfo.flag === 'cn' ? 'china' : 'europe'}.png`}
-                            alt={player.raceInfo.flag === 'cn' ? 'Ch' : 'Eu'}
-                            className='w-5 h-5 object-contain'
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                          <span className='text-sm'>{player.raceInfo.flag === 'cn' ? 'Ch' : 'Eu'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <img
-                            src='/assets/race/china.png'
-                            alt='Ch'
-                            className='w-6 h-6 object-contain'
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                          <span className='text-sm'>Ch</span>
-                        </>
-                      )}
-                    </div>
+                  <TableCell className='hidden md:table-cell text-center'>
+                    {player.CurLevel || player.Level || 'Unknown'}
                   </TableCell>
-                  <TableCell className='hidden lg:table-cell'>
+                  <TableCell className='hidden lg:table-cell text-center'>
                     {player.GuildName || player.Guild || 'no guild'}
                   </TableCell>
-                  <TableCell className='text-right font-semibold text-theme-primary'>
+                  <TableCell className='text-center font-semibold text-theme-primary'>
                     {player.ItemPoints || '0'}
                   </TableCell>
                 </TableRow>

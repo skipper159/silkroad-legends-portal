@@ -11,7 +11,7 @@ import TwoFactorModal from '@/components/TwoFactorModal';
 import { useTheme } from '@/context/ThemeContext';
 
 const Login = () => {
-  const { currentTemplate } = useTheme();
+  const { currentTemplate, theme } = useTheme();
   const { Layout, AuthLayout } = currentTemplate.components;
   const LayoutComponent = AuthLayout || Layout;
   const [username, setUsername] = useState('');
@@ -34,7 +34,7 @@ const Login = () => {
 
       toast({
         title: 'Login Successful',
-        description: 'Welcome back to Lafftale online!',
+        description: `Welcome back to ${theme.siteName}!`,
       });
 
       if (isAdmin) {
@@ -134,7 +134,7 @@ const Login = () => {
             >
               <div className='text-center mb-8'>
                 <h2 className='text-3xl font-bold text-theme-primary'>Login</h2>
-                <p className='text-theme-text-muted mt-2'>Sign in to your Silkroad Lafftale account</p>
+                <p className='text-theme-text-muted mt-2'>Sign in to your {theme.siteName} account</p>
               </div>
 
               <form onSubmit={handleLogin} className='space-y-6'>
@@ -148,7 +148,7 @@ const Login = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder='Enter your username or email'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='flex-1'
                   />
                 </div>
 
@@ -168,7 +168,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder='Enter your password'
                     required
-                    className='bg-theme-background/70 border-theme-border focus:border-theme-primary text-theme-text'
+                    className='flex-1'
                   />
                 </div>
 

@@ -10,7 +10,7 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout, isAdmin } = useAuth();
-  const { currentTemplate } = useTheme();
+  const { currentTemplate, theme } = useTheme();
 
   const logo = currentTemplate.assets.logo;
 
@@ -27,9 +27,9 @@ const Header = () => {
         <div className='flex justify-between h-16 items-center'>
           <div className='flex-shrink-0 flex items-center'>
             <Link to='/' className='flex items-center'>
-              <img src={logo} alt='Lafftale Logo' className='h-10 w-auto mr-2' />
+              <img src={logo} alt={`${theme.siteName} Logo`} className='h-10 w-auto mr-2' />
               <span className='text-lafftale-bronze font-cinzel text-2xl font-bold'>
-                Lafftale <span className='text-lafftale-gold font-cinzel text-2xl font-bold'>Online</span>
+                {theme.siteName} <span className='text-lafftale-gold font-cinzel text-2xl font-bold'>Online</span>
               </span>
             </Link>
           </div>

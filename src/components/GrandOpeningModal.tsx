@@ -3,10 +3,12 @@ import { X, Calendar, PartyPopper } from 'lucide-react';
 import { useCountdown } from '@/hooks/useCountdown';
 import { useWebSettings } from '@/hooks/useWebSettings';
 import { getCookie, setCookie } from '@/utils/cookies';
+import { useTheme } from '@/context/ThemeContext';
 
 const COOKIE_NAME = 'grand_opening_modal_dismissed';
 
 const GrandOpeningModal = () => {
+  const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const { settings, loading } = useWebSettings();
 
@@ -92,8 +94,9 @@ const GrandOpeningModal = () => {
           </h2>
 
           <p className='text-theme-text-muted text-lg mb-8 max-w-md mx-auto'>
-            Join us for the official launch of <span className='text-theme-primary font-semibold'>Lafftale</span> and
-            embark on an epic journey through the Silkroad!
+            Join us for the official launch of{' '}
+            <span className='text-theme-primary font-semibold'>{theme.siteName}</span> and embark on an epic journey
+            through the Silkroad!
           </p>
 
           {/* Countdown */}

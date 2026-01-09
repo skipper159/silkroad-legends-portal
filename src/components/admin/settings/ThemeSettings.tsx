@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Save, Palette, Type, Square, Sparkles, Eye, LayoutTemplate } from 'lucide-react';
+import { Loader2, Save, Palette, Type, Square, Sparkles, Eye, LayoutTemplate, Frame } from 'lucide-react';
 import { weburl } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
@@ -34,9 +34,9 @@ const ThemeSettings = () => {
     setActiveTemplate,
   } = useTheme();
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'colors' | 'cards' | 'buttons' | 'typography' | 'effects' | 'template'>(
-    'colors'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'colors' | 'branding' | 'cards' | 'ui_elements' | 'typography' | 'effects' | 'template' | 'borders'
+  >('colors');
 
   // Save individual setting to API
   const saveSetting = async (key: string, value: string) => {
@@ -75,6 +75,52 @@ const ThemeSettings = () => {
         { key: 'button_border_radius', value: theme.buttonBorderRadius },
         { key: 'enable_animations', value: String(theme.enableAnimations) },
         { key: 'enable_glow', value: String(theme.enableGlow) },
+        // Border settings
+        { key: 'ui_border_color', value: theme.uiBorderColor },
+        { key: 'ui_border_custom_color', value: theme.uiBorderCustomColor },
+        { key: 'ui_border_opacity', value: String(theme.uiBorderOpacity) },
+        { key: 'ui_border_width', value: theme.uiBorderWidth },
+        // Input settings
+        { key: 'ui_input_focus_color', value: theme.uiInputFocusColor },
+        { key: 'ui_input_focus_custom_color', value: theme.uiInputFocusCustomColor },
+        { key: 'ui_input_text_color', value: theme.uiInputTextColor },
+        { key: 'ui_input_bg_mode', value: theme.uiInputBgMode },
+        { key: 'ui_input_bg_custom', value: theme.uiInputBgCustom },
+
+        // Branding Opacity
+        { key: 'brand_gold_opacity', value: String(theme.brandGoldOpacity) },
+        { key: 'brand_bronze_opacity', value: String(theme.brandBronzeOpacity) },
+        { key: 'brand_dark_opacity', value: String(theme.brandDarkOpacity) },
+        { key: 'brand_dark_gray_opacity', value: String(theme.brandDarkGrayOpacity) },
+
+        // UI Elements
+        { key: 'ui_button_primary_color', value: theme.uiButtonPrimaryColor },
+        { key: 'ui_button_custom_color', value: theme.uiButtonCustomColor },
+        { key: 'ui_button_opacity', value: String(theme.uiButtonOpacity) },
+        { key: 'ui_button_brightness', value: String(theme.uiButtonBrightness) },
+
+        { key: 'ui_slider_color', value: theme.uiSliderColor },
+        { key: 'ui_slider_custom_color', value: theme.uiSliderCustomColor },
+        { key: 'ui_slider_opacity', value: String(theme.uiSliderOpacity) },
+        { key: 'ui_slider_brightness', value: String(theme.uiSliderBrightness) },
+
+        { key: 'ui_scrollbar_color', value: theme.uiScrollbarColor },
+        { key: 'ui_scrollbar_custom_color', value: theme.uiScrollbarCustomColor },
+        { key: 'ui_scrollbar_opacity', value: String(theme.uiScrollbarOpacity) },
+
+        { key: 'ui_selection_color', value: theme.uiSelectionColor },
+        { key: 'ui_selection_custom_color', value: theme.uiSelectionCustomColor },
+        { key: 'ui_selection_opacity', value: String(theme.uiSelectionOpacity) },
+
+        { key: 'ui_link_color', value: theme.uiLinkColor },
+        { key: 'ui_link_custom_color', value: theme.uiLinkCustomColor },
+        { key: 'ui_link_opacity', value: String(theme.uiLinkOpacity) },
+
+        { key: 'ui_table_stripe_strength', value: String(theme.uiTableStripeStrength) },
+
+        { key: 'ui_loader_color', value: theme.uiLoaderColor },
+        { key: 'ui_loader_custom_color', value: theme.uiLoaderCustomColor },
+
         // Custom colors
         { key: 'custom_color_primary', value: theme.customColors.primary },
         { key: 'custom_color_primary_hover', value: theme.customColors.primaryHover },
@@ -86,6 +132,11 @@ const ThemeSettings = () => {
         { key: 'custom_color_accent', value: theme.customColors.accent },
         { key: 'custom_color_secondary', value: theme.customColors.secondary },
         { key: 'custom_color_highlight', value: theme.customColors.highlight },
+        // Branding colors
+        { key: 'custom_color_brand_gold', value: theme.customColors.brandGold },
+        { key: 'custom_color_brand_bronze', value: theme.customColors.brandBronze },
+        { key: 'custom_color_brand_dark', value: theme.customColors.brandDark },
+        { key: 'custom_color_brand_dark_gray', value: theme.customColors.brandDarkGray },
 
         { key: 'active_template', value: theme.activeTemplate },
       ];
@@ -172,8 +223,10 @@ const ThemeSettings = () => {
         <div className='flex flex-wrap gap-2 border-b border-theme-border pb-4'>
           {[
             { id: 'colors', label: 'Colors', icon: Palette },
+            { id: 'branding', label: 'Branding', icon: Palette },
+            { id: 'borders', label: 'Borders', icon: Frame },
             { id: 'cards', label: 'Cards', icon: Square },
-            { id: 'buttons', label: 'Buttons', icon: Square },
+            { id: 'ui_elements', label: 'UI Elements', icon: Square },
             { id: 'typography', label: 'Typography', icon: Type },
             { id: 'effects', label: 'Effects', icon: Sparkles },
             { id: 'template', label: 'Template', icon: LayoutTemplate },
@@ -261,6 +314,296 @@ const ThemeSettings = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Branding Colors Tab */}
+        {activeTab === 'branding' && (
+          <div className='space-y-6'>
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Branding Colors</Label>
+              <p className='text-sm text-theme-text-muted mb-4'>
+                Customize the branding colors used throughout the site (lafftale-gold, lafftale-bronze, etc.)
+              </p>
+              <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                <div>
+                  <Label className='text-xs mb-1 block'>Brand Gold</Label>
+                  <div className='flex gap-2 items-center'>
+                    <input
+                      type='color'
+                      value={theme.customColors.brandGold}
+                      onChange={(e) => setCustomColor('brandGold', e.target.value)}
+                      className='w-10 h-10 rounded cursor-pointer border-0'
+                    />
+                    <input
+                      type='text'
+                      value={theme.customColors.brandGold}
+                      onChange={(e) => setCustomColor('brandGold', e.target.value)}
+                      className='flex-1 px-2 py-1 text-xs bg-theme-background border border-theme-border rounded'
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className='text-xs mb-1 block'>Brand Bronze</Label>
+                  <div className='flex gap-2 items-center'>
+                    <input
+                      type='color'
+                      value={theme.customColors.brandBronze}
+                      onChange={(e) => setCustomColor('brandBronze', e.target.value)}
+                      className='w-10 h-10 rounded cursor-pointer border-0'
+                    />
+                    <input
+                      type='text'
+                      value={theme.customColors.brandBronze}
+                      onChange={(e) => setCustomColor('brandBronze', e.target.value)}
+                      className='flex-1 px-2 py-1 text-xs bg-theme-background border border-theme-border rounded'
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className='text-xs mb-1 block'>Brand Dark</Label>
+                  <div className='flex gap-2 items-center'>
+                    <input
+                      type='color'
+                      value={theme.customColors.brandDark}
+                      onChange={(e) => setCustomColor('brandDark', e.target.value)}
+                      className='w-10 h-10 rounded cursor-pointer border-0'
+                    />
+                    <input
+                      type='text'
+                      value={theme.customColors.brandDark}
+                      onChange={(e) => setCustomColor('brandDark', e.target.value)}
+                      className='flex-1 px-2 py-1 text-xs bg-theme-background border border-theme-border rounded'
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className='text-xs mb-1 block'>Brand Dark Gray</Label>
+                  <div className='flex gap-2 items-center'>
+                    <input
+                      type='color'
+                      value={theme.customColors.brandDarkGray}
+                      onChange={(e) => setCustomColor('brandDarkGray', e.target.value)}
+                      className='w-10 h-10 rounded cursor-pointer border-0'
+                    />
+                    <input
+                      type='text'
+                      value={theme.customColors.brandDarkGray}
+                      onChange={(e) => setCustomColor('brandDarkGray', e.target.value)}
+                      className='flex-1 px-2 py-1 text-xs bg-theme-background border border-theme-border rounded'
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className='mt-6 p-4 rounded-lg' style={{ backgroundColor: 'var(--lafftale-dark)' }}>
+                <h4 className='font-semibold mb-2' style={{ color: 'var(--lafftale-gold)' }}>
+                  Preview
+                </h4>
+                <p style={{ color: 'var(--lafftale-bronze)' }}>This shows how your branding colors will look.</p>
+                <div className='mt-2 p-2 rounded' style={{ backgroundColor: 'var(--lafftale-darkgray)' }}>
+                  <span style={{ color: 'var(--lafftale-gold)' }}>Gold Text</span>
+                  <span className='mx-2'>|</span>
+                  <span style={{ color: 'var(--lafftale-bronze)' }}>Bronze Text</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Borders Tab */}
+        {activeTab === 'borders' && (
+          <div className='space-y-6'>
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border space-y-6'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div>
+                  <Label className='mb-2 block'>Border Color Mode</Label>
+                  <select
+                    value={theme.uiBorderColor}
+                    onChange={(e) =>
+                      setCardSetting('uiBorderColor', e.target.value as 'gold' | 'bronze' | 'primary' | 'custom')
+                    }
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='primary'>Match Primary Color</option>
+                    <option value='custom'>Custom Color</option>
+                  </select>
+                </div>
+
+                {theme.uiBorderColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Border Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiBorderCustomColor}
+                        onChange={(e) => setCardSetting('uiBorderCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                      <input
+                        type='text'
+                        value={theme.uiBorderCustomColor}
+                        onChange={(e) => setCardSetting('uiBorderCustomColor', e.target.value)}
+                        className='flex-1 px-2 py-1 text-sm bg-theme-background border border-theme-border rounded'
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <Label className='mb-2 block'>Border Opacity: {theme.uiBorderOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiBorderOpacity}
+                    onChange={(e) => setCardSetting('uiBorderOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                  <p className='text-xs text-theme-text-muted mt-1'>
+                    Controls transparency of all borders (Tables, Inputs, etc.)
+                  </p>
+                </div>
+
+                <div>
+                  <Label className='mb-2 block'>Border Width</Label>
+                  <select
+                    value={theme.uiBorderWidth}
+                    onChange={(e) =>
+                      setCardSetting('uiBorderWidth', e.target.value as keyof typeof BORDER_WIDTH_OPTIONS)
+                    }
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    {Object.entries(BORDER_WIDTH_OPTIONS).map(([id, opt]) => (
+                      <option key={id} value={id}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className='mt-6 border-t border-theme-border pt-6'>
+                <Label className='mb-4 block text-lg font-semibold'>Input Configuration</Label>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <div>
+                    <Label className='mb-2 block'>Input Focus Ring Color</Label>
+                    <select
+                      value={theme.uiInputFocusColor}
+                      onChange={(e) =>
+                        setCardSetting(
+                          'uiInputFocusColor',
+                          e.target.value as 'gold' | 'bronze' | 'primary' | 'border' | 'custom'
+                        )
+                      }
+                      className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                    >
+                      <option value='gold'>Match Brand Gold</option>
+                      <option value='bronze'>Match Brand Bronze</option>
+                      <option value='primary'>Match Primary Color</option>
+                      <option value='border'>Match Border Color</option>
+                      <option value='custom'>Custom Color</option>
+                    </select>
+                  </div>
+
+                  {theme.uiInputFocusColor === 'custom' && (
+                    <div>
+                      <Label className='mb-2 block'>Custom Focus Color</Label>
+                      <div className='flex gap-2 items-center'>
+                        <input
+                          type='color'
+                          value={theme.uiInputFocusCustomColor}
+                          onChange={(e) => setCardSetting('uiInputFocusCustomColor', e.target.value)}
+                          className='w-10 h-10 rounded cursor-pointer border-0'
+                        />
+                        <input
+                          type='text'
+                          value={theme.uiInputFocusCustomColor}
+                          onChange={(e) => setCardSetting('uiInputFocusCustomColor', e.target.value)}
+                          className='flex-1 px-2 py-1 text-sm bg-theme-background border border-theme-border rounded'
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <Label className='mb-2 block'>Input Text Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiInputTextColor}
+                        onChange={(e) => setCardSetting('uiInputTextColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                      <input
+                        type='text'
+                        value={theme.uiInputTextColor}
+                        onChange={(e) => setCardSetting('uiInputTextColor', e.target.value)}
+                        className='flex-1 px-2 py-1 text-sm bg-theme-background border border-theme-border rounded'
+                      />
+                    </div>
+                    <p className='text-xs text-theme-text-muted mt-1'>Ensures text is visible inside input fields.</p>
+                  </div>
+
+                  <div>
+                    <Label className='mb-2 block'>Input Background</Label>
+                    <select
+                      value={theme.uiInputBgMode}
+                      onChange={(e) =>
+                        setCardSetting('uiInputBgMode', e.target.value as 'default' | 'lighter' | 'darker' | 'custom')
+                      }
+                      className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                    >
+                      <option value='default'>Default (Match Surface)</option>
+                      <option value='lighter'>Brighter (+10%)</option>
+                      <option value='darker'>Darker (-10%)</option>
+                      <option value='custom'>Custom Color</option>
+                    </select>
+                    <p className='text-xs text-theme-text-muted mt-1'>
+                      Adjusts background brightness against the surface.
+                    </p>
+                  </div>
+
+                  {theme.uiInputBgMode === 'custom' && (
+                    <div>
+                      <Label className='mb-2 block'>Custom Background Color</Label>
+                      <div className='flex gap-2 items-center'>
+                        <input
+                          type='color'
+                          value={theme.uiInputBgCustom}
+                          onChange={(e) => setCardSetting('uiInputBgCustom', e.target.value)}
+                          className='w-10 h-10 rounded cursor-pointer border-0'
+                        />
+                        <input
+                          type='text'
+                          value={theme.uiInputBgCustom}
+                          onChange={(e) => setCardSetting('uiInputBgCustom', e.target.value)}
+                          className='flex-1 px-2 py-1 text-sm bg-theme-background border border-theme-border rounded'
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Preview Box */}
+              <div className='mt-6 border-t border-theme-border pt-6'>
+                <Label className='mb-4 block'>Border Preview</Label>
+                <div className='flex gap-4 flex-wrap'>
+                  <div className='p-4 border rounded bg-theme-surface'>Default Border</div>
+                  <div className='p-4 border rounded bg-theme-background'>Background Border</div>
+                  <Button variant='outline'>Outline Button</Button>
+                  <input
+                    type='text'
+                    placeholder='Input Border'
+                    className='p-2 border rounded bg-transparent w-full max-w-[200px]'
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -361,10 +704,11 @@ const ThemeSettings = () => {
           </div>
         )}
 
-        {/* Buttons Tab */}
-        {activeTab === 'buttons' && (
+        {/* UI Elements Tab (formerly Buttons) */}
+        {activeTab === 'ui_elements' && (
           <div className='space-y-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {/* Standard Button Styles */}
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 bg-theme-surface border border-theme-border p-4 rounded-lg'>
               <div>
                 <Label className='mb-2 block'>Button Style</Label>
                 <select
@@ -394,6 +738,297 @@ const ThemeSettings = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* 1. Buttons Customization */}
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Primary Button Color</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label className='mb-2 block'>Base Color</Label>
+                  <select
+                    value={theme.uiButtonPrimaryColor}
+                    onChange={(e) => setCardSetting('uiButtonPrimaryColor', e.target.value as any)}
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='primary'>Match Theme Primary</option>
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='custom'>Custom Color</option>
+                  </select>
+                </div>
+                {theme.uiButtonPrimaryColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiButtonCustomColor}
+                        onChange={(e) => setCardSetting('uiButtonCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                      <input
+                        type='text'
+                        value={theme.uiButtonCustomColor}
+                        onChange={(e) => setCardSetting('uiButtonCustomColor', e.target.value)}
+                        className='flex-1 px-2 py-1 text-sm bg-theme-background border border-theme-border rounded'
+                      />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className='mb-2 block'>Opacity: {theme.uiButtonOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiButtonOpacity}
+                    onChange={(e) => setCardSetting('uiButtonOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+                <div>
+                  <Label className='mb-2 block'>Brightness: {theme.uiButtonBrightness}%</Label>
+                  <input
+                    type='range'
+                    min='-100'
+                    max='100'
+                    value={theme.uiButtonBrightness}
+                    onChange={(e) => setCardSetting('uiButtonBrightness', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                  <p className='text-xs text-theme-text-muted mt-1'>Negative = Darker, Positive = Lighter</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Sliders */}
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Sliders (Range Inputs)</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label className='mb-2 block'>Slider Thumb Color</Label>
+                  <select
+                    value={theme.uiSliderColor}
+                    onChange={(e) => setCardSetting('uiSliderColor', e.target.value as any)}
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='primary'>Match Theme Primary</option>
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='custom'>Custom Color</option>
+                  </select>
+                </div>
+                {theme.uiSliderColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiSliderCustomColor}
+                        onChange={(e) => setCardSetting('uiSliderCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className='mb-2 block'>Opacity: {theme.uiSliderOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiSliderOpacity}
+                    onChange={(e) => setCardSetting('uiSliderOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+                <div>
+                  <Label className='mb-2 block'>Brightness: {theme.uiSliderBrightness}%</Label>
+                  <input
+                    type='range'
+                    min='-100'
+                    max='100'
+                    value={theme.uiSliderBrightness}
+                    onChange={(e) => setCardSetting('uiSliderBrightness', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Scrollbars */}
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Scrollbars</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label className='mb-2 block'>Thumb Color</Label>
+                  <select
+                    value={theme.uiScrollbarColor}
+                    onChange={(e) => setCardSetting('uiScrollbarColor', e.target.value as any)}
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='primary'>Match Theme Primary</option>
+                    <option value='custom'>Custom Color</option>
+                  </select>
+                </div>
+                {theme.uiScrollbarColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiScrollbarCustomColor}
+                        onChange={(e) => setCardSetting('uiScrollbarCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className='mb-2 block'>Opacity: {theme.uiScrollbarOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiScrollbarOpacity}
+                    onChange={(e) => setCardSetting('uiScrollbarOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Selection */}
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Text Selection</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label className='mb-2 block'>Highlight Color</Label>
+                  <select
+                    value={theme.uiSelectionColor}
+                    onChange={(e) => setCardSetting('uiSelectionColor', e.target.value as any)}
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='primary'>Match Theme Primary</option>
+                    <option value='custom'>Custom Color</option>
+                  </select>
+                </div>
+                {theme.uiSelectionColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiSelectionCustomColor}
+                        onChange={(e) => setCardSetting('uiSelectionCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className='mb-2 block'>Opacity: {theme.uiSelectionOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiSelectionOpacity}
+                    onChange={(e) => setCardSetting('uiSelectionOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Links */}
+            <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+              <Label className='font-semibold mb-4 block'>Links</Label>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <Label className='mb-2 block'>Link Color</Label>
+                  <select
+                    value={theme.uiLinkColor}
+                    onChange={(e) => setCardSetting('uiLinkColor', e.target.value as any)}
+                    className='w-full p-2 bg-theme-background border border-theme-border rounded'
+                  >
+                    <option value='custom'>Custom Color</option>
+                    <option value='primary'>Match Theme Primary</option>
+                    <option value='gold'>Match Brand Gold</option>
+                    <option value='bronze'>Match Brand Bronze</option>
+                    <option value='text'>Match Text Color</option>
+                  </select>
+                </div>
+                {theme.uiLinkColor === 'custom' && (
+                  <div>
+                    <Label className='mb-2 block'>Custom Color</Label>
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        type='color'
+                        value={theme.uiLinkCustomColor}
+                        onChange={(e) => setCardSetting('uiLinkCustomColor', e.target.value)}
+                        className='w-10 h-10 rounded cursor-pointer border-0'
+                      />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className='mb-2 block'>Opacity: {theme.uiLinkOpacity}%</Label>
+                  <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={theme.uiLinkOpacity}
+                    onChange={(e) => setCardSetting('uiLinkOpacity', parseInt(e.target.value))}
+                    className='w-full accent-theme-primary'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 6. Tables & Loaders */}
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+                <Label className='font-semibold mb-4 block'>Tables</Label>
+                <Label className='mb-2 block'>Zebra Stripe Strength: {theme.uiTableStripeStrength}%</Label>
+                <input
+                  type='range'
+                  min='0'
+                  max='50'
+                  value={theme.uiTableStripeStrength}
+                  onChange={(e) => setCardSetting('uiTableStripeStrength', parseInt(e.target.value))}
+                  className='w-full accent-theme-primary'
+                />
+                <p className='text-xs text-theme-text-muted mt-1'>Controls intensity of alternating row colors.</p>
+              </div>
+              <div className='p-4 bg-theme-background rounded-lg border border-theme-border'>
+                <Label className='font-semibold mb-4 block'>Loaders (Spinners)</Label>
+                <Label className='mb-2 block'>Loader Color</Label>
+                <select
+                  value={theme.uiLoaderColor}
+                  onChange={(e) => setCardSetting('uiLoaderColor', e.target.value as any)}
+                  className='w-full p-2 bg-theme-background border border-theme-border rounded mb-3'
+                >
+                  <option value='primary'>Match Theme Primary</option>
+                  <option value='gold'>Match Brand Gold</option>
+                  <option value='bronze'>Match Brand Bronze</option>
+                  <option value='custom'>Custom Color</option>
+                </select>
+                {theme.uiLoaderColor === 'custom' && (
+                  <div className='flex gap-2 items-center'>
+                    <input
+                      type='color'
+                      value={theme.uiLoaderCustomColor}
+                      onChange={(e) => setCardSetting('uiLoaderCustomColor', e.target.value)}
+                      className='w-10 h-10 rounded cursor-pointer border-0'
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

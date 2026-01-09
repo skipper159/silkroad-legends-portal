@@ -1,21 +1,21 @@
-import ActiveTemplate from '@/config/theme-config';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-const { Layout } = ActiveTemplate.components;
+import { useTheme } from '@/context/ThemeContext';
 
 const BeginnerGuide = () => {
+  const { currentTemplate, theme } = useTheme();
+  const { Layout } = currentTemplate.components;
   return (
     <Layout>
       <div
         className='py-12 bg-cover bg-center'
         style={{
-          backgroundImage: `url('${ActiveTemplate.assets.pageHeaderBackground}')`,
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
         }}
       >
         <div className='container mx-auto px-4 text-center'>
           <div className='bg-black/50 p-6 rounded-lg inline-block backdrop-blur-sm'>
             <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white'>
-              Beginner Guide <span className='text-theme-accent font-cinzel text-4xl font-bold'>Lafftale</span>
+              Beginner Guide <span className='text-theme-accent font-cinzel text-4xl font-bold'>{theme.siteName}</span>
             </h1>
             <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
               Structured, practical guide with visual aids. Everything you need to know to get started.
