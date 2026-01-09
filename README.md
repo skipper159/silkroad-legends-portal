@@ -1,5 +1,8 @@
 # 🏛️ Silkroad Legends Portal
 
+# YT Video Preview
+https://youtu.be/MSxzUPT6kqU
+
 A modern, full-stack web portal for Silkroad Online private servers. Built with React, TypeScript, and Express.js, featuring real-time player statistics, rankings, donation systems, and comprehensive admin tools.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
