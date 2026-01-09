@@ -168,21 +168,21 @@ const CharacterOverview = () => {
   return (
     <TooltipProvider>
       <div>
-        <h2 className='text-2xl font-bold text-lafftale-gold mb-6'>Character Overview</h2>
+        <h2 className='text-2xl font-bold text-theme-primary mb-6'>Character Overview</h2>
 
         {isLoading ? (
           <div className='flex justify-center p-12'>
-            <div className='w-6 h-6 border-4 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+            <div className='w-6 h-6 border-4 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
           </div>
         ) : gameAccounts.length > 0 ? (
           <div className='space-y-4'>
             <div>
               <Label>Choose Game Account</Label>
               <Select value={selectedAccountId?.toString()} onValueChange={handleAccountChange}>
-                <SelectTrigger className='bg-lafftale-dark border-lafftale-gold/30'>
+                <SelectTrigger className='bg-theme-background border-theme-primary/30'>
                   <SelectValue placeholder='Choose Account' />
                 </SelectTrigger>
-                <SelectContent className='bg-lafftale-darkgray'>
+                <SelectContent className='bg-theme-surface'>
                   {gameAccounts.map((acc) => (
                     <SelectItem key={acc.id} value={acc.id.toString()}>
                       {acc.username} ({acc.characters.length})
@@ -204,17 +204,17 @@ const CharacterOverview = () => {
                       return (
                         <Card
                           key={character.id}
-                          className={`bg-lafftale-dark/80 border-2 cursor-pointer transition-all hover:scale-105 ${
+                          className={`bg-theme-surface border-2 cursor-pointer transition-all hover:scale-105 ${
                             selectedCharacter?.id === character.id
-                              ? 'border-lafftale-gold'
-                              : 'border-lafftale-gold/30 hover:border-lafftale-gold/70'
+                              ? 'border-theme-primary'
+                              : 'border-theme-primary/30 hover:border-theme-primary/70'
                           }`}
                           onClick={() => handleCharacterSelect(character)}
                         >
                           <CardContent className='p-4'>
                             <div className='flex flex-col items-center'>
                               {/* Character Portrait */}
-                              <div className='w-16 h-16 rounded-full overflow-hidden border-2 border-lafftale-gold/50 mb-2'>
+                              <div className='w-16 h-16 rounded-full overflow-hidden border-2 border-theme-primary/50 mb-2'>
                                 <img
                                   src={portrait}
                                   alt={`${character.name} Portrait`}
@@ -226,7 +226,7 @@ const CharacterOverview = () => {
                               </div>
 
                               {/* Character Name */}
-                              <h4 className='font-bold text-lafftale-gold'>{character.name}</h4>
+                              <h4 className='font-bold text-theme-primary'>{character.name}</h4>
 
                               {/* Race with Icon */}
                               <div className='flex items-center gap-1 mb-1'>
@@ -238,11 +238,11 @@ const CharacterOverview = () => {
                                     e.currentTarget.style.display = 'none';
                                   }}
                                 />
-                                <span className='text-xs text-lafftale-bronze'>{raceInfo.name}</span>
+                                <span className='text-xs text-theme-text-muted'>{raceInfo.name}</span>
                               </div>
 
                               {/* Level */}
-                              <div className='text-sm text-lafftale-bronze'>Level {character.level}</div>
+                              <div className='text-sm text-theme-text-muted'>Level {character.level}</div>
 
                               {/* Job Levels */}
                               <div className='flex gap-2 mt-2'>
@@ -288,11 +288,11 @@ const CharacterOverview = () => {
                 </div>
               </div>
             ) : (
-              <p className='text-gray-400'>No Characters found for this Account.</p>
+              <p className='text-theme-text-muted'>No Characters found for this Account.</p>
             )}
 
             {selectedCharacter ? (
-              <Card className='border-lafftale-gold/20 bg-lafftale-dark/70'>
+              <Card className='border-theme-primary/20 bg-theme-background/70'>
                 <CardContent className='p-6'>
                   {/* Character Header with Race */}
                   <div className='flex items-center gap-3 mb-6'>
@@ -302,74 +302,74 @@ const CharacterOverview = () => {
                       className='w-6 h-6'
                     />
                     <div>
-                      <h3 className='text-xl font-bold text-lafftale-gold'>{selectedCharacter.name}</h3>
-                      <p className='text-sm text-lafftale-bronze'>{getCharacterRaceInfo(selectedCharacter).name}</p>
+                      <h3 className='text-xl font-bold text-theme-primary'>{selectedCharacter.name}</h3>
+                      <p className='text-sm text-theme-text-muted'>{getCharacterRaceInfo(selectedCharacter).name}</p>
                     </div>
                     {selectedCharacter.nickname && (
-                      <p className='text-lafftale-bronze ml-4'>Nickname: {selectedCharacter.nickname}</p>
+                      <p className='text-theme-text-muted ml-4'>Nickname: {selectedCharacter.nickname}</p>
                     )}
                   </div>
 
                   {/* First Row: Basic Info, Character Attributes, Job Levels */}
                   <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Basic Character Info */}
-                    <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                      <h4 className='text-lafftale-bronze font-bold mb-3'>Character Data</h4>
+                    <div className='p-4 bg-theme-surface/50 rounded-[var(--theme-card-radius)] border border-theme-primary/20'>
+                      <h4 className='text-theme-text-muted font-bold mb-3'>Character Data</h4>
                       <div className='space-y-2'>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>Level:</span>
-                          <span className='text-lafftale-gold'>
+                          <span className='text-theme-text-muted'>Level:</span>
+                          <span className='text-theme-primary'>
                             {selectedCharacter.level}/{selectedCharacter.maxLevel}
                           </span>
                         </div>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>Gold:</span>
+                          <span className='text-theme-text-muted'>Gold:</span>
                           <span className={getGoldColorClass(selectedCharacter.gold)}>
                             {Number(selectedCharacter.gold).toLocaleString('de-DE')}
                           </span>
                         </div>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>Stat Points:</span>
-                          <span className='text-lafftale-gold'>{selectedCharacter.statPoints}</span>
+                          <span className='text-theme-text-muted'>Stat Points:</span>
+                          <span className='text-theme-primary'>{selectedCharacter.statPoints}</span>
                         </div>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>Skill Points:</span>
-                          <span className='text-lafftale-gold'>{selectedCharacter.skillPoints}</span>
+                          <span className='text-theme-text-muted'>Skill Points:</span>
+                          <span className='text-theme-primary'>{selectedCharacter.skillPoints}</span>
                         </div>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>Guild:</span>
+                          <span className='text-theme-text-muted'>Guild:</span>
                           {selectedCharacter.GuildName ? (
                             <Link
                               to={`/guild/${encodeURIComponent(selectedCharacter.GuildName)}`}
-                              className='text-lafftale-gold hover:text-lafftale-bronze transition-colors underline'
+                              className='text-theme-primary hover:text-theme-primary/80 transition-colors underline'
                             >
                               {selectedCharacter.GuildName}
                             </Link>
                           ) : (
-                            <span className='text-lafftale-gold'>None</span>
+                            <span className='text-theme-primary'>None</span>
                           )}
                         </div>
                       </div>
                     </div>
 
                     {/* Character Attributes */}
-                    <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                      <h4 className='text-lafftale-bronze font-bold mb-3'>Attributes</h4>
+                    <div className='p-4 bg-theme-surface/50 rounded-[var(--theme-card-radius)] border border-theme-primary/20'>
+                      <h4 className='text-theme-text-muted font-bold mb-3'>Attributes</h4>
                       <div className='space-y-2'>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>STR:</span>
-                          <span className='text-white'>{selectedCharacter.Strength}</span>
+                          <span className='text-theme-text-muted'>STR:</span>
+                          <span className='text-theme-text'>{selectedCharacter.Strength}</span>
                         </div>
                         <div className='flex justify-between'>
-                          <span className='text-gray-300'>INT:</span>
-                          <span className='text-white'>{selectedCharacter.Intellect}</span>
+                          <span className='text-theme-text-muted'>INT:</span>
+                          <span className='text-theme-text'>{selectedCharacter.Intellect}</span>
                         </div>
                         <div className='space-y-1'>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>HP:</span>
-                            <span className='text-white'>{selectedCharacter.HP}</span>
+                            <span className='text-theme-text-muted'>HP:</span>
+                            <span className='text-theme-text'>{selectedCharacter.HP}</span>
                           </div>
-                          <div className='w-full bg-gray-700 rounded-full h-2'>
+                          <div className='w-full bg-theme-surface rounded-full h-2'>
                             <div
                               className='bg-red-500 h-2 rounded-full transition-all duration-300'
                               style={{ width: '100%' }}
@@ -378,10 +378,10 @@ const CharacterOverview = () => {
                         </div>
                         <div className='space-y-1'>
                           <div className='flex justify-between'>
-                            <span className='text-gray-300'>MP:</span>
-                            <span className='text-white'>{selectedCharacter.MP}</span>
+                            <span className='text-theme-text-muted'>MP:</span>
+                            <span className='text-theme-text'>{selectedCharacter.MP}</span>
                           </div>
-                          <div className='w-full bg-gray-700 rounded-full h-2'>
+                          <div className='w-full bg-theme-surface rounded-full h-2'>
                             <div
                               className='bg-blue-500 h-2 rounded-full transition-all duration-300'
                               style={{ width: '100%' }}
@@ -392,29 +392,29 @@ const CharacterOverview = () => {
                     </div>
 
                     {/* Job Levels */}
-                    <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                      <h4 className='text-lafftale-bronze font-bold mb-3'>Job Levels</h4>
+                    <div className='p-4 bg-theme-surface/50 rounded-[var(--theme-card-radius)] border border-theme-primary/20'>
+                      <h4 className='text-theme-text-muted font-bold mb-3'>Job Levels</h4>
                       <div className='space-y-2'>
                         <div className='flex items-center justify-between'>
                           <div className='flex items-center gap-2'>
                             <img src={getJobIcon('trader')} alt='Trader' className='w-5 h-5' />
-                            <span className='text-gray-300'>Trader:</span>
+                            <span className='text-theme-text-muted'>Trader:</span>
                           </div>
-                          <span className='text-white'>{selectedCharacter.traderLevel || 0}</span>
+                          <span className='text-theme-text'>{selectedCharacter.traderLevel || 0}</span>
                         </div>
                         <div className='flex items-center justify-between'>
                           <div className='flex items-center gap-2'>
                             <img src={getJobIcon('hunter')} alt='Hunter' className='w-5 h-5' />
-                            <span className='text-gray-300'>Hunter:</span>
+                            <span className='text-theme-text-muted'>Hunter:</span>
                           </div>
-                          <span className='text-white'>{selectedCharacter.hunterLevel || 0}</span>
+                          <span className='text-theme-text'>{selectedCharacter.hunterLevel || 0}</span>
                         </div>
                         <div className='flex items-center justify-between'>
                           <div className='flex items-center gap-2'>
                             <img src={getJobIcon('thief')} alt='Thief' className='w-5 h-5' />
-                            <span className='text-gray-300'>Thief:</span>
+                            <span className='text-theme-text-muted'>Thief:</span>
                           </div>
-                          <span className='text-white'>{selectedCharacter.thiefLevel || 0}</span>
+                          <span className='text-theme-text'>{selectedCharacter.thiefLevel || 0}</span>
                         </div>
                       </div>
                     </div>
@@ -424,17 +424,17 @@ const CharacterOverview = () => {
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6'>
                     {/* Equipment */}
                     <div className='flex flex-col items-center'>
-                      <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Equipment</h3>
+                      <h3 className='text-xl font-bold text-theme-primary mb-4'>Equipment</h3>
 
                       {/* Item Points Section */}
                       <div className='mb-4'>
-                        <div className='p-3 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20 min-w-[200px]'>
+                        <div className='p-3 bg-theme-surface/50 rounded-[var(--theme-card-radius)] border border-theme-primary/20 min-w-[200px]'>
                           <div className='text-center'>
-                            <h4 className='text-lafftale-bronze font-bold mb-1 text-sm'>Item Points</h4>
-                            <div className='text-xl font-bold text-lafftale-gold'>
+                            <h4 className='text-theme-text-muted font-bold mb-1 text-sm'>Item Points</h4>
+                            <div className='text-xl font-bold text-theme-primary'>
                               {itemPointsLoading ? (
                                 <div className='flex justify-center'>
-                                  <div className='w-4 h-4 border-2 border-lafftale-gold border-t-transparent rounded-full animate-spin'></div>
+                                  <div className='w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin'></div>
                                 </div>
                               ) : (
                                 itemPoints.toLocaleString('de-DE')
@@ -451,7 +451,7 @@ const CharacterOverview = () => {
 
                     {/* Inventory */}
                     <div className='flex flex-col items-center'>
-                      <h3 className='text-xl font-bold text-lafftale-gold mb-4'>Inventory</h3>
+                      <h3 className='text-xl font-bold text-theme-primary mb-4'>Inventory</h3>
                       <div className='flex justify-center w-full'>
                         {selectedCharacter.inventory && (
                           <CharacterInventory characterId={selectedCharacter.id} items={selectedCharacter.inventory} />
@@ -461,16 +461,16 @@ const CharacterOverview = () => {
                   </div>
 
                   {/* Third Row: Position */}
-                  <div className='p-4 bg-lafftale-dark/50 rounded-lg border border-lafftale-gold/20'>
-                    <h4 className='text-lafftale-bronze font-bold mb-3'>Position</h4>
+                  <div className='p-4 bg-theme-surface/50 rounded-[var(--theme-card-radius)] border border-theme-primary/20'>
+                    <h4 className='text-theme-text-muted font-bold mb-3'>Position</h4>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div className='flex justify-between'>
-                        <span className='text-gray-300'>Region:</span>
-                        <span className='text-white'>{selectedCharacter.region}</span>
+                        <span className='text-theme-text-muted'>Region:</span>
+                        <span className='text-theme-text'>{selectedCharacter.region}</span>
                       </div>
                       <div className='flex justify-between'>
-                        <span className='text-gray-300'>Coordinates:</span>
-                        <span className='text-white'>
+                        <span className='text-theme-text-muted'>Coordinates:</span>
+                        <span className='text-theme-text'>
                           X: {Math.round(selectedCharacter.PosX)} / Y: {Math.round(selectedCharacter.PosY)} / Z:{' '}
                           {Math.round(selectedCharacter.PosZ)}
                         </span>

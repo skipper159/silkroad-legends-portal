@@ -265,7 +265,7 @@ const UserVoting = () => {
             <Card>
               <CardContent className='p-4'>
                 <div className='flex items-center space-x-2'>
-                  <Vote className='h-5 w-5 text-blue-500' />
+                  <Vote className='h-5 w-5 text-theme-primary' />
                   <div>
                     <p className='text-sm font-medium'>Total Votes</p>
                     <p className='text-2xl font-bold'>{getTotalVotes()}</p>
@@ -277,7 +277,7 @@ const UserVoting = () => {
             <Card>
               <CardContent className='p-4'>
                 <div className='flex items-center space-x-2'>
-                  <Gift className='h-5 w-5 text-green-500' />
+                  <Gift className='h-5 w-5 text-theme-secondary' />
                   <div>
                     <p className='text-sm font-medium'>Earned Silk</p>
                     <p className='text-2xl font-bold'>{getTotalRewardsEarned()}</p>
@@ -289,7 +289,7 @@ const UserVoting = () => {
             <Card>
               <CardContent className='p-4'>
                 <div className='flex items-center space-x-2'>
-                  <History className='h-5 w-5 text-purple-500' />
+                  <History className='h-5 w-5 text-theme-text-muted' />
                   <div>
                     <p className='text-sm font-medium'>History</p>
                     <Button
@@ -327,7 +327,7 @@ const UserVoting = () => {
                     <Card
                       key={site.id}
                       className={`transition-all hover:shadow-md ${
-                        canVote ? 'border-theme-secondary' : 'border-theme-border'
+                        canVote ? 'border-theme-secondary/50' : 'border-theme-border'
                       }`}
                     >
                       <CardContent className='p-4'>
@@ -350,13 +350,15 @@ const UserVoting = () => {
                           </div>
                           {canVote ? (
                             <Badge
-                              variant='default'
-                              className='bg-theme-secondary/20 text-theme-secondary hover:bg-theme-secondary/30'
+                              variant='outline'
+                              className='bg-theme-secondary/20 text-theme-secondary border-theme-secondary/30'
                             >
                               Available
                             </Badge>
                           ) : (
-                            <Badge variant='secondary'>Cooldown</Badge>
+                            <Badge variant='outline' className='text-theme-text-muted border-theme-border'>
+                              Cooldown
+                            </Badge>
                           )}
                         </div>
 
@@ -422,9 +424,12 @@ const UserVoting = () => {
                     <p className='text-center text-muted-foreground py-8'>No votes yet</p>
                   ) : (
                     voteHistory.map((vote) => (
-                      <div key={vote.id} className='flex items-center justify-between p-3 bg-muted rounded-lg'>
+                      <div
+                        key={vote.id}
+                        className='flex items-center justify-between p-3 bg-theme-background rounded-lg border border-theme-border'
+                      >
                         <div>
-                          <p className='font-medium'>{vote.site_name}</p>
+                          <p className='font-medium text-theme-text'>{vote.site_name}</p>
                           <p className='text-sm text-muted-foreground'>
                             {new Date(vote.voted_at).toLocaleDateString('en-US', {
                               year: 'numeric',
@@ -435,7 +440,10 @@ const UserVoting = () => {
                             })}
                           </p>
                         </div>
-                        <Badge variant='outline' className='text-green-600'>
+                        <Badge
+                          variant='outline'
+                          className='text-theme-secondary border-theme-secondary/30 bg-theme-secondary/10'
+                        >
                           +{vote.reward_silk} Silk
                         </Badge>
                       </div>

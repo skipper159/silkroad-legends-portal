@@ -129,7 +129,10 @@ const SupportTickets = () => {
     <>
       <div className='flex justify-between items-center mb-4'>
         <h2 className='text-xl font-bold text-theme-primary'>Support Tickets</h2>
-        <Button onClick={() => setOpenNewModal(true)} className='flex items-center gap-2'>
+        <Button
+          onClick={() => setOpenNewModal(true)}
+          className='flex items-center gap-2 bg-theme-primary text-theme-text-on-primary hover:bg-theme-primary/90'
+        >
           <PlusCircle size={16} />
           New Ticket
         </Button>
@@ -142,8 +145,8 @@ const SupportTickets = () => {
         </div>
       ) : (
         <Card className='overflow-x-auto'>
-          <table className='min-w-full text-left text-sm text-gray-300'>
-            <thead className='bg-theme-surface/50 text-theme-primary uppercase'>
+          <table className='min-w-full text-left text-sm text-theme-text-muted'>
+            <thead className='bg-theme-surface/80 text-theme-primary uppercase'>
               <tr>
                 <th className='p-3'>Subject</th>
                 <th className='p-3'>Priority</th>
@@ -161,7 +164,7 @@ const SupportTickets = () => {
                       <span
                         className={
                           ticket.Priority === 'high'
-                            ? 'text-red-500'
+                            ? 'text-red-400'
                             : ticket.Priority === 'normal'
                             ? 'text-yellow-400'
                             : 'text-green-400'
@@ -173,7 +176,9 @@ const SupportTickets = () => {
                     <td className='p-3'>
                       <span
                         className={`px-2 py-1 rounded text-xs font-semibold ${
-                          ticket.Status === 'open' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-200'
+                          ticket.Status === 'open'
+                            ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                            : 'bg-theme-surface text-theme-text-muted border border-theme-border'
                         }`}
                       >
                         {ticket.Status}
@@ -189,7 +194,7 @@ const SupportTickets = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className='p-8 text-center text-gray-400'>
+                  <td colSpan={5} className='p-8 text-center text-theme-text-muted'>
                     <div className='space-y-2'>
                       <div>No support tickets found</div>
                       <div className='text-sm'>Create your first ticket if you need help!</div>

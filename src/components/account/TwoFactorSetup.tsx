@@ -193,7 +193,9 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
         {/* Status Display */}
         <div
           className={`flex items-center gap-3 p-4 rounded-lg mb-6 ${
-            isEnabled ? 'bg-green-500/10 border border-green-500/30' : 'bg-gray-700/50 border border-gray-600'
+            isEnabled
+              ? 'bg-green-500/10 border border-green-500/30'
+              : 'bg-theme-background/50 border border-theme-text-muted/30'
           }`}
         >
           {isEnabled ? (
@@ -208,8 +210,8 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
             <>
               <ShieldOff className='h-6 w-6 text-gray-400' />
               <div>
-                <p className='font-semibold text-gray-300'>2FA is Disabled</p>
-                <p className='text-sm text-gray-400'>Enable 2FA to add extra security to your account</p>
+                <p className='font-semibold text-theme-text-muted'>2FA is Disabled</p>
+                <p className='text-sm text-theme-text-muted'>Enable 2FA to add extra security to your account</p>
               </div>
             </>
           )}
@@ -219,8 +221,8 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
         {setupMode && qrCode && (
           <div className='space-y-6'>
             <div className='text-center'>
-              <h3 className='text-lg font-semibold text-white mb-2'>Scan QR Code</h3>
-              <p className='text-sm text-gray-400 mb-4'>
+              <h3 className='text-lg font-semibold text-theme-primary mb-2'>Scan QR Code</h3>
+              <p className='text-sm text-theme-text-muted mb-4'>
                 Use Google Authenticator, Authy, or any TOTP app to scan this code
               </p>
 
@@ -232,10 +234,17 @@ const TwoFactorSetup = ({ onStatusChange }: TwoFactorSetupProps) => {
               {/* Manual Entry */}
               {secret && (
                 <div className='mt-4'>
-                  <p className='text-sm text-gray-400 mb-2'>Or enter this code manually:</p>
+                  <p className='text-sm text-theme-text-muted mb-2'>Or enter this code manually:</p>
                   <div className='flex items-center justify-center gap-2'>
-                    <code className='px-3 py-2 bg-gray-800 rounded text-theme-primary font-mono text-sm'>{secret}</code>
-                    <Button variant='ghost' size='sm' onClick={copySecret} className='text-gray-400 hover:text-white'>
+                    <code className='px-3 py-2 bg-theme-background rounded text-theme-primary font-mono text-sm'>
+                      {secret}
+                    </code>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      onClick={copySecret}
+                      className='text-theme-text-muted hover:text-theme-primary'
+                    >
                       {copied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
                     </Button>
                   </div>

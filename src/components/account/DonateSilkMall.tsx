@@ -140,7 +140,7 @@ const DonateSilkMall = () => {
               <div className='mt-6 p-4 bg-theme-primary/10 rounded-lg border border-theme-primary/30'>
                 <div className='flex justify-between items-center mb-2'>
                   <span className='text-theme-text-muted'>Price:</span>
-                  <span className='text-white font-bold'>${selectedPack?.price}.00</span>
+                  <span className='text-theme-text font-bold'>${selectedPack?.price}.00</span>
                 </div>
                 <div className='flex justify-between items-center mb-2'>
                   <span className='text-theme-text-muted'>Silk Amount:</span>
@@ -155,7 +155,7 @@ const DonateSilkMall = () => {
                 {selectedPack?.bonus ? (
                   <div className='mt-3 pt-3 border-t border-theme-primary/20 flex justify-between items-center'>
                     <span className='text-theme-text-muted'>Total:</span>
-                    <span className='text-white font-bold'>{selectedPack?.amount + selectedPack?.bonus} Silk</span>
+                    <span className='text-theme-text font-bold'>{selectedPack?.amount + selectedPack?.bonus} Silk</span>
                   </div>
                 ) : null}
               </div>
@@ -180,7 +180,7 @@ const DonateSilkMall = () => {
                   }`}
                   onClick={() => selectPaymentMethod('payop')}
                 >
-                  <span className='text-white font-semibold'>PayOP</span>
+                  <span className='text-theme-text font-semibold'>PayOP</span>
                   <div className='w-8 h-8 bg-[#1583d7] rounded-full flex items-center justify-center'>
                     <span className='text-white font-bold text-sm'>PO</span>
                   </div>
@@ -194,8 +194,8 @@ const DonateSilkMall = () => {
                   }`}
                   onClick={() => selectPaymentMethod('nowcrypto')}
                 >
-                  <span className='text-white font-semibold'>NOWPayments (Crypto)</span>
-                  <Bitcoin size={20} className='text-white' />
+                  <span className='text-theme-text font-semibold'>NOWPayments (Crypto)</span>
+                  <Bitcoin size={20} className='text-theme-text' />
                 </Button>
               </div>
             </CardContent>
@@ -206,7 +206,7 @@ const DonateSilkMall = () => {
               >
                 <Coins className='mr-2' size={20} /> Purchase Silk
               </Button>
-              <p className='text-center text-xs text-gray-400'>
+              <p className='text-center text-xs text-theme-text-muted'>
                 Silk will be credited to your account immediately after successful payment.
               </p>
             </CardFooter>

@@ -151,6 +151,10 @@ export interface ThemeSettings {
   seoDescription: string;
   // === NEW: Download ===
   downloadUrl: string;
+  // === NEW: Home Page Section Backgrounds ===
+  homeNewsSectionBgMode: 'transparent' | 'custom';
+  homeNewsSectionBgUrl: string;
+  homeNewsSectionBgSettings: BackgroundSettings;
   // === NEW: Template ===
   activeTemplate: TemplateId;
 }

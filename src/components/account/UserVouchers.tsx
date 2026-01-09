@@ -157,15 +157,15 @@ const UserVouchers: React.FC = () => {
     const typeString = getTypeString(type);
     switch (typeString.toLowerCase()) {
       case 'silk':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-500/10 text-blue-400 border-blue-500/30';
       case 'gold':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
       case 'experience':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-500/10 text-green-400 border-green-500/30';
       case 'item':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-theme-surface text-theme-text-muted border-theme-border';
     }
   };
 
@@ -189,14 +189,14 @@ const UserVouchers: React.FC = () => {
     switch (status.toLowerCase()) {
       case 'redeemed':
       case 'success':
-        return <CheckCircle className='h-4 w-4 text-green-500' />;
+        return <CheckCircle className='h-4 w-4 text-green-400' />;
       case 'failed':
       case 'error':
-        return <XCircle className='h-4 w-4 text-red-500' />;
+        return <XCircle className='h-4 w-4 text-red-400' />;
       case 'pending':
-        return <Clock className='h-4 w-4 text-yellow-500' />;
+        return <Clock className='h-4 w-4 text-yellow-400' />;
       default:
-        return <CheckCircle className='h-4 w-4 text-green-500' />;
+        return <CheckCircle className='h-4 w-4 text-green-400' />;
     }
   };
 
@@ -320,7 +320,7 @@ const UserVouchers: React.FC = () => {
               {voucherHistory.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className='flex items-center justify-between p-4 bg-theme-background/50 rounded-lg border border-theme-highlight/20'
+                  className='flex items-center justify-between p-4 bg-theme-surface rounded-lg border border-theme-primary/10'
                 >
                   <div className='flex items-center gap-3'>
                     <div className='text-2xl'>{getTypeIcon(voucher.type)}</div>
@@ -330,14 +330,19 @@ const UserVouchers: React.FC = () => {
                         {getStatusIcon(voucher.status)}
                       </div>
                       <div className='flex items-center gap-2 mt-1'>
-                        <Badge className={getTypeColor(voucher.type)}>{getTypeString(voucher.type)}</Badge>
+                        <Badge variant='outline' className={getTypeColor(voucher.type)}>
+                          {getTypeString(voucher.type)}
+                        </Badge>
                         {voucher.max_uses > 1 && (
                           <Badge variant='outline' className='text-xs text-blue-400 border-blue-400'>
                             {voucher.used_count}/{voucher.max_uses} used
                           </Badge>
                         )}
                         {voucher.game_account_name && !historyFilterJid && (
-                          <Badge variant='outline' className='text-xs text-purple-400 border-purple-400'>
+                          <Badge
+                            variant='outline'
+                            className='text-xs text-purple-400 border-purple-400/30 bg-purple-500/10'
+                          >
                             {voucher.game_account_name}
                           </Badge>
                         )}

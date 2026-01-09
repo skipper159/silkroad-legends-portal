@@ -397,26 +397,15 @@ const ThemeSettings = () => {
               </div>
 
               {/* Preview */}
-              <div
-                className='mt-6 p-4 rounded-lg'
-                style={{ backgroundColor: theme.customColors.brandDark || 'var(--lafftale-dark)' }}
-              >
-                <h4
-                  className='font-semibold mb-2'
-                  style={{ color: theme.customColors.brandGold || 'var(--lafftale-gold)' }}
-                >
+              <div className='mt-6 p-4 rounded-lg' style={{ backgroundColor: theme.customColors.brandDark }}>
+                <h4 className='font-semibold mb-2' style={{ color: theme.customColors.brandGold }}>
                   Preview
                 </h4>
-                <p style={{ color: theme.customColors.brandBronze || 'var(--lafftale-bronze)' }}>
-                  This shows how your branding colors will look.
-                </p>
-                <div
-                  className='mt-2 p-2 rounded'
-                  style={{ backgroundColor: theme.customColors.brandDarkGray || 'var(--lafftale-darkgray)' }}
-                >
-                  <span style={{ color: theme.customColors.brandGold || 'var(--lafftale-gold)' }}>Gold Text</span>
+                <p style={{ color: theme.customColors.brandBronze }}>This shows how your branding colors will look.</p>
+                <div className='mt-2 p-2 rounded' style={{ backgroundColor: theme.customColors.brandDarkGray }}>
+                  <span style={{ color: theme.customColors.brandGold }}>Gold Text</span>
                   <span className='mx-2'>|</span>
-                  <span style={{ color: theme.customColors.brandBronze || 'var(--lafftale-bronze)' }}>Bronze Text</span>
+                  <span style={{ color: theme.customColors.brandBronze }}>Bronze Text</span>
                 </div>
               </div>
             </div>
@@ -1219,7 +1208,11 @@ const ThemeSettings = () => {
         <LivePreview />
 
         {/* Save Button */}
-        <Button onClick={handleSaveAll} disabled={isSaving} className='w-full'>
+        <Button
+          onClick={handleSaveAll}
+          disabled={isSaving}
+          className='w-full bg-theme-primary hover:bg-theme-primary-hover text-theme-background'
+        >
           {isSaving ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Saving...

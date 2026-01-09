@@ -171,6 +171,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             uiLoaderColor: data.ui_loader_color || defaultTheme.uiLoaderColor,
             uiLoaderCustomColor: data.ui_loader_custom_color || defaultTheme.uiLoaderCustomColor,
 
+            // Home Page Section Backgrounds
+            homeNewsSectionBgMode: data.home_news_section_bg_mode || defaultTheme.homeNewsSectionBgMode,
+            homeNewsSectionBgUrl: data.home_news_section_bg_url || defaultTheme.homeNewsSectionBgUrl,
+            homeNewsSectionBgSettings: data.home_news_section_bg_settings
+              ? JSON.parse(data.home_news_section_bg_settings)
+              : defaultTheme.homeNewsSectionBgSettings,
+
             activeTemplate: (data.active_template as TemplateId) || defaultTheme.activeTemplate,
           };
 

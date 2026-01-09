@@ -83,6 +83,9 @@ const BrandingSettings = () => {
           if ((theme.backgrounds as any)[bgType]) {
             setBackground(bgType as any, { url: imageUrl });
           }
+        } else if (fieldKey === 'homeNewsSectionBg') {
+          // Home Page News Section background
+          setBranding('homeNewsSectionBgUrl', imageUrl);
         }
 
         toast({ title: 'Image uploaded successfully' });
@@ -154,6 +157,11 @@ const BrandingSettings = () => {
         seo_description: theme.seoDescription,
         download_url: theme.downloadUrl,
         hero_media: JSON.stringify(theme.heroMedia),
+
+        // Home Page Section Backgrounds
+        home_news_section_bg_mode: theme.homeNewsSectionBgMode,
+        home_news_section_bg_url: theme.homeNewsSectionBgUrl,
+        home_news_section_bg_settings: JSON.stringify(theme.homeNewsSectionBgSettings),
       };
 
       const response = await fetch(`${weburl}/api/settings`, {
@@ -265,9 +273,12 @@ const BrandingSettings = () => {
         />
 
         <Tabs defaultValue='images' className='space-y-4'>
-          <TabsList className='grid w-full grid-cols-5 bg-theme-background'>
+          <TabsList className='grid w-full grid-cols-6 bg-theme-background'>
             <TabsTrigger value='images' className='flex gap-2'>
               <ImageIcon className='h-4 w-4' /> Images
+            </TabsTrigger>
+            <TabsTrigger value='home-sections' className='flex gap-2'>
+              <LayoutTemplate className='h-4 w-4' /> Home Sections
             </TabsTrigger>
             <TabsTrigger value='hero-media' className='flex gap-2'>
               <Play className='h-4 w-4' /> Hero Media
@@ -380,6 +391,138 @@ const BrandingSettings = () => {
                 No image settings available for this template.
               </div>
             )}
+          </TabsContent>
+
+          {/* Home Page Sections Tab */}
+          <TabsContent value='home-sections' className='space-y-6'>
+            <div className='border border-theme-border rounded-lg p-4'>
+              <Label className='text-lg font-semibold'>News Section Background</Label>
+              <p className='text-xs text-theme-text-muted mb-4'>
+                Configure the background for the "Latest Updates" section on the Home page.
+              </p>
+
+              <div className='space-y-4'>
+                <div className='flex gap-4'>
+                  <label className='flex items-center gap-2 cursor-pointer'>
+                    <input
+                      type='radio'
+                      name='newsSectionBgMode'
+                      value='transparent'
+                      checked={theme.homeNewsSectionBgMode === 'transparent'}
+                      onChange={() => setBranding('homeNewsSectionBgMode', 'transparent')}
+                      className='accent-theme-primary'
+                    />
+                    <span className='text-sm'>Transparent (show global background)</span>
+                  </label>
+                  <label className='flex items-center gap-2 cursor-pointer'>
+                    <input
+                      type='radio'
+                      name='newsSectionBgMode'
+                      value='custom'
+                      checked={theme.homeNewsSectionBgMode === 'custom'}
+                      onChange={() => setBranding('homeNewsSectionBgMode', 'custom')}
+                      className='accent-theme-primary'
+                    />
+                    <span className='text-sm'>Custom Image</span>
+                  </label>
+                </div>
+
+                {theme.homeNewsSectionBgMode === 'custom' && (
+                  <div className='space-y-4 pt-4 border-t border-theme-border/50'>
+                    <div className='flex gap-4 items-center'>
+                      {theme.homeNewsSectionBgUrl && (
+                        <img
+                          src={
+                            theme.homeNewsSectionBgUrl.startsWith('http')
+                              ? theme.homeNewsSectionBgUrl
+                              : `${weburl}${theme.homeNewsSectionBgUrl}`
+                          }
+                          alt='News Section Background'
+                          className='h-20 w-auto max-w-[150px] object-cover border border-theme-border rounded'
+                        />
+                      )}
+                      <div className='flex gap-2'>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          disabled={uploading === 'homeNewsSectionBg'}
+                          onClick={() => handleCreateUploadClick('homeNewsSectionBg')}
+                        >
+                          {uploading === 'homeNewsSectionBg' ? (
+                            <Loader2 className='h-3 w-3 animate-spin' />
+                          ) : (
+                            <Upload className='h-3 w-3 mr-2' />
+                          )}
+                          Upload
+                        </Button>
+                        {theme.homeNewsSectionBgUrl && (
+                          <Button
+                            type='button'
+                            variant='destructive'
+                            size='sm'
+                            onClick={() => setBranding('homeNewsSectionBgUrl', '')}
+                          >
+                            <Trash2 className='h-3 w-3' />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Background Controls */}
+                    <div className='mt-4 space-y-3 p-3 bg-theme-background/50 rounded-md border border-theme-border/50'>
+                      <div>
+                        <Label className='text-xs'>
+                          Image Opacity: {theme.homeNewsSectionBgSettings?.opacity || 100}%
+                        </Label>
+                        <Slider
+                          value={[theme.homeNewsSectionBgSettings?.opacity || 100]}
+                          onValueChange={([v]) =>
+                            setBranding('homeNewsSectionBgSettings', { ...theme.homeNewsSectionBgSettings, opacity: v })
+                          }
+                          min={0}
+                          max={100}
+                          step={5}
+                          className='mt-2'
+                        />
+                      </div>
+                      <div>
+                        <Label className='text-xs'>
+                          Overlay Opacity: {theme.homeNewsSectionBgSettings?.overlayOpacity || 50}%
+                        </Label>
+                        <Slider
+                          value={[theme.homeNewsSectionBgSettings?.overlayOpacity || 50]}
+                          onValueChange={([v]) =>
+                            setBranding('homeNewsSectionBgSettings', {
+                              ...theme.homeNewsSectionBgSettings,
+                              overlayOpacity: v,
+                            })
+                          }
+                          min={0}
+                          max={100}
+                          step={5}
+                          className='mt-2'
+                        />
+                      </div>
+                      <div className='flex gap-2 items-center'>
+                        <Label className='text-xs'>Overlay Color</Label>
+                        <input
+                          type='color'
+                          value={theme.homeNewsSectionBgSettings?.overlayColor || '#000000'}
+                          onChange={(e) =>
+                            setBranding('homeNewsSectionBgSettings', {
+                              ...theme.homeNewsSectionBgSettings,
+                              overlayColor: e.target.value,
+                            })
+                          }
+                          className='h-6 w-8 rounded border-0 cursor-pointer'
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </TabsContent>
 
           {/* Hero Media Tab */}

@@ -130,5 +130,9 @@ export const defaultTheme: ThemeSettings = {
     'Join the ultimate Silkroad Online experience on Silkroad Legends private server.',
   // Download
   downloadUrl: '',
+  // Home Page Section Backgrounds
+  homeNewsSectionBgMode: 'transparent',
+  homeNewsSectionBgUrl: '',
+  homeNewsSectionBgSettings: { ...defaultBackgroundSettings },
   activeTemplate: 'modern-v2', // Default to Modern V2
 };

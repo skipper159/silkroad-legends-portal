@@ -185,7 +185,7 @@ const Account = () => {
           <div className='card p-8 text-center'>
             <h2 className='text-2xl text-red-500 mb-4'>Error</h2>
             <p className='text-theme-text-muted mb-4'>{error || 'User data could not be loaded'}</p>
-            <Button onClick={() => window.location.reload()} className='bg-theme-primary text-white'>
+            <Button onClick={() => window.location.reload()} className='bg-theme-primary text-theme-text-on-primary'>
               Try again
             </Button>
           </div>
@@ -231,13 +231,13 @@ const Account = () => {
 
                   {/* Game Accounts mit Silk-Guthaben */}
                   {gameAccounts.length > 0 && (
-                    <div className='mb-6 px-2 py-4 bg-theme-surface border border-theme-primary/30 rounded-lg'>
+                    <div className='mb-6 px-2 py-4 bg-theme-surface border border-theme-primary/30 rounded-[var(--theme-card-radius)]'>
                       <h3 className='text-md font-bold text-theme-primary mb-3 text-center'>Silk Currency</h3>
                       <div className='space-y-2'>
                         {gameAccounts.map((account) => (
                           <div
                             key={account.JID}
-                            className='p-2 bg-theme-surface rounded-lg border border-theme-primary/20 flex justify-between items-center'
+                            className='p-2 bg-theme-surface rounded-[var(--theme-card-radius)] border border-theme-primary/20 flex justify-between items-center'
                           >
                             <span className='text-theme-primary font-cinzel font-medium'>{account.StrUserID}</span>
                             <div className='flex items-center gap-1 text-theme-primary'>
@@ -250,29 +250,53 @@ const Account = () => {
                     </div>
                   )}
 
-                  <TabsList className='grid grid-cols-1 h-auto gap-2'>
-                    <TabsTrigger value='web-account' className='flex justify-start gap-3 items-center'>
+                  <TabsList className='grid grid-cols-1 h-auto gap-2 bg-transparent p-0'>
+                    <TabsTrigger
+                      value='web-account'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <Settings size={18} /> Account Settings
                     </TabsTrigger>
-                    <TabsTrigger value='game-accounts' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='game-accounts'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <Shield size={18} /> Game Accounts
                     </TabsTrigger>
-                    <TabsTrigger value='characters' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='characters'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <User size={18} /> Character Overview
                     </TabsTrigger>
-                    <TabsTrigger value='donate' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='donate'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <Gift size={18} /> Donate / SilkMall
                     </TabsTrigger>
-                    <TabsTrigger value='vouchers' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='vouchers'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <Gift size={18} /> Vouchers
                     </TabsTrigger>
-                    <TabsTrigger value='referrals' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='referrals'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <UserPlus size={18} /> Referrals
                     </TabsTrigger>
-                    <TabsTrigger value='voting' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='voting'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <Vote size={18} /> Voting
                     </TabsTrigger>
-                    <TabsTrigger value='tickets' className='flex justify-start gap-3 items-center'>
+                    <TabsTrigger
+                      value='tickets'
+                      className='w-full flex justify-start gap-3 items-center border border-theme-primary/20 bg-theme-primary/20 text-theme-primary hover:bg-theme-primary/30 data-[state=active]:bg-theme-primary data-[state=active]:text-theme-text-on-primary'
+                    >
                       <TicketCheck size={18} /> Support Tickets
                     </TabsTrigger>
                   </TabsList>

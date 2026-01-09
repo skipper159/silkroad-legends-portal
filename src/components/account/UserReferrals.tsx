@@ -257,20 +257,20 @@ const UserReferrals: React.FC = () => {
   const getRewardTypeColor = (type: string) => {
     switch (type) {
       case 'silk':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-500/10 text-blue-400 border-blue-500/30';
       case 'gold':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
       case 'item':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-theme-surface text-theme-text-muted border-theme-border';
     }
   };
 
   if (loading) {
     return (
       <div className='text-center py-8'>
-        <div className='text-gray-400'>Loading referral data...</div>
+        <div className='text-theme-text-muted'>Loading referral data...</div>
       </div>
     );
   }
@@ -399,7 +399,7 @@ const UserReferrals: React.FC = () => {
         <CardContent>
           {referrals.length === 0 ? (
             <div className='text-center py-8'>
-              <Users className='h-12 w-12 text-gray-500 mx-auto mb-4' />
+              <Users className='h-12 w-12 text-theme-text-muted mx-auto mb-4' />
               <p className='text-theme-text-muted'>You don't have any referrals yet</p>
               <p className='text-theme-text-muted text-sm'>Share your referral code with friends</p>
             </div>
@@ -408,7 +408,7 @@ const UserReferrals: React.FC = () => {
               {referrals.map((referral) => (
                 <div
                   key={referral.id}
-                  className='flex items-center justify-between p-4 bg-theme-background/50 rounded-lg border border-theme-highlight/20'
+                  className='flex items-center justify-between p-4 bg-theme-surface rounded-lg border border-theme-primary/10'
                 >
                   <div className='flex items-center gap-3'>
                     <Users className='h-5 w-5 text-theme-highlight' />
@@ -425,9 +425,10 @@ const UserReferrals: React.FC = () => {
                     <Badge
                       className={
                         referral.invited_jid
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                          ? 'bg-green-500/10 text-green-400 border-green-500/30'
+                          : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30'
                       }
+                      variant='outline'
                     >
                       {referral.invited_jid ? 'Used' : 'Pending'}
                     </Badge>
@@ -458,10 +459,12 @@ const UserReferrals: React.FC = () => {
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               {rewards.map((reward) => (
-                <div key={reward.id} className='p-4 bg-theme-background/50 rounded-lg border border-theme-highlight/20'>
+                <div key={reward.id} className='p-4 bg-theme-surface rounded-lg border border-theme-primary/10'>
                   <div className='flex justify-between items-start mb-2'>
                     <h4 className='font-medium text-theme-text'>{reward.title}</h4>
-                    <Badge className={getRewardTypeColor(reward.reward_type)}>{reward.reward_type}</Badge>
+                    <Badge variant='outline' className={getRewardTypeColor(reward.reward_type)}>
+                      {reward.reward_type}
+                    </Badge>
                   </div>
                   <p className='text-sm text-theme-text-muted mb-2'>{reward.description}</p>
                   {reward.reward_value && (

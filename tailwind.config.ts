@@ -79,6 +79,7 @@ const config: Config = {
           surface: 'var(--theme-surface)',
           border: 'var(--theme-border)',
           text: 'var(--theme-text)',
+          'text-on-primary': 'var(--theme-text-on-primary)',
           'text-muted': 'var(--theme-text-muted)',
           accent: 'var(--theme-accent)',
           secondary: 'var(--theme-secondary)',

@@ -32,10 +32,23 @@ const ServerInfo: FC = () => {
 
   return (
     <Layout>
-      <PageBanner
-        title='Server Specs'
-        subtitle='Dive into the golden era of Silkroad Online, reimagined on our private server – for true veterans and new explorers alike.'
-      />
+      <div
+        className='py-12 bg-cover bg-center'
+        style={{
+          backgroundImage: `url('${currentTemplate.assets.pageHeaderBackground}')`,
+        }}
+      >
+        <div className='container mx-auto px-4 text-center'>
+          <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold mb-6'>
+            Server <span className='text-theme-accent font-cinzel text-4xl font-bold'>Specs</span>
+          </h1>
+          <p className='text-lg max-w-2xl mx-auto mb-10 text-theme-text-muted'>
+            Dive into the golden era of Silkroad Online, reimagined on our private server – for true veterans and new
+            explorers alike.
+          </p>
+        </div>
+      </div>
+      <hr />
 
       <div className='container mx-auto py-10'>
         <h1 className='text-4xl font-bold text-center mb-8'>Server Information & Rules</h1>

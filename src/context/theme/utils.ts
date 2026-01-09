@@ -158,6 +158,18 @@ export const applyThemeToDOM = (theme: ThemeSettings) => {
   root.style.setProperty('--theme-highlight', colors.highlight);
   root.style.setProperty('--theme-primary-glow', `${colors.primary}40`);
 
+  // RGB Variables for opacity support in gradients
+  root.style.setProperty('--theme-primary-rgb', hexToRgbSpaced(colors.primary));
+  root.style.setProperty('--theme-primary-hover-rgb', hexToRgbSpaced(colors.primaryHover));
+  root.style.setProperty('--theme-secondary-rgb', hexToRgbSpaced(colors.secondary));
+  root.style.setProperty('--theme-highlight-rgb', hexToRgbSpaced(colors.highlight));
+  root.style.setProperty('--theme-accent-rgb', hexToRgbSpaced(colors.accent));
+  root.style.setProperty('--theme-text-rgb', hexToRgbSpaced(colors.text));
+  root.style.setProperty('--theme-text-muted-rgb', hexToRgbSpaced(colors.textMuted));
+  root.style.setProperty('--theme-background-rgb', hexToRgbSpaced(colors.background));
+  root.style.setProperty('--theme-surface-rgb', hexToRgbSpaced(colors.surface));
+  root.style.setProperty('--theme-border-rgb', hexToRgbSpaced(colors.border));
+
   // Branding Colors
   root.style.setProperty('--lafftale-gold', hexToRgbSpaced(theme.customColors.brandGold));
   root.style.setProperty('--lafftale-bronze', hexToRgbSpaced(theme.customColors.brandBronze));

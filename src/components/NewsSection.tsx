@@ -29,9 +29,9 @@ const getCategoryIcon = (category: string) => {
 const getCategoryClass = (category: string) => {
   const lowerCategory = category?.toLowerCase();
   if (lowerCategory === 'update') return 'bg-blue-600';
-  if (lowerCategory === 'event') return 'bg-yellow-500 text-black';
+  if (lowerCategory === 'event') return 'bg-theme-highlight text-theme-surface';
   if (lowerCategory === 'community') return 'bg-green-600';
-  return 'bg-destructive';
+  return 'bg-theme-accent';
 };
 
 // Fallback news items in case API fails
@@ -124,7 +124,7 @@ const NewsSection = () => {
   // Format date helper function
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('de-DE', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -167,7 +167,7 @@ const NewsSection = () => {
                           <span
                             className={`${getCategoryClass(
                               item.category
-                            )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(var(--theme-primary),0.4)] transition-shadow duration-300`}
+                            )} px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(var(--theme-highlight),0.4)] transition-shadow duration-300`}
                           >
                             {getCategoryIcon(item.category)} {item.category}
                           </span>
@@ -183,7 +183,7 @@ const NewsSection = () => {
                         {item.title}
                       </h3>
 
-                      <p className='text-theme-text-muted mb-4 line-clamp-2 group-hover:text-theme-text-muted transition-colors duration-300'>
+                      <p className='text-theme-text-muted mb-4 line-clamp-3 group-hover:text-theme-text transition-colors duration-300'>
                         {item.excerpt}
                       </p>
 

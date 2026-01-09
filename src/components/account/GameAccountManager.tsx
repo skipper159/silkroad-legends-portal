@@ -150,36 +150,36 @@ const GameAccountManager = () => {
 
   return (
     <div className='space-y-8'>
-      <h2 className='text-2xl font-bold font-cinzel text-lafftale-gold mb-6'>Game Account Management</h2>
+      <h2 className='text-2xl font-bold font-cinzel text-theme-primary mb-6'>Game Account Management</h2>
 
-      <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+      <Card className='bg-theme-surface border-theme-primary/30'>
         <CardHeader>
-          <CardTitle className='text-lafftale-gold'>Create New Game Account</CardTitle>
+          <CardTitle className='text-theme-primary'>Create New Game Account</CardTitle>
           <CardDescription>Create a new in-game login</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleCreateGameAccount} className='space-y-4'>
             <Label>Username</Label>
             <Input
-              className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+              className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
               value={newGameUsername}
               onChange={(e) => setNewGameUsername(e.target.value)}
             />
             <Label>Password</Label>
             <Input
-              className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+              className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
               type='password'
               value={newGamePassword}
               onChange={(e) => setNewGamePassword(e.target.value)}
             />
             <Label>Confirm Password</Label>
             <Input
-              className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+              className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
               type='password'
               value={confirmGamePassword}
               onChange={(e) => setConfirmGamePassword(e.target.value)}
             />
-            <Button type='submit' className='bg-lafftale-gold text-lafftale-dark'>
+            <Button type='submit' className='bg-theme-primary text-theme-text-on-primary'>
               Create
             </Button>
           </form>
@@ -187,9 +187,9 @@ const GameAccountManager = () => {
       </Card>
 
       {gameAccounts.length > 0 && (
-        <Card className='bg-lafftale-darkgray border-lafftale-gold/30'>
+        <Card className='bg-theme-surface border-theme-primary/30'>
           <CardHeader>
-            <CardTitle className='text-lafftale-gold'>Manage Existing Accounts</CardTitle>
+            <CardTitle className='text-theme-primary'>Manage Existing Accounts</CardTitle>
             <CardDescription>Change password or delete a game account</CardDescription>
           </CardHeader>
           <CardContent className='space-y-6'>
@@ -201,10 +201,10 @@ const GameAccountManager = () => {
                 setSelectedAccount(acc || null);
               }}
             >
-              <SelectTrigger className='bg-lafftale-dark border-lafftale-gold/20'>
+              <SelectTrigger className='bg-theme-background border-theme-primary/20'>
                 <SelectValue placeholder='Choose Account' />
               </SelectTrigger>
-              <SelectContent className='bg-lafftale-darkgray'>
+              <SelectContent className='bg-theme-surface'>
                 {gameAccounts.map((acc) => (
                   <SelectItem key={acc.JID} value={acc.JID.toString()}>
                     {acc.StrUserID}
@@ -219,26 +219,26 @@ const GameAccountManager = () => {
                   <form onSubmit={handleChangeGamePassword} className='space-y-4 sm:w-1/2'>
                     <Label>Current Password</Label>
                     <Input
-                      className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+                      className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
                       type='password'
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                     <Label>New Password</Label>
                     <Input
-                      className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+                      className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
                       type='password'
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                     />
                     <Label>Confirm New Password</Label>
                     <Input
-                      className='bg-lafftale-dark border border-lafftale-gold/20 focus:ring-2 focus:ring-lafftale-gold focus:outline-none'
+                      className='bg-theme-background border border-theme-primary/20 focus:ring-2 focus:ring-theme-primary focus:outline-none'
                       type='password'
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
-                    <Button type='submit' className='bg-lafftale-gold text-lafftale-dark'>
+                    <Button type='submit' className='bg-theme-primary text-theme-text-on-primary'>
                       Change Password
                     </Button>
                   </form>
@@ -250,9 +250,9 @@ const GameAccountManager = () => {
                           Delete Account
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent className='bg-lafftale-darkgray border-lafftale-gold'>
+                      <AlertDialogContent className='bg-theme-surface border-theme-primary'>
                         <AlertDialogHeader>
-                          <AlertDialogTitle className='text-lafftale-gold'>Delete Game Account</AlertDialogTitle>
+                          <AlertDialogTitle className='text-theme-primary'>Delete Game Account</AlertDialogTitle>
                           <AlertDialogDescription>
                             Are you sure you want to delete the game account "{selectedAccount?.StrUserID}"? A
                             verification email will be sent to your email address for confirmation. All characters and
@@ -260,7 +260,7 @@ const GameAccountManager = () => {
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel className='bg-lafftale-darkgray text-lafftale-gold border border-lafftale-gold hover:bg-lafftale-darkgray/50'>
+                          <AlertDialogCancel className='bg-theme-surface text-theme-primary border border-theme-primary hover:bg-theme-surface/50'>
                             Cancel
                           </AlertDialogCancel>
                           <AlertDialogAction className='bg-red-600 hover:bg-red-700' onClick={handleDeleteGameAccount}>
